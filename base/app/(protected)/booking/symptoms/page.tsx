@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { analyzeSymptoms, SymptomAnalysis } from '@/lib/api';
+import { AuthProtected } from '@/components/auth-protected';
+import { PatientSidebar } from '@/components/patient-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function SymptomsPage() {
   const router = useRouter();
@@ -49,8 +52,12 @@ export default function SymptomsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4">
+    <AuthProtected>
+      <SidebarProvider suppressHydrationWarning>
+        <PatientSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
+            <div className="max-w-3xl mx-auto w-full px-4">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -240,7 +247,10 @@ export default function SymptomsPage() {
             </button>
           </div>
         )}
-      </div>
-    </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProtected>
   );
 }

@@ -14,6 +14,7 @@ import {
   FlaskConical,
 } from "lucide-react"
 
+import { useAuth } from "@/lib/authContext"
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -27,17 +28,12 @@ import {
 } from "@/components/ui/sidebar"
 
 // Provider-focused navigation data.
-const data = {
-  user: {
-    name: "Dr Autumn Hayes",
-    email: "dr.autumn.hayes@exampleclinic.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+const navConfig = {
   teams: [
     {
-      name: "Example Clinic",
+      name: "Nora Health",
       logo: Map,
-      plan: "Standard",
+      plan: "Provider",
     },
   ],
   navMain: [
@@ -136,17 +132,25 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, logout } = useAuth()
+
+  const userData = {
+    name: user?.email?.split('@')[0] || "Provider",
+    email: user?.email || "",
+    avatar: "/avatars/shadcn.jpg",
+  }
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} suppressHydrationWarning>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={navConfig.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={navConfig.navMain} />
+        <NavProjects projects={navConfig.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} onLogout={logout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getProviders, Provider } from '@/lib/api';
 import Link from 'next/link';
+import { AuthProtected } from '@/components/auth-protected';
+import { PatientSidebar } from '@/components/patient-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -39,8 +42,12 @@ export default function ProvidersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AuthProtected>
+      <SidebarProvider suppressHydrationWarning>
+        <PatientSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -156,7 +163,10 @@ export default function ProvidersPage() {
             Showing {providers.length} provider{providers.length !== 1 ? 's' : ''}
           </p>
         </div>
-      </div>
-    </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProtected>
   );
 }

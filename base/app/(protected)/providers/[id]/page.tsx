@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getProvider, getAvailableSlots, bookAppointment, Provider, TimeSlot, AvailableSlotsResponse } from '@/lib/api';
+import { AuthProtected } from '@/components/auth-protected';
+import { PatientSidebar } from '@/components/patient-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function ProviderDetailPage() {
   const params = useParams();
@@ -129,8 +132,12 @@ export default function ProviderDetailPage() {
   const slotsForSelectedDate = selectedDate && slotsData ? slotsData.slots[selectedDate] || [] : [];
 
   return (
-    <>
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <AuthProtected>
+      <SidebarProvider suppressHydrationWarning>
+        <PatientSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
+            <div className="max-w-7xl mx-auto w-full px-4 py-8">
         {/* Provider Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-6">
@@ -265,10 +272,9 @@ export default function ProviderDetailPage() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Booking Modal */}
-      {showModal && selectedSlot && provider && (
+        {/* Booking Modal */}
+        {showModal && selectedSlot && provider && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             {bookingSuccess ? (
@@ -370,7 +376,11 @@ export default function ProviderDetailPage() {
             )}
           </div>
         </div>
-      )}
-    </>
+        )}
+      </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProtected>
   );
 }

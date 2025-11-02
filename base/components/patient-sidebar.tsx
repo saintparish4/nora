@@ -16,6 +16,7 @@ import {
   LogOut,
 } from "lucide-react"
 
+import { useAuth } from "@/lib/authContext"
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -28,14 +29,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-const data = {
-  user: {
-    name: "Patient Jane",
-    email: "jane.doe@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+const navConfig = {
   teams: [
-    { name: "Example Clinic", logo: Home, plan: "Patient" },
+    { name: "Nora Health", logo: Home, plan: "Patient" },
   ],
   navMain: [
     {
@@ -67,65 +63,63 @@ const data = {
     },
     {
       title: "Appointments",
-      url: "/dashboard/appointments",
+      url: "/appointments",
       icon: CalendarDays,
       items: [
-        { title: "Upcoming", url: "/dashboard/appointments" },
-        { title: "History", url: "/dashboard/appointments/history" },
+        { title: "My Appointments", url: "/appointments" },
       ],
     },
     {
       title: "Messages",
-      url: "/dashboard/messages",
+      url: "/patient/dashboard/messages",
       icon: Inbox,
       items: [
-        { title: "Inbox", url: "/dashboard/messages" },
-        { title: "Compose", url: "/dashboard/messages/compose" },
+        { title: "Inbox", url: "/patient/dashboard/messages" },
+        { title: "Compose", url: "/patient/dashboard/messages/compose" },
       ],
     },
     {
       title: "Lab Results",
-      url: "/dashboard/labs",
+      url: "/patient/dashboard/labs",
       icon: FlaskConical,
       items: [
-        { title: "Recent", url: "/dashboard/labs" },
-        { title: "All Results", url: "/dashboard/labs/all" },
+        { title: "Recent", url: "/patient/dashboard/labs" },
+        { title: "All Results", url: "/patient/dashboard/labs/all" },
       ],
     },
     {
       title: "Medications",
-      url: "/dashboard/medications",
+      url: "/patient/dashboard/medications",
       icon: Pill,
       items: [
-        { title: "Active", url: "/dashboard/medications" },
-        { title: "Refills", url: "/dashboard/medications/refills" },
+        { title: "Active", url: "/patient/dashboard/medications" },
+        { title: "Refills", url: "/patient/dashboard/medications/refills" },
       ],
     },
     {
       title: "Documents",
-      url: "/dashboard/documents",
+      url: "/patient/dashboard/documents",
       icon: FileText,
       items: [
-        { title: "Forms", url: "/dashboard/documents/forms" },
-        { title: "Records", url: "/dashboard/documents/records" },
+        { title: "Forms", url: "/patient/dashboard/documents/forms" },
+        { title: "Records", url: "/patient/dashboard/documents/records" },
       ],
     },
     {
       title: "Billing",
-      url: "/dashboard/billing",
+      url: "/patient/dashboard/billing",
       icon: Receipt,
       items: [
-        { title: "Statements", url: "/dashboard/billing" },
-        { title: "Payments", url: "/dashboard/billing/payments" },
+        { title: "Statements", url: "/patient/dashboard/billing" },
+        { title: "Payments", url: "/patient/dashboard/billing/payments" },
       ],
     },
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/settings",
       icon: Settings2,
       items: [
-        { title: "Profile", url: "/dashboard/settings/profile" },
-        { title: "Preferences", url: "/dashboard/settings/preferences" },
+        { title: "Preferences", url: "/settings" },
       ],
     },
     {
@@ -141,17 +135,25 @@ const data = {
 }
 
 export function PatientSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, logout } = useAuth()
+
+  const userData = {
+    name: user?.email?.split('@')[0] || "Patient",
+    email: user?.email || "",
+    avatar: "/avatars/shadcn.jpg",
+  }
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} suppressHydrationWarning>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={navConfig.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={navConfig.navMain} />
+        <NavProjects projects={navConfig.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} onLogout={logout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

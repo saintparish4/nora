@@ -1,3 +1,5 @@
+'use client';
+
 import { PatientSidebar } from "@/components/patient-sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -6,7 +8,7 @@ import { CalendarDays, FlaskConical, MessageSquare, Receipt, Stethoscope } from 
 
 export default function Page() {
   return (
-    <SidebarProvider>
+    <SidebarProvider suppressHydrationWarning>
       <PatientSidebar />
       <SidebarInset>
         <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">

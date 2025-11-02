@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { AppSidebar } from "@/components/app-sidebar";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
@@ -73,6 +75,7 @@ export default function Page() {
 
   return (
     <SidebarProvider
+      suppressHydrationWarning
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",

@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { getAppointments, cancelAppointment, Appointment } from '@/lib/api';
 import Link from 'next/link';
+import { AuthProtected } from '@/components/auth-protected';
+import { PatientSidebar } from '@/components/patient-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function AppointmentsPage() {
   const [upcoming, setUpcoming] = useState<Appointment[]>([]);
@@ -59,14 +62,26 @@ export default function AppointmentsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Loading appointments...</div>
-      </div>
+      <AuthProtected>
+        <SidebarProvider suppressHydrationWarning>
+          <PatientSidebar />
+          <SidebarInset>
+            <div className="flex justify-center items-center min-h-screen">
+              <div className="text-xl">Loading appointments...</div>
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      </AuthProtected>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <AuthProtected>
+      <SidebarProvider suppressHydrationWarning>
+        <PatientSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
+            <div className="max-w-7xl mx-auto w-full px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">My Appointments</h1>
         <p className="text-gray-600">Manage your upcoming and past appointments</p>
@@ -173,6 +188,10 @@ export default function AppointmentsPage() {
         )}
         </div>
       </div>
-    </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProtected>
   );
 }

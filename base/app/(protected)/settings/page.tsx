@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { updateEmailPreferences } from '@/lib/api';
+import { AuthProtected } from '@/components/auth-protected';
+import { PatientSidebar } from '@/components/patient-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -39,7 +42,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <AuthProtected>
+      <SidebarProvider suppressHydrationWarning>
+        <PatientSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
+            <div className="max-w-4xl mx-auto w-full p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
         <p className="text-gray-600">Manage your account preferences</p>
@@ -130,6 +138,10 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProtected>
   );
 }

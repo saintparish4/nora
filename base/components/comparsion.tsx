@@ -57,7 +57,7 @@ export default function Comparison() {
             ChatGPT vs <span className="font-medium">Nora</span>
           </h2>
           <p className="text-xl text-gray-600 leading-relaxed font-light max-w-2xl mx-auto">
-            See how Nora's specialized medical AI compares to general-purpose ChatGPT
+            See how Nora&apos;s specialized medical AI compares to general-purpose ChatGPT
           </p>
         </div>
 
@@ -177,7 +177,7 @@ export default function Comparison() {
             <div className="flex-1">
               <h3 className="text-xl font-medium text-white mb-2">Why Choose Nora for Healthcare?</h3>
               <p className="text-gray-300 leading-relaxed">
-                While ChatGPT excels at general conversation, Nora is purpose-built for healthcare. It combines OpenAI's powerful GPT technology with specialized medical knowledge, provider databases, and booking systems to deliver an end-to-end healthcare navigation experience. Nora doesn't just answer questions—it matches you with the right specialist and books your appointment.
+                While ChatGPT excels at general conversation, Nora is purpose-built for healthcare. It combines OpenAI&apos;s powerful GPT technology with specialized medical knowledge, provider databases, and booking systems to deliver an end-to-end healthcare navigation experience. Nora doesn&apos;t just answer questions—it matches you with the right specialist and books your appointment.
               </p>
             </div>
           </div>

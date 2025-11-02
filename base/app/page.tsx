@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import Header from '@/components/header';
 import Hero from '@/components/hero';
 import AiMatching from '@/components/aiMatching';
+import Comparison from '@/components/comparsion';
 import HowItWorks from '@/components/how-it-works';
 import Providers from '@/components/providers';
 import Testimonials from '@/components/testimonials';
@@ -39,6 +40,7 @@ export default function Home() {
       <Header />
       <Hero />
       <AiMatching />
+      <Comparison />
       <HowItWorks />
       <Providers />
       <Testimonials />

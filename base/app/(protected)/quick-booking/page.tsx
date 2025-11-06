@@ -21,7 +21,7 @@ export default function QuickBookingPage() {
   const [providers, setProviders] = useState<(Provider & { next_available_slots: TimeSlot[] })[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider & { next_available_slots: TimeSlot[] } | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [appointmentId, setAppointmentId] = useState<number | null>(null);
+  const [_appointmentId, setAppointmentId] = useState<number | null>(null);
 
   const handleAnalyzeSymptoms = async () => {
     if (description.length < 10) {
@@ -157,7 +157,7 @@ export default function QuickBookingPage() {
                 Describe Your Symptoms
               </h2>
               <p className="text-gray-600 mb-6">
-                Tell us what you're experiencing, and our AI will recommend the right specialist.
+                Tell us what you&apos;re experiencing, and our AI will recommend the right specialist.
               </p>
               
               <textarea
@@ -380,7 +380,7 @@ export default function QuickBookingPage() {
                 Appointment Booked Successfully! 🎉
               </h3>
               <p className="text-gray-600 mb-8">
-                You'll receive a confirmation email shortly with all the details.
+                You&apos;ll receive a confirmation email shortly with all the details.
               </p>
 
               <div className="flex gap-4 justify-center">

@@ -4,6 +4,7 @@ An AI-powered healthcare booking platform that intelligently matches patients wi
 
 ## Key Features
 
+- **⚡ Quick Booking (NEW)**: Go from symptoms to booked appointment in under 2 minutes with our streamlined booking flow
 - **AI-Powered Matching**: Intelligent symptom analysis that recommends the most appropriate medical specialists
 - **Smart Scheduling**: Real-time availability and instant appointment booking
 - **Secure Authentication**: JWT-based user authentication and authorization

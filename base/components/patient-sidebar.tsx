@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Pill,
   LogOut,
+  Zap,
 } from "lucide-react"
 
 import { useAuth } from "@/lib/authContext"
@@ -41,6 +42,14 @@ const navConfig = {
       isActive: true,
       items: [
         { title: "Overview", url: "/dashboard" },
+      ],
+    },
+    {
+      title: "⚡ Quick Booking",
+      url: "/quick-booking",
+      icon: Zap,
+      items: [
+        { title: "Book in 2 Minutes", url: "/quick-booking" },
       ],
     },
     {

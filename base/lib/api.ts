@@ -547,3 +547,63 @@ export async function cancelProviderAppointment(id: number): Promise<Appointment
   
   return data;
 }
+
+// Quick Booking API
+export interface QuickBookingAnalysisResponse {
+  analysis: SymptomAnalysis;
+  providers: (Provider & { next_available_slots: TimeSlot[] })[];
+  total_providers: number;
+}
+
+export async function quickBookingAnalyze(description: string): Promise<QuickBookingAnalysisResponse> {
+  const token = getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}/quick-booking/analyze`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ description })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to analyze symptoms');
+  }
+
+  return data;
+}
+
+export async function quickBookingBook(params: {
+  provider_id: number;
+  start_time: string;
+  end_time: string;
+  notes?: string;
+}): Promise<{ success: boolean; message: string; appointment: Appointment }> {
+  const token = getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}/quick-booking/book`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(params)
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to book appointment');
+  }
+
+  return data;
+}

@@ -20,6 +20,10 @@ Rails.application.routes.draw do
     end
   end
 
+  # Quick booking routes (streamlined flow)
+  post '/quick-booking/analyze', to: 'quick_booking#analyze'
+  post '/quick-booking/book', to: 'quick_booking#book'
+
   # API routes
   namespace :api do
     namespace :v1 do

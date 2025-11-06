@@ -46,14 +46,14 @@ const Hero = () => {
 
           {/* CTA buttons */}
           <div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
           >
             <Link
-              href="/booking/symptoms"
-              className="group relative px-10 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+              href="/quick-booking"
+              className="group relative px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
             >
               <span className="flex items-center gap-3">
-                Book Appointment
+                ⚡ Book in Under 2 Minutes
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -71,6 +71,16 @@ const Hero = () => {
             >
               Browse Providers
             </Link>
+          </div>
+
+          {/* Feature callout */}
+          <div className="mb-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm text-green-700 font-medium">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Go from symptoms to booked appointment in under 2 minutes
+            </div>
           </div>
 
           {/* Stats */}

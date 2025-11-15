@@ -26,8 +26,8 @@ class QuickBookingController < ApplicationController
 
     # Step 3: Get next available slots for each provider
     providers_with_slots = providers.map do |provider|
-      slots = SlotGeneratorService.new(provider).generate_slots(days: 7)
-      next_slots = slots.values.flatten.take(3) # Get first 3 available slots
+      all_slots = SlotGeneratorService.new(provider).generate_available_slots
+      next_slots = all_slots.take(3) # Get first 3 available slots
 
       provider.as_json(only: [:id, :name, :specialty, :avatar_url, :rating, :location, :hourly_rate])
               .merge(next_available_slots: next_slots)

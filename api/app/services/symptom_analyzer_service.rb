@@ -82,14 +82,9 @@ class SymptomAnalyzerService
         parse_response(response)
     rescue StandardError => e
         Rails.logger.error "OpenAI API Error: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
         # Return safe fallback
-        {
-            specialty: 'primary_care',
-            urgency: 'routine',
-            reasoning: 'Unable to analyze symptoms at this time. Please consult a primary care provider.',
-            keywords: [],
-            error: true 
-        }
+        fallback_response
     end
 
     def system_prompt
@@ -160,7 +155,7 @@ class SymptomAnalyzerService
             keywords: parsed['keywords'] || [],
             red_flags: parsed['red_flags'] || [],
             specialty_name: SPECIALTIES[validate_specialty(parsed['specialty'])],
-            urgency_name: URGENCY_LEVELS[validate_urgency(parsed['urgency'])]
+            urgency_details: URGENCY_LEVELS[validate_urgency(parsed['urgency'])]
         }
     rescue JSON::ParserError => e
         Rails.logger.error "Failed to parse OpenAI response: #{e.message}"

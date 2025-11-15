@@ -567,6 +567,7 @@ export async function quickBookingAnalyze(description: string): Promise<QuickBoo
   const res = await fetch(`${API_URL}/quick-booking/analyze`, {
     method: 'POST',
     headers,
+    credentials: 'include',
     body: JSON.stringify({ description })
   });
 
@@ -596,6 +597,7 @@ export async function quickBookingBook(params: {
   const res = await fetch(`${API_URL}/quick-booking/book`, {
     method: 'POST',
     headers,
+    credentials: 'include',
     body: JSON.stringify(params)
   });
 

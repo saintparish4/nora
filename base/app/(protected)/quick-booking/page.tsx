@@ -231,7 +231,7 @@ export default function QuickBookingPage() {
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span>{provider.rating.toFixed(1)}</span>
+                              <span>{Number(provider.rating).toFixed(1)}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <MapPin className="h-4 w-4" />
@@ -413,4 +413,6 @@ export default function QuickBookingPage() {
     </AuthProtected>
   );
 }
+
+
 

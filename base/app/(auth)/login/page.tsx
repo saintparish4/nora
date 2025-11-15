@@ -27,136 +27,142 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center p-6">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-orange-100/30 to-pink-100/30 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center p-4 md:p-8">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
 
-      <div className="relative w-full max-w-sm">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-6 shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-light text-gray-900 mb-2 tracking-tight">
-            Welcome back
-          </h1>
-          <p className="text-gray-500 font-light">
-            Sign in to continue your journey
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Free Tier Notice */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-xl p-4 backdrop-blur-sm">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">
-                <svg className="w-5 h-5 text-amber-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
+      {/* Main Card Container */}
+      <div className="relative w-full max-w-5xl">
+        <div className="bg-white backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3),_0_10px_30px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(0,0,0,0.05)] overflow-hidden border border-gray-200">
+          <div className="grid md:grid-cols-2 min-h-[600px]">
+            
+            {/* Left Column - Login Form */}
+            <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+              {/* Header */}
+              <div className="mb-8">
+                <h1 className="text-3xl md:text-4xl font-extralight text-gray-900 mb-3 tracking-tight">
+                  Welcome back
+                </h1>
+                <p className="text-gray-500 text-sm font-light">
+                  Sign in to continue your journey
+                </p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-amber-800">Please be patient</p>
-                <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                  Due to our free tier hosting, login may take up to 50 seconds to complete successfully.
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Free Tier Notice */}
+                <div className="bg-amber-50/50 border border-amber-200/30 rounded-2xl p-4">
+                  <div className="flex items-start space-x-3">
+                    <svg className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <div>
+                      <p className="text-xs text-amber-800 font-medium">Login may take up to 50 seconds</p>
+                      <p className="text-xs text-amber-700/80 mt-0.5">Free tier hosting • Please be patient</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50/50 border border-red-200/30 rounded-2xl p-4">
+                    <div className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      <p className="text-xs text-red-700">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Email Field */}
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-xs font-medium text-gray-600 uppercase tracking-wide">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`w-full px-4 py-3.5 bg-white border border-gray-200 rounded-2xl transition-all duration-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 ${
+                      focusedField === 'email' ? 'ring-4 ring-blue-50 border-blue-400' : ''
+                    }`}
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <label htmlFor="password" className="block text-xs font-medium text-gray-600 uppercase tracking-wide">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`w-full px-4 py-3.5 bg-white border border-gray-200 rounded-2xl transition-all duration-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 ${
+                      focusedField === 'password' ? 'ring-4 ring-blue-50 border-blue-400' : ''
+                    }`}
+                    placeholder="Enter your password"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 mt-6 ${
+                    loading
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 active:scale-[0.98]'
+                  }`}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin"></div>
+                      <span>Signing in...</span>
+                    </div>
+                  ) : (
+                    'Sign In'
+                  )}
+                </button>
+              </form>
+
+              {/* Footer */}
+              <div className="mt-8 text-center">
+                <p className="text-sm text-gray-500">
+                  Don&apos;t have an account?{' '}
+                  <Link 
+                    href="/signup" 
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200"
+                  >
+                    Create one
+                  </Link>
                 </p>
               </div>
             </div>
-          </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200/50 rounded-xl p-4 backdrop-blur-sm">
-              <div className="flex items-center space-x-3">
-                <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Email Field */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <div className="relative">
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
-                className={`w-full px-4 py-3 bg-white/80 backdrop-blur-sm border rounded-xl transition-all duration-200 ease-out text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 ${
-                  focusedField === 'email' ? 'shadow-lg shadow-blue-500/10' : 'shadow-sm'
-                }`}
-                placeholder="Enter your email"
+            {/* Right Column - Image */}
+            <div className="hidden md:block relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 shadow-[inset_-15px_0_30px_-5px_rgba(0,0,0,0.25)]">
+              <img 
+                src="/auth/login.jpg" 
+                alt="Healthcare professionals" 
+                className="w-full h-full object-cover shadow-[8px_0_40px_rgba(0,0,0,0.3),_4px_0_20px_rgba(0,0,0,0.2)]"
               />
             </div>
+
           </div>
-
-          {/* Password Field */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-                className={`w-full px-4 py-3 bg-white/80 backdrop-blur-sm border rounded-xl transition-all duration-200 ease-out text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 ${
-                  focusedField === 'password' ? 'shadow-lg shadow-blue-500/10' : 'shadow-sm'
-                }`}
-                placeholder="Enter your password"
-              />
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 ease-out transform ${
-              loading
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0'
-            }`}
-          >
-            {loading ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                <span>Signing in...</span>
-              </div>
-            ) : (
-              'Sign in'
-            )}
-          </button>
-        </form>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">
-            Don&apos;t have an account?{' '}
-            <Link 
-              href="/signup" 
-              className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200"
-            >
-              Create one
-            </Link>
-          </p>
         </div>
       </div>
     </div>

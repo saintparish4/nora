@@ -50,26 +50,34 @@ const Hero = () => {
           >
             <Link
               href="/quick-booking"
-              className="group relative px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+              className="group relative overflow-hidden px-12 py-5 bg-gray-900 text-white font-normal rounded-2xl transition-all duration-500 ease-out hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] active:scale-[0.98]"
             >
-              <span className="flex items-center gap-3">
-                ⚡ Book in Under 2 Minutes
+              {/* Subtle shimmer effect on hover */}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              
+              <span className="relative flex items-center gap-4 text-[15px] tracking-wide">
+                <span className="relative">
+                  Book in Under 2 Minutes
+                  {/* Subtle underline animation */}
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-white/40 group-hover:w-full transition-all duration-500" />
+                </span>
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
+                  strokeWidth="2"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
             </Link>
             
             <Link
               href="/providers"
-              className="px-10 py-4 bg-white text-gray-900 font-medium rounded-full border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md"
+              className="group px-12 py-5 bg-white text-gray-900 font-normal rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)]"
             >
-              Browse Providers
+              <span className="text-[15px] tracking-wide">Browse Providers</span>
             </Link>
           </div>
 

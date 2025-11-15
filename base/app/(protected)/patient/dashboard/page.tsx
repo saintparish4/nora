@@ -24,7 +24,7 @@ export default function Page() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">Thu, 2:30 PM</div>
-                <p className="text-muted-foreground text-xs">With Dr Autumn Hayes</p>
+                <p className="text-muted-foreground text-xs">Annual physical</p>
               </CardContent>
             </Card>
             <Card>
@@ -73,7 +73,7 @@ export default function Page() {
                   <div className="flex items-center justify-between pt-0">
                     <div>
                       <div className="font-medium">Annual physical</div>
-                      <div className="text-muted-foreground">Thu, 2:30 PM • Dr Autumn Hayes</div>
+                      <div className="text-muted-foreground">Thu, 2:30 PM • Primary Care</div>
                     </div>
                     <a className="text-primary text-sm" href="#">View details</a>
                   </div>

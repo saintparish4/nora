@@ -1,19 +1,23 @@
-// Mock the API module - must be before any imports
-const mockUpdateEmailPreferences = jest.fn()
-const mockGetCurrentUser = jest.fn()
-
+// Mock the API module
 jest.mock('@/lib/api', () => ({
-  updateEmailPreferences: mockUpdateEmailPreferences,
-  getCurrentUser: mockGetCurrentUser,
+  updateEmailPreferences: jest.fn(),
+  getCurrentUser: jest.fn(),
+  signup: jest.fn(),
+  login: jest.fn(),
+  logout: jest.fn(),
 }))
 
 import { describe, it, beforeEach, expect, jest } from '@jest/globals'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import React from 'react'
 
-// Import after mocks
+// Import the mocked module to get references
+import * as api from '@/lib/api'
 import SettingsPage from '@/app/(protected)/settings/page'
 import { AuthProvider } from '@/lib/authContext'
+
+const mockGetCurrentUser = api.getCurrentUser as jest.MockedFunction<typeof api.getCurrentUser>
+const mockUpdateEmailPreferences = api.updateEmailPreferences as jest.MockedFunction<typeof api.updateEmailPreferences>
 
 // Create a custom render function that wraps with AuthProvider
 const renderWithProviders = (ui: React.ReactElement) => {
@@ -43,27 +47,26 @@ describe('Settings Page', () => {
   })
 
   it('renders settings page', async () => {
-    await act(async () => {
-      renderWithProviders(<SettingsPage />)
+    renderWithProviders(<SettingsPage />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Email Notifications')).toBeDefined()
     })
-    const heading = screen.getByText('Email Notifications')
-    expect(heading).toBeDefined()
   })
 
   it('displays current preferences', async () => {
-    await act(async () => {
-      renderWithProviders(<SettingsPage />)
-    })
+    renderWithProviders(<SettingsPage />)
     
-    const bookingCheckbox = screen.getByLabelText('Booking Confirmations')
-    expect(bookingCheckbox).toBeDefined()
+    await waitFor(() => {
+      expect(screen.getByLabelText('Booking Confirmations')).toBeDefined()
+    })
   })
 
   it('updates preferences on save', async () => {
-    let unmount: (() => void) | undefined
-    await act(async () => {
-      const result = renderWithProviders(<SettingsPage />)
-      unmount = result.unmount
+    renderWithProviders(<SettingsPage />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Save Preferences')).toBeDefined()
     })
     
     const saveButton = screen.getByText('Save Preferences')
@@ -75,22 +78,24 @@ describe('Settings Page', () => {
     await waitFor(() => {
       expect(screen.getByText('Preferences saved successfully!')).toBeDefined()
     })
-    
-    unmount?.()
   })
 
   it('shows error message on API failure', async () => {
-    // Mock fetch to return an error response
-    global.fetch = jest.fn(() =>
-      Promise.resolve({ok: false, json: () => Promise.resolve({ error: 'API Error' } as never)} as never)
-    ) as jest.MockedFunction<typeof fetch>
-    await act(async () => {
-      renderWithProviders(<SettingsPage />)
+    // Mock updateEmailPreferences to reject with an error
+    mockUpdateEmailPreferences.mockRejectedValueOnce(new Error('API Error'))
+    
+    renderWithProviders(<SettingsPage />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Save Preferences')).toBeDefined()
     })
+    
     const saveButton = screen.getByText('Save Preferences')
+    
     await act(async () => {
       fireEvent.click(saveButton)
     })
+    
     await waitFor(() => {
       expect(screen.getByText('API Error')).toBeDefined()
     })

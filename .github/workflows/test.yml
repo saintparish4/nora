@@ -1,0 +1,73 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-backend:
+    name: Rails Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
+          working-directory: ./api
+
+      - name: Install dependencies
+        working-directory: ./api
+        run: bundle install
+
+      - name: Set up database
+        working-directory: ./api
+        env:
+          RAILS_ENV: test
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
+
+      - name: Run RSpec tests
+        working-directory: ./api
+        env:
+          RAILS_ENV: test
+        run: bundle exec rspec
+
+  test-frontend:
+    name: Next.js Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: ./base/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ./base
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Jest tests
+        working-directory: ./base
+        run: pnpm test -- --ci --coverage --maxWorkers=2
+
+      - name: Run ESLint
+        working-directory: ./base
+        run: pnpm run lint

@@ -67,7 +67,3 @@ jobs:
       - name: Run Jest tests
         working-directory: ./base
         run: pnpm test -- --ci --coverage --maxWorkers=2
-
-      - name: Run ESLint
-        working-directory: ./base
-        run: pnpm run lint

@@ -269,7 +269,7 @@ export function ChartAreaInteractive({
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value as string | number).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })

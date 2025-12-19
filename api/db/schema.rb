@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_30_023656) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
   create_table "appointments", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.integer "provider_id", null: false
@@ -66,6 +66,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_023656) do
     t.index ["provider_id"], name: "index_calendar_connections_on_provider_id"
   end
 
+  create_table "conversation_messages", force: :cascade do |t|
+    t.integer "conversation_id", null: false
+    t.string "role"
+    t.text "content"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_conversation_messages_on_conversation_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "session_id"
+    t.string "status"
+    t.json "context"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "follow_up_recommendations", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "appointment_id", null: false
+    t.string "recommendation_type"
+    t.text "message"
+    t.datetime "scheduled_for"
+    t.datetime "sent_at"
+    t.boolean "acknowledged"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appointment_id"], name: "index_follow_up_recommendations_on_appointment_id"
+    t.index ["user_id"], name: "index_follow_up_recommendations_on_user_id"
+  end
+
+  create_table "provider_conditions", force: :cascade do |t|
+    t.integer "provider_id", null: false
+    t.string "condition_name"
+    t.integer "expertise_level"
+    t.integer "cases_treated"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_provider_conditions_on_provider_id"
+  end
+
   create_table "providers", force: :cascade do |t|
     t.string "name", null: false
     t.string "specialty", null: false
@@ -81,6 +127,35 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_023656) do
     t.index ["specialty"], name: "index_providers_on_specialty"
   end
 
+  create_table "risk_assessments", force: :cascade do |t|
+    t.integer "conversation_id", null: false
+    t.integer "user_id", null: false
+    t.string "care_level"
+    t.integer "confidence"
+    t.text "reasoning"
+    t.json "red_flags"
+    t.json "self_care_options"
+    t.json "escalation_triggers"
+    t.json "recommended_specialties"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_risk_assessments_on_conversation_id"
+    t.index ["user_id"], name: "index_risk_assessments_on_user_id"
+  end
+
+  create_table "user_preferences", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "preferred_location"
+    t.json "preferred_times"
+    t.string "insurance_info"
+    t.string "provider_gender_preference"
+    t.json "language_preferences"
+    t.json "communication_preferences"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_preferences_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
@@ -91,6 +166,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_023656) do
     t.boolean "cancellation_notices", default: true
     t.boolean "is_provider", default: false
     t.integer "provider_id"
+    t.json "booking_patterns", default: {}
+    t.json "health_history", default: {}
     t.index ["provider_id"], name: "index_users_on_provider_id"
   end
 
@@ -99,4 +176,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_023656) do
   add_foreign_key "availabilities", "providers"
   add_foreign_key "blocked_slots", "providers"
   add_foreign_key "calendar_connections", "providers"
+  add_foreign_key "conversation_messages", "conversations"
+  add_foreign_key "conversations", "users"
+  add_foreign_key "follow_up_recommendations", "appointments"
+  add_foreign_key "follow_up_recommendations", "users"
+  add_foreign_key "provider_conditions", "providers"
+  add_foreign_key "risk_assessments", "conversations"
+  add_foreign_key "risk_assessments", "users"
+  add_foreign_key "user_preferences", "users"
 end

@@ -1,20 +1,20 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 // Token management
-const TOKEN_KEY = 'mai_auth_token';
+const TOKEN_KEY = "mai_auth_token";
 
 export function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function removeToken(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.removeItem(TOKEN_KEY);
 }
 
@@ -107,7 +107,7 @@ export interface SymptomAnalysis {
 
 export interface SymptomAnalysisResponse {
   analysis: SymptomAnalysis;
-  timestamp: string; 
+  timestamp: string;
 }
 
 export interface ProviderStats {
@@ -129,6 +129,63 @@ export interface ProviderDashboard {
   upcoming_appointments: Appointment[];
   recent_appointments: Appointment[];
   calendar_connected: boolean;
+}
+
+export interface ChatMessage {
+  id: number;
+  role: "user" | "assistant" | "system";
+  content: string;
+  metadata: {
+    suggested_replies?: string[];
+    confidence?: number;
+    needs_more_info?: boolean;
+  };
+  created_at: string;
+}
+
+export interface RiskAssessment {
+  id: number;
+  care_level: "emergency" | "urgent" | "primary" | "specialist" | "wellness";
+  confidence: number;
+  reasoning: string;
+  red_flags: string[];
+  self_care_options: string[];
+  escalation_triggers: string[];
+  recommended_specialties: string[];
+}
+
+export interface ChatResponse {
+  message: string;
+  suggested_replies: string[];
+  confidence: number;
+  needs_more_info: boolean;
+  ready_for_assessment: boolean;
+  session_id: string;
+}
+
+export interface ChatHistory {
+  messages: ChatMessage[];
+  risk_assessment: RiskAssessment | null;
+}
+
+export interface ProviderMatchResponse {
+  providers: Provider[];
+  care_level: string;
+  confidence: number;
+}
+
+export interface FollowUpRecommendation {
+  id: number;
+  recommendation_type:
+    | "check_in"
+    | "follow_up_appointment"
+    | "prevention_tip"
+    | "symptom_recurrence";
+  message: string;
+  scheduled_for: string;
+  sent_at: string | null;
+  acknowledged: boolean;
+  metadata: Record<string, any>;
 }
 
 export async function signup(
@@ -189,7 +246,7 @@ export async function logout(): Promise<void> {
     await fetch(`${API_URL}/auth/logout`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   }
@@ -205,7 +262,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
     const res = await fetch(`${API_URL}/auth/me`, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -317,7 +374,7 @@ export async function bookAppointment(params: {
   // Check if response has content before parsing
   const contentType = res.headers.get("content-type");
   let data;
-  
+
   if (contentType && contentType.includes("application/json")) {
     try {
       data = await res.json();
@@ -349,7 +406,7 @@ export async function getAppointments(): Promise<AppointmentsResponse> {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to fetch appointments"); 
+    throw new Error("Failed to fetch appointments");
   }
 
   return res.json();
@@ -406,12 +463,14 @@ export async function updateEmailPreferences(preferences: {
   return data;
 }
 
-export async function analyzeSymptoms(description: string): Promise<SymptomAnalysisResponse> {
+export async function analyzeSymptoms(
+  description: string
+): Promise<SymptomAnalysisResponse> {
   const res = await fetch(`${API_URL}/api/v1/analyze-symptoms`, {
     method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ description }) 
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ description }),
   });
 
   const data = await res.json();
@@ -420,27 +479,31 @@ export async function analyzeSymptoms(description: string): Promise<SymptomAnaly
     throw new Error(data.error || "Failed to analyze symptoms");
   }
 
-  return data; 
+  return data;
 }
 
-export async function getProvidersByAISpecialty(specialty: string, params?: {
-  location?: string;
-  min_rating?: number;
-  sort?: string;
-}): Promise<ProvidersResponse> {
+export async function getProvidersByAISpecialty(
+  specialty: string,
+  params?: {
+    location?: string;
+    min_rating?: number;
+    sort?: string;
+  }
+): Promise<ProvidersResponse> {
   const queryParams = new URLSearchParams();
 
   // Use ai_specialty parameter for backend filtering
   queryParams.set("ai_specialty", specialty);
 
   if (params?.location) queryParams.append("location", params.location);
-  if (params?.min_rating) queryParams.append('min_rating', params.min_rating.toString());
-  if (params?.sort) queryParams.append('sort', params.sort);
+  if (params?.min_rating)
+    queryParams.append("min_rating", params.min_rating.toString());
+  if (params?.sort) queryParams.append("sort", params.sort);
 
   const url = `${API_URL}/providers?${queryParams}`;
 
   const res = await fetch(url, {
-    credentials: 'include',
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -452,99 +515,116 @@ export async function getProvidersByAISpecialty(specialty: string, params?: {
 
 export async function getProviderDashboard(): Promise<ProviderDashboard> {
   const res = await fetch(`${API_URL}/api/v1/provider/dashboard`, {
-    credentials: 'include'
+    credentials: "include",
   });
-  
+
   if (!res.ok) {
-    throw new Error('Failed to fetch provider dashboard');
+    throw new Error("Failed to fetch provider dashboard");
   }
-  
+
   return res.json();
 }
 
-export async function getCalendarConnectionStatus(): Promise<{ connected: boolean; last_synced: string; needs_sync: boolean }> {
+export async function getCalendarConnectionStatus(): Promise<{
+  connected: boolean;
+  last_synced: string;
+  needs_sync: boolean;
+}> {
   const res = await fetch(`${API_URL}/api/v1/provider/calendar/status`, {
-    credentials: 'include'
+    credentials: "include",
   });
-  
+
   if (!res.ok) {
-    throw new Error('Failed to check calendar status');
+    throw new Error("Failed to check calendar status");
   }
-  
+
   return res.json();
 }
 
-export async function connectGoogleCalendar(): Promise<{ authorization_url: string }> {
+export async function connectGoogleCalendar(): Promise<{
+  authorization_url: string;
+}> {
   const res = await fetch(`${API_URL}/api/v1/provider/calendar/connect`, {
-    credentials: 'include'
+    credentials: "include",
   });
-  
+
   if (!res.ok) {
-    throw new Error('Failed to initiate calendar connection');
+    throw new Error("Failed to initiate calendar connection");
   }
-  
+
   return res.json();
 }
 
 export async function syncGoogleCalendar(): Promise<void> {
   const res = await fetch(`${API_URL}/api/v1/provider/calendar/sync`, {
-    method: 'POST',
-    credentials: 'include'
+    method: "POST",
+    credentials: "include",
   });
-  
+
   const data = await res.json();
-  
+
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to sync calendar');
+    throw new Error(data.error || "Failed to sync calendar");
   }
-  
+
   return data;
 }
 
 export async function disconnectGoogleCalendar(): Promise<void> {
   const res = await fetch(`${API_URL}/api/v1/provider/calendar/disconnect`, {
-    method: 'DELETE',
-    credentials: 'include'
+    method: "DELETE",
+    credentials: "include",
   });
-  
+
   const data = await res.json();
-  
+
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to disconnect calendar');
+    throw new Error(data.error || "Failed to disconnect calendar");
   }
-  
+
   return data;
 }
 
-export async function markAppointmentComplete(id: number, notes?: string): Promise<Appointment> {
-  const res = await fetch(`${API_URL}/api/v1/provider/appointments/${id}/complete`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ notes })
-  });
-  
+export async function markAppointmentComplete(
+  id: number,
+  notes?: string
+): Promise<Appointment> {
+  const res = await fetch(
+    `${API_URL}/api/v1/provider/appointments/${id}/complete`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ notes }),
+    }
+  );
+
   const data = await res.json();
-  
+
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to mark appointment as complete');
+    throw new Error(data.error || "Failed to mark appointment as complete");
   }
-  
+
   return data;
 }
 
-export async function cancelProviderAppointment(id: number): Promise<Appointment> {
-  const res = await fetch(`${API_URL}/api/v1/provider/appointments/${id}/cancel`, {
-    method: 'PATCH',
-    credentials: 'include'
-  });
-  
+export async function cancelProviderAppointment(
+  id: number
+): Promise<Appointment> {
+  const res = await fetch(
+    `${API_URL}/api/v1/provider/appointments/${id}/cancel`,
+    {
+      method: "PATCH",
+      credentials: "include",
+    }
+  );
+
   const data = await res.json();
-  
+
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to cancel appointment');
+    throw new Error(data.error || "Failed to cancel appointment");
   }
-  
+
   return data;
 }
 
@@ -555,26 +635,28 @@ export interface QuickBookingAnalysisResponse {
   total_providers: number;
 }
 
-export async function quickBookingAnalyze(description: string): Promise<QuickBookingAnalysisResponse> {
+export async function quickBookingAnalyze(
+  description: string
+): Promise<QuickBookingAnalysisResponse> {
   const token = getToken();
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${API_URL}/quick-booking/analyze`, {
-    method: 'POST',
+    method: "POST",
     headers,
-    credentials: 'include',
-    body: JSON.stringify({ description })
+    credentials: "include",
+    body: JSON.stringify({ description }),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to analyze symptoms');
+    throw new Error(data.error || "Failed to analyze symptoms");
   }
 
   return data;
@@ -588,23 +670,135 @@ export async function quickBookingBook(params: {
 }): Promise<{ success: boolean; message: string; appointment: Appointment }> {
   const token = getToken();
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${API_URL}/quick-booking/book`, {
-    method: 'POST',
+    method: "POST",
     headers,
-    credentials: 'include',
-    body: JSON.stringify(params)
+    credentials: "include",
+    body: JSON.stringify(params),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || 'Failed to book appointment');
+    throw new Error(data.error || "Failed to book appointment");
+  }
+
+  return data;
+}
+
+export async function sendChatMessage(
+  message: string,
+  sessionId?: string
+): Promise<ChatResponse> {
+  const res = await fetch(`${API_URL}/api/v1/chat/message`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ message, session_id: sessionId }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to send message");
+  }
+
+  return data;
+}
+
+export async function getChatHistory(sessionId: string): Promise<ChatHistory> {
+  const res = await fetch(
+    `${API_URL}/api/v1/chat/history?session_id=${sessionId}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch chat history");
+  }
+
+  return res.json();
+}
+
+export async function resetChat(
+  sessionId: string
+): Promise<{ message: string; new_session_id: string }> {
+  const res = await fetch(`${API_URL}/api/v1/chat/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to reset chat");
+  }
+
+  return data;
+}
+
+export async function getRecommendedProviders(
+  sessionId: string,
+  location?: string,
+  limit?: number
+): Promise<ProviderMatchResponse> {
+  const params = new URLSearchParams();
+  params.append("session_id", sessionId);
+  if (location) params.append("location", location);
+  if (limit) params.append("limit", limit.toString());
+
+  const res = await fetch(
+    `${API_URL}/api/v1/chat/recommended_providers?${params}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to get recommended providers");
+  }
+
+  return data;
+}
+
+export async function getFollowUpRecommendations(): Promise<{
+  pending: FollowUpRecommendation[];
+  unacknowledged: FollowUpRecommendation[];
+}> {
+  const res = await fetch(`${API_URL}/api/v1/follow_ups`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch follow-up recommendations");
+  }
+
+  return res.json();
+}
+
+export async function acknowledgeFollowUp(
+  id: number
+): Promise<{ message: string }> {
+  const res = await fetch(`${API_URL}/api/v1/follow_ups/${id}/acknowledge`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to acknowledge follow-up");
   }
 
   return data;

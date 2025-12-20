@@ -1,8 +1,12 @@
 puts "🌱 Seeding database..."
 
+# ============================================================================
+# DATA CLEANUP
+# ============================================================================
 # Clear all data and reset auto-increment counters
 Appointment.destroy_all
 Availability.destroy_all
+ProviderCondition.destroy_all
 Provider.destroy_all
 User.destroy_all
 
@@ -11,7 +15,11 @@ ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='p
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='availabilities'")
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='appointments'")
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='users'")
+ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='provider_conditions'")
 
+# ============================================================================
+# TEST USER
+# ============================================================================
 # Create test user
 puts "👤 Creating test user..."
 test_user = User.create!(
@@ -24,6 +32,9 @@ test_user = User.create!(
 )
 puts "✅ Created test user: #{test_user.email}"
 
+# ============================================================================
+# PROVIDERS DATA
+# ============================================================================
 puts "🏥 Seeding providers..."
 
 providers_data = [
@@ -677,9 +688,396 @@ providers_data = [
     experience_years: 7,
     rating: 4.6,
     avatar_url: "https://i.pravatar.cc/150?img=63"
+  },
+  
+  # NEW ORLEANS PROVIDERS
+  {
+    name: "Dr. Marie LeBlanc",
+    specialty: "Primary Care",
+    bio: "Family medicine physician serving the New Orleans community with a focus on preventive care and chronic disease management.",
+    location: "New Orleans, LA",
+    hourly_rate: 185.00,
+    experience_years: 12,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=16"
+  },
+  {
+    name: "Dr. Antoine Dubois",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in heart disease prevention and management. Expert in cardiovascular health.",
+    location: "New Orleans, LA",
+    hourly_rate: 250.00,
+    experience_years: 18,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=18"
+  },
+  {
+    name: "Dr. Camille Thibodeaux",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed therapist specializing in trauma recovery and stress management. Culturally sensitive approach.",
+    location: "New Orleans, LA",
+    hourly_rate: 155.00,
+    experience_years: 11,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=21"
+  },
+  {
+    name: "Dr. Robert Boudreaux",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in orthopedic rehabilitation and sports medicine. Helping patients return to active lifestyles.",
+    location: "New Orleans, LA",
+    hourly_rate: 125.00,
+    experience_years: 10,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=34"
+  },
+  {
+    name: "Dr. Elizabeth Martin",
+    specialty: "Dermatology",
+    bio: "Board-certified dermatologist providing comprehensive skin care services including medical and cosmetic treatments.",
+    location: "New Orleans, LA",
+    hourly_rate: 195.00,
+    experience_years: 13,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=46"
+  },
+  
+  # LAS VEGAS PROVIDERS
+  {
+    name: "Dr. Michael Torres",
+    specialty: "Primary Care",
+    bio: "Family medicine physician providing comprehensive primary care services to the Las Vegas community.",
+    location: "Las Vegas, NV",
+    hourly_rate: 190.00,
+    experience_years: 14,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=50"
+  },
+  {
+    name: "Dr. Jennifer Walsh",
+    specialty: "Urgent Care",
+    bio: "Emergency medicine physician providing urgent care services. Quick, efficient care for acute conditions.",
+    location: "Las Vegas, NV",
+    hourly_rate: 175.00,
+    experience_years: 11,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=11"
+  },
+  {
+    name: "Dr. David Kim",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in preventive cardiology and heart disease management.",
+    location: "Las Vegas, NV",
+    hourly_rate: 245.00,
+    experience_years: 16,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=65"
+  },
+  {
+    name: "Dr. Amanda Foster",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed therapist specializing in anxiety, depression, and stress management. Evening and weekend availability.",
+    location: "Las Vegas, NV",
+    hourly_rate: 150.00,
+    experience_years: 9,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=66"
+  },
+  {
+    name: "Ryan Mitchell",
+    specialty: "Personal Training",
+    bio: "Certified personal trainer specializing in strength training and body transformation.",
+    location: "Las Vegas, NV",
+    hourly_rate: 95.00,
+    experience_years: 8,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=70"
+  },
+  
+  # SAN DIEGO PROVIDERS
+  {
+    name: "Dr. Sarah Johnson",
+    specialty: "Primary Care",
+    bio: "Family medicine physician providing comprehensive primary care with focus on preventive medicine.",
+    location: "San Diego, CA",
+    hourly_rate: 205.00,
+    experience_years: 15,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=1"
+  },
+  {
+    name: "Dr. Mark Thompson",
+    specialty: "Sports Medicine",
+    bio: "Sports medicine physician working with athletes and active individuals. Injury prevention and treatment specialist.",
+    location: "San Diego, CA",
+    hourly_rate: 195.00,
+    experience_years: 13,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    name: "Dr. Lisa Chen",
+    specialty: "Dermatology",
+    bio: "Board-certified dermatologist specializing in medical dermatology and skin cancer screening.",
+    location: "San Diego, CA",
+    hourly_rate: 200.00,
+    experience_years: 12,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=3"
+  },
+  {
+    name: "Dr. James Rodriguez",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in sports rehabilitation and orthopedic conditions.",
+    location: "San Diego, CA",
+    hourly_rate: 130.00,
+    experience_years: 11,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=4"
+  },
+  {
+    name: "Maria Santos",
+    specialty: "Yoga Instruction",
+    bio: "Certified yoga instructor specializing in Vinyasa and restorative yoga. Beach yoga sessions available.",
+    location: "San Diego, CA",
+    hourly_rate: 85.00,
+    experience_years: 9,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=6"
+  },
+  
+  # PHOENIX PROVIDERS
+  {
+    name: "Dr. Robert Martinez",
+    specialty: "Primary Care",
+    bio: "Family medicine physician providing comprehensive primary care services to the Phoenix area.",
+    location: "Phoenix, AZ",
+    hourly_rate: 195.00,
+    experience_years: 16,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=7"
+  },
+  {
+    name: "Dr. Patricia Brown",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in preventive cardiology and cardiovascular disease management.",
+    location: "Phoenix, AZ",
+    hourly_rate: 240.00,
+    experience_years: 17,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=8"
+  },
+  {
+    name: "Dr. Kevin Lee",
+    specialty: "Dermatology",
+    bio: "Board-certified dermatologist specializing in skin cancer detection and treatment. Mohs surgery certified.",
+    location: "Phoenix, AZ",
+    hourly_rate: 190.00,
+    experience_years: 14,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=71"
+  },
+  {
+    name: "Dr. Nancy Garcia",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed therapist specializing in anxiety, depression, and relationship counseling.",
+    location: "Phoenix, AZ",
+    hourly_rate: 160.00,
+    experience_years: 12,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=72"
+  },
+  {
+    name: "Carlos Mendez",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in orthopedic rehabilitation and sports injuries.",
+    location: "Phoenix, AZ",
+    hourly_rate: 120.00,
+    experience_years: 10,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=73"
+  },
+  
+  # SALT LAKE CITY PROVIDERS
+  {
+    name: "Dr. Emily Anderson",
+    specialty: "Primary Care",
+    bio: "Family medicine physician providing comprehensive primary care with focus on preventive health.",
+    location: "Salt Lake City, UT",
+    hourly_rate: 185.00,
+    experience_years: 13,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=74"
+  },
+  {
+    name: "Dr. Thomas Wilson",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in heart disease prevention and management.",
+    location: "Salt Lake City, UT",
+    hourly_rate: 235.00,
+    experience_years: 18,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=75"
+  },
+  {
+    name: "Dr. Jennifer Taylor",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in sports medicine and orthopedic rehabilitation.",
+    location: "Salt Lake City, UT",
+    hourly_rate: 115.00,
+    experience_years: 11,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=76"
+  },
+  {
+    name: "Dr. Michael Davis",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed therapist specializing in stress management and anxiety disorders.",
+    location: "Salt Lake City, UT",
+    hourly_rate: 155.00,
+    experience_years: 10,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=77"
+  },
+  {
+    name: "Sarah Johnson",
+    specialty: "Nutrition Counseling",
+    bio: "Registered dietitian specializing in weight management and sports nutrition.",
+    location: "Salt Lake City, UT",
+    hourly_rate: 100.00,
+    experience_years: 9,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=78"
+  },
+  
+  # DENVER PROVIDERS
+  {
+    name: "Dr. Christopher Moore",
+    specialty: "Primary Care",
+    bio: "Family medicine physician providing comprehensive primary care services in Denver.",
+    location: "Denver, CO",
+    hourly_rate: 200.00,
+    experience_years: 15,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=79"
+  },
+  {
+    name: "Dr. Jessica White",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in preventive cardiology and heart health optimization.",
+    location: "Denver, CO",
+    hourly_rate: 250.00,
+    experience_years: 17,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=80"
+  },
+  {
+    name: "Dr. Ryan Harris",
+    specialty: "Sports Medicine",
+    bio: "Sports medicine physician working with athletes and active individuals. Altitude training specialist.",
+    location: "Denver, CO",
+    hourly_rate: 195.00,
+    experience_years: 12,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=81"
+  },
+  {
+    name: "Dr. Amanda Clark",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in sports rehabilitation and outdoor athlete injuries.",
+    location: "Denver, CO",
+    hourly_rate: 125.00,
+    experience_years: 11,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=82"
+  },
+  {
+    name: "Dr. Matthew Lewis",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed therapist specializing in anxiety, depression, and stress management.",
+    location: "Denver, CO",
+    hourly_rate: 165.00,
+    experience_years: 13,
+    rating: 4.7,
+    avatar_url: "https://i.pravatar.cc/150?img=83"
+  },
+  {
+    name: "Jennifer Adams",
+    specialty: "Yoga Instruction",
+    bio: "Certified yoga instructor specializing in power yoga and meditation practices.",
+    location: "Denver, CO",
+    hourly_rate: 80.00,
+    experience_years: 10,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=84"
+  },
+  
+  # BOSTON PROVIDERS
+  {
+    name: "Dr. Elizabeth Walsh",
+    specialty: "Primary Care",
+    bio: "Board-certified internist providing comprehensive primary care. Academic medical center background.",
+    location: "Boston, MA",
+    hourly_rate: 225.00,
+    experience_years: 19,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=85"
+  },
+  {
+    name: "Dr. Robert O'Brien",
+    specialty: "Cardiology",
+    bio: "Cardiologist specializing in interventional cardiology and complex cardiac conditions.",
+    location: "Boston, MA",
+    hourly_rate: 280.00,
+    experience_years: 21,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=86"
+  },
+  {
+    name: "Dr. Catherine Murphy",
+    specialty: "Dermatology",
+    bio: "Board-certified dermatologist specializing in medical dermatology and skin cancer treatment.",
+    location: "Boston, MA",
+    hourly_rate: 210.00,
+    experience_years: 16,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=87"
+  },
+  {
+    name: "Dr. Patrick Sullivan",
+    specialty: "Mental Health Counseling",
+    bio: "Licensed clinical psychologist specializing in cognitive behavioral therapy and anxiety disorders.",
+    location: "Boston, MA",
+    hourly_rate: 175.00,
+    experience_years: 14,
+    rating: 4.9,
+    avatar_url: "https://i.pravatar.cc/150?img=88"
+  },
+  {
+    name: "Dr. Margaret Kelly",
+    specialty: "Physical Therapy",
+    bio: "Physical therapist specializing in orthopedic rehabilitation and post-surgical recovery.",
+    location: "Boston, MA",
+    hourly_rate: 135.00,
+    experience_years: 12,
+    rating: 4.8,
+    avatar_url: "https://i.pravatar.cc/150?img=89"
+  },
+  {
+    name: "Dr. Daniel Quinn",
+    specialty: "Pediatrics",
+    bio: "Board-certified pediatrician providing comprehensive care for children and adolescents.",
+    location: "Boston, MA",
+    hourly_rate: 195.00,
+    experience_years: 15,
+    rating: 5.0,
+    avatar_url: "https://i.pravatar.cc/150?img=90"
   }
 ]
 
+# ============================================================================
+# SCHEDULE TEMPLATES
+# ============================================================================
 # Define schedule templates by specialty type
 schedule_templates = {
   medical_specialist: [
@@ -802,6 +1200,9 @@ specialty_mappings = {
   'Urgent Care' => :urgent_care
 }
 
+# ============================================================================
+# PROVIDER CREATION
+# ============================================================================
 # Create all providers with automatic schedule assignment based on specialty
 providers_data.each_with_index do |provider_data, index|
   provider = Provider.create!(provider_data)
@@ -824,10 +1225,11 @@ providers_data.each_with_index do |provider_data, index|
   puts "   📅 #{schedule.length} time slots - Template: #{template_key}"
 end
 
-# All providers now created automatically with schedules above
-# Sample appointments section below
-
+# ============================================================================
+# SAMPLE APPOINTMENTS
+# ============================================================================
 # Create some realistic existing appointments to simulate a working system
+# Note: provider_index corresponds to the order providers were created above
 puts "\n📅 Creating sample appointments..."
 
 appointment_data = [
@@ -905,6 +1307,9 @@ providers = Provider.all.to_a
 appointment_data.each do |apt|
   provider = providers[apt[:provider_index]]
   
+  # Skip if provider doesn't exist (safety check)
+  next unless provider
+  
   # Combine date and time into datetime objects
   start_datetime = Time.zone.parse("#{apt[:date]} #{apt[:start_time]}")
   end_datetime = Time.zone.parse("#{apt[:date]} #{apt[:end_time]}")
@@ -920,13 +1325,230 @@ appointment_data.each do |apt|
   puts "   ✓ Booked: #{provider.name} on #{apt[:date].strftime('%A, %b %d')} at #{apt[:start_time]} (#{apt[:service]})"
 end
 
+# ============================================================================
+# PROVIDER CONDITIONS
+# ============================================================================
+# Add provider conditions for all specialties based on their expertise
+puts "\n🏥 Adding provider conditions..."
+condition_mappings = {
+  'Primary Care' => [
+    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'cold_flu', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'general_checkup', expertise_level: 5, cases_treated: 600 }
+  ],
+  'Internal Medicine' => [
+    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'heart_disease', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'chronic_disease', expertise_level: 5, cases_treated: 500 }
+  ],
+  'Cardiology' => [
+    { condition_name: 'heart_disease', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'chest_pain', expertise_level: 5, cases_treated: 250 },
+    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'arrhythmia', expertise_level: 4, cases_treated: 180 },
+    { condition_name: 'heart_failure', expertise_level: 5, cases_treated: 200 }
+  ],
+  'Dermatology' => [
+    { condition_name: 'acne', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'skin_cancer', expertise_level: 5, cases_treated: 200 },
+    { condition_name: 'eczema', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'psoriasis', expertise_level: 4, cases_treated: 250 },
+    { condition_name: 'rashes', expertise_level: 5, cases_treated: 350 }
+  ],
+  'Neurology' => [
+    { condition_name: 'headaches', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'migraines', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'seizures', expertise_level: 4, cases_treated: 150 },
+    { condition_name: 'movement_disorders', expertise_level: 4, cases_treated: 120 },
+    { condition_name: 'neuropathy', expertise_level: 4, cases_treated: 200 }
+  ],
+  'Gastroenterology' => [
+    { condition_name: 'digestive_issues', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'ibd', expertise_level: 5, cases_treated: 200 },
+    { condition_name: 'acid_reflux', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'constipation', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'abdominal_pain', expertise_level: 5, cases_treated: 400 }
+  ],
+  'Endocrinology' => [
+    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'thyroid_disorders', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'hormonal_imbalances', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'metabolic_disorders', expertise_level: 4, cases_treated: 200 }
+  ],
+  'Rheumatology' => [
+    { condition_name: 'arthritis', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'autoimmune_diseases', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'lupus', expertise_level: 4, cases_treated: 150 },
+    { condition_name: 'fibromyalgia', expertise_level: 4, cases_treated: 200 }
+  ],
+  'Ophthalmology' => [
+    { condition_name: 'eye_infections', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'vision_problems', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'cataracts', expertise_level: 5, cases_treated: 250 },
+    { condition_name: 'glaucoma', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'dry_eyes', expertise_level: 4, cases_treated: 350 }
+  ],
+  'ENT (Otolaryngology)' => [
+    { condition_name: 'sinus_issues', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'hearing_loss', expertise_level: 5, cases_treated: 250 },
+    { condition_name: 'ear_infections', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'voice_disorders', expertise_level: 4, cases_treated: 150 },
+    { condition_name: 'allergies', expertise_level: 4, cases_treated: 300 }
+  ],
+  'Orthopedics' => [
+    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'fractures', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'back_pain', expertise_level: 4, cases_treated: 400 },
+    { condition_name: 'arthritis', expertise_level: 4, cases_treated: 350 }
+  ],
+  'Sports Medicine' => [
+    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'muscle_strains', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'concussion', expertise_level: 4, cases_treated: 150 },
+    { condition_name: 'performance', expertise_level: 4, cases_treated: 200 }
+  ],
+  'OB/GYN' => [
+    { condition_name: 'pregnancy', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'menstrual_issues', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'pelvic_pain', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'menopause', expertise_level: 4, cases_treated: 250 },
+    { condition_name: 'womens_health', expertise_level: 5, cases_treated: 600 }
+  ],
+  'Pediatrics' => [
+    { condition_name: 'childhood_illnesses', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'developmental_concerns', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'vaccinations', expertise_level: 5, cases_treated: 600 },
+    { condition_name: 'growth_issues', expertise_level: 4, cases_treated: 150 },
+    { condition_name: 'general_checkup', expertise_level: 5, cases_treated: 700 }
+  ],
+  'Psychiatry' => [
+    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'adhd', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'bipolar', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'medication_management', expertise_level: 5, cases_treated: 500 }
+  ],
+  'Psychology' => [
+    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'trauma', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'relationship_issues', expertise_level: 4, cases_treated: 350 },
+    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 }
+  ],
+  'Mental Health Counseling' => [
+    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'trauma', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'relationship_issues', expertise_level: 4, cases_treated: 350 }
+  ],
+  'Physical Therapy' => [
+    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'post_surgical', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'rehabilitation', expertise_level: 5, cases_treated: 450 }
+  ],
+  'Occupational Therapy' => [
+    { condition_name: 'hand_therapy', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'stroke_recovery', expertise_level: 5, cases_treated: 250 },
+    { condition_name: 'developmental_delays', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'workplace_injuries', expertise_level: 4, cases_treated: 300 }
+  ],
+  'Speech Therapy' => [
+    { condition_name: 'speech_delays', expertise_level: 5, cases_treated: 300 },
+    { condition_name: 'voice_disorders', expertise_level: 5, cases_treated: 250 },
+    { condition_name: 'swallowing_issues', expertise_level: 4, cases_treated: 200 },
+    { condition_name: 'language_disorders', expertise_level: 4, cases_treated: 250 }
+  ],
+  'Personal Training' => [
+    { condition_name: 'weight_management', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'fitness', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'strength_training', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'athletic_performance', expertise_level: 4, cases_treated: 300 }
+  ],
+  'Yoga Instruction' => [
+    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'flexibility', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'back_pain', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'mindfulness', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'balance', expertise_level: 4, cases_treated: 250 }
+  ],
+  'Pilates Instruction' => [
+    { condition_name: 'core_strength', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'flexibility', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'posture', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'rehabilitation', expertise_level: 4, cases_treated: 250 }
+  ],
+  'Nutrition Counseling' => [
+    { condition_name: 'weight_management', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'digestive_issues', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'sports_nutrition', expertise_level: 4, cases_treated: 200 }
+  ],
+  'Massage Therapy' => [
+    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'stress', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'muscle_tension', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'sports_injury', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'relaxation', expertise_level: 5, cases_treated: 500 }
+  ],
+  'Acupuncture' => [
+    { condition_name: 'pain_management', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'stress', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'digestive_issues', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'headaches', expertise_level: 5, cases_treated: 350 },
+    { condition_name: 'fertility', expertise_level: 3, cases_treated: 150 }
+  ],
+  'Chiropractic' => [
+    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'neck_pain', expertise_level: 5, cases_treated: 400 },
+    { condition_name: 'joint_pain', expertise_level: 4, cases_treated: 350 },
+    { condition_name: 'sports_injury', expertise_level: 4, cases_treated: 300 },
+    { condition_name: 'posture', expertise_level: 5, cases_treated: 400 }
+  ],
+  'Urgent Care' => [
+    { condition_name: 'cold_flu', expertise_level: 5, cases_treated: 600 },
+    { condition_name: 'minor_injuries', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'infections', expertise_level: 5, cases_treated: 450 },
+    { condition_name: 'acute_illnesses', expertise_level: 5, cases_treated: 500 },
+    { condition_name: 'emergency_care', expertise_level: 4, cases_treated: 300 }
+  ]
+}
+
+Provider.find_each do |provider|
+  conditions = condition_mappings[provider.specialty]
+  if conditions
+    conditions.each do |condition_data|
+      ProviderCondition.create!(
+        provider: provider,
+        condition_name: condition_data[:condition_name],
+        expertise_level: condition_data[:expertise_level],
+        cases_treated: condition_data[:cases_treated]
+      )
+    end
+  end
+end
+
+puts "✅ Added provider conditions for all specialties (#{ProviderCondition.count} total conditions)"
+
+# ============================================================================
+# SEEDING SUMMARY
+# ============================================================================
 puts "\n✨ Seeding complete!"
 puts "   📊 #{Provider.count} providers across major US cities"
 puts "   📅 #{Appointment.count} sample existing appointments"
+puts "   🏥 #{ProviderCondition.count} provider conditions"
 puts "   👤 1 test user (#{test_user.email})"
 puts ""
 puts "🏙️  Provider Distribution by City:"
-providers.group_by(&:location).each do |city, city_providers|
+providers.group_by(&:location).sort_by { |city, _| city }.each do |city, city_providers|
   puts "   • #{city}: #{city_providers.count} providers"
 end
 puts ""
@@ -944,8 +1566,9 @@ providers.first(10).each do |provider|
     end_seconds = a.end_time.hour * 3600 + a.end_time.min * 60
     (end_seconds - start_seconds) / 3600.0
   }
+  conditions_count = provider.provider_conditions.count
   puts "   • #{provider.name} (#{provider.specialty}) - #{provider.location}"
-  puts "     #{availability_count} time slots, ~#{total_hours.round(1)} hours/week, $#{provider.hourly_rate}/hr"
+  puts "     #{availability_count} time slots, ~#{total_hours.round(1)} hours/week, $#{provider.hourly_rate}/hr, #{conditions_count} conditions"
 end
 puts ""
 puts "🔐 Test Login Credentials:"

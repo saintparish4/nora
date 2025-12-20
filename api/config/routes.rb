@@ -29,6 +29,19 @@ Rails.application.routes.draw do
     namespace :v1 do
       post '/analyze-symptoms', to: 'symptoms#analyze'
 
+      # Chat routes
+      post 'chat/message'
+      get 'chat/history'
+      post 'chat/reset'
+      get 'chat/recommended_providers'
+
+      # Follow-up routes
+      resources :follow_ups, only: [:index] do
+        member do
+          patch 'acknowledge'
+        end
+      end
+
       # Provider routes
       namespace :provider do
         get 'dashboard', to: 'dashboard#index'

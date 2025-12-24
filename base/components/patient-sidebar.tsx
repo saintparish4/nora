@@ -3,8 +3,6 @@
 import * as React from "react"
 import {
   CalendarDays,
-  Bot,
-  Search,
   FileText,
   FlaskConical,
   Home,
@@ -14,7 +12,8 @@ import {
   Stethoscope,
   Pill,
   LogOut,
-  Zap,
+  HeartPulse,
+  Users,
 } from "lucide-react"
 
 import { useAuth } from "@/lib/authContext"
@@ -40,96 +39,73 @@ const navConfig = {
       url: "/dashboard",
       icon: Home,
       isActive: true,
-      items: [
-        { title: "Overview", url: "/dashboard" },
-      ],
+      items: [], // No dropdown - direct link
     },
     {
-      title: "⚡ Quick Booking",
-      url: "/quick-booking",
-      icon: Zap,
-      items: [
-        { title: "Book in 2 Minutes", url: "/quick-booking" },
-      ],
-    },
-    {
-      title: "AI Symptom Checker",
-      url: "/booking/symptoms",
-      icon: Bot,
-      items: [
-        { title: "New Check", url: "/booking/symptoms" },
-        { title: "History", url: "/booking/symptoms/history" },
-      ],
+      title: "Get Care",
+      url: "/get-care",
+      icon: HeartPulse,
+      items: [], // No dropdown - unified wizard
     },
     {
       title: "Browse Providers",
       url: "/providers",
-      icon: Search,
-      items: [
-        { title: "All Providers", url: "/providers" },
-        { title: "Specialties", url: "/providers/specialties" },
-      ],
+      icon: Users,
+      items: [], // No dropdown - direct link
     },
     {
       title: "Appointments",
       url: "/appointments",
       icon: CalendarDays,
-      items: [
-        { title: "My Appointments", url: "/appointments" },
-      ],
+      items: [], // No dropdown - direct link
     },
     {
       title: "Messages",
-      url: "/patient/dashboard/messages",
+      url: "/dashboard/messages",
       icon: Inbox,
-      items: [
-        { title: "Inbox", url: "/patient/dashboard/messages" },
-        { title: "Compose", url: "/patient/dashboard/messages/compose" },
-      ],
+      items: [], // No dropdown - combined inbox/compose
     },
     {
       title: "Lab Results",
-      url: "/patient/dashboard/labs",
+      url: "/dashboard/labs",
       icon: FlaskConical,
       items: [
-        { title: "Recent", url: "/patient/dashboard/labs" },
-        { title: "All Results", url: "/patient/dashboard/labs/all" },
+        { title: "Recent", url: "/dashboard/labs" },
+        { title: "All Results", url: "/dashboard/labs/all" },
       ],
     },
     {
       title: "Medications",
-      url: "/patient/dashboard/medications",
+      url: "/dashboard/medications",
       icon: Pill,
       items: [
-        { title: "Active", url: "/patient/dashboard/medications" },
-        { title: "Refills", url: "/patient/dashboard/medications/refills" },
+        { title: "Active", url: "/dashboard/medications" },
+        { title: "Refills", url: "/dashboard/medications/refills" },
       ],
     },
     {
       title: "Documents",
-      url: "/patient/dashboard/documents",
+      url: "/dashboard/documents",
       icon: FileText,
       items: [
-        { title: "Forms", url: "/patient/dashboard/documents/forms" },
-        { title: "Records", url: "/patient/dashboard/documents/records" },
+        { title: "Forms", url: "/dashboard/documents/forms" },
+        { title: "Records", url: "/dashboard/documents/records" },
       ],
     },
     {
       title: "Billing",
-      url: "/patient/dashboard/billing",
+      url: "/dashboard/billing",
       icon: Receipt,
       items: [
-        { title: "Statements", url: "/patient/dashboard/billing" },
-        { title: "Payments", url: "/patient/dashboard/billing/payments" },
+        { title: "Statements", url: "/dashboard/billing" },
+        { title: "Payments", url: "/dashboard/billing/payments" },
       ],
     },
     {
       title: "Settings",
       url: "/settings",
       icon: Settings2,
-      items: [
-        { title: "Preferences", url: "/settings" },
-      ],
+      items: [], // No dropdown - direct link
     },
     {
       title: "Logout",
@@ -168,5 +144,3 @@ export function PatientSidebar({ ...props }: React.ComponentProps<typeof Sidebar
     </Sidebar>
   )
 }
-
-

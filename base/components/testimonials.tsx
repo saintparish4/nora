@@ -1,225 +1,220 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import GlassCard from '@/components/ui/glass-card';
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  avatar: string;
-  quote: string;
-  rating: number;
-}
-
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
-    id: 1,
+    quote: 'Nora matched me with a neurologist in under 2 minutes. The AI understood my symptoms better than I could explain them myself.',
     name: 'Sarah Johnson',
     role: 'Patient',
-    avatar: 'SJ',
-    quote: 'I described my symptoms and NORA matched me with a dermatologist instantly. Booked same-day with real-time availability!',
-    rating: 5
+    gradient: 'from-organic-rose to-organic-peach',
   },
   {
-    id: 2,
+    quote: 'The real-time availability feature saved me hours of phone calls. I booked a same-day appointment that actually worked with my schedule.',
     name: 'Michael Chen',
     role: 'Patient',
-    avatar: 'MC',
-    quote: 'The AI symptom analysis was incredibly accurate. Found the perfect specialist who accepts my insurance in under 2 minutes.',
-    rating: 5
+    gradient: 'from-organic-sage to-organic-mint',
   },
   {
-    id: 3,
+    quote: 'As a provider, the smart scheduling has reduced our no-shows by 40%. The matching quality means patients arrive prepared.',
     name: 'Dr. Emily Rodriguez',
     role: 'Neurologist',
-    avatar: 'ER',
-    quote: 'NORA\'s automated email reminders reduced our no-shows by 40%. The smart scheduling fills my calendar perfectly.',
-    rating: 5
+    gradient: 'from-organic-peach to-organic-rose',
   },
   {
-    id: 4,
+    quote: 'Finally, a healthcare platform that works the way modern technology should. Simple, fast, and genuinely helpful.',
     name: 'James Patterson',
     role: 'Patient',
-    avatar: 'JP',
-    quote: 'Secure, HIPAA-compliant, and lightning fast. Got instant confirmation and a reminder 24 hours before my appointment.',
-    rating: 5
-  }
+    gradient: 'from-organic-mint to-organic-sage',
+  },
 ];
 
 export default function Testimonials() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [progressPct, setProgressPct] = useState(0);
-  const touchStartXRef = useRef<number | null>(null);
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const goToTestimonial = (index: number) => {
-    setCurrentIndex(index);
-  };
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (isPaused) return;
-    const id = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(id);
-  }, [isPaused]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
 
-  useEffect(() => {
-    // Reset progress on index change
-    setProgressPct(0);
-    if (isPaused) return;
-    const stepMs = 100;
-    const totalMs = 6000;
-    const increment = (stepMs / totalMs) * 100;
-    const id = setInterval(() => {
-      setProgressPct((p) => {
-        const next = p + increment;
-        return next >= 100 ? 100 : next;
-      });
-    }, stepMs);
-    return () => clearInterval(id);
-  }, [currentIndex, isPaused]);
-
-  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-    if (e.key === 'ArrowLeft') {
-      prevTestimonial();
-    } else if (e.key === 'ArrowRight') {
-      nextTestimonial();
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
     }
-  };
 
-  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    touchStartXRef.current = e.touches[0]?.clientX ?? null;
-  };
+    return () => observer.disconnect();
+  }, []);
 
-  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    const startX = touchStartXRef.current;
-    const endX = e.changedTouches[0]?.clientX ?? null;
-    touchStartXRef.current = null;
-    if (startX == null || endX == null) return;
-    const delta = endX - startX;
-    if (Math.abs(delta) < 40) return;
-    if (delta < 0) {
-      nextTestimonial();
-    } else {
-      prevTestimonial();
+  // Autoplay carousel
+  useEffect(() => {
+    if (isVisible) {
+      autoplayRef.current = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % testimonials.length);
+      }, 5000);
+    }
+
+    return () => {
+      if (autoplayRef.current) {
+        clearInterval(autoplayRef.current);
+      }
+    };
+  }, [isVisible]);
+
+  const handleDotClick = (index: number) => {
+    setActiveIndex(index);
+    // Reset autoplay timer
+    if (autoplayRef.current) {
+      clearInterval(autoplayRef.current);
+      autoplayRef.current = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % testimonials.length);
+      }, 5000);
     }
   };
 
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div
-          className="text-center mb-16"
+    <section ref={sectionRef} className="relative py-24 overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-organic-rose/5 via-white to-organic-sage/5 pointer-events-none" />
+      
+      <div className="relative max-w-5xl mx-auto px-6 lg:px-8">
+        {/* Header */}
+        <div 
+          className={`text-center mb-16 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
         >
-          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-            What people are saying
+          <span className="inline-block px-4 py-1.5 text-sm font-medium text-organic-rose bg-organic-rose/10 rounded-full mb-4">
+            Testimonials
+          </span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-warm-900 tracking-tight-organic">
+            Trusted by thousands
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-            Join thousands of satisfied patients and providers
-          </p>
         </div>
 
-        {/* Testimonial Card */}
-        <div
-          className="relative max-w-4xl mx-auto outline-none"
-          tabIndex={0}
-          role="region"
-          aria-label="Testimonials carousel"
-          onKeyDown={handleKeyDown}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={() => setIsPaused(false)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
+        {/* Featured testimonial */}
+        <div 
+          className={`relative transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{ transitionDelay: '200ms' }}
         >
-          <div className="bg-gray-50 rounded-3xl p-12 md:p-16 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
-              {/* Rating */}
-              <div className="flex justify-center mb-8">
-                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className="w-5 h-5 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
+          <GlassCard 
+            variant="default" 
+            padding="lg" 
+            rounded="3xl"
+            hover={false}
+            className="relative overflow-hidden"
+          >
+            {/* Background accent */}
+            <div 
+              className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 bg-gradient-to-br ${testimonials[activeIndex].gradient} transition-all duration-700`}
+              style={{ transform: 'translate(30%, -30%)' }}
+            />
+            
+            <div className="relative">
+              {/* Large quote mark */}
+              <svg 
+                className="w-16 h-16 text-warm-200 mb-6" 
+                viewBox="0 0 24 24" 
+                fill="currentColor"
+              >
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              
+              {/* Quote text with animation */}
+              <div className="min-h-[120px] mb-8">
+                <p 
+                  key={activeIndex}
+                  className="text-2xl md:text-3xl lg:text-4xl font-light text-warm-800 leading-relaxed animate-fade-in"
+                >
+                  {testimonials[activeIndex].quote}
+                </p>
               </div>
-
-              {/* Quote */}
-              <blockquote className="text-2xl md:text-3xl text-gray-700 font-light text-center mb-10 leading-relaxed transition-opacity duration-500" aria-live="polite">
-                &ldquo;{testimonials[currentIndex].quote}&rdquo;
-              </blockquote>
-
-              {/* Profile */}
-              <div className="flex items-center justify-center">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium text-lg mr-4">
-                  {testimonials[currentIndex].avatar}
+              
+              {/* Author info */}
+              <div 
+                key={`author-${activeIndex}`}
+                className="flex items-center gap-4 animate-fade-in"
+              >
+                {/* Abstract gradient avatar */}
+                <div 
+                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${testimonials[activeIndex].gradient} flex items-center justify-center shadow-organic-sm`}
+                >
+                  <span className="text-lg font-semibold text-white">
+                    {testimonials[activeIndex].name.split(' ').map(n => n[0]).join('')}
+                  </span>
                 </div>
-                <div className="text-left">
-                  <div className="font-medium text-gray-900 text-lg">
-                    {testimonials[currentIndex].name}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {testimonials[currentIndex].role}
-                  </div>
+                <div>
+                  <div className="font-semibold text-warm-900">{testimonials[activeIndex].name}</div>
+                  <div className="text-sm text-warm-500">{testimonials[activeIndex].role}</div>
                 </div>
               </div>
-            {/* Autoplay progress */}
-            <div className="mt-10 h-1 bg-gray-200 rounded-full overflow-hidden" aria-hidden>
-              <div
-                className="h-full bg-gray-900 transition-[width] duration-100 ease-linear"
-                style={{ width: `${progressPct}%` }}
-              />
             </div>
-          </div>
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-            aria-label="Previous testimonial"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-            aria-label="Next testimonial"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          </GlassCard>
         </div>
 
-        {/* Dots Navigation */}
-        <div className="flex justify-center mt-12 gap-2">
+        {/* Navigation dots */}
+        <div 
+          className={`flex justify-center gap-3 mt-8 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
+          style={{ transitionDelay: '400ms' }}
+        >
           {testimonials.map((_, index) => (
             <button
               key={index}
-              onClick={() => goToTestimonial(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex
-                  ? 'bg-gray-900 w-8'
-                  : 'bg-gray-300 hover:bg-gray-400 w-2'
+              onClick={() => handleDotClick(index)}
+              className={`relative h-2.5 rounded-full transition-all duration-500 ${
+                index === activeIndex 
+                  ? 'w-10 bg-gradient-to-r from-organic-sage to-organic-mint' 
+                  : 'w-2.5 bg-warm-200 hover:bg-warm-300'
               }`}
               aria-label={`Go to testimonial ${index + 1}`}
             />
+          ))}
+        </div>
+
+        {/* Mini testimonial cards preview */}
+        <div 
+          className={`hidden md:grid grid-cols-4 gap-4 mt-12 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{ transitionDelay: '600ms' }}
+        >
+          {testimonials.map((testimonial, index) => (
+            <button
+              key={index}
+              onClick={() => handleDotClick(index)}
+              className={`text-left p-4 rounded-2xl transition-all duration-300 ${
+                index === activeIndex 
+                  ? 'bg-white shadow-organic-sm ring-2 ring-organic-sage/30' 
+                  : 'bg-warm-100/50 hover:bg-white hover:shadow-organic-sm'
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div 
+                  className={`w-8 h-8 rounded-lg bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center`}
+                >
+                  <span className="text-xs font-semibold text-white">
+                    {testimonial.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <span className="text-sm font-medium text-warm-700 truncate">
+                  {testimonial.name}
+                </span>
+              </div>
+              <p className="text-xs text-warm-500 line-clamp-2">
+                {testimonial.quote}
+              </p>
+            </button>
           ))}
         </div>
       </div>

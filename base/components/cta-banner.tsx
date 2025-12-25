@@ -1,62 +1,121 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import GradientOrb from '@/components/ui/gradient-orb';
 
 export default function CtaBanner() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="py-24 bg-gray-900 text-white">
-      <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-        <div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 leading-tight">
-            Smart healthcare matching{' '}
-            <span className="font-medium">starts with NORA</span>
+    <section 
+      ref={sectionRef}
+      className="relative py-24 overflow-hidden"
+    >
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-organic-rose/20 via-organic-peach/30 to-organic-sage/20 animate-gradient" />
+      
+      {/* Floating orbs */}
+      <GradientOrb 
+        size="lg" 
+        variant="rose" 
+        className="top-0 -left-20 opacity-30" 
+        animation="float-slow"
+      />
+      <GradientOrb 
+        size="md" 
+        variant="sage" 
+        className="bottom-0 right-10 opacity-25" 
+        animation="float"
+      />
+      <GradientOrb 
+        size="sm" 
+        variant="mint" 
+        className="top-1/2 right-1/4 opacity-20" 
+        animation="float-reverse"
+      />
+      
+      <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center">
+        {/* Content */}
+        <div 
+          className={`transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-warm-900 tracking-tight-organic mb-6">
+            Ready to simplify
+            <br />
+            your healthcare journey?
           </h2>
           
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Join 50,000+ patients experiencing AI-powered symptom analysis and instant specialist booking
+          <p className="text-lg text-warm-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Join thousands who have discovered a better way to connect with the right care. 
+            From symptoms to specialist in under 2 minutes.
           </p>
 
-          <div>
-            <div>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-900 font-medium rounded-full hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md"
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/signup"
+              className="group inline-flex items-center gap-3 px-8 py-4 bg-warm-900 text-white font-medium rounded-2xl shadow-organic hover:shadow-organic-lg transition-organic hover:-translate-y-1"
+            >
+              Start Your Journey
+              <svg 
+                className="w-5 h-5 transition-transform group-hover:translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                viewBox="0 0 24 24"
               >
-                Get Started Free
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-            </div>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            
+            <Link
+              href="/how-it-works"
+              className="inline-flex items-center gap-2 px-8 py-4 text-warm-700 font-medium rounded-2xl hover:bg-white/50 transition-organic"
+            >
+              See how it works
+            </Link>
           </div>
-
-          {/* Trust indicators */}
-          <div
-            className="flex flex-wrap justify-center items-center gap-8 mt-12 text-gray-400 text-sm font-light"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>No credit card required</span>
+        </div>
+        
+        {/* Trust indicators */}
+        <div 
+          className={`mt-16 flex flex-wrap items-center justify-center gap-8 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
+          style={{ transitionDelay: '300ms' }}
+        >
+          {[
+            { value: '50K+', label: 'Appointments booked' },
+            { value: '2min', label: 'Average booking time' },
+            { value: '98%', label: 'User satisfaction' },
+          ].map((stat, index) => (
+            <div key={index} className="text-center px-6">
+              <div className="text-2xl font-semibold text-warm-900">{stat.value}</div>
+              <div className="text-sm text-warm-500">{stat.label}</div>
             </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>HIPAA Compliant</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Instant booking</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-

@@ -2,121 +2,181 @@
 
 import React from 'react';
 import Link from 'next/link';
+import GradientOrb from '@/components/ui/gradient-orb';
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-white">
-      {/* Subtle background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-50/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-50/20 rounded-full blur-3xl" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-mesh">
+      {/* Animated gradient orbs */}
+      <GradientOrb 
+        size="xl" 
+        variant="rose" 
+        className="top-10 -left-20 opacity-40" 
+        animation="float-slow"
+      />
+      <GradientOrb 
+        size="lg" 
+        variant="sage" 
+        className="top-40 right-10 opacity-30" 
+        animation="float"
+      />
+      <GradientOrb 
+        size="md" 
+        variant="mint" 
+        className="bottom-32 left-1/4 opacity-35" 
+        animation="float-reverse"
+      />
+      <GradientOrb 
+        size="lg" 
+        variant="peach" 
+        className="bottom-20 right-1/4 opacity-30" 
+        animation="float-slow"
+      />
+      
+      {/* Main content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 py-20 text-center">
+        {/* Badge */}
+        <div 
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full mb-8 shadow-organic-sm animate-fade-in"
+        >
+          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-organic-sage to-organic-mint animate-pulse" />
+          <span className="text-sm font-medium text-warm-700">AI-Powered Healthcare</span>
+        </div>
 
-      <div className="relative container-refined">
-        <div className="text-center max-w-4xl mx-auto">
-          {/* Trust indicator */}
-          <div className="mb-12">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200/50 shadow-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-gray-600">
-                Trusted by 50,000+ patients worldwide
-              </span>
-            </div>
-          </div>
+        {/* Main headline */}
+        <h1 
+          className="text-5xl md:text-6xl lg:text-7xl font-semibold text-warm-900 tracking-tight-organic leading-[1.1] mb-6 animate-fade-in-up"
+        >
+          Your health journey,
+          <br />
+          <span className="text-gradient-organic">simplified.</span>
+        </h1>
 
-          {/* Main headline */}
-          <h1
-            className="text-6xl md:text-7xl lg:text-8xl font-light text-gray-900 leading-[0.9] tracking-tight mb-8"
+        {/* Subtitle */}
+        <p 
+          className="text-lg md:text-xl text-warm-500 max-w-2xl mx-auto mb-10 leading-relaxed-plus animate-fade-in-up delay-200"
+          style={{ opacity: 0, animationFillMode: 'forwards' }}
+        >
+          From describing symptoms to booking with the right specialist—all in under 2 minutes. 
+          Let AI guide you to the care you need.
+        </p>
+
+        {/* CTA Buttons */}
+        <div 
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up delay-300"
+          style={{ opacity: 0, animationFillMode: 'forwards' }}
+        >
+          <Link
+            href="/quick-booking"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-warm-900 text-white font-medium rounded-2xl shadow-organic hover:shadow-organic-lg transition-organic hover:-translate-y-1"
           >
-            Healthcare that{' '}
-            <span className="font-medium bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              fits
-            </span>
-            <br />
-            perfectly
-          </h1>
-
-          {/* Subtitle */}
-          <p
-            className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-16 font-light leading-relaxed"
-          >
-            AI-powered symptom analysis connects you with the right specialist instantly. 
-            Real-time availability. Seamless booking.
-          </p>
-
-          {/* CTA buttons */}
-          <div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
-          >
-            <Link
-              href="/quick-booking"
-              className="group relative overflow-hidden px-12 py-5 bg-gray-900 text-white font-normal rounded-2xl transition-all duration-500 ease-out hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] active:scale-[0.98]"
+            Get Started
+            <svg 
+              className="w-5 h-5 transition-transform group-hover:translate-x-1" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              viewBox="0 0 24 24"
             >
-              {/* Subtle shimmer effect on hover */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              
-              <span className="relative flex items-center gap-4 text-[15px] tracking-wide">
-                <span className="relative">
-                  Book in Under 2 Minutes
-                  {/* Subtle underline animation */}
-                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-white/40 group-hover:w-full transition-all duration-500" />
-                </span>
-                <svg
-                  className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-            </Link>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="inline-flex items-center gap-2 px-8 py-4 text-warm-700 font-medium rounded-2xl hover:bg-white/50 transition-organic"
+          >
+            Learn how it works
+          </Link>
+        </div>
+
+        {/* Abstract visualization - Connected dots forming a wave */}
+        <div 
+          className="relative w-full max-w-3xl mx-auto h-40 animate-fade-in-up delay-500"
+          style={{ opacity: 0, animationFillMode: 'forwards' }}
+        >
+          <svg 
+            viewBox="0 0 800 120" 
+            className="w-full h-full"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="oklch(0.85 0.08 15)" stopOpacity="0.2" />
+                <stop offset="30%" stopColor="oklch(0.82 0.06 155)" stopOpacity="0.6" />
+                <stop offset="70%" stopColor="oklch(0.82 0.06 155)" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="oklch(0.92 0.04 165)" stopOpacity="0.2" />
+              </linearGradient>
+              <linearGradient id="dotGradientRose" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="oklch(0.85 0.08 15)" />
+                <stop offset="100%" stopColor="oklch(0.92 0.06 60)" />
+              </linearGradient>
+              <linearGradient id="dotGradientSage" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="oklch(0.82 0.06 155)" />
+                <stop offset="100%" stopColor="oklch(0.92 0.04 165)" />
+              </linearGradient>
+            </defs>
             
-            <Link
-              href="/providers"
-              className="group px-12 py-5 bg-white text-gray-900 font-normal rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)]"
-            >
-              <span className="text-[15px] tracking-wide">Browse Providers</span>
-            </Link>
-          </div>
-
-          {/* Feature callout */}
-          <div className="mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm text-green-700 font-medium">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Go from symptoms to booked appointment in under 2 minutes
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div
-            className="grid grid-cols-3 gap-12 max-w-lg mx-auto"
-          >
+            {/* Flowing connection line */}
+            <path
+              d="M 50 60 Q 150 30 250 55 T 450 50 T 650 55 Q 700 65 750 60"
+              fill="none"
+              stroke="url(#lineGradient)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="animate-draw-line"
+            />
+            
+            {/* Connection dots with staggered animations */}
             {[
-              { value: '50K+', label: 'Patients Served' },
-              { value: '98%', label: 'Satisfaction Rate' },
-              { value: '<2min', label: 'Average Match Time' },
-            ].map((stat, index) => (
-              <div 
-                key={index} 
-                className="text-center"
-              >
-                <div className="text-3xl font-semibold text-gray-900 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-500 font-medium">
-                  {stat.label}
-                </div>
-              </div>
+              { cx: 50, cy: 60, r: 8, gradient: 'dotGradientRose', delay: '0.1s' },
+              { cx: 150, cy: 38, r: 6, gradient: 'dotGradientSage', delay: '0.2s' },
+              { cx: 250, cy: 55, r: 10, gradient: 'dotGradientRose', delay: '0.3s' },
+              { cx: 350, cy: 45, r: 7, gradient: 'dotGradientSage', delay: '0.4s' },
+              { cx: 450, cy: 50, r: 12, gradient: 'dotGradientRose', delay: '0.5s' },
+              { cx: 550, cy: 48, r: 6, gradient: 'dotGradientSage', delay: '0.6s' },
+              { cx: 650, cy: 55, r: 9, gradient: 'dotGradientRose', delay: '0.7s' },
+              { cx: 750, cy: 60, r: 7, gradient: 'dotGradientSage', delay: '0.8s' },
+            ].map((dot, index) => (
+              <g key={index}>
+                <circle
+                  cx={dot.cx}
+                  cy={dot.cy}
+                  r={dot.r + 4}
+                  fill={`url(#${dot.gradient})`}
+                  opacity="0.2"
+                  className="animate-pulse-soft"
+                  style={{ animationDelay: dot.delay }}
+                />
+                <circle
+                  cx={dot.cx}
+                  cy={dot.cy}
+                  r={dot.r}
+                  fill={`url(#${dot.gradient})`}
+                  className="animate-scale-in"
+                  style={{ animationDelay: dot.delay, opacity: 0, animationFillMode: 'forwards' }}
+                />
+              </g>
             ))}
-          </div>
+            
+            {/* Labels */}
+            <text x="50" y="90" textAnchor="middle" className="fill-warm-500 text-[10px] font-medium">
+              Symptoms
+            </text>
+            <text x="250" y="90" textAnchor="middle" className="fill-warm-500 text-[10px] font-medium">
+              AI Analysis
+            </text>
+            <text x="450" y="90" textAnchor="middle" className="fill-warm-500 text-[10px] font-medium">
+              Matching
+            </text>
+            <text x="650" y="90" textAnchor="middle" className="fill-warm-500 text-[10px] font-medium">
+              Booking
+            </text>
+          </svg>
         </div>
       </div>
 
-      
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
     </section>
   );
 };

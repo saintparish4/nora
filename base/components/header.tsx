@@ -4,23 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link 
-      href={href}
-      className="relative text-gray-700 hover:text-gray-900 transition-colors font-medium text-sm group"
-    >
-      {children}
-      <div className="absolute -bottom-1 left-0 h-px bg-gray-900 w-0 group-hover:w-full transition-all duration-200" />
-    </Link>
-  );
+interface HeaderProps {
+  variant?: 'light' | 'dark';
 }
 
-export default function Header() {
+export default function Header({ variant = 'light' }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Handle scroll effect with native JavaScript
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -33,132 +24,117 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-100 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md' 
-          : 'bg-white/0 backdrop-blur-none'
+          ? 'glass shadow-organic-sm py-2' 
+          : 'bg-transparent py-4'
       }`}
     >
       <nav className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="hover:scale-105 transition-transform duration-200">
-            <Link href="/" className="flex items-center gap-2">
+        <div className="flex justify-between items-center">
+          {/* Logo with breathing animation */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative">
               <Image
                 src="/logo2.png"
                 alt="Nora logo"
-                width={42}
-                height={42}
+                width={32}
+                height={32}
                 priority
+                className="transition-transform duration-500 group-hover:scale-105"
               />
-              <span className="text-xl font-light text-gray-900">Nora</span>
-            </Link>
-          </div>
+              {/* Subtle glow effect on hover */}
+              <div className="absolute inset-0 rounded-full bg-organic-sage/0 group-hover:bg-organic-sage/20 blur-lg transition-all duration-500" />
+            </div>
+            <span className="text-lg font-semibold text-warm-900 tracking-tight">
+              Nora
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <NavLink href="/booking/symptoms">Book</NavLink>
-            <NavLink href="/providers">Providers</NavLink>
-            <NavLink href="/for-providers">For Providers</NavLink>
-            <NavLink href="/how-it-works">How It Works</NavLink>
-            <NavLink href="/login">Sign In</NavLink>
+          <div className="hidden md:flex items-center gap-2">
+            {[
+              { href: '/how-it-works', label: 'How It Works' },
+              { href: '/providers', label: 'Providers' },
+              { href: '/for-providers', label: 'For Providers' },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative px-4 py-2 text-sm font-medium text-warm-600 hover:text-warm-900 transition-colors group"
+              >
+                {item.label}
+                {/* Organic pill background on hover */}
+                <span className="absolute inset-0 rounded-full bg-warm-100/0 group-hover:bg-warm-100/80 -z-10 transition-all duration-300 scale-90 group-hover:scale-100" />
+              </Link>
+            ))}
+            
+            <div className="w-px h-6 bg-warm-200 mx-2" />
+            
+            <Link 
+              href="/login" 
+              className="px-4 py-2 text-sm font-medium text-warm-600 hover:text-warm-900 transition-colors"
+            >
+              Sign In
+            </Link>
+            
             <Link
               href="/signup"
-              className="px-4 py-2 bg-gray-900 text-white font-medium text-sm rounded-full hover:bg-gray-800 transition-colors"
+              className="group relative px-5 py-2.5 text-sm font-medium rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
             >
-              Get Started
+              {/* Gradient background */}
+              <span className="absolute inset-0 bg-warm-900 transition-all duration-300" />
+              {/* Hover gradient overlay */}
+              <span className="absolute inset-0 bg-gradient-to-r from-organic-sage/20 to-organic-rose/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative text-white">Get Started</span>
             </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors active:scale-95 hover:scale-105"
-              aria-label="Toggle menu"
-              aria-expanded={isMenuOpen}
-            >
-              {/* Unique 9-dot grid menu icon */}
-              <div className={`relative w-6 h-6 transition-transform duration-300 ease-in-out ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`}>
-                <svg
-                  className="w-full h-full [transform-box:fill-box]"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  {/* Row 1 */}
-                  <circle cx="6" cy="6" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-70 [transition-delay:0ms]' : 'opacity-100'}`} />
-                  <circle cx="12" cy="6" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-80 [transition-delay:50ms]' : 'opacity-100'}`} />
-                  <circle cx="18" cy="6" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-70 [transition-delay:100ms]' : 'opacity-100'}`} />
-
-                  {/* Row 2 */}
-                  <circle cx="6" cy="12" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-80 [transition-delay:150ms]' : 'opacity-100'}`} />
-                  <circle cx="12" cy="12" r="1.6" className={`transition-all duration-300 ease-out origin-center ${isMenuOpen ? 'scale-125 opacity-100 [transition-delay:200ms]' : 'scale-100 opacity-100'}`} />
-                  <circle cx="18" cy="12" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-80 [transition-delay:250ms]' : 'opacity-100'}`} />
-
-                  {/* Row 3 */}
-                  <circle cx="6" cy="18" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-70 [transition-delay:300ms]' : 'opacity-100'}`} />
-                  <circle cx="12" cy="18" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-80 [transition-delay:350ms]' : 'opacity-100'}`} />
-                  <circle cx="18" cy="18" r="1.6" className={`transition-all duration-300 ease-out ${isMenuOpen ? 'opacity-70 [transition-delay:400ms]' : 'opacity-100'}`} />
-                </svg>
-              </div>
-            </button>
-          </div>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-warm-700 hover:text-warm-900 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              )}
+            </svg>
+          </button>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen 
-            ? 'max-h-96 opacity-100' 
-            : 'max-h-0 opacity-0'
-        }`}>
-          <div className="px-0 pt-4 pb-6 space-y-1 bg-white border-t border-gray-100">
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 animate-fade-in">
+            <div className="flex flex-col gap-1">
+              {[
+                { href: '/how-it-works', label: 'How It Works' },
+                { href: '/providers', label: 'Providers' },
+                { href: '/for-providers', label: 'For Providers' },
+                { href: '/login', label: 'Sign In' },
+              ].map((item) => (
                 <Link
-                  href="/booking/symptoms"
-                  className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors text-base font-medium rounded-lg"
+                  key={item.href}
+                  href={item.href}
+                  className="px-4 py-3 text-sm font-medium text-warm-700 hover:text-warm-900 hover:bg-warm-100/50 rounded-xl transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Book Appointment
+                  {item.label}
                 </Link>
-                <Link
-                  href="/providers"
-                  className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors text-base font-medium rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Find Providers
-                </Link>
-                <Link
-                  href="/for-providers"
-                  className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors text-base font-medium rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  For Providers
-                </Link>
-                <Link
-                  href="/how-it-works"
-                  className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors text-base font-medium rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  How It Works
-                </Link>
-                <Link
-                  href="/login"
-                  className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors text-base font-medium rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <div className="pt-2 px-4">
-                  <Link
-                    href="/signup"
-                    className="block px-4 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-center font-medium text-base"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                </div>
+              ))}
+              <Link
+                href="/signup"
+                className="mx-4 mt-3 px-4 py-3 text-sm font-medium rounded-xl text-center bg-warm-900 text-white hover:bg-warm-900/90 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </nav>
     </header>
   );

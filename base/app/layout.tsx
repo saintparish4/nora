@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/authContext"; // CONFIGURE AUTH PROVIDER HERE
+import { AuthProvider } from "@/lib/authContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nora Health | Seamless Healthcare Scheduling",
-  description: "Nora Health | Seamless Healthcare Scheduling",
+  title: "Nora Health | Your AI Health Companion",
+  description: "From symptoms to specialist in under 2 minutes. Nora uses AI to understand your health needs and connect you with the right care.",
 };
 
 export default function RootLayout({
@@ -26,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <AuthProvider>
           {children}

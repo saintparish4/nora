@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '@/lib/authContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,15 +28,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center p-4 md:p-8">
-      {/* Subtle background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl"></div>
+    <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/auth-bg.jpg"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
       {/* Main Card Container */}
-      <div className="relative w-full max-w-5xl">
+      <div className="relative z-10 w-full max-w-5xl">
         <div className="bg-white backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3),_0_10px_30px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(0,0,0,0.05)] overflow-hidden border border-gray-200">
           <div className="grid md:grid-cols-2 min-h-[600px]">
             

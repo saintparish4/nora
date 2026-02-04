@@ -14,6 +14,5 @@ class CreateRiskAssessments < ActiveRecord::Migration[8.0]
     end
 
     add_index :risk_assessments, :care_level
-    add_index :risk_assessments, :user_id 
   end
 end

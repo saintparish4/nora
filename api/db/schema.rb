@@ -70,20 +70,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
     t.integer "conversation_id", null: false
     t.string "role"
     t.text "content"
-    t.json "metadata"
+    t.json "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["conversation_id", "created_at"], name: "index_conversation_messages_on_conversation_id_and_created_at"
     t.index ["conversation_id"], name: "index_conversation_messages_on_conversation_id"
   end
 
   create_table "conversations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "session_id"
-    t.string "status"
-    t.json "context"
+    t.string "status", default: "active"
+    t.json "context", default: {}
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_conversations_on_session_id"
+    t.index ["status"], name: "index_conversations_on_status"
     t.index ["user_id"], name: "index_conversations_on_user_id"
   end
 
@@ -94,11 +97,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
     t.text "message"
     t.datetime "scheduled_for"
     t.datetime "sent_at"
-    t.boolean "acknowledged"
-    t.json "metadata"
+    t.boolean "acknowledged", default: false
+    t.json "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appointment_id"], name: "index_follow_up_recommendations_on_appointment_id"
+    t.index ["recommendation_type"], name: "index_follow_up_recommendations_on_recommendation_type"
+    t.index ["user_id", "scheduled_for"], name: "index_follow_up_recommendations_on_user_id_and_scheduled_for"
     t.index ["user_id"], name: "index_follow_up_recommendations_on_user_id"
   end
 
@@ -106,9 +111,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
     t.integer "provider_id", null: false
     t.string "condition_name"
     t.integer "expertise_level"
-    t.integer "cases_treated"
+    t.integer "cases_treated", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["provider_id", "condition_name"], name: "index_provider_conditions_on_provider_id_and_condition_name"
     t.index ["provider_id"], name: "index_provider_conditions_on_provider_id"
   end
 
@@ -133,12 +139,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
     t.string "care_level"
     t.integer "confidence"
     t.text "reasoning"
-    t.json "red_flags"
-    t.json "self_care_options"
-    t.json "escalation_triggers"
-    t.json "recommended_specialties"
+    t.json "red_flags", default: []
+    t.json "self_care_options", default: []
+    t.json "escalation_triggers", default: []
+    t.json "recommended_specialties", default: []
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["care_level"], name: "index_risk_assessments_on_care_level"
     t.index ["conversation_id"], name: "index_risk_assessments_on_conversation_id"
     t.index ["user_id"], name: "index_risk_assessments_on_user_id"
   end
@@ -146,14 +153,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
   create_table "user_preferences", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "preferred_location"
-    t.json "preferred_times"
+    t.json "preferred_times", default: []
     t.string "insurance_info"
     t.string "provider_gender_preference"
-    t.json "language_preferences"
-    t.json "communication_preferences"
+    t.json "language_preferences", default: []
+    t.json "communication_preferences", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_user_preferences_on_user_id"
+    t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|

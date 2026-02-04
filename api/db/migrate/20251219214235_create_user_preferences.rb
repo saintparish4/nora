@@ -1,7 +1,7 @@
 class CreateUserPreferences < ActiveRecord::Migration[8.0]
   def change
     create_table :user_preferences do |t|
-      t.references :user, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true, index: { unique: true }
       t.string :preferred_location
       t.json :preferred_times, default: [] # ["morning", "afternoon", "evening"] 
       t.string :insurance_info
@@ -10,7 +10,5 @@ class CreateUserPreferences < ActiveRecord::Migration[8.0]
       t.json :communication_preferences, default: {} 
       t.timestamps
     end
-
-    add_index :user_preferences, :user_id, unique: true 
   end
 end

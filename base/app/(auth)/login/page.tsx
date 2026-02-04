@@ -17,6 +17,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // login() from useAuth() calls api.login() → POST /auth/login, then redirects to /dashboard
       await login(email, password);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed');

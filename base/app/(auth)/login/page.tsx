@@ -3,14 +3,12 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '@/lib/authContext';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const { login } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -28,150 +26,129 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/auth-bg.jpg"
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Overlay for better readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
+    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative">
+      <div className="noise-overlay" />
 
-      {/* Main Card Container */}
-      <div className="relative z-10 w-full max-w-5xl">
-        <div className="bg-white backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3),_0_10px_30px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(0,0,0,0.05)] overflow-hidden border border-gray-200">
-          <div className="grid md:grid-cols-2 min-h-[600px]">
-            
-            {/* Left Column - Login Form */}
-            <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
-              {/* Header */}
-              <div className="mb-8">
-                <h1 className="text-3xl md:text-4xl font-extralight text-gray-900 mb-3 tracking-tight">
-                  Welcome back
-                </h1>
-                <p className="text-gray-500 text-sm font-light">
-                  Sign in to continue your journey
-                </p>
-              </div>
-
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Free Tier Notice */}
-                <div className="bg-amber-50/50 border border-amber-200/30 rounded-2xl p-4">
-                  <div className="flex items-start space-x-3">
-                    <svg className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="text-xs text-amber-800 font-medium">Login may take up to 50 seconds</p>
-                      <p className="text-xs text-amber-700/80 mt-0.5">Free tier hosting • Please be patient</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Error Message */}
-                {error && (
-                  <div className="bg-red-50/50 border border-red-200/30 rounded-2xl p-4">
-                    <div className="flex items-center space-x-3">
-                      <svg className="w-4 h-4 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                      <p className="text-xs text-red-700">{error}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-xs font-medium text-gray-600 uppercase tracking-wide">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onFocus={() => setFocusedField('email')}
-                    onBlur={() => setFocusedField(null)}
-                    className={`w-full px-4 py-3.5 bg-white border border-gray-200 rounded-2xl transition-all duration-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 ${
-                      focusedField === 'email' ? 'ring-4 ring-blue-50 border-blue-400' : ''
-                    }`}
-                    placeholder="you@example.com"
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="space-y-2">
-                  <label htmlFor="password" className="block text-xs font-medium text-gray-600 uppercase tracking-wide">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onFocus={() => setFocusedField('password')}
-                    onBlur={() => setFocusedField(null)}
-                    className={`w-full px-4 py-3.5 bg-white border border-gray-200 rounded-2xl transition-all duration-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 ${
-                      focusedField === 'password' ? 'ring-4 ring-blue-50 border-blue-400' : ''
-                    }`}
-                    placeholder="Enter your password"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 mt-6 ${
-                    loading
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 active:scale-[0.98]'
-                  }`}
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin"></div>
-                      <span>Signing in...</span>
-                    </div>
-                  ) : (
-                    'Sign In'
-                  )}
-                </button>
-              </form>
-
-              {/* Footer */}
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-500">
-                  Don&apos;t have an account?{' '}
-                  <Link 
-                    href="/signup" 
-                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200"
-                  >
-                    Create one
-                  </Link>
-                </p>
-              </div>
-            </div>
-
-            {/* Right Column - Image */}
-            <div className="hidden md:block relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 shadow-[inset_-15px_0_30px_-5px_rgba(0,0,0,0.25)]">
-              <img 
-                src="/auth/login.jpg" 
-                alt="Healthcare professionals" 
-                className="w-full h-full object-cover shadow-[8px_0_40px_rgba(0,0,0,0.3),_4px_0_20px_rgba(0,0,0,0.2)]"
-              />
-            </div>
-
+      <div className="max-w-[1200px] mx-auto px-6 relative z-[2]">
+        <nav className="flex justify-between items-center py-8 relative z-10">
+          <Link href="/" className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline">
+            <span className="w-px h-6 bg-[var(--ink-color)] rotate-[15deg]" />
+            nora.ai
+          </Link>
+          <div className="flex gap-6">
+            <Link href="/specialists" className="text-[var(--ink-color)] text-[0.9rem] no-underline opacity-80 hover:opacity-100 transition-opacity">
+              Specialists
+            </Link>
+            <Link href="/technology" className="text-[var(--ink-color)] text-[0.9rem] no-underline opacity-80 hover:opacity-100 transition-opacity">
+              Technology
+            </Link>
           </div>
-        </div>
+          <Link
+            href="/"
+            className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[var(--ink-color)] text-[0.9rem] no-underline transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+          >
+            Return Home
+          </Link>
+        </nav>
+
+        <section className="min-h-[calc(100vh-120px)] flex items-center justify-center py-10 relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150px] h-[70vh] -z-[1] pointer-events-none">
+            <div
+              className="w-full h-full"
+              style={{
+                background: 'linear-gradient(180deg, rgba(255,156,107,0) 0%, rgba(255,156,107,0.6) 40%, rgba(224,242,194,0.6) 100%)',
+                filter: 'blur(50px)',
+                opacity: 0.7,
+              }}
+            />
+          </div>
+
+          <div
+            className="w-full max-w-[480px] rounded-[var(--radius-card)] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)]"
+            style={{
+              background: 'rgba(239, 238, 236, 0.4)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid var(--glass-border)',
+            }}
+          >
+            <div className="mb-10">
+              <h1 className="font-serif text-[2.5rem] font-normal tracking-[-0.02em] mb-2">Welcome back</h1>
+              <p className="text-[0.95rem] opacity-60">Access your clinical insights and unified medical records.</p>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <div className="text-left mb-6">
+                <label htmlFor="email" className="block text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-2 opacity-70">
+                  Patient Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full px-5 py-4 rounded-xl border bg-white/50 font-sans text-base text-[var(--ink-color)] outline-none transition-all duration-300 focus:border-[var(--ink-color)] focus:bg-white/80"
+                  style={{ borderColor: 'var(--glass-border)' }}
+                />
+              </div>
+
+              <div className="text-left mb-6">
+                <label htmlFor="password" className="block text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-2 opacity-70">
+                  Security Code
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-5 py-4 rounded-xl border bg-white/50 font-sans text-base text-[var(--ink-color)] outline-none transition-all duration-300 focus:border-[var(--ink-color)] focus:bg-white/80"
+                  style={{ borderColor: 'var(--glass-border)' }}
+                />
+                <Link href="#" className="block text-right text-[0.8rem] mt-2 opacity-60 no-underline font-semibold text-[var(--ink-color)] relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-[var(--ink-color)] after:opacity-30 hover:after:opacity-100 after:transition-opacity">
+                  Trouble signing in?
+                </Link>
+              </div>
+
+              {error && (
+                <div className="mb-4 text-left text-sm text-red-600 bg-red-50/80 border border-red-200/50 rounded-xl px-4 py-3">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-[var(--ink-color)] text-white border-0 rounded-[var(--radius-pill)] font-sans text-base font-medium cursor-pointer transition-all duration-300 mt-3 disabled:opacity-70 disabled:cursor-not-allowed hover:enabled:-translate-y-0.5 hover:enabled:shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+              >
+                {loading ? 'Verifying...' : 'Unlock Dashboard'}
+              </button>
+            </form>
+
+            <div
+              className="inline-flex items-center gap-1.5 text-[0.7rem] font-semibold tracking-[0.05em] mt-6 px-3 py-1 rounded-xl"
+              style={{ color: '#6B7BFF', background: 'rgba(107, 123, 255, 0.1)' }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              ENCRYPTED PATIENT PORTAL
+            </div>
+
+            <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--glass-border)' }}>
+              <p className="text-[0.9rem] opacity-80 mb-3">New to Aura Health AI?</p>
+              <Link
+                href="/signup"
+                className="text-[var(--ink-color)] no-underline font-semibold text-[0.85rem] relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-[var(--ink-color)] after:opacity-30 hover:after:opacity-100 after:transition-opacity"
+              >
+                Begin your registration journey
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

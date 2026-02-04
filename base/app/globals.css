@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-outfit);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -64,22 +64,22 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.995 0.002 60);
-  --foreground: oklch(0.22 0.01 60);
+  --background: #EFEEEC;
+  --foreground: #0F1115;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.01 60);
+  --card-foreground: #0F1115;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.01 60);
-  --primary: oklch(0.22 0.01 60);
-  --primary-foreground: oklch(0.985 0 0);
+  --popover-foreground: #0F1115;
+  --primary: #0F1115;
+  --primary-foreground: #EFEEEC;
   --secondary: oklch(0.97 0.005 60);
-  --secondary-foreground: oklch(0.22 0.01 60);
+  --secondary-foreground: #0F1115;
   --muted: oklch(0.97 0.005 60);
   --muted-foreground: oklch(0.50 0.01 60);
   --accent: oklch(0.97 0.005 60);
-  --accent-foreground: oklch(0.22 0.01 60);
+  --accent-foreground: #0F1115;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.005 60);
+  --border: rgba(15, 17, 21, 0.1);
   --input: oklch(0.92 0.005 60);
   --ring: oklch(0.70 0.06 15);
   --chart-1: oklch(0.85 0.08 15);
@@ -88,13 +88,22 @@
   --chart-4: oklch(0.92 0.04 165);
   --chart-5: oklch(0.75 0.08 280);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.22 0.01 60);
-  --sidebar-primary: oklch(0.22 0.01 60);
+  --sidebar-foreground: #0F1115;
+  --sidebar-primary: #0F1115;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0.005 60);
-  --sidebar-accent-foreground: oklch(0.22 0.01 60);
+  --sidebar-accent-foreground: #0F1115;
   --sidebar-border: oklch(0.92 0.005 60);
   --sidebar-ring: oklch(0.70 0.06 15);
+  
+  /* Aura color palette */
+  --bg-color: #EFEEEC;
+  --ink-color: #0F1115;
+  --beam-start: #FF9C6B;
+  --beam-end: #E0F2C2;
+  --glass-border: rgba(15, 17, 21, 0.1);
+  --radius-pill: 999px;
+  --radius-card: 24px;
   
   /* Organic color palette - Warm and healing */
   --organic-rose: oklch(0.85 0.08 15);
@@ -499,4 +508,123 @@
 /* Letter spacing for headlines */
 .tracking-tight-organic {
   letter-spacing: -0.02em;
+}
+
+/* ========================================
+   AURA HEALTH AI STYLES
+   ======================================== */
+
+/* Noise overlay effect */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Aura beam gradient */
+.aura-beam {
+  background: linear-gradient(180deg, rgba(255,156,107,0) 0%, rgba(255,156,107,0.8) 40%, rgba(224,242,194,0.8) 100%);
+  filter: blur(40px);
+  opacity: 0.8;
+}
+
+/* Technology page: beam sweep */
+@keyframes tech-sweep {
+  0%,
+  100% {
+    transform: translateX(-150%) rotate(15deg);
+  }
+  50% {
+    transform: translateX(150%) rotate(15deg);
+  }
+}
+
+.tech-beam {
+  position: absolute;
+  width: 200px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 156, 107, 0) 0%,
+    rgba(255, 156, 107, 0.3) 50%,
+    rgba(224, 242, 194, 0.3) 100%
+  );
+  filter: blur(40px);
+  animation: tech-sweep 8s infinite ease-in-out;
+}
+
+/* Aura pulse animation */
+@keyframes aura-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 156, 107, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 156, 107, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 156, 107, 0);
+  }
+}
+
+.animate-aura-pulse {
+  animation: aura-pulse 2s infinite;
+}
+
+/* Nav item underline animation */
+.nav-item-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--ink-color);
+  transition: width 0.3s ease;
+}
+
+.nav-item-underline:hover::after {
+  width: 100%;
+}
+
+/* Booking engine hover effect */
+.booking-engine-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-engine-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+}
+
+/* Feature card hover */
+.feature-card-hover {
+  transition: all 0.3s ease;
+}
+
+.feature-card-hover:hover {
+  border-color: var(--ink-color);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Search button hover gradient */
+.btn-search-hover:hover {
+  background: linear-gradient(135deg, var(--beam-start), #d58c65);
+}
+
+/* Locations list scrollbar */
+.locations-list-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.locations-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.locations-list-scroll::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
 }

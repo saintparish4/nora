@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
-import { Outfit, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/authContext";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const cormorantGaramond = Cormorant_Garamond({
+  variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "600"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Nora Health | Your AI Health Companion",
-  description: "From symptoms to specialist in under 2 minutes. Nora uses AI to understand your health needs and connect you with the right care.",
+  title: "Aura Health AI",
+  description: "The clarity of data, the warmth of care. AI-powered precision medicine and diagnostics.",
 };
 
 export default function RootLayout({
@@ -27,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${outfit.variable} ${geistMono.variable} antialiased font-sans`}
+        className={`${cormorantGaramond.variable} ${spaceGrotesk.variable} antialiased font-sans`}
       >
         <AuthProvider>
           {children}

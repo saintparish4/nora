@@ -83,17 +83,22 @@ export default function Home() {
           {/* AI Badge */}
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-[20px] bg-[rgba(255,156,107,0.1)] text-[#C27045] text-[0.65rem] sm:text-xs font-semibold mb-4 sm:mb-5 md:mb-6 border border-[rgba(255,156,107,0.2)]">
             <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[var(--beam-start)] animate-aura-pulse" />
-            AI-POWERED DIAGNOSTICS
+            AI HEALTH INTELLIGENCE
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] leading-[1.15] sm:leading-[1.1] mb-8 sm:mb-10 md:mb-12 max-w-[90%] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] tracking-[-0.02em] px-2">
+          <h1 className="font-serif text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] leading-[1.15] sm:leading-[1.1] mb-4 sm:mb-5 md:mb-6 max-w-[90%] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] tracking-[-0.02em] px-2">
             <span className="block text-base sm:text-lg md:text-xl lg:text-2xl font-sans mb-2 sm:mb-3 md:mb-4 tracking-[0.03em] sm:tracking-[0.05em] opacity-70 not-italic">
-              Precision Medicine
+              The AI Assistant That Acts
             </span>
-            The clarity of data,<br className="hidden sm:block" />
-            <span className="sm:hidden"> </span>the warmth of care.
+            From symptoms to specialist,<br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>one seamless step.
           </h1>
+
+          {/* Subheadline */}
+          <p className="text-[0.85rem] sm:text-[0.95rem] md:text-base leading-[1.6] sm:leading-[1.7] opacity-70 max-w-[90%] sm:max-w-[480px] md:max-w-[540px] mb-8 sm:mb-10 md:mb-12 px-2">
+            nora.ai combines intelligent symptom analysis, longitudinal health tracking, and predictive risk modeling with seamless appointment booking — actionable insights and direct access to care.
+          </p>
 
           {/* Booking Engine */}
           <form className="flex flex-col lg:flex-row items-center bg-[rgba(239,238,236,0.6)] backdrop-blur-[10px] border border-[var(--ink-color)] rounded-2xl sm:rounded-3xl lg:rounded-full p-3 sm:p-4 lg:p-2 max-w-[95%] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] w-full shadow-[0_4px_20px_rgba(0,0,0,0.02)] booking-engine-hover">
@@ -149,15 +154,15 @@ export default function Home() {
         <section className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-10 md:gap-16 lg:gap-20 py-6 sm:py-8 md:py-10 border-t border-b border-[var(--glass-border)]">
           <div className="text-center">
             <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">98%</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Diagnostic Accuracy</span>
+            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Symptom Match Accuracy</span>
           </div>
           <div className="text-center">
             <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">24/7</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">AI Monitoring</span>
+            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Biomarker Monitoring</span>
           </div>
           <div className="text-center">
-            <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">15m</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Avg Wait Time</span>
+            <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">&lt;2m</span>
+            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Symptom to Booking</span>
           </div>
         </section>
 
@@ -167,9 +172,9 @@ export default function Home() {
             <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 mb-4 sm:mb-5 md:mb-6 flex items-center justify-center border border-[var(--ink-color)] rounded-full text-base sm:text-lg md:text-xl">
               ✦
             </div>
-            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Intelligent Triage</h3>
+            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Symptom Intelligence</h3>
             <p className="text-[0.85rem] sm:text-[0.9rem] md:text-[0.95rem] leading-[1.5] sm:leading-[1.6] opacity-80">
-              Our AI analyzes symptoms in real-time to match you with the precise specialist needed for your condition.
+              Our AI analyzes your symptoms in real-time, matching you with the right specialist — not just a list of providers, but the precise care you need.
             </p>
           </div>
           
@@ -179,7 +184,7 @@ export default function Home() {
             </div>
             <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Holistic Records</h3>
             <p className="text-[0.85rem] sm:text-[0.9rem] md:text-[0.95rem] leading-[1.5] sm:leading-[1.6] opacity-80">
-              Seamless integration of your medical history into a unified, secure timeline accessible by your care team.
+              Your medical history, biomarkers, and lab results unified into a secure timeline — tracking trends over time so you and your care team can act before concerns escalate.
             </p>
           </div>
           
@@ -187,9 +192,9 @@ export default function Home() {
             <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 mb-4 sm:mb-5 md:mb-6 flex items-center justify-center border border-[var(--ink-color)] rounded-full text-base sm:text-lg md:text-xl">
               →
             </div>
-            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Predictive Care</h3>
+            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Predictive Care & Booking</h3>
             <p className="text-[0.85rem] sm:text-[0.9rem] md:text-[0.95rem] leading-[1.5] sm:leading-[1.6] opacity-80">
-              Forward-looking health modeling to prevent conditions before they develop into chronic issues.
+              Population-based risk modeling anticipates health concerns before they escalate — then seamlessly books you with the right provider to act on it.
             </p>
           </div>
         </section>

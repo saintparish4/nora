@@ -108,7 +108,7 @@ export default function SignupPage() {
 
               <div className="text-left mb-6">
                 <label htmlFor="password" className="block text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-2 opacity-70">
-                  Security Code
+                  Password
                 </label>
                 <input
                   id="password"
@@ -124,7 +124,7 @@ export default function SignupPage() {
 
               <div className="text-left mb-6">
                 <label htmlFor="confirmPassword" className="block text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-2 opacity-70">
-                  Confirm Security Code
+                  Confirm Password
                 </label>
                 <input
                   id="confirmPassword"

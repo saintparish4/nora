@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { NoraLogo } from '@/components/navigation/nora-logo';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
 import { ChatMessageList } from '@/components/chat/chat-message-list';
@@ -119,13 +120,7 @@ export default function TechnologyPage() {
       <div className="max-w-[1200px] w-full mx-auto px-6 flex flex-col flex-1 min-h-0 relative z-[2]">
         {/* Nav */}
         <nav className="flex justify-between items-center py-8 flex-shrink-0">
-          <Link
-            href="/"
-            className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline"
-          >
-            <span className="w-px h-6 bg-[var(--ink-color)] rotate-[15deg]" />
-            nora.ai
-          </Link>
+          <NoraLogo className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline" />
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/specialists"

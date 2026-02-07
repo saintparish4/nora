@@ -2,18 +2,40 @@
 
 import { useAuth } from '@/lib/auth/context';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { NoraLogo } from '@/components/navigation/nora-logo';
+
+const SPECIALTY_REQUIRED_ERROR = 'Please enter a specialty to search for specialists (e.g. primary care, cardiology, pediatrics).';
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [specialty, setSpecialty] = useState('');
+  const [location, setLocation] = useState('');
+  const [insurance, setInsurance] = useState('');
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
       router.push('/dashboard');
     }
   }, [user, loading, router]);
+
+  function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const trimmed = specialty.trim();
+    if (!trimmed) {
+      setSearchError(SPECIALTY_REQUIRED_ERROR);
+      return;
+    }
+    setSearchError(null);
+    const params = new URLSearchParams();
+    params.set('specialty', trimmed);
+    if (location.trim()) params.set('location', location.trim());
+    if (insurance.trim()) params.set('insurance', insurance.trim());
+    router.push(`/specialists?${params.toString()}`);
+  }
 
   if (loading) {
     return (
@@ -38,52 +60,40 @@ export default function Home() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-[2]">
         {/* Navigation */}
         <nav className="flex justify-between items-center py-4 sm:py-6 md:py-8 relative z-10">
-          <Link
-            href="/"
-            className="font-serif text-xl sm:text-2xl italic flex items-center gap-2 sm:gap-3 text-[var(--ink-color)] no-underline"
-          >
-            <span className="w-px h-5 sm:h-6 bg-[var(--ink-color)] rotate-[15deg]" />
-            nora.ai
-          </Link>
+          <NoraLogo />
           <div className="hidden lg:flex gap-6 xl:gap-8 absolute left-1/2 -translate-x-1/2">
             <Link
               href="/specialists"
-              className="nav-item-underline text-[0.85rem] lg:text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
+              className="nav-item-underline text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
             >
               Specialists
             </Link>
             <Link
               href="/locations"
-              className="nav-item-underline text-[0.85rem] lg:text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
+              className="nav-item-underline text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
             >
               Locations
             </Link>
             <Link
               href="/technology"
-              className="nav-item-underline text-[0.85rem] lg:text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
+              className="nav-item-underline text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
             >
               SymptomX
             </Link>
           </div>
           <Link
             href="/login"
-            className="px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.8rem] sm:text-[0.85rem] md:text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+            className="px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
           >
             Patient Login
           </Link>
         </nav>
 
         {/* Hero Section */}
-        <section className="min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] flex flex-col items-center justify-center text-center relative pb-12 sm:pb-16 md:pb-20">
+        <section className="min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] flex flex-col items-center justify-center text-center relative pt-8 sm:pt-12 md:pt-16 pb-12 sm:pb-16 md:pb-20">
           {/* Beam Effect */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] sm:w-[80px] md:w-[100px] h-[40vh] sm:h-[50vh] md:h-[60vh] -z-[1] pointer-events-none">
             <div className="w-full h-full aura-beam" />
-          </div>
-
-          {/* AI Badge */}
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-[20px] bg-[rgba(255,156,107,0.1)] text-[#C27045] text-[0.65rem] sm:text-xs font-semibold mb-4 sm:mb-5 md:mb-6 border border-[rgba(255,156,107,0.2)]">
-            <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[var(--beam-start)] animate-aura-pulse" />
-            AI HEALTH INTELLIGENCE
           </div>
 
           {/* Headline */}
@@ -100,43 +110,61 @@ export default function Home() {
             We don't just interpret your symptoms—we match you to the right specialist and book the visit.
           </p>
 
-          {/* Booking Engine */}
-          <form className="flex flex-col lg:flex-row items-center bg-[rgba(239,238,236,0.6)] backdrop-blur-[10px] border border-[var(--ink-color)] rounded-2xl sm:rounded-3xl lg:rounded-full p-3 sm:p-4 lg:p-2 max-w-[95%] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] w-full shadow-[0_4px_20px_rgba(0,0,0,0.02)] booking-engine-hover">
+          {/* Search Engine */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex flex-col lg:flex-row items-center bg-[rgba(239,238,236,0.6)] backdrop-blur-[10px] border border-[var(--ink-color)] rounded-2xl sm:rounded-3xl lg:rounded-full p-3 sm:p-4 lg:p-2 w-full max-w-[95%] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] mx-auto shadow-[0_4px_20px_rgba(0,0,0,0.02)] booking-engine-hover"
+            noValidate
+          >
             <div className="flex-1 px-4 sm:px-5 lg:px-6 border-r-0 lg:border-r border-[rgba(15,17,21,0.1)] py-3 sm:py-4 lg:py-0 w-full lg:w-auto border-b lg:border-b-0">
-              <label className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
-                Condition or Specialty
+              <label htmlFor="home-specialty" className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
+                Specialty
               </label>
-              <input 
-                type="text" 
-                placeholder="e.g. Cardiology, Dr. Smith" 
+              <input
+                id="home-specialty"
+                type="text"
+                placeholder="e.g. Primary care, Cardiology, Pediatrics"
+                value={specialty}
+                onChange={(e) => {
+                  setSpecialty(e.target.value);
+                  if (searchError) setSearchError(null);
+                }}
+                aria-invalid={!!searchError}
+                aria-describedby={searchError ? 'home-search-error' : undefined}
                 className="w-full bg-transparent border-none font-sans text-sm sm:text-base text-[var(--ink-color)] outline-none placeholder:text-[rgba(15,17,21,0.3)]"
               />
             </div>
-            
+
             <div className="flex-1 px-4 sm:px-5 lg:px-6 border-r-0 lg:border-r border-[rgba(15,17,21,0.1)] py-3 sm:py-4 lg:py-0 w-full lg:w-auto border-b lg:border-b-0">
-              <label className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
+              <label htmlFor="home-location" className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
                 Location
               </label>
-              <input 
-                type="text" 
-                placeholder="New York, NY" 
+              <input
+                id="home-location"
+                type="text"
+                placeholder="New York, NY"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 className="w-full bg-transparent border-none font-sans text-sm sm:text-base text-[var(--ink-color)] outline-none placeholder:text-[rgba(15,17,21,0.3)]"
               />
             </div>
-            
+
             <div className="flex-1 px-4 sm:px-5 lg:px-6 py-3 sm:py-4 lg:py-0 w-full lg:w-auto">
-              <label className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
+              <label htmlFor="home-insurance" className="block text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.05em] text-[rgba(15,17,21,0.5)] mb-0.5 sm:mb-1">
                 Insurance
               </label>
-              <input 
-                type="text" 
-                placeholder="Select Provider" 
+              <input
+                id="home-insurance"
+                type="text"
+                placeholder="Select Provider"
+                value={insurance}
+                onChange={(e) => setInsurance(e.target.value)}
                 className="w-full bg-transparent border-none font-sans text-sm sm:text-base text-[var(--ink-color)] outline-none placeholder:text-[rgba(15,17,21,0.3)]"
               />
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               className="w-full lg:w-12 h-11 sm:h-12 rounded-xl lg:rounded-full bg-[var(--ink-color)] border-none text-white flex items-center justify-center cursor-pointer ml-0 lg:ml-2 mt-3 sm:mt-4 lg:mt-0 transition-transform duration-200 hover:scale-105 btn-search-hover"
             >
               <svg width="18" height="18" className="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -145,6 +173,11 @@ export default function Home() {
               </svg>
             </button>
           </form>
+          {searchError && (
+            <p id="home-search-error" role="alert" className="mt-3 text-sm font-sans max-w-[95%] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] w-full text-center text-[var(--color-destructive)]">
+              {searchError}
+            </p>
+          )}
 
           {/* Horizontal Divider */}
           <div className="w-px h-12 sm:h-16 md:h-20 bg-[var(--ink-color)] my-6 sm:my-8 md:my-10 opacity-20" />

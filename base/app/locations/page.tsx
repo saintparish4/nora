@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { NoraLogo } from '@/components/navigation/nora-logo';
 import { useState } from 'react';
 
 const locations = [
@@ -112,13 +113,7 @@ export default function LocationsPage() {
       <div className="max-w-[1200px] mx-auto px-6 relative z-[2]">
         {/* Navigation */}
         <nav className="flex justify-between items-center py-8 relative z-10">
-          <Link
-            href="/"
-            className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline"
-          >
-            <span className="w-px h-6 bg-[var(--ink-color)] rotate-[15deg]" />
-            nora.ai
-          </Link>
+          <NoraLogo className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline" />
           <div className="hidden md:flex gap-8">
             <Link
               href="/specialists"

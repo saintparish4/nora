@@ -1,15 +1,14 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Specialists | Aura Health AI',
-  description:
-    "Browse our network of precision specialists verified by Aura's diagnostic accuracy standards.",
-};
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { NoraLogo } from '@/components/navigation/nora-logo';
+import { getProviders } from '@/lib/api';
+import type { Provider as ApiProvider } from '@/types';
 
 type SpecialistTag = { label: string; availability?: boolean };
 
-const specialists: Array<{
+function mapProviderToSpecialist(p: ApiProvider): {
   id: number;
   name: string;
   specialty: string;
@@ -19,72 +18,36 @@ const specialists: Array<{
   tags: SpecialistTag[];
   bio: string;
   hasBeam: boolean;
-}> = [
-  {
-    id: 1,
-    name: 'Dr. Sarah Chen',
-    specialty: 'Senior Cardiologist • PhD',
-    rating: 4.9,
-    reviewCount: 128,
-    image:
-      'https://images.unsplash.com/photo-1559839734-2b71f1536783?auto=format&fit=crop&q=80&w=200',
-    tags: [
-      { label: '14 Years Exp.' },
-      { label: 'Johns Hopkins Alum' },
-      { label: 'Available Tomorrow', availability: true },
-    ],
-    bio: 'Specializes in AI-assisted robotic surgery and preventative cardiovascular health modeling.',
-    hasBeam: true,
-  },
-  {
-    id: 2,
-    name: 'Dr. Marcus Thorne',
-    specialty: 'Interventional Cardiology',
-    rating: 4.8,
-    reviewCount: 94,
-    image:
-      'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200',
-    tags: [
-      { label: '10 Years Exp.' },
-      { label: 'Stanford Medical' },
-      { label: 'Available Today', availability: true },
-    ],
-    bio: 'Expert in genomic mapping for early detection of hereditary heart conditions.',
-    hasBeam: true,
-  },
-  {
-    id: 3,
-    name: 'Dr. Elena Rodriguez',
-    specialty: 'Pediatric Cardiologist',
-    rating: 5.0,
-    reviewCount: 210,
-    image:
-      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200',
-    tags: [
-      { label: '18 Years Exp.' },
-      { label: 'Mayo Clinic' },
-      { label: 'Telehealth Only' },
-    ],
-    bio: 'Leading researcher in congenital heart defects and non-invasive diagnostic imaging.',
-    hasBeam: false,
-  },
-  {
-    id: 4,
-    name: 'Dr. Julian Vane',
-    specialty: 'Electrophysiology',
-    rating: 4.7,
-    reviewCount: 56,
-    image:
-      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=200',
-    tags: [
-      { label: '8 Years Exp.' },
-      { label: 'Oxford Medical' },
-      { label: 'In-Person Only', availability: true },
-    ],
-    bio: 'Specializing in cardiac rhythm disorders and advanced pacemaker integration.',
-    hasBeam: false,
-  },
-];
+} {
+  const rating = typeof p.rating === 'number' ? p.rating : Number(p.rating) || 0;
+  const tags: SpecialistTag[] = [];
+  if (p.experience_years != null && p.experience_years > 0) {
+    tags.push({ label: `${p.experience_years} Years Exp.` });
+  }
+  if (p.location) tags.push({ label: p.location });
+  const hasAvailability = p.availabilities && p.availabilities.length > 0;
+  if (hasAvailability) tags.push({ label: 'Available', availability: true });
+
+  return {
+    id: p.id,
+    name: p.name,
+    specialty: p.specialty,
+    rating,
+    reviewCount: 0,
+    image: p.avatar_url || 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200',
+    tags,
+    bio: p.bio || '',
+    hasBeam: rating >= 4.8,
+  };
+}
+
+const SPECIALTY_OPTIONS = [
+  { value: 'Primary Care', label: 'Primary Care' },
+  { value: 'Cardiology', label: 'Cardiologist' },
+  { value: 'Ophthalmology', label: 'Ophthalmology' },
+  { value: 'Dentistry', label: 'Dentistry' },
+  { value: 'Pediatrics', label: 'Pediatrics' },
+] as const;
 
 function ArrowRightIcon() {
   return (
@@ -105,6 +68,45 @@ function ArrowRightIcon() {
 }
 
 export default function SpecialistsPage() {
+  const [allSpecialists, setAllSpecialists] = useState<ReturnType<typeof mapProviderToSpecialist>[]>([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    getProviders()
+      .then((res) => {
+        if (!cancelled) {
+          setAllSpecialists(res.providers.map(mapProviderToSpecialist));
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load specialists');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const specialists =
+    selectedSpecialties.length === 0
+      ? allSpecialists
+      : allSpecialists.filter((s) => selectedSpecialties.includes(s.specialty));
+
+  function toggleSpecialty(value: string) {
+    setSelectedSpecialties((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative">
       <div className="noise-overlay" />
@@ -112,13 +114,7 @@ export default function SpecialistsPage() {
       <div className="max-w-[1200px] mx-auto px-6 relative z-[2]">
         {/* Navigation */}
         <nav className="flex justify-between items-center py-8 relative z-10">
-          <Link
-            href="/"
-            className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline"
-          >
-            <span className="w-px h-6 bg-[var(--ink-color)] rotate-[15deg]" />
-            nora.ai
-          </Link>
+          <NoraLogo className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline" />
           <div className="hidden md:flex gap-8">
             <Link
               href="/specialists"
@@ -149,16 +145,12 @@ export default function SpecialistsPage() {
 
         {/* Page header */}
         <header className="pt-[60px] pb-10 text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[20px] bg-[rgba(255,156,107,0.1)] text-[#C27045] text-xs font-semibold mb-6 border border-[rgba(255,156,107,0.2)]">
-            <div className="w-2 h-2 rounded-full bg-[var(--beam-start)] animate-aura-pulse" />
-            MATCHING SYSTEM ACTIVE
-          </div>
           <h1 className="font-serif text-4xl md:text-[3.5rem] mb-4 tracking-[-0.02em] font-normal">
             Find your care team.
           </h1>
           <p className="text-[1.1rem] opacity-60 max-w-[500px]">
-            Browse our network of precision specialists verified by Aura&apos;s
-            diagnostic accuracy standards.
+            Browse our network of precision specialists verified by Nora&apos;s
+            matching technology.
           </p>
         </header>
 
@@ -170,34 +162,24 @@ export default function SpecialistsPage() {
               <h4 className="text-[0.75rem] uppercase tracking-[0.1em] mb-4 opacity-60">
                 Specialty
               </h4>
-              <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 accent-[var(--ink-color)]"
-                />
-                Cardiology
-              </label>
-              <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
-                <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
-                Neurology
-              </label>
-              <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
-                <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
-                Oncology
-              </label>
-              <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
-                <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
-                Endocrinology
-              </label>
-              <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
-                <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
-                Pediatrics
-              </label>
+              {SPECIALTY_OPTIONS.map(({ value, label }) => (
+                <label
+                  key={value}
+                  className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSpecialties.includes(value)}
+                    onChange={() => toggleSpecialty(value)}
+                    className="w-4 h-4 accent-[var(--ink-color)]"
+                  />
+                  {label}
+                </label>
+              ))}
             </div>
             <div className="border-b border-[var(--glass-border)] pb-6 mb-8">
               <h4 className="text-[0.75rem] uppercase tracking-[0.1em] mb-4 opacity-60">
-                Experience
+                Experience <span className="normal-case opacity-50">(Not Implemented)</span>
               </h4>
               <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
                 <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
@@ -214,7 +196,7 @@ export default function SpecialistsPage() {
             </div>
             <div className="border-b border-[var(--glass-border)] pb-6 mb-8">
               <h4 className="text-[0.75rem] uppercase tracking-[0.1em] mb-4 opacity-60">
-                Availability
+                Availability <span className="normal-case opacity-50">(Not Implemented)</span>
               </h4>
               <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
                 <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
@@ -231,7 +213,7 @@ export default function SpecialistsPage() {
             </div>
             <div className="pb-6">
               <h4 className="text-[0.75rem] uppercase tracking-[0.1em] mb-4 opacity-60">
-                Rating
+                Rating <span className="normal-case opacity-50">(Not Implemented)</span>
               </h4>
               <label className="flex items-center gap-3 mb-3 cursor-pointer text-[0.9rem]">
                 <input type="checkbox" className="w-4 h-4 accent-[var(--ink-color)]" />
@@ -246,7 +228,26 @@ export default function SpecialistsPage() {
 
           {/* Specialist cards grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {specialists.map((s) => (
+            {loading && (
+              <div className="col-span-full flex items-center justify-center py-16">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-2 border-[var(--beam-start)] border-t-transparent rounded-full animate-spin" />
+                  <p className="text-[var(--ink-color)]/60 text-sm">Loading specialists...</p>
+                </div>
+              </div>
+            )}
+            {error && !loading && (
+              <div className="col-span-full rounded-xl border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-8 text-center">
+                <p className="text-[var(--ink-color)]/80 mb-2">Could not load specialists.</p>
+                <p className="text-sm opacity-60">{error}</p>
+              </div>
+            )}
+            {!loading && !error && specialists.length === 0 && (
+              <div className="col-span-full rounded-xl border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-8 text-center">
+                <p className="text-[var(--ink-color)]/80">No specialists found.</p>
+              </div>
+            )}
+            {!loading && !error && specialists.map((s) => (
               <article
                 key={s.id}
                 className="specialist-card bg-[rgba(255,255,255,0.4)] border border-[var(--glass-border)] rounded-[var(--radius-card)] p-8 transition-all duration-[0.4s] ease-[cubic-bezier(0.165,0.84,0.44,1)] relative overflow-hidden hover:bg-[rgba(255,255,255,0.8)] hover:-translate-y-1 hover:border-[var(--ink-color)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.03)]"
@@ -287,11 +288,10 @@ export default function SpecialistsPage() {
                   {s.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className={`text-[0.75rem] px-3 py-1 rounded-[var(--radius-pill)] border border-transparent ${
-                        tag.availability
+                      className={`text-[0.75rem] px-3 py-1 rounded-[var(--radius-pill)] border border-transparent ${tag.availability
                           ? 'bg-[rgba(224,242,194,0.4)] text-[#4a5c2d]'
                           : 'bg-[rgba(15,17,21,0.05)]'
-                      }`}
+                        }`}
                     >
                       {tag.label}
                     </span>
@@ -302,17 +302,17 @@ export default function SpecialistsPage() {
                 </p>
                 <div className="flex justify-between items-center pt-6 border-t border-[var(--glass-border)]">
                   <Link
-                    href="#"
+                    href={`/providers/${s.id}`}
                     className="text-[var(--ink-color)] text-[0.9rem] font-medium no-underline flex items-center gap-2 hover:[&>svg]:translate-x-1 [&>svg]:transition-transform [&>svg]:duration-300"
                   >
                     View Profile <ArrowRightIcon />
                   </Link>
-                  <button
-                    type="button"
-                    className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] bg-transparent cursor-pointer transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+                  <Link
+                    href={`/providers/${s.id}`}
+                    className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] bg-transparent cursor-pointer transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
                   >
                     Book Now
-                  </button>
+                  </Link>
                 </div>
               </article>
             ))}

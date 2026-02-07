@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { updateEmailPreferences } from '@/lib/api';
-import { AuthProtected } from '@/components/auth-protected';
-import { PatientSidebar } from '@/components/patient-sidebar';
+import { AuthProtected } from '@/components/dashboard/auth-protected';
+import { PatientSidebar } from '@/components/dashboard/patient-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function SettingsPage() {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { AuthProtected } from '@/components/auth-protected';
-import { PatientSidebar } from '@/components/patient-sidebar';
+import { AuthProtected } from '@/components/dashboard/auth-protected';
+import { PatientSidebar } from '@/components/dashboard/patient-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { 

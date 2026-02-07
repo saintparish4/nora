@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/authContext";
+import { AuthProvider } from "@/lib/auth/context";
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-serif",

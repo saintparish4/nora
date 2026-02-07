@@ -1,15 +1,4 @@
-# Root level .gitignore for MAI project
-
-# Rails specific ignores (legacy store directory)
-/store/log/*
-!/store/log/.keep
-/store/tmp/*
-!/store/tmp/.keep
-!/store/tmp/pids/.keep
-!/store/tmp/storage/.keep
-/store/storage/*
-!/store/storage/.keep
-/store/public/assets
+# Root level .gitignore for NORA project
 
 # Rails API specific ignores
 /api/log/*
@@ -35,6 +24,8 @@
 /base/.env*
 
 # General ignores
+/notebook
+/docs
 .DS_Store
 *.log
 *.tmp

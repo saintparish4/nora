@@ -15,7 +15,7 @@ RSpec.describe Appointment, type: :model do
   describe 'callbacks' do
     it 'sends booking notifications after create' do
       appointment = build(:appointment)
-      expect(NotificationService).to receive(:send_booking_notifications).with(appointment)
+      expect(Notifications::NotificationService).to receive(:send_booking_notifications).with(appointment)
       appointment.save
     end
   end

@@ -19,7 +19,7 @@ module Api
                     return render json: { error: 'Description is too long (max 1000 characters)' }, status: :unprocessable_entity
                 end
 
-                analyzer = SymptomAnalyzerService.new(description)
+                analyzer = Triage::SymptomAnalyzerService.new(description)
                 result = analyzer.analyze
 
                 render json: {

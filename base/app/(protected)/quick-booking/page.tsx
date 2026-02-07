@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
-import { AuthProtected } from '@/components/auth-protected';
+import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { Button } from '@/components/ui/button';
 import { Check, Clock, MapPin, Star, ArrowRight, Sparkles, Calendar } from 'lucide-react';
 

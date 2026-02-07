@@ -1,17 +1,17 @@
 require 'rails_helper'
 
-RSpec.describe NotificationService do
+RSpec.describe Notifications::NotificationService do
   describe '.send_booking_notifications' do
     it 'sends booking confirmation to patient via Resend' do
       # Build appointment without saving to avoid callback
       appointment = build(:appointment)
       
       # Stub the callback during save
-      allow(NotificationService).to receive(:send_booking_notifications)
+      allow(Notifications::NotificationService).to receive(:send_booking_notifications)
       appointment.save!
       
       # Clear the stub and test the actual service
-      allow(NotificationService).to receive(:send_booking_notifications).and_call_original
+      allow(Notifications::NotificationService).to receive(:send_booking_notifications).and_call_original
       
       # Mock Resend API call
       expect(Resend::Emails).to receive(:send).with(hash_including(
@@ -19,21 +19,21 @@ RSpec.describe NotificationService do
         subject: "Appointment Confirmed - #{appointment.provider.name}"
       ))
       
-      NotificationService.send_booking_notifications(appointment)
+      Notifications::NotificationService.send_booking_notifications(appointment)
     end
     
     it 'respects patient notification preferences' do
       appointment = build(:appointment)
       appointment.patient.booking_confirmations = false
       
-      allow(NotificationService).to receive(:send_booking_notifications)
+      allow(Notifications::NotificationService).to receive(:send_booking_notifications)
       appointment.save!
-      allow(NotificationService).to receive(:send_booking_notifications).and_call_original
+      allow(Notifications::NotificationService).to receive(:send_booking_notifications).and_call_original
       
       # Should not call Resend if preference is disabled
       expect(Resend::Emails).not_to receive(:send)
       
-      NotificationService.send_booking_notifications(appointment)
+      Notifications::NotificationService.send_booking_notifications(appointment)
     end
   end
   
@@ -46,7 +46,7 @@ RSpec.describe NotificationService do
         subject: "Appointment Cancelled - #{appointment.provider.name}"
       ))
       
-      NotificationService.send_cancellation_notifications(appointment, 'patient')
+      Notifications::NotificationService.send_cancellation_notifications(appointment, 'patient')
     end
     
     it 'respects patient notification preferences' do
@@ -58,7 +58,7 @@ RSpec.describe NotificationService do
       
       expect(Resend::Emails).not_to receive(:send)
       
-      NotificationService.send_cancellation_notifications(appointment, 'patient')
+      Notifications::NotificationService.send_cancellation_notifications(appointment, 'patient')
     end
   end
   
@@ -75,7 +75,7 @@ RSpec.describe NotificationService do
       # Should only send one email for tomorrow's appointment
       expect(Resend::Emails).to receive(:send).once
       
-      NotificationService.send_reminder_notifications
+      Notifications::NotificationService.send_reminder_notifications
     end
     
     it 'respects patient notification preferences for reminders' do
@@ -88,7 +88,7 @@ RSpec.describe NotificationService do
       
       expect(Resend::Emails).not_to receive(:send)
       
-      NotificationService.send_reminder_notifications
+      Notifications::NotificationService.send_reminder_notifications
     end
   end
 end

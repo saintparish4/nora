@@ -1,4 +1,4 @@
-puts "🌱 Seeding database..."
+puts "Seeding database..."
 
 # ============================================================================
 # DATA CLEANUP
@@ -6,7 +6,6 @@ puts "🌱 Seeding database..."
 # Clear all data and reset auto-increment counters
 Appointment.destroy_all
 Availability.destroy_all
-ProviderCondition.destroy_all
 Provider.destroy_all
 User.destroy_all
 
@@ -15,13 +14,12 @@ ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='p
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='availabilities'")
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='appointments'")
 ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='users'")
-ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='provider_conditions'")
 
 # ============================================================================
 # TEST USER
 # ============================================================================
 # Create test user
-puts "👤 Creating test user..."
+puts "Creating test user..."
 test_user = User.create!(
   email: 'saintparish6@gmail.com',
   password: 'password123',
@@ -30,12 +28,12 @@ test_user = User.create!(
   reminders_24h: true,
   cancellation_notices: true
 )
-puts "✅ Created test user: #{test_user.email}"
+puts "Created test user: #{test_user.email}"
 
 # ============================================================================
 # PROVIDERS DATA
 # ============================================================================
-puts "🏥 Seeding providers..."
+puts "Seeding providers..."
 
 providers_data = [
   # NEW YORK CITY PROVIDERS
@@ -1221,8 +1219,8 @@ providers_data.each_with_index do |provider_data, index|
     )
   end
   
-  puts "✅ Created provider: #{provider.name} (#{provider.specialty}) in #{provider.location}"
-  puts "   📅 #{schedule.length} time slots - Template: #{template_key}"
+  puts "Created provider: #{provider.name} (#{provider.specialty}) in #{provider.location}"
+  puts "   #{schedule.length} time slots - Template: #{template_key}"
 end
 
 # ============================================================================
@@ -1230,7 +1228,7 @@ end
 # ============================================================================
 # Create some realistic existing appointments to simulate a working system
 # Note: provider_index corresponds to the order providers were created above
-puts "\n📅 Creating sample appointments..."
+puts "\nCreating sample appointments..."
 
 appointment_data = [
   # Dr. Sarah Chen appointments (Physical Therapy)
@@ -1322,255 +1320,39 @@ appointment_data.each do |apt|
     status: 'confirmed',
     notes: "#{apt[:service]} - Sample appointment created during seeding"
   )
-  puts "   ✓ Booked: #{provider.name} on #{apt[:date].strftime('%A, %b %d')} at #{apt[:start_time]} (#{apt[:service]})"
+  puts "   Booked: #{provider.name} on #{apt[:date].strftime('%A, %b %d')} at #{apt[:start_time]} (#{apt[:service]})"
 end
-
-# ============================================================================
-# PROVIDER CONDITIONS
-# ============================================================================
-# Add provider conditions for all specialties based on their expertise
-puts "\n🏥 Adding provider conditions..."
-condition_mappings = {
-  'Primary Care' => [
-    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'cold_flu', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'general_checkup', expertise_level: 5, cases_treated: 600 }
-  ],
-  'Internal Medicine' => [
-    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'heart_disease', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'chronic_disease', expertise_level: 5, cases_treated: 500 }
-  ],
-  'Cardiology' => [
-    { condition_name: 'heart_disease', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'chest_pain', expertise_level: 5, cases_treated: 250 },
-    { condition_name: 'hypertension', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'arrhythmia', expertise_level: 4, cases_treated: 180 },
-    { condition_name: 'heart_failure', expertise_level: 5, cases_treated: 200 }
-  ],
-  'Dermatology' => [
-    { condition_name: 'acne', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'skin_cancer', expertise_level: 5, cases_treated: 200 },
-    { condition_name: 'eczema', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'psoriasis', expertise_level: 4, cases_treated: 250 },
-    { condition_name: 'rashes', expertise_level: 5, cases_treated: 350 }
-  ],
-  'Neurology' => [
-    { condition_name: 'headaches', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'migraines', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'seizures', expertise_level: 4, cases_treated: 150 },
-    { condition_name: 'movement_disorders', expertise_level: 4, cases_treated: 120 },
-    { condition_name: 'neuropathy', expertise_level: 4, cases_treated: 200 }
-  ],
-  'Gastroenterology' => [
-    { condition_name: 'digestive_issues', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'ibd', expertise_level: 5, cases_treated: 200 },
-    { condition_name: 'acid_reflux', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'constipation', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'abdominal_pain', expertise_level: 5, cases_treated: 400 }
-  ],
-  'Endocrinology' => [
-    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'thyroid_disorders', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'hormonal_imbalances', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'metabolic_disorders', expertise_level: 4, cases_treated: 200 }
-  ],
-  'Rheumatology' => [
-    { condition_name: 'arthritis', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'autoimmune_diseases', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'lupus', expertise_level: 4, cases_treated: 150 },
-    { condition_name: 'fibromyalgia', expertise_level: 4, cases_treated: 200 }
-  ],
-  'Ophthalmology' => [
-    { condition_name: 'eye_infections', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'vision_problems', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'cataracts', expertise_level: 5, cases_treated: 250 },
-    { condition_name: 'glaucoma', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'dry_eyes', expertise_level: 4, cases_treated: 350 }
-  ],
-  'ENT (Otolaryngology)' => [
-    { condition_name: 'sinus_issues', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'hearing_loss', expertise_level: 5, cases_treated: 250 },
-    { condition_name: 'ear_infections', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'voice_disorders', expertise_level: 4, cases_treated: 150 },
-    { condition_name: 'allergies', expertise_level: 4, cases_treated: 300 }
-  ],
-  'Orthopedics' => [
-    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'fractures', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'back_pain', expertise_level: 4, cases_treated: 400 },
-    { condition_name: 'arthritis', expertise_level: 4, cases_treated: 350 }
-  ],
-  'Sports Medicine' => [
-    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'muscle_strains', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'concussion', expertise_level: 4, cases_treated: 150 },
-    { condition_name: 'performance', expertise_level: 4, cases_treated: 200 }
-  ],
-  'OB/GYN' => [
-    { condition_name: 'pregnancy', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'menstrual_issues', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'pelvic_pain', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'menopause', expertise_level: 4, cases_treated: 250 },
-    { condition_name: 'womens_health', expertise_level: 5, cases_treated: 600 }
-  ],
-  'Pediatrics' => [
-    { condition_name: 'childhood_illnesses', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'developmental_concerns', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'vaccinations', expertise_level: 5, cases_treated: 600 },
-    { condition_name: 'growth_issues', expertise_level: 4, cases_treated: 150 },
-    { condition_name: 'general_checkup', expertise_level: 5, cases_treated: 700 }
-  ],
-  'Psychiatry' => [
-    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'adhd', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'bipolar', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'medication_management', expertise_level: 5, cases_treated: 500 }
-  ],
-  'Psychology' => [
-    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'trauma', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'relationship_issues', expertise_level: 4, cases_treated: 350 },
-    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 }
-  ],
-  'Mental Health Counseling' => [
-    { condition_name: 'anxiety', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'depression', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'trauma', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'relationship_issues', expertise_level: 4, cases_treated: 350 }
-  ],
-  'Physical Therapy' => [
-    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'sports_injury', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'joint_pain', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'post_surgical', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'rehabilitation', expertise_level: 5, cases_treated: 450 }
-  ],
-  'Occupational Therapy' => [
-    { condition_name: 'hand_therapy', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'stroke_recovery', expertise_level: 5, cases_treated: 250 },
-    { condition_name: 'developmental_delays', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'workplace_injuries', expertise_level: 4, cases_treated: 300 }
-  ],
-  'Speech Therapy' => [
-    { condition_name: 'speech_delays', expertise_level: 5, cases_treated: 300 },
-    { condition_name: 'voice_disorders', expertise_level: 5, cases_treated: 250 },
-    { condition_name: 'swallowing_issues', expertise_level: 4, cases_treated: 200 },
-    { condition_name: 'language_disorders', expertise_level: 4, cases_treated: 250 }
-  ],
-  'Personal Training' => [
-    { condition_name: 'weight_management', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'fitness', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'strength_training', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'athletic_performance', expertise_level: 4, cases_treated: 300 }
-  ],
-  'Yoga Instruction' => [
-    { condition_name: 'stress', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'flexibility', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'back_pain', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'mindfulness', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'balance', expertise_level: 4, cases_treated: 250 }
-  ],
-  'Pilates Instruction' => [
-    { condition_name: 'core_strength', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'flexibility', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'posture', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'rehabilitation', expertise_level: 4, cases_treated: 250 }
-  ],
-  'Nutrition Counseling' => [
-    { condition_name: 'weight_management', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'diabetes', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'digestive_issues', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'sports_nutrition', expertise_level: 4, cases_treated: 200 }
-  ],
-  'Massage Therapy' => [
-    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'stress', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'muscle_tension', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'sports_injury', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'relaxation', expertise_level: 5, cases_treated: 500 }
-  ],
-  'Acupuncture' => [
-    { condition_name: 'pain_management', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'stress', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'digestive_issues', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'headaches', expertise_level: 5, cases_treated: 350 },
-    { condition_name: 'fertility', expertise_level: 3, cases_treated: 150 }
-  ],
-  'Chiropractic' => [
-    { condition_name: 'back_pain', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'neck_pain', expertise_level: 5, cases_treated: 400 },
-    { condition_name: 'joint_pain', expertise_level: 4, cases_treated: 350 },
-    { condition_name: 'sports_injury', expertise_level: 4, cases_treated: 300 },
-    { condition_name: 'posture', expertise_level: 5, cases_treated: 400 }
-  ],
-  'Urgent Care' => [
-    { condition_name: 'cold_flu', expertise_level: 5, cases_treated: 600 },
-    { condition_name: 'minor_injuries', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'infections', expertise_level: 5, cases_treated: 450 },
-    { condition_name: 'acute_illnesses', expertise_level: 5, cases_treated: 500 },
-    { condition_name: 'emergency_care', expertise_level: 4, cases_treated: 300 }
-  ]
-}
-
-Provider.find_each do |provider|
-  conditions = condition_mappings[provider.specialty]
-  if conditions
-    conditions.each do |condition_data|
-      ProviderCondition.create!(
-        provider: provider,
-        condition_name: condition_data[:condition_name],
-        expertise_level: condition_data[:expertise_level],
-        cases_treated: condition_data[:cases_treated]
-      )
-    end
-  end
-end
-
-puts "✅ Added provider conditions for all specialties (#{ProviderCondition.count} total conditions)"
 
 # ============================================================================
 # SEEDING SUMMARY
 # ============================================================================
-puts "\n✨ Seeding complete!"
-puts "   📊 #{Provider.count} providers across major US cities"
-puts "   📅 #{Appointment.count} sample existing appointments"
-puts "   🏥 #{ProviderCondition.count} provider conditions"
-puts "   👤 1 test user (#{test_user.email})"
+puts "\nSeeding complete!"
+puts "   #{Provider.count} providers across major US cities"
+puts "   #{Appointment.count} sample existing appointments"
+puts "   1 test user (#{test_user.email})"
 puts ""
-puts "🏙️  Provider Distribution by City:"
+puts "Provider Distribution by City:"
 providers.group_by(&:location).sort_by { |city, _| city }.each do |city, city_providers|
   puts "   • #{city}: #{city_providers.count} providers"
 end
 puts ""
-puts "🏥 Provider Distribution by Specialty:"
+puts "Provider Distribution by Specialty:"
 providers.group_by(&:specialty).sort_by { |_, p| -p.count }.each do |specialty, spec_providers|
   puts "   • #{specialty}: #{spec_providers.count} provider#{'s' if spec_providers.count > 1}"
 end
 puts ""
-puts "📋 Sample Provider Details (first 10):"
+puts "Sample Provider Details (first 10):"
 providers.first(10).each do |provider|
   availability_count = provider.availabilities.count
-  total_hours = provider.availabilities.sum { |a| 
-    # Convert time fields to seconds since midnight and calculate difference
+  total_hours = provider.availabilities.sum { |a|
     start_seconds = a.start_time.hour * 3600 + a.start_time.min * 60
     end_seconds = a.end_time.hour * 3600 + a.end_time.min * 60
     (end_seconds - start_seconds) / 3600.0
   }
-  conditions_count = provider.provider_conditions.count
   puts "   • #{provider.name} (#{provider.specialty}) - #{provider.location}"
-  puts "     #{availability_count} time slots, ~#{total_hours.round(1)} hours/week, $#{provider.hourly_rate}/hr, #{conditions_count} conditions"
+  puts "     #{availability_count} time slots, ~#{total_hours.round(1)} hours/week, $#{provider.hourly_rate}/hr"
 end
 puts ""
-puts "🔐 Test Login Credentials:"
+puts "Test Login Credentials:"
 puts "   Email: saintparish6@gmail.com"
 puts "   Password: password123"

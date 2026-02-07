@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SymptomAnalyzerService do
+RSpec.describe Triage::SymptomAnalyzerService do
   let(:service) { described_class.new(description) }
   
   describe '#analyze' do

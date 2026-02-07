@@ -18,15 +18,23 @@ export function removeToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+// Normalize RequestInit.headers into a plain record so we can add Authorization.
+function toHeaderRecord(init: HeadersInit | undefined): Record<string, string> {
+  if (!init) return {};
+  if (init instanceof Headers) return Object.fromEntries(init.entries());
+  if (Array.isArray(init)) return Object.fromEntries(init as [string, string][]);
+  return { ...init };
+}
+
 // Shared authFetch helper to eliminate duplicated token/header boilerplate
 export async function authFetch(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
   const token = getToken();
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options.headers,
+    ...toHeaderRecord(options.headers),
   };
 
   if (token) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useAuth } from '@/lib/authContext';
+import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 
 export default function SignupPage() {

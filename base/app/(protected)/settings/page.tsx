@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/authContext';
+import { useAuth } from '@/lib/auth/context';
 import { updateEmailPreferences } from '@/lib/api';
 import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { PatientSidebar } from '@/components/dashboard/patient-sidebar';

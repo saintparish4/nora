@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Technology | Aura Health AI',
+  title: 'Symptom Analyzer | Aura Health AI',
   description:
-    "Where biological intuition meets computational rigor. Explore the neural framework behind Aura's diagnostic engine.",
+    'Clinical-grade AI symptom assistant. Describe your symptoms and get evidence-based guidance. Not a diagnosis.',
 };
 
 export default function TechnologyLayout({

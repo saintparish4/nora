@@ -45,7 +45,7 @@ export default function Home() {
             <span className="w-px h-5 sm:h-6 bg-[var(--ink-color)] rotate-[15deg]" />
             nora.ai
           </Link>
-          <div className="hidden lg:flex gap-6 xl:gap-8">
+          <div className="hidden lg:flex gap-6 xl:gap-8 absolute left-1/2 -translate-x-1/2">
             <Link
               href="/specialists"
               className="nav-item-underline text-[0.85rem] lg:text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
@@ -62,7 +62,7 @@ export default function Home() {
               href="/technology"
               className="nav-item-underline text-[0.85rem] lg:text-[0.9rem] relative text-[var(--ink-color)] opacity-70 hover:opacity-100 no-underline"
             >
-              Technology
+              SymptomX
             </Link>
           </div>
           <Link
@@ -97,7 +97,7 @@ export default function Home() {
 
           {/* Subheadline */}
           <p className="text-[0.85rem] sm:text-[0.95rem] md:text-base leading-[1.6] sm:leading-[1.7] opacity-70 max-w-[90%] sm:max-w-[480px] md:max-w-[540px] mb-8 sm:mb-10 md:mb-12 px-2">
-            nora.ai combines intelligent symptom analysis, longitudinal health tracking, and predictive risk modeling with seamless appointment booking — actionable insights and direct access to care.
+            We don't just interpret your symptoms—we match you to the right specialist and book the visit.
           </p>
 
           {/* Booking Engine */}
@@ -146,28 +146,64 @@ export default function Home() {
             </button>
           </form>
 
-          {/* Vertical Divider */}
+          {/* Horizontal Divider */}
           <div className="w-px h-12 sm:h-16 md:h-20 bg-[var(--ink-color)] my-6 sm:my-8 md:my-10 opacity-20" />
         </section>
+      </div>
 
-        {/* Stats Strip */}
-        <section className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-10 md:gap-16 lg:gap-20 py-6 sm:py-8 md:py-10 border-t border-b border-[var(--glass-border)]">
-          <div className="text-center">
-            <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">98%</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Symptom Match Accuracy</span>
+      {/* Trusted by - logo carousel, full-bleed lines */}
+      <div className="w-screen relative left-1/2 -translate-x-1/2 border-t border-b border-[var(--glass-border)] overflow-hidden min-h-[180px] sm:min-h-[200px] flex flex-col justify-center">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10 w-full flex flex-col items-center justify-center">
+          <p className="text-center text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.12em] sm:tracking-[0.15em] opacity-60 mb-6 sm:mb-8">
+            Trusted by Top Health Systems
+          </p>
+          <div className="flex overflow-hidden w-full">
+            <div className="flex shrink-0 animate-logo-marquee items-center gap-12 sm:gap-16 md:gap-20 lg:gap-24">
+              {(() => {
+                const partners = [
+                  { name: 'Baylor Scott & White', logo: '/logos/Baylor_Scott__White_Logo.png' },
+                  { name: 'BAuA', logo: '/logos/Bundesanstalt_fur_Arbeitsschutz_und_Arbeitsmedizin_Logo.png' },
+                  { name: 'Capsule Pharmacy', logo: '/logos/Capsule_Pharmacy_Logo-s640.png' },
+                  { name: 'Dubai Cares', logo: '/logos/Dubai_Cares_Logo.png' },
+                  { name: 'Exact Sciences', logo: '/logos/Exact_Sciences_Logo-s640.png' },
+                  { name: 'Forma Inc.', logo: '/logos/Forma_Inc._Logo.png' },
+                  { name: 'Labcorp', logo: '/logos/Laboratory_Corporation_of_America_Holdings_Logo.png' },
+                  { name: 'Montefiore', logo: '/logos/mhs-montefiore-new-rochelle.png' },
+                  { name: 'Mount Sinai', logo: '/logos/mount-sinai.png' },
+                  { name: 'Nano X Imaging', logo: '/logos/Nano_X_Imaging_Logo-s640.png' },
+                  { name: 'Reproductive Biology Associates', logo: '/logos/Reproductive_Biology_Associates_Logo.png' },
+                  { name: 'Summit Health', logo: '/logos/Summit_Health_Logo-s640.png' },
+                  { name: 'Synthego', logo: '/logos/Synthego_Logo.png' },
+                ];
+                const logoClass = 'h-full w-auto max-w-[200px] sm:max-w-[240px] md:max-w-[280px] object-contain object-center';
+                const cellClass = 'shrink-0 flex items-center justify-center h-12 sm:h-14 md:h-16 lg:h-20 text-[var(--ink-color)] opacity-50 font-serif italic whitespace-nowrap';
+                return (
+                  <>
+                    <div className="flex shrink-0 items-center gap-12 sm:gap-16 md:gap-20 lg:gap-24" aria-hidden={false}>
+                      {partners.map((item) => (
+                        <div key={item.name} className={cellClass}>
+                          <img src={item.logo} alt={item.name} className={logoClass} />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-12 sm:gap-16 md:gap-20 lg:gap-24" aria-hidden>
+                      {partners.map((item) => (
+                        <div key={item.name} className={cellClass}>
+                          <img src={item.logo} alt="" className={logoClass} />
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
           </div>
-          <div className="text-center">
-            <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">24/7</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Biomarker Monitoring</span>
-          </div>
-          <div className="text-center">
-            <span className="font-serif text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.5rem] block leading-none mb-1 sm:mb-2">&lt;2m</span>
-            <span className="text-[0.65rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.08em] sm:tracking-[0.1em] opacity-60">Symptom to Booking</span>
-          </div>
-        </section>
+        </div>
+      </div>
 
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-[2]">
         {/* Features Section */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-12 md:mt-16 mb-16 sm:mb-24 md:mb-32">
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-12 md:mt-16 mb-16 sm:mb-24 md:mb-32">
           <div className="p-5 sm:p-6 md:p-8 border border-[var(--glass-border)] rounded-[16px] sm:rounded-[20px] md:rounded-[24px] bg-[rgba(255,255,255,0.3)] feature-card-hover">
             <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 mb-4 sm:mb-5 md:mb-6 flex items-center justify-center border border-[var(--ink-color)] rounded-full text-base sm:text-lg md:text-xl">
               ✦
@@ -177,24 +213,14 @@ export default function Home() {
               Our AI analyzes your symptoms in real-time, matching you with the right specialist — not just a list of providers, but the precise care you need.
             </p>
           </div>
-          
+
           <div className="p-5 sm:p-6 md:p-8 border border-[var(--glass-border)] rounded-[16px] sm:rounded-[20px] md:rounded-[24px] bg-[rgba(255,255,255,0.3)] feature-card-hover">
-            <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 mb-4 sm:mb-5 md:mb-6 flex items-center justify-center border border-[var(--ink-color)] rounded-full text-base sm:text-lg md:text-xl">
-              ○
-            </div>
-            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Holistic Records</h3>
-            <p className="text-[0.85rem] sm:text-[0.9rem] md:text-[0.95rem] leading-[1.5] sm:leading-[1.6] opacity-80">
-              Your medical history, biomarkers, and lab results unified into a secure timeline — tracking trends over time so you and your care team can act before concerns escalate.
-            </p>
-          </div>
-          
-          <div className="p-5 sm:p-6 md:p-8 border border-[var(--glass-border)] rounded-[16px] sm:rounded-[20px] md:rounded-[24px] bg-[rgba(255,255,255,0.3)] feature-card-hover sm:col-span-2 lg:col-span-1">
             <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 mb-4 sm:mb-5 md:mb-6 flex items-center justify-center border border-[var(--ink-color)] rounded-full text-base sm:text-lg md:text-xl">
               →
             </div>
-            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Predictive Care & Booking</h3>
+            <h3 className="font-serif text-xl sm:text-[1.35rem] md:text-2xl mb-2 sm:mb-3 italic">Seamless Booking</h3>
             <p className="text-[0.85rem] sm:text-[0.9rem] md:text-[0.95rem] leading-[1.5] sm:leading-[1.6] opacity-80">
-              Population-based risk modeling anticipates health concerns before they escalate — then seamlessly books you with the right provider to act on it.
+              Based on your symptom analysis, we connect you directly with the right provider and book your appointment — no guesswork, no endless searching.
             </p>
           </div>
         </section>

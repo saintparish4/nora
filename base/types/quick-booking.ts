@@ -1,5 +1,6 @@
 import { SymptomAnalysis } from './symptoms';
-import { Provider, TimeSlot } from './appointments';
+import { TimeSlot } from './appointments';
+import { Provider } from './providers';
 
 export interface QuickBookingAnalysisResponse {
   analysis: SymptomAnalysis;

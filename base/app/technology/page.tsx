@@ -1,40 +1,124 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useCallback } from 'react';
+import { ChatMessageList } from '@/components/chat/chat-message-list';
+import type { ChatMessageData } from '@/components/chat/chat-message';
 
-const researchItems = [
-  { title: 'Genomic Variability in AI Triage', source: 'Nature Medicine, 2023' },
-  { title: 'Predictive Cardiology Models', source: 'Journal of AI Health, 2024' },
-  { title: 'Ethical AI in Patient Care', source: 'Stanford Bioethics, 2023' },
-  { title: 'Neural Synthesis for Oncology', source: 'Lancet Digital Health, 2024' },
+// ---------------------------------------------------------------------------
+// Types – extend as needed when you connect the backend
+// ---------------------------------------------------------------------------
+
+/** Patient/session context from backend – placeholder shape */
+export interface PatientContext {
+  displayName: string;
+  primaryLocation?: string;
+}
+
+/** Backend API surface – implement these when connecting your API */
+export interface SymptomAnalyzerBackend {
+  sendMessage(sessionId: string | null, userMessage: string): Promise<ChatMessageData[]>;
+  startOrResumeSession(): Promise<{ sessionId: string; initialMessages?: ChatMessageData[] }>;
+  endSession(sessionId: string): Promise<void>;
+  getPatientContext(sessionId: string | null): Promise<PatientContext | null>;
+}
+
+// ---------------------------------------------------------------------------
+// Backend placeholder – replace with real client (fetch, SDK, etc.)
+// ---------------------------------------------------------------------------
+
+function useSymptomAnalyzerBackend(): {
+  sendMessage: (text: string) => Promise<void>;
+  endSession: () => Promise<void>;
+  patientContext: PatientContext | null;
+  isLoading: boolean;
+} {
+  const [patientContext] = useState<PatientContext | null>({
+    displayName: 'Anonymous Guest',
+    primaryLocation: 'NY',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendMessage = useCallback(async (text: string) => {
+    // TODO: call your backend, e.g. POST /api/symptom-analyzer/chat
+    setIsLoading(true);
+    await new Promise((r) => setTimeout(r, 300));
+    setIsLoading(false);
+  }, []);
+
+  const endSession = useCallback(async () => {
+    // TODO: call your backend, e.g. POST /api/symptom-analyzer/end
+    await new Promise((r) => setTimeout(r, 100));
+  }, []);
+
+  return { sendMessage, endSession, patientContext, isLoading };
+}
+
+// ---------------------------------------------------------------------------
+// Initial state
+// ---------------------------------------------------------------------------
+
+const INITIAL_MESSAGES: ChatMessageData[] = [
+  {
+    id: 'welcome',
+    role: 'ai',
+    content:
+      "Hello. I am Aura's diagnostic assistant. To help me understand what you're experiencing, could you please describe your primary symptom and when it started?",
+  },
+  {
+    id: 'user-1',
+    role: 'user',
+    content:
+      "I've been having a persistent sharp pain in my lower back since yesterday morning. It seems to get worse when I try to stand up straight.",
+  },
+  {
+    id: 'ai-1',
+    role: 'ai',
+    content:
+      'I understand. Sharp lower back pain aggravated by standing. Have you noticed any numbness, tingling, or weakness radiating down either of your legs?',
+  },
 ];
 
-const nodes = [
-  { label: 'DNA', active: true },
-  { label: 'LABS', active: false },
-  { label: 'VITAL', active: true },
-  { label: 'HIS', active: false },
-  { label: 'IMG', active: true },
-  { label: 'ENV', active: false },
-];
+// ---------------------------------------------------------------------------
+// Technology page = Symptom Analyzer
+// ---------------------------------------------------------------------------
 
 export default function TechnologyPage() {
-  return (
-    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative">
-      <div className="noise-overlay" />
-      <div
-        className="fixed -top-[10%] -right-[10%] w-[40vw] h-[40vw] rounded-full pointer-events-none -z-[1]"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(224,242,194,0.3) 0%, rgba(255,156,107,0) 70%)',
-          filter: 'blur(60px)',
-        }}
-        aria-hidden
-      />
+  const router = useRouter();
+  const [messages, setMessages] = useState<ChatMessageData[]>(INITIAL_MESSAGES);
+  const [inputValue, setInputValue] = useState('');
 
-      <div className="max-w-[1200px] mx-auto px-6 relative z-[2]">
-        {/* Navigation */}
-        <nav className="flex justify-between items-center py-8 relative z-10">
+  const { sendMessage, endSession, patientContext, isLoading } =
+    useSymptomAnalyzerBackend();
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const text = inputValue.trim();
+      if (!text || isLoading) return;
+      setInputValue('');
+      setMessages((prev) => [
+        ...prev,
+        { id: `user-${Date.now()}`, role: 'user', content: text },
+      ]);
+      sendMessage(text);
+    },
+    [inputValue, isLoading, sendMessage]
+  );
+
+  const handleEndSession = useCallback(async () => {
+    await endSession();
+    router.push('/');
+  }, [endSession, router]);
+
+  return (
+    <div className="h-dvh bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-hidden relative flex flex-col">
+      <div className="noise-overlay" aria-hidden />
+
+      <div className="max-w-[1200px] w-full mx-auto px-6 flex flex-col flex-1 min-h-0 relative z-[2]">
+        {/* Nav */}
+        <nav className="flex justify-between items-center py-8 flex-shrink-0">
           <Link
             href="/"
             className="font-serif text-2xl italic flex items-center gap-3 text-[var(--ink-color)] no-underline"
@@ -42,7 +126,7 @@ export default function TechnologyPage() {
             <span className="w-px h-6 bg-[var(--ink-color)] rotate-[15deg]" />
             nora.ai
           </Link>
-          <div className="hidden md:flex gap-8">
+          <div className="hidden md:flex items-center gap-8">
             <Link
               href="/specialists"
               className="nav-item-underline text-[0.9rem] relative opacity-70 hover:opacity-100"
@@ -59,159 +143,136 @@ export default function TechnologyPage() {
               href="/technology"
               className="nav-item-underline text-[0.9rem] relative font-semibold opacity-100 after:!w-full"
             >
-              Technology
+              SymptomX
             </Link>
           </div>
-          <Link
-            href="/login"
-            className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
-          >
-            Patient Login
-          </Link>
-        </nav>
-
-        {/* Hero */}
-        <section className="py-[120px] md:py-[120px] pb-20 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[20px] bg-[rgba(255,156,107,0.1)] text-[#C27045] text-[0.75rem] font-semibold mb-6 border border-[rgba(255,156,107,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-[var(--beam-start)] animate-aura-pulse" />
-            CORE ARCHITECTURE
-          </div>
-          <h1 className="font-serif text-4xl md:text-[4.5rem] mb-6 tracking-[-0.02em] font-normal">
-            Synthesized Intelligence
-          </h1>
-          <p className="text-xl max-w-[600px] mx-auto opacity-70 leading-relaxed">
-            Where biological intuition meets computational rigor. Explore the
-            neural framework behind Aura&apos;s diagnostic engine.
-          </p>
-        </section>
-
-        {/* Diagram section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center py-20">
-          <div className="relative h-[500px] bg-[rgba(255,255,255,0.2)] rounded-[var(--radius-card)] border border-[var(--glass-border)] flex items-center justify-center overflow-hidden">
-            <div className="tech-beam" aria-hidden />
-            <div className="relative z-[2] grid grid-cols-3 gap-5">
-              {nodes.map((n) => (
-                <div
-                  key={n.label}
-                  className={`w-[60px] h-[60px] rounded-full border border-[var(--ink-color)] flex items-center justify-center text-[0.8rem] bg-[var(--bg-color)] shadow-[0_4px_12px_rgba(0,0,0,0.05)] ${
-                    n.active
-                      ? 'bg-[var(--ink-color)] text-[var(--bg-color)] border-[var(--ink-color)]'
-                      : ''
-                  }`}
-                >
-                  {n.label}
-                </div>
-              ))}
+          <div className="flex items-center gap-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[rgba(15,17,21,0.05)] text-[0.75rem] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#27AE60] analyzer-status-pulse" />
+              SECURE ANALYZER ACTIVE
             </div>
-          </div>
-          <div>
-            <h2 className="font-serif text-[2.5rem] md:text-[3rem] mb-6 tracking-[-0.02em] font-normal">
-              The Multimodal Engine
-            </h2>
-            <p className="text-[1.1rem] leading-[1.7] opacity-80 mb-8">
-              Unlike traditional AI which analyzes data in silos, Aura&apos;s
-              engine utilizes cross-domain synthesis. It simultaneously
-              cross-references genomic sequences, longitudinal lab results, and
-              real-time biometric streams to identify patterns invisible to the
-              human eye.
-            </p>
-            <span className="inline-block px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] cursor-pointer transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]">
-              Read Whitepaper
-            </span>
-          </div>
-        </section>
-
-        {/* Innovation grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 my-20">
-          <div className="p-12 border border-[var(--glass-border)] rounded-[var(--radius-card)] bg-[rgba(255,255,255,0.4)]">
-            <span className="text-[0.7rem] tracking-[0.1em] uppercase opacity-50 block mb-4">
-              Diagnostic Accuracy
-            </span>
-            <h3 className="font-serif text-3xl mb-5 font-normal">
-              Neural Pattern Matching
-            </h3>
-            <p className="leading-relaxed opacity-80 mb-6">
-              Our proprietary algorithm, Aura-Net, has been trained on over 40
-              million clinical episodes, achieving a 98.4% accuracy rate in
-              early-stage oncology detection.
-            </p>
-            <span className="font-serif text-[2.5rem]">98.4%</span>
-          </div>
-          <div className="p-12 border border-[var(--glass-border)] rounded-[var(--radius-card)] bg-[rgba(255,255,255,0.4)]">
-            <span className="text-[0.7rem] tracking-[0.1em] uppercase opacity-50 block mb-4">
-              Data Ethics
-            </span>
-            <h3 className="font-serif text-3xl mb-5 font-normal">
-              Privacy-First Compute
-            </h3>
-            <p className="leading-relaxed opacity-80 mb-6">
-              We utilize federated learning and zero-knowledge proofs, ensuring
-              your medical data never leaves the local encryption layer while
-              still contributing to global health insights.
-            </p>
-            <span className="font-serif text-[2.5rem]">AES-256</span>
-          </div>
-        </section>
-
-        {/* Research strip */}
-        <section className="py-[100px] border-t border-[var(--glass-border)] text-center">
-          <h2 className="font-serif text-[2rem] md:text-[2.5rem] mb-3 tracking-[-0.02em] font-normal">
-            Peer-Reviewed Foundations
-          </h2>
-          <p className="opacity-60 mb-[60px]">
-            Collaborating with the world&apos;s leading medical institutions.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-0">
-            {researchItems.map((item) => (
-              <div
-                key={item.title}
-                className="text-left p-6 border-l border-[var(--ink-color)]"
-              >
-                <h4 className="font-sans font-semibold text-[0.9rem] mb-2">
-                  {item.title}
-                </h4>
-                <span className="text-[0.8rem] opacity-60">{item.source}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="py-[120px] text-center bg-gradient-to-b from-transparent to-[rgba(224,242,194,0.2)] rounded-[40px_40px_0_0]">
-          <h2 className="font-serif text-3xl md:text-[3.5rem] mb-8 tracking-[-0.02em] font-normal">
-            Ready to see the <i>future</i> of care?
-          </h2>
-          <div className="flex flex-wrap gap-4 justify-center">
             <Link
-              href="/"
-              className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline bg-[var(--ink-color)] text-[var(--bg-color)] transition-all duration-300 hover:opacity-90"
-            >
-              Book a Consultation
-            </Link>
-            <Link
-              href="/"
+              href="/login"
               className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
             >
-              Partner with Us
+              Patient Login
             </Link>
+            <button
+              type="button"
+              onClick={handleEndSession}
+              className="px-5 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] text-[var(--ink-color)] bg-transparent cursor-pointer transition-all duration-200 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+            >
+              End Session
+            </button>
           </div>
-        </section>
+        </nav>
 
-        {/* Footer */}
-        <footer className="py-[60px] border-t border-[var(--glass-border)] flex flex-col sm:flex-row justify-between items-center gap-4 text-[0.8rem] opacity-60">
-          <div>© 2024 Aura Health AI. All rights reserved.</div>
-          <div className="flex gap-6">
-            <Link href="/" className="text-inherit no-underline hover:opacity-80">
-              Privacy Policy
-            </Link>
-            <Link href="/" className="text-inherit no-underline hover:opacity-80">
-              HIPAA Compliance
-            </Link>
-            <Link href="/" className="text-inherit no-underline hover:opacity-80">
-              Terms of Service
-            </Link>
-          </div>
-        </footer>
+        {/* Chat layout: sidebar + main */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 lg:gap-10 pb-10 min-h-0 overflow-hidden">
+          {/* Sidebar */}
+          <aside className="flex flex-col gap-6 flex-shrink-0 lg:max-w-[300px]">
+            <div className="p-6 border border-[var(--glass-border)] rounded-[var(--radius-card)] bg-[rgba(255,255,255,0.3)]">
+              <h4 className="font-sans text-[0.7rem] uppercase tracking-widest mb-4 opacity-50">
+                Patient Context
+              </h4>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2 text-[0.85rem]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--beam-start)]" />
+                  {patientContext?.displayName ?? 'Anonymous Guest'}
+                </div>
+                <div className="flex items-center gap-2 text-[0.85rem]">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ background: 'var(--beam-end)' }}
+                  />
+                  Primary Location: {patientContext?.primaryLocation ?? 'NY'}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border border-[var(--glass-border)] rounded-[var(--radius-card)] bg-[rgba(255,255,255,0.3)]">
+              <h4 className="font-sans text-[0.7rem] uppercase tracking-widest mb-4 opacity-50">
+                Aura Intelligence
+              </h4>
+              <p className="text-[0.85rem] leading-relaxed opacity-70">
+                Our clinical-grade AI model is processing your input against 14M+
+                medical data points. This is not a diagnosis.
+              </p>
+            </div>
+
+            <div className="p-6 border border-[var(--glass-border)] rounded-[var(--radius-card)] bg-[rgba(255,255,255,0.3)] mt-auto">
+              <h4 className="font-sans text-[0.7rem] uppercase tracking-widest mb-4 opacity-50">
+                Emergency
+              </h4>
+              <p className="text-[0.85rem] leading-relaxed text-[#E67E22]">
+                If you&apos;re experiencing a life threatening medical emergency
+                please call 911.
+              </p>
+            </div>
+          </aside>
+
+          {/* Main chat */}
+          <main className="relative bg-[rgba(255,255,255,0.4)] backdrop-blur-sm border border-[var(--glass-border)] rounded-[var(--radius-card)] overflow-hidden min-h-0">
+            {/* Decorative beam */}
+            <div
+              className="absolute -top-[20%] -right-[10%] w-[300px] h-[140%] -z-[1] rotate-[-15deg] pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(255,156,107,0) 0%, rgba(224,242,194,0.3) 50%, rgba(255,156,107,0) 100%)',
+                filter: 'blur(60px)',
+              }}
+              aria-hidden
+            />
+
+            {/* Message list – handles scroll, animations, typing indicator */}
+            <ChatMessageList messages={messages} isLoading={isLoading} />
+
+            {/* Input – pinned to bottom, outside scroll flow */}
+            <div
+              className="absolute bottom-0 left-0 right-0 pt-6 px-8 lg:px-10 pb-6 lg:pb-8 z-10"
+              style={{
+                background:
+                  'linear-gradient(to top, rgba(239,238,236,1) 60%, rgba(239,238,236,0) 100%)',
+              }}
+            >
+              <form
+                onSubmit={handleSubmit}
+                className="flex items-center bg-white border border-[var(--ink-color)] rounded-[var(--radius-pill)] pl-6 pr-2 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-shadow duration-300 focus-within:shadow-[0_10px_40px_rgba(0,0,0,0.08)]"
+              >
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Type your response here..."
+                  disabled={isLoading}
+                  className="flex-1 border-0 outline-none font-sans text-[0.95rem] bg-transparent min-w-0 disabled:opacity-60 placeholder:text-[var(--ink-color)]/30"
+                  aria-label="Your response"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputValue.trim() || isLoading}
+                  className="w-11 h-11 rounded-full bg-[var(--ink-color)] text-white border-0 cursor-pointer flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 flex-shrink-0"
+                  aria-label="Send"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

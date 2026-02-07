@@ -576,6 +576,66 @@
   animation: aura-pulse 2s infinite;
 }
 
+/* Symptom Analyzer – status badge pulse */
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(39, 174, 96, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(39, 174, 96, 0);
+  }
+}
+
+.analyzer-status-pulse {
+  animation: pulse-green 2s infinite;
+}
+
+/* Chat typing indicator dots */
+@keyframes chat-typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 0.9;
+  }
+}
+
+.chat-typing-dot {
+  animation: chat-typing-bounce 1.2s ease-in-out infinite;
+}
+
+/* Chat avatar subtle pulse */
+@keyframes chat-avatar-rotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chat-avatar-icon {
+  display: inline-block;
+  animation: chat-avatar-rotate 12s linear infinite;
+}
+
+/* Logo carousel marquee – seamless loop (two identical tracks, -50% = one track width) */
+@keyframes logo-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-logo-marquee {
+  animation: logo-marquee 45s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
 /* Nav item underline animation */
 .nav-item-underline::after {
   content: '';

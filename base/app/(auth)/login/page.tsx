@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { Suspense, useState, FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') ?? undefined;
 
@@ -156,5 +156,22 @@ export default function LoginPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative flex items-center justify-center">
+      <div className="noise-overlay" />
+      <p className="text-[var(--ink-color)] opacity-60">Loading...</p>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
 import { AuthProtected } from '@/components/dashboard/auth-protected';
@@ -9,7 +9,7 @@ import { Check, Clock, MapPin, Star, ArrowRight, Sparkles, Calendar } from 'luci
 
 type Step = 'symptoms' | 'providers' | 'slots' | 'confirm' | 'success';
 
-export default function QuickBookingPage() {
+function QuickBookingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const prefillSpecialty = searchParams.get('specialty');
@@ -458,5 +458,22 @@ export default function QuickBookingPage() {
   );
 }
 
+function QuickBookingFallback() {
+  return (
+    <AuthProtected>
+      <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans flex items-center justify-center">
+        <p className="text-[var(--ink-color)] opacity-60">Loading...</p>
+      </div>
+    </AuthProtected>
+  );
+}
+
+export default function QuickBookingPage() {
+  return (
+    <Suspense fallback={<QuickBookingFallback />}>
+      <QuickBookingContent />
+    </Suspense>
+  );
+}
 
 

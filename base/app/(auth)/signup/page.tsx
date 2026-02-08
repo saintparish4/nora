@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { Suspense, useState, FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 
-export default function SignupPage() {
+function SignupContent() {
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') ?? undefined;
 
@@ -181,5 +181,22 @@ export default function SignupPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+function SignupFallback() {
+  return (
+    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative flex items-center justify-center">
+      <div className="noise-overlay" />
+      <p className="text-[var(--ink-color)] opacity-60">Loading...</p>
+    </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<SignupFallback />}>
+      <SignupContent />
+    </Suspense>
   );
 }

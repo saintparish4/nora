@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { NoraLogo } from '@/components/navigation/nora-logo';
 import { useState } from 'react';
+import LocationsMap from './locations-map';
 
 const locations = [
+  // ── New York — Manhattan ──────────────────────────────────────
   {
     id: 'central',
     tag: 'Flagship Hospital',
@@ -12,10 +14,12 @@ const locations = [
     name: 'Aura Central — Hudson Yards',
     address: '502 10th Ave, New York, NY 10018',
     hours: 'Open 24/7',
-    distance: '0.8 miles away',
+    distance: '0.8 mi',
     services: ['ER', 'Genomics Lab', 'Surgery'],
-    markerLabel: 'A1',
+    markerLabel: 'NY',
     markerStyle: 'default',
+    lat: 40.7544,
+    lng: -73.9977,
   },
   {
     id: 'chelsea',
@@ -24,10 +28,12 @@ const locations = [
     name: 'Aura West — Chelsea',
     address: '128 W 18th St, New York, NY 10011',
     hours: '8 AM – 8 PM',
-    distance: '1.2 miles away',
+    distance: '1.2 mi',
     services: ['Imaging', 'Mental Health'],
-    markerLabel: 'W1',
+    markerLabel: 'NY',
     markerStyle: 'beam',
+    lat: 40.7398,
+    lng: -73.9968,
   },
   {
     id: 'ues',
@@ -36,11 +42,14 @@ const locations = [
     name: 'Aura Upper East Side',
     address: '1100 Park Ave, New York, NY 10128',
     hours: '9 AM – 6 PM',
-    distance: '4.5 miles away',
+    distance: '4.5 mi',
     services: ['Primary Care', 'Dermatology'],
-    markerLabel: 'UE',
+    markerLabel: 'NY',
     markerStyle: 'default',
+    lat: 40.7894,
+    lng: -73.9530,
   },
+  // ── New York — Brooklyn ───────────────────────────────────────
   {
     id: 'brooklyn',
     tag: 'Specialized Lab',
@@ -48,10 +57,188 @@ const locations = [
     name: 'Aura Brooklyn Heights',
     address: '15 Montague St, Brooklyn, NY 11201',
     hours: '8 AM – 5 PM',
-    distance: '6.1 miles away',
+    distance: '6.1 mi',
     services: ['Cardiology', 'Blood Work'],
-    markerLabel: 'Bk',
+    markerLabel: 'BK',
     markerStyle: 'default',
+    lat: 40.6935,
+    lng: -73.9932,
+  },
+  {
+    id: 'brooklyn-wburg',
+    tag: 'Wellness Center',
+    tagStyle: 'beam',
+    name: 'Aura Williamsburg',
+    address: '325 Kent Ave, Brooklyn, NY 11249',
+    hours: '7 AM – 9 PM',
+    distance: '5.4 mi',
+    services: ['Physical Therapy', 'Nutrition', 'Mental Health'],
+    markerLabel: 'BK',
+    markerStyle: 'beam',
+    lat: 40.7134,
+    lng: -73.9618,
+  },
+  // ── Washington DC ─────────────────────────────────────────────
+  {
+    id: 'dc-flagship',
+    tag: 'Flagship Hospital',
+    tagStyle: 'default',
+    name: 'Aura Capitol — Foggy Bottom',
+    address: '2141 K St NW, Washington, DC 20037',
+    hours: 'Open 24/7',
+    services: ['ER', 'Oncology', 'Neurosurgery'],
+    markerLabel: 'DC',
+    markerStyle: 'default',
+    lat: 38.9025,
+    lng: -77.0485,
+  },
+  {
+    id: 'dc-clinic',
+    tag: 'Clinic',
+    tagStyle: 'default',
+    name: 'Aura Georgetown',
+    address: '3301 New Mexico Ave NW, Washington, DC 20016',
+    hours: '8 AM – 6 PM',
+    services: ['Primary Care', 'Pediatrics', 'Women\'s Health'],
+    markerLabel: 'DC',
+    markerStyle: 'default',
+    lat: 38.9280,
+    lng: -77.0735,
+  },
+  // ── Miami ─────────────────────────────────────────────────────
+  {
+    id: 'miami-brickell',
+    tag: 'Wellness Center',
+    tagStyle: 'beam',
+    name: 'Aura Brickell',
+    address: '1450 Brickell Ave, Miami, FL 33131',
+    hours: '7 AM – 9 PM',
+    services: ['Imaging', 'Sports Medicine', 'Dermatology'],
+    markerLabel: 'MI',
+    markerStyle: 'beam',
+    lat: 25.7585,
+    lng: -80.1918,
+  },
+  {
+    id: 'miami-health',
+    tag: 'Specialized Lab',
+    tagStyle: 'sage',
+    name: 'Aura Miami Health District',
+    address: '1150 NW 14th St, Miami, FL 33136',
+    hours: '8 AM – 5 PM',
+    services: ['Genomics Lab', 'Pathology', 'Blood Work'],
+    markerLabel: 'MI',
+    markerStyle: 'default',
+    lat: 25.7895,
+    lng: -80.2100,
+  },
+  // ── Houston ───────────────────────────────────────────────────
+  {
+    id: 'houston-tmc',
+    tag: 'Flagship Hospital',
+    tagStyle: 'default',
+    name: 'Aura Texas Medical Center',
+    address: '6560 Fannin St, Houston, TX 77030',
+    hours: 'Open 24/7',
+    services: ['ER', 'Cardiology', 'Transplant Center'],
+    markerLabel: 'HO',
+    markerStyle: 'default',
+    lat: 29.7105,
+    lng: -95.3965,
+  },
+  {
+    id: 'houston-kirby',
+    tag: 'Clinic',
+    tagStyle: 'default',
+    name: 'Aura Upper Kirby',
+    address: '2727 Kirby Dr, Houston, TX 77098',
+    hours: '9 AM – 6 PM',
+    services: ['Primary Care', 'Endocrinology', 'Allergy'],
+    markerLabel: 'HO',
+    markerStyle: 'default',
+    lat: 29.7380,
+    lng: -95.4215,
+  },
+  // ── Chicago ───────────────────────────────────────────────────
+  {
+    id: 'chicago-streeterville',
+    tag: 'Flagship Hospital',
+    tagStyle: 'default',
+    name: 'Aura Streeterville',
+    address: '259 E Erie St, Chicago, IL 60611',
+    hours: 'Open 24/7',
+    services: ['ER', 'Neurology', 'Orthopedics'],
+    markerLabel: 'CH',
+    markerStyle: 'default',
+    lat: 41.8940,
+    lng: -87.6210,
+  },
+  {
+    id: 'chicago-imd',
+    tag: 'Wellness Center',
+    tagStyle: 'beam',
+    name: 'Aura Illinois Medical District',
+    address: '1725 W Harrison St, Chicago, IL 60612',
+    hours: '7 AM – 8 PM',
+    services: ['Physical Therapy', 'Mental Health', 'Nutrition'],
+    markerLabel: 'CH',
+    markerStyle: 'beam',
+    lat: 41.8745,
+    lng: -87.6695,
+  },
+  // ── Los Angeles ───────────────────────────────────────────────
+  {
+    id: 'la-beverly',
+    tag: 'Flagship Hospital',
+    tagStyle: 'default',
+    name: 'Aura Beverly',
+    address: '8700 Beverly Blvd, Los Angeles, CA 90048',
+    hours: 'Open 24/7',
+    services: ['ER', 'Oncology', 'Robotic Surgery'],
+    markerLabel: 'LA',
+    markerStyle: 'default',
+    lat: 34.0762,
+    lng: -118.3810,
+  },
+  {
+    id: 'la-brentwood',
+    tag: 'Specialized Lab',
+    tagStyle: 'sage',
+    name: 'Aura Brentwood',
+    address: '200 S Barrington Ave, Los Angeles, CA 90049',
+    hours: '8 AM – 5 PM',
+    services: ['Genomics Lab', 'Blood Work', 'Radiology'],
+    markerLabel: 'LA',
+    markerStyle: 'default',
+    lat: 34.0535,
+    lng: -118.4645,
+  },
+  // ── San Francisco ─────────────────────────────────────────────
+  {
+    id: 'sf-parnassus',
+    tag: 'Wellness Center',
+    tagStyle: 'beam',
+    name: 'Aura Parnassus',
+    address: '400 Parnassus Ave, San Francisco, CA 94143',
+    hours: '7 AM – 9 PM',
+    services: ['Imaging', 'Mental Health', 'Integrative Medicine'],
+    markerLabel: 'SF',
+    markerStyle: 'beam',
+    lat: 37.7631,
+    lng: -122.4576,
+  },
+  {
+    id: 'sf-pac-heights',
+    tag: 'Clinic',
+    tagStyle: 'default',
+    name: 'Aura Pacific Heights',
+    address: '2100 Webster St, San Francisco, CA 94115',
+    hours: '9 AM – 6 PM',
+    services: ['Primary Care', 'Ophthalmology', 'Dermatology'],
+    markerLabel: 'SF',
+    markerStyle: 'default',
+    lat: 37.7885,
+    lng: -122.4325,
   },
 ];
 
@@ -75,24 +262,6 @@ const features = [
       'Continuous AI air purification and robotic sanitation protocols ensure the highest level of clinical environment safety.',
   },
 ];
-
-function SettingsIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  );
-}
 
 export default function LocationsPage() {
   const [activeId, setActiveId] = useState<string>(locations[0].id);
@@ -197,7 +366,7 @@ export default function LocationsPage() {
                 <div className="text-[0.9rem] leading-relaxed opacity-70 mb-4">
                   {loc.address}
                   <br />
-                  {loc.hours} • {loc.distance}
+                  {loc.hours}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {loc.services.map((s) => (
@@ -214,63 +383,14 @@ export default function LocationsPage() {
           </aside>
 
           <section
-            className="rounded-[var(--radius-card)] overflow-hidden relative border border-[var(--glass-border)] bg-[#e5e5f7] min-h-[400px] lg:min-h-0 order-first lg:order-none"
-            style={{
-              backgroundImage:
-                'radial-gradient(var(--glass-border) 1px, transparent 1px)',
-              backgroundSize: '20px 20px',
-            }}
+            className="rounded-[var(--radius-card)] overflow-hidden relative border border-[var(--glass-border)] min-h-[400px] lg:min-h-0 order-first lg:order-none"
             aria-label="Map"
           >
-            {/* Placeholder markers */}
-            <div
-              className="absolute w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-semibold cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.2)] rotate-[-45deg] top-[30%] left-[45%]"
-              style={{ background: 'var(--ink-color)', borderRadius: '50% 50% 50% 0' }}
-              aria-hidden
-            >
-              <span className="rotate-45">A1</span>
-            </div>
-            <div
-              className="absolute w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-semibold cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.2)] rotate-[-45deg] top-[55%] left-[35%]"
-              style={{
-                background: 'var(--beam-start)',
-                borderRadius: '50% 50% 50% 0',
-              }}
-              aria-hidden
-            >
-              <span className="rotate-45">W1</span>
-            </div>
-            <div
-              className="absolute w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-semibold cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.2)] rotate-[-45deg] top-[20%] left-[70%]"
-              style={{ background: 'var(--ink-color)', borderRadius: '50% 50% 50% 0' }}
-              aria-hidden
-            >
-              <span className="rotate-45">UE</span>
-            </div>
-
-            <div className="absolute bottom-6 right-6 flex flex-col gap-2">
-              <button
-                type="button"
-                className="w-10 h-10 bg-white border border-[var(--glass-border)] rounded-lg flex items-center justify-center text-[1.2rem] cursor-pointer hover:bg-[var(--bg-color)] transition-colors"
-                aria-label="Zoom in"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                className="w-10 h-10 bg-white border border-[var(--glass-border)] rounded-lg flex items-center justify-center text-[1.2rem] cursor-pointer hover:bg-[var(--bg-color)] transition-colors"
-                aria-label="Zoom out"
-              >
-                −
-              </button>
-              <button
-                type="button"
-                className="w-10 h-10 bg-white border border-[var(--glass-border)] rounded-lg flex items-center justify-center cursor-pointer hover:bg-[var(--bg-color)] transition-colors"
-                aria-label="Map settings"
-              >
-                <SettingsIcon />
-              </button>
-            </div>
+            <LocationsMap
+              locations={locations}
+              activeId={activeId}
+              onSelectLocation={setActiveId}
+            />
           </section>
         </main>
 

@@ -11,6 +11,8 @@ export interface Provider {
   rating: number;
   avatar_url: string;
   availabilities?: Availability[];
+  /** Returned by the list endpoint instead of full availabilities */
+  has_availability?: boolean;
 }
 
 export interface ProvidersResponse {

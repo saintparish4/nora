@@ -32,10 +32,18 @@ module Api
                     else
                       @providers.order(created_at: :desc)
                     end
-        
+
+        # Eager load availabilities to avoid N+1 queries, then materialize
+        # so .length uses the loaded collection instead of issuing a COUNT query
+        @providers = @providers.includes(:availabilities).load
+
         render json: {
-          providers: @providers.as_json(include: :availabilities),
-          total: @providers.count,
+          providers: @providers.map { |p|
+            p.as_json(except: :availabilities).merge(
+              has_availability: p.availabilities.any?
+            )
+          },
+          total: @providers.length,
           ai_filtered: params[:ai_specialty].present?
         }
       end

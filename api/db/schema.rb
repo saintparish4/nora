@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_08_000001) do
   create_table "appointments", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.integer "provider_id", null: false
@@ -78,7 +78,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
   end
 
   create_table "conversations", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.string "session_id"
     t.string "status", default: "active"
     t.json "context", default: {}
@@ -184,7 +184,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_214604) do
   add_foreign_key "blocked_slots", "providers"
   add_foreign_key "calendar_connections", "providers"
   add_foreign_key "conversation_messages", "conversations"
-  add_foreign_key "conversations", "users"
+  add_foreign_key "conversations", "users", on_delete: :nullify
   add_foreign_key "follow_up_recommendations", "appointments"
   add_foreign_key "follow_up_recommendations", "users"
   add_foreign_key "provider_conditions", "providers"

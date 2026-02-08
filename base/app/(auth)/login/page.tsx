@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl') ?? undefined;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,8 +21,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // login() from useAuth() calls api.login() → POST /auth/login, then redirects to /dashboard
-      await login(email, password);
+      // login() from useAuth() redirects to returnUrl (if present) or /dashboard
+      await login(email, password, returnUrl);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -142,7 +146,7 @@ export default function LoginPage() {
             <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--glass-border)' }}>
               <p className="text-[0.9rem] opacity-80 mb-3">New to Aura Health AI?</p>
               <Link
-                href="/signup"
+                href={returnUrl ? `/signup?returnUrl=${encodeURIComponent(returnUrl)}` : '/signup'}
                 className="text-[var(--ink-color)] no-underline font-semibold text-[0.85rem] relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-[var(--ink-color)] after:opacity-30 hover:after:opacity-100 after:transition-opacity"
               >
                 Begin your registration journey

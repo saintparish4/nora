@@ -3,115 +3,264 @@
 import Link from 'next/link';
 import { NoraLogo } from '@/components/navigation/nora-logo';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { ChatMessageList } from '@/components/chat/chat-message-list';
 import type { ChatMessageData } from '@/components/chat/chat-message';
+import { sendSymptomChatMessage } from '@/lib/api/symptom-chat';
+import { useAuth } from '@/lib/auth/context';
+import type { SymptomAnalysis, ChatProvider } from '@/types';
 
 // ---------------------------------------------------------------------------
-// Types – extend as needed when you connect the backend
+// Constants
 // ---------------------------------------------------------------------------
 
-/** Patient/session context from backend – placeholder shape */
-export interface PatientContext {
-  displayName: string;
-  primaryLocation?: string;
-}
-
-/** Backend API surface – implement these when connecting your API */
-export interface SymptomAnalyzerBackend {
-  sendMessage(sessionId: string | null, userMessage: string): Promise<ChatMessageData[]>;
-  startOrResumeSession(): Promise<{ sessionId: string; initialMessages?: ChatMessageData[] }>;
-  endSession(sessionId: string): Promise<void>;
-  getPatientContext(sessionId: string | null): Promise<PatientContext | null>;
-}
+const MIN_CHARS = 30;
 
 // ---------------------------------------------------------------------------
-// Backend placeholder – replace with real client (fetch, SDK, etc.)
+// Session ID — generated once per browser session
 // ---------------------------------------------------------------------------
 
-function useSymptomAnalyzerBackend(): {
-  sendMessage: (text: string) => Promise<void>;
-  endSession: () => Promise<void>;
-  patientContext: PatientContext | null;
-  isLoading: boolean;
-} {
-  const [patientContext] = useState<PatientContext | null>({
-    displayName: 'Anonymous Guest',
-    primaryLocation: 'NY',
-  });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const sendMessage = useCallback(async (text: string) => {
-    // TODO: call your backend, e.g. POST /api/symptom-analyzer/chat
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 300));
-    setIsLoading(false);
-  }, []);
-
-  const endSession = useCallback(async () => {
-    // TODO: call your backend, e.g. POST /api/symptom-analyzer/end
-    await new Promise((r) => setTimeout(r, 100));
-  }, []);
-
-  return { sendMessage, endSession, patientContext, isLoading };
+function getOrCreateSessionId(): string {
+  if (typeof window === 'undefined') return '';
+  let id = sessionStorage.getItem('symptom_chat_session_id');
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem('symptom_chat_session_id', id);
+  }
+  return id;
 }
 
 // ---------------------------------------------------------------------------
-// Initial state
+// Initial assistant greeting (shown before any API call)
 // ---------------------------------------------------------------------------
 
-const INITIAL_MESSAGES: ChatMessageData[] = [
-  {
-    id: 'welcome',
-    role: 'ai',
-    content:
-      "Hello. I am Aura's diagnostic assistant. To help me understand what you're experiencing, could you please describe your primary symptom and when it started?",
-  },
-  {
-    id: 'user-1',
-    role: 'user',
-    content:
-      "I've been having a persistent sharp pain in my lower back since yesterday morning. It seems to get worse when I try to stand up straight.",
-  },
-  {
-    id: 'ai-1',
-    role: 'ai',
-    content:
-      'I understand. Sharp lower back pain aggravated by standing. Have you noticed any numbness, tingling, or weakness radiating down either of your legs?',
-  },
-];
+const WELCOME_MESSAGE: ChatMessageData = {
+  id: 'welcome',
+  role: 'ai',
+  content:
+    "Hello, I'm your diagnostic assistant. To get started, please describe your main symptoms and how long you've been feeling this way. The more detail you provide, the better I can help.",
+};
 
 // ---------------------------------------------------------------------------
-// Technology page = Symptom Analyzer
+// Provider booking card – rendered inline in chat
+// ---------------------------------------------------------------------------
+
+function ProviderCard({
+  analysis,
+  providers,
+  onBook,
+}: {
+  analysis: SymptomAnalysis;
+  providers: ChatProvider[];
+  onBook: (provider: ChatProvider) => void;
+}) {
+  const urgencyColors: Record<string, string> = {
+    routine: 'bg-green-50 text-green-800 border-green-200',
+    urgent: 'bg-orange-50 text-orange-800 border-orange-200',
+    emergency: 'bg-red-50 text-red-800 border-red-200',
+  };
+
+  return (
+    <div className="self-start max-w-[90%] animate-fade-in">
+      {/* Analysis summary */}
+      <div className="mb-4 p-5 bg-white/90 backdrop-blur-sm border border-[var(--glass-border)] rounded-[20px] rounded-tl-md shadow-organic-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[0.7rem] uppercase tracking-widest opacity-50 font-semibold">
+            Recommendation
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <span className="px-3 py-1 bg-[var(--ink-color)]/5 rounded-full text-[0.8rem] font-semibold">
+            {analysis.specialty_name}
+          </span>
+          <span
+            className={`px-3 py-1 rounded-full text-[0.8rem] font-medium border ${
+              urgencyColors[analysis.urgency] ?? urgencyColors.routine
+            }`}
+          >
+            {analysis.urgency.charAt(0).toUpperCase() + analysis.urgency.slice(1)}
+          </span>
+        </div>
+        {analysis.urgency_details && (
+          <p className="text-[0.8rem] opacity-60">
+            {analysis.urgency_details.message}
+          </p>
+        )}
+      </div>
+
+      {/* Provider cards */}
+      {providers.length > 0 && (
+        <div className="space-y-3">
+          {providers.map((provider) => (
+            <div
+              key={provider.id}
+              className="p-5 bg-white/90 backdrop-blur-sm border border-[var(--glass-border)] rounded-[20px] shadow-organic-sm hover:shadow-organic transition-shadow duration-200"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--beam-start)] to-[var(--beam-end)] flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
+                  {provider.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-[0.95rem] truncate">
+                    {provider.name}
+                  </h4>
+                  <p className="text-[0.8rem] opacity-60">{provider.specialty}</p>
+                  <div className="flex flex-wrap items-center gap-3 mt-1 text-[0.78rem] opacity-50">
+                    {provider.rating > 0 && (
+                      <span className="flex items-center gap-1">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-yellow-500"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        {Number(provider.rating).toFixed(1)}
+                      </span>
+                    )}
+                    {provider.location && <span>{provider.location}</span>}
+                    {provider.hourly_rate > 0 && (
+                      <span>${provider.hourly_rate}/hr</span>
+                    )}
+                  </div>
+                  {provider.next_available_slots.length > 0 && (
+                    <p className="text-[0.78rem] text-green-700 mt-1">
+                      Next available:{' '}
+                      {new Date(
+                        provider.next_available_slots[0].start_time
+                      ).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => onBook(provider)}
+                className="mt-4 w-full py-2.5 bg-[var(--ink-color)] text-[var(--bg-color)] rounded-[var(--radius-pill)] text-[0.85rem] font-medium cursor-pointer border-0 transition-all duration-200 hover:opacity-90 hover:scale-[1.01] active:scale-[0.99]"
+              >
+                Book with {provider.name.split(' ')[0]}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Technology page — Conversational Symptom Analyzer
 // ---------------------------------------------------------------------------
 
 export default function TechnologyPage() {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatMessageData[]>(INITIAL_MESSAGES);
+  const { user } = useAuth();
+  const [messages, setMessages] = useState<ChatMessageData[]>([WELCOME_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const sessionIdRef = useRef<string>('');
 
-  const { sendMessage, endSession, patientContext, isLoading } =
-    useSymptomAnalyzerBackend();
+  // Recommendation state — set when the API returns analysis + providers
+  const [recommendation, setRecommendation] = useState<{
+    analysis: SymptomAnalysis;
+    providers: ChatProvider[];
+  } | null>(null);
 
+  // Initialize session ID on mount (client-only)
+  useEffect(() => {
+    sessionIdRef.current = getOrCreateSessionId();
+  }, []);
+
+  // ------- Send message to API -------
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
       const text = inputValue.trim();
       if (!text || isLoading) return;
+      if (text.length < MIN_CHARS) return; // enforced by disabled state, but double-check
+
       setInputValue('');
       setMessages((prev) => [
         ...prev,
         { id: `user-${Date.now()}`, role: 'user', content: text },
       ]);
-      sendMessage(text);
+      setIsLoading(true);
+
+      try {
+        const response = await sendSymptomChatMessage(
+          sessionIdRef.current,
+          text
+        );
+
+        // Append assistant message
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `ai-${Date.now()}`,
+            role: 'ai',
+            content: response.assistant_message,
+          },
+        ]);
+
+        // If analysis is ready, show the provider card
+        if (!response.need_more_detail && response.analysis && response.providers) {
+          setRecommendation({
+            analysis: response.analysis,
+            providers: response.providers,
+          });
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `ai-error-${Date.now()}`,
+            role: 'ai',
+            content: `I'm sorry, I encountered an issue: ${errorMsg}`,
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
     },
-    [inputValue, isLoading, sendMessage]
+    [inputValue, isLoading]
   );
 
-  const handleEndSession = useCallback(async () => {
-    await endSession();
-    router.push('/');
-  }, [endSession, router]);
+  // ------- Book with provider -------
+  const handleBookProvider = useCallback(
+    (provider: ChatProvider) => {
+      // Build the quick-booking URL with pre-fill params
+      const bookingUrl = `/quick-booking?specialty=${encodeURIComponent(
+        provider.specialty
+      )}&provider_id=${provider.id}`;
+
+      if (!user) {
+        // Not logged in — redirect to login with returnUrl
+        router.push(
+          `/login?returnUrl=${encodeURIComponent(bookingUrl)}`
+        );
+      } else {
+        // Already logged in — go directly to quick-booking
+        router.push(bookingUrl);
+      }
+    },
+    [user, router]
+  );
+
+  // ------- End session -------
+  const handleEndSession = useCallback(() => {
+    // Clear session storage so a new session starts next time
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('symptom_chat_session_id');
+    }
+    setMessages([WELCOME_MESSAGE]);
+    setRecommendation(null);
+    sessionIdRef.current = getOrCreateSessionId();
+  }, []);
+
+  const inputTrimmed = inputValue.trim();
+  const charCount = inputTrimmed.length;
+  const isBelowMin = charCount > 0 && charCount < MIN_CHARS;
+  const canSend = charCount >= MIN_CHARS && !isLoading;
 
   return (
     <div className="h-dvh bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-hidden relative flex flex-col">
@@ -146,18 +295,27 @@ export default function TechnologyPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#27AE60] analyzer-status-pulse" />
               SECURE ANALYZER ACTIVE
             </div>
-            <Link
-              href="/login"
-              className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
-            >
-              Patient Login
-            </Link>
+            {!user ? (
+              <Link
+                href="/login"
+                className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+              >
+                Patient Login
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard"
+                className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+              >
+                Dashboard
+              </Link>
+            )}
             <button
               type="button"
               onClick={handleEndSession}
               className="px-5 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] text-[var(--ink-color)] bg-transparent cursor-pointer transition-all duration-200 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
             >
-              End Session
+              New Session
             </button>
           </div>
         </nav>
@@ -173,14 +331,7 @@ export default function TechnologyPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-[0.85rem]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--beam-start)]" />
-                  {patientContext?.displayName ?? 'Anonymous Guest'}
-                </div>
-                <div className="flex items-center gap-2 text-[0.85rem]">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ background: 'var(--beam-end)' }}
-                  />
-                  Primary Location: {patientContext?.primaryLocation ?? 'NY'}
+                  {user?.email ?? 'Anonymous Guest'}
                 </div>
               </div>
             </div>
@@ -219,8 +370,20 @@ export default function TechnologyPage() {
               aria-hidden
             />
 
-            {/* Message list – handles scroll, animations, typing indicator */}
-            <ChatMessageList messages={messages} isLoading={isLoading} />
+            {/* Message list + provider card */}
+            <ChatMessageList
+              messages={messages}
+              isLoading={isLoading}
+              renderAfter={
+                recommendation ? (
+                  <ProviderCard
+                    analysis={recommendation.analysis}
+                    providers={recommendation.providers}
+                    onBook={handleBookProvider}
+                  />
+                ) : undefined
+              }
+            />
 
             {/* Input – pinned to bottom, outside scroll flow */}
             <div
@@ -230,6 +393,13 @@ export default function TechnologyPage() {
                   'linear-gradient(to top, rgba(239,238,236,1) 60%, rgba(239,238,236,0) 100%)',
               }}
             >
+              {/* Character count hint */}
+              {isBelowMin && (
+                <p className="text-[0.75rem] text-[var(--ink-color)]/50 mb-2 pl-2">
+                  {charCount} / {MIN_CHARS} characters minimum
+                </p>
+              )}
+
               <form
                 onSubmit={handleSubmit}
                 className="flex items-center bg-white border border-[var(--ink-color)] rounded-[var(--radius-pill)] pl-6 pr-2 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-shadow duration-300 focus-within:shadow-[0_10px_40px_rgba(0,0,0,0.08)]"
@@ -238,14 +408,14 @@ export default function TechnologyPage() {
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Type your response here..."
+                  placeholder="Describe your symptoms in detail..."
                   disabled={isLoading}
                   className="flex-1 border-0 outline-none font-sans text-[0.95rem] bg-transparent min-w-0 disabled:opacity-60 placeholder:text-[var(--ink-color)]/30"
                   aria-label="Your response"
                 />
                 <button
                   type="submit"
-                  disabled={!inputValue.trim() || isLoading}
+                  disabled={!canSend}
                   className="w-11 h-11 rounded-full bg-[var(--ink-color)] text-white border-0 cursor-pointer flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 flex-shrink-0"
                   aria-label="Send"
                 >

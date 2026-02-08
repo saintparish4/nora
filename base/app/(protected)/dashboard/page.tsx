@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import { ArrowRight, RefreshCw, Shield } from 'lucide-react';
+import { useAuth } from '@/lib/auth/context';
 
 export default function DashboardPage() {
+  const { logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden relative">
       {/* Noise overlay */}
@@ -32,11 +35,20 @@ export default function DashboardPage() {
             <Link href="/dashboard/settings" className="opacity-50 hover:opacity-100 transition-opacity">Settings</Link>
           </div>
           
-          <div className="flex items-center gap-3 bg-white/40 py-1.5 pl-1.5 pr-4 rounded-full border border-[var(--glass-border)]">
-            <div className="w-8 h-8 rounded-full bg-[var(--beam-start)] flex items-center justify-center font-semibold text-[0.8rem]">
-              EB
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 bg-white/40 py-1.5 pl-1.5 pr-4 rounded-full border border-[var(--glass-border)]">
+              <div className="w-8 h-8 rounded-full bg-[var(--beam-start)] flex items-center justify-center font-semibold text-[0.8rem]">
+                EB
+              </div>
+              <span className="text-[0.85rem] font-medium">Elena Berg</span>
             </div>
-            <span className="text-[0.85rem] font-medium">Elena Berg</span>
+            <button
+              type="button"
+              onClick={() => logout()}
+              className="text-[0.85rem] font-medium opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+            >
+              Log out
+            </button>
           </div>
         </nav>
 

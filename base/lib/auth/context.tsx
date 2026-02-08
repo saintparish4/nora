@@ -7,8 +7,8 @@ import { User, signup as apiSignup, login as apiLogin, logout as apiLogout, getC
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, returnUrl?: string) => Promise<void>;
+  signup: (email: string, password: string, returnUrl?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -26,16 +26,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const data = await apiLogin(email, password);
-    setUser(data.user);
-    router.push('/dashboard');
+  // Validate that a return URL is a safe relative path (prevent open redirects).
+  const safeReturnUrl = (url?: string): string => {
+    if (!url) return '/dashboard';
+    // Only allow relative paths starting with /
+    if (url.startsWith('/') && !url.startsWith('//')) return url;
+    return '/dashboard';
   };
 
-  const signup = async (email: string, password: string) => {
+  const login = async (email: string, password: string, returnUrl?: string) => {
+    const data = await apiLogin(email, password);
+    setUser(data.user);
+    router.push(safeReturnUrl(returnUrl));
+  };
+
+  const signup = async (email: string, password: string, returnUrl?: string) => {
     const data = await apiSignup(email, password);
     setUser(data.user);
-    router.push('/dashboard');
+    router.push(safeReturnUrl(returnUrl));
   };
 
   const logout = async () => {

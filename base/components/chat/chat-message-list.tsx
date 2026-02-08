@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import {
   ChatMessage,
   TypingIndicator,
@@ -14,6 +14,8 @@ import {
 interface ChatMessageListProps {
   messages: ChatMessageData[];
   isLoading?: boolean;
+  /** Optional React node rendered after all messages (e.g. provider card). */
+  renderAfter?: ReactNode;
 }
 
 // ---------------------------------------------------------------------------
@@ -23,6 +25,7 @@ interface ChatMessageListProps {
 export function ChatMessageList({
   messages,
   isLoading = false,
+  renderAfter,
 }: ChatMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -33,7 +36,7 @@ export function ChatMessageList({
       bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }, 80);
     return () => clearTimeout(id);
-  }, [messages, isLoading]);
+  }, [messages, isLoading, renderAfter]);
 
   return (
     <div
@@ -46,6 +49,9 @@ export function ChatMessageList({
       ))}
 
       {isLoading && <TypingIndicator />}
+
+      {/* Optional content after messages (e.g. provider card) */}
+      {renderAfter}
 
       {/* Invisible anchor for auto-scroll */}
       <div ref={bottomRef} className="h-px shrink-0" />

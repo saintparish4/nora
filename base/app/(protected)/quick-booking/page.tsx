@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
 import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,11 @@ type Step = 'symptoms' | 'providers' | 'slots' | 'confirm' | 'success';
 
 export default function QuickBookingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prefillSpecialty = searchParams.get('specialty');
+  const prefillProviderId = searchParams.get('provider_id');
+  const hasPrefilled = useRef(false);
+
   const [currentStep, setCurrentStep] = useState<Step>('symptoms');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,6 +27,45 @@ export default function QuickBookingPage() {
   const [selectedProvider, setSelectedProvider] = useState<Provider & { next_available_slots: TimeSlot[] } | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [_appointmentId, setAppointmentId] = useState<number | null>(null);
+
+  // Pre-fill from chat: if specialty query param is present, auto-analyze
+  useEffect(() => {
+    if (!prefillSpecialty || hasPrefilled.current) return;
+    hasPrefilled.current = true;
+
+    const prefillDescription = `I need to see a ${prefillSpecialty} specialist`;
+    setDescription(prefillDescription);
+    setLoading(true);
+
+    quickBookingAnalyze(prefillDescription)
+      .then((result) => {
+        setAnalysis(result.analysis);
+        setProviders(result.providers);
+
+        if (result.providers.length === 0) {
+          setError('No providers available for this specialty. Please try again later.');
+          return;
+        }
+
+        // If a specific provider was pre-selected from chat, jump to slots
+        if (prefillProviderId) {
+          const match = result.providers.find(
+            (p: Provider & { next_available_slots: TimeSlot[] }) => String(p.id) === prefillProviderId
+          );
+          if (match) {
+            setSelectedProvider(match);
+            setCurrentStep('slots');
+            return;
+          }
+        }
+
+        setCurrentStep('providers');
+      })
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Failed to load providers');
+      })
+      .finally(() => setLoading(false));
+  }, [prefillSpecialty, prefillProviderId]);
 
   const handleAnalyzeSymptoms = async () => {
     if (description.length < 10) {

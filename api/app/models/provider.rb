@@ -11,13 +11,24 @@ class Provider < ApplicationRecord
     validates :experience_years, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validates :rating, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }, allow_nil: true
 
-    # Map AI specialty keys to provider specialties
+    # Map AI specialty keys (from SymptomAnalyzerService) to provider specialties.
+    # Every key the analyzer can return must be present so chat recommendations
+    # always find matching providers when they exist in the database.
     SPECIALTY_MAPPINGS = {
         'primary_care' => ['Primary Care'],
         'cardiology' => ['Cardiology'],
+        'dermatology' => ['Dermatology'],
+        'urgent_care' => ['Urgent Care'],
+        'emergency' => ['Emergency Room', 'Emergency Medicine'],
+        'mental_health' => ['Mental Health Counseling', 'Psychiatry', 'Psychology'],
+        'pediatrics' => ['Pediatrics'],
+        'gynecology' => ['Gynecology', 'OB-GYN'],
+        'oncology' => ['Oncology'],
+        'orthopedics' => ['Orthopedics', 'Orthopedic Surgery'],
+        'physical_therapy' => ['Physical Therapy'],
+        'nutrition' => ['Nutrition Counseling', 'Nutrition'],
         'ophthalmology' => ['Ophthalmology'],
-        'dentistry' => ['Dentistry'],
-        'pediatrics' => ['Pediatrics']
+        'dentistry' => ['Dentistry']
     }.freeze
 
     scope :by_ai_specialty, ->(ai_specialty) {

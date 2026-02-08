@@ -30,6 +30,9 @@ Rails.application.routes.draw do
       # Symptoms analysis
       post '/analyze-symptoms', to: 'symptoms#analyze'
 
+      # Conversational symptom chat (guest-friendly)
+      post '/symptom-chat/send', to: 'symptom_chat#send_message'
+
     end
   end
 end

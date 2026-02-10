@@ -4,7 +4,7 @@
 
 NORA is an AI-powered healthcare booking platform that intelligently matches patients with the right providers and eliminates scheduling friction. The platform leverages advanced AI to analyze symptoms, recommend appropriate specialists, and streamline the entire appointment booking process—getting patients from symptoms to confirmed appointments in under 2 minutes.
 
-## Features
+## Features 
 
 | Feature | Description |
 |---------|-------------|

@@ -3,15 +3,20 @@
 require 'rails_helper'
 
 RSpec.describe PhiAccessLoggable, type: :controller do
-    # Minimal test controller that includes the concern
+    # Minimal test controller that includes the concern.
+    # Implements current_user so specs can stub it (RSpec requires the method to exist).
     controller(ActionController::API) do
       include PhiAccessLoggable
-  
+
+      def current_user
+        # Stubbed in specs
+      end
+
       def index
         log_phi_access("Appointment", 42, :view)
         render json: { ok: true }
       end
-  
+
       def create
         log_phi_access("Appointment", 99, :create, user_id: nil)
         render json: { ok: true }, status: :created
@@ -30,8 +35,13 @@ RSpec.describe PhiAccessLoggable, type: :controller do
   
     describe "#log_phi_access" do
       context "with authenticated user" do
-        before { allow(controller).to receive(:current_user).and_return(user) }
-  
+        before do
+          allow(controller).to receive(:current_user).and_return(user)
+          # get :index builds a new request, so stub the class so the request used during the action has these
+          allow_any_instance_of(ActionDispatch::Request).to receive(:request_id).and_return('req-spec-123')
+          allow_any_instance_of(ActionDispatch::Request).to receive(:remote_ip).and_return('127.0.0.1')
+        end
+
         it "creates an audit log row with the correct attributes" do
           expect { get :index }.to change(PhiAccessLog, :count).by(1)
   

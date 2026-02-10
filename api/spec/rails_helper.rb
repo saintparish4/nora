@@ -35,6 +35,9 @@ RSpec.configure do |config|
   
   # ActiveJob test helpers
   config.include ActiveJob::TestHelper
+
+  # Time helpers (travel_to, freeze_time, etc.)
+  config.include ActiveSupport::Testing::TimeHelpers
   
   # Clear enqueued jobs before and after each test
   config.around(:each) do |example|

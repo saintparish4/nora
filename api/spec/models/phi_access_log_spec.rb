@@ -20,7 +20,16 @@ RSpec.describe PhiAccessLog, type: :model do
   # -----------------------------------------------------------------
   describe 'validations' do
     it 'is valid with all required fields' do
-      expect(log).to be_valid
+      record = described_class.new(
+        user_id: 1,
+        resource_type: 'Appointment',
+        resource_id: '42',
+        action: 'view',
+        session_id: 'sess_abc',
+        request_id: 'req_xyz',
+        ip_address: '127.0.0.1'
+      )
+      expect(record).to be_valid
     end
 
     it 'requires resource_type' do

@@ -73,6 +73,8 @@ module Api
             content: assistant_msg
           )
 
+          log_phi_access("Conversation", conversation.id, :create, user_id: current_user_if_present&.id)
+
           return render json: {
             session_id: session_id,
             assistant_message: assistant_msg,
@@ -108,6 +110,8 @@ module Api
           role: 'assistant',
           content: assistant_msg
         )
+
+        log_phi_access("Conversation", conversation.id, :create, user_id: current_user_if_present&.id)
 
         render json: {
           session_id: session_id,

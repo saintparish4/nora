@@ -16,6 +16,7 @@ module Api
         )
 
         if appointment.save
+          log_phi_access("Appointment", appointment.id, :create)
           render json: {
             message: 'Appointment booked successfully!',
             appointment: appointment.as_json(
@@ -43,6 +44,8 @@ module Api
         upcoming = appointments.upcoming
         past = appointments.past
 
+        (upcoming + past).each { |appt| log_phi_access("Appointment", appt.id, :view) }
+
         render json: {
           upcoming: upcoming.as_json(
             include: {
@@ -60,6 +63,7 @@ module Api
       # GET /api/v1/appointments/:id
       def show 
         appointment = current_user.appointments.find(params[:id])
+        log_phi_access("Appointment", appointment.id, :view)
         render json: {
           appointment: appointment.as_json(
             include: {
@@ -84,6 +88,7 @@ module Api
         end
 
         if appointment.update(status: 'cancelled')
+          log_phi_access("Appointment", appointment.id, :update)
           begin
             Notifications::NotificationService.send_cancellation_notifications(appointment, 'patient')
           rescue => e

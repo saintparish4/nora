@@ -22,6 +22,8 @@ module Api
                 analyzer = Triage::SymptomAnalyzerService.new(description)
                 result = analyzer.analyze
 
+                log_phi_access("SymptomAnalysis", request.request_id, :create)
+
                 render json: {
                     analysis: result,
                     timestamp: Time.current.iso8601

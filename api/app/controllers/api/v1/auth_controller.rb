@@ -47,12 +47,14 @@ module Api
       
       # GET /api/v1/auth/me
       def me
+        log_phi_access("User", current_user.id, :view)
         render json: { user: current_user.as_json(only: [:id, :email]) }
       end
       
       # PATCH /api/v1/auth/preferences
       def update_preferences
         if current_user.update(preference_params)
+          log_phi_access("User", current_user.id, :update)
           render json: {
             message: 'Preferences updated successfully',
             user: current_user.as_json(only: [:id, :email, :booking_confirmations, :reminders_24h, :cancellation_notices])

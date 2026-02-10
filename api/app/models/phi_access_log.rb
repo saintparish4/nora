@@ -19,11 +19,11 @@ class PhiAccessLog < ApplicationRecord
   validates :action, presence: true, inclusion: { in: ALLOWED_ACTIONS }
 
   # -----------------------------------------------------------------
-  # Immutabillity 
+  # Immutability
   # -----------------------------------------------------------------
   after_initialize :readonly!, if: :persisted?
 
-  before_validation { raise ActiveRecord::ReadOnlyRecord, "PHI audit logs are immutable" } 
+  before_validation { raise ActiveRecord::ReadOnlyRecord, "PHI audit logs are immutable" if persisted? }
   before_destroy { raise ActiveRecord::ReadOnlyRecord, "PHI audit logs cannot be destroyed" }
 
   # -----------------------------------------------------------------

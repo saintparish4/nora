@@ -35,6 +35,8 @@ module Api
                   .merge(next_available_slots: next_slots)
         end
 
+        log_phi_access("SymptomAnalysis", request.request_id, :create)
+
         render json: {
           analysis: analysis,
           providers: providers_with_slots,
@@ -62,6 +64,7 @@ module Api
         )
 
         if appointment.save
+          log_phi_access("Appointment", appointment.id, :create)
           # Send notifications asynchronously
           begin
             Notifications::NotificationService.send_booking_notifications(appointment)

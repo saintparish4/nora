@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_08_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_08_000002) do
   create_table "appointments", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.integer "provider_id", null: false
@@ -105,6 +105,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_000001) do
     t.index ["recommendation_type"], name: "index_follow_up_recommendations_on_recommendation_type"
     t.index ["user_id", "scheduled_for"], name: "index_follow_up_recommendations_on_user_id_and_scheduled_for"
     t.index ["user_id"], name: "index_follow_up_recommendations_on_user_id"
+  end
+
+  create_table "phi_access_logs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "resource_type", null: false
+    t.string "resource_id", null: false
+    t.string "action", null: false
+    t.string "session_id"
+    t.string "request_id"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_phi_access_logs_on_created_at"
+    t.index ["resource_type", "resource_id"], name: "index_phi_access_logs_on_resource_type_and_resource_id"
+    t.index ["user_id"], name: "index_phi_access_logs_on_user_id"
   end
 
   create_table "provider_conditions", force: :cascade do |t|

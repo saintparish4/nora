@@ -26,7 +26,6 @@
 
 # General ignores
 /notebook
-/docs
 .DS_Store
 *.log
 *.tmp

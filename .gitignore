@@ -1,6 +1,7 @@
 # Root level .gitignore for NORA project
 
 # Rails API specific ignores
+/api/coverage
 /api/log/*
 !/api/log/.keep
 /api/tmp/*

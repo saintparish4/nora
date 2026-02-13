@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { AuthProtected } from '@/components/dashboard/auth-protected';
-import { PatientSidebar } from '@/components/dashboard/patient-sidebar';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { 
   Inbox, 
@@ -158,12 +155,8 @@ export default function MessagesPage() {
   const unreadCount = MOCK_MESSAGES.filter(m => m.unread).length;
 
   return (
-    <AuthProtected>
-      <SidebarProvider suppressHydrationWarning>
-        <PatientSidebar />
-        <SidebarInset>
-          <div className="flex flex-1 flex-col h-full">
-            {/* Header */}
+    <div className="flex flex-1 flex-col h-full pb-16">
+      {/* Header */}
             <div className="border-b bg-white px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -398,8 +391,5 @@ export default function MessagesPage() {
               )}
             </div>
           </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </AuthProtected>
   );
 }

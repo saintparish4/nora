@@ -430,7 +430,7 @@ function QuickBookingContent() {
               <div className="flex gap-4 justify-center">
                 <Button
                   variant="outline"
-                  onClick={() => router.push('/appointments')}
+                  onClick={() => router.push('/dashboard/appointments')}
                 >
                   View Appointments
                 </Button>

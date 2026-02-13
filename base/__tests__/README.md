@@ -1,6 +1,6 @@
 # Settings Page Tests
 
-This document describes the test suite for the Settings page component (`app/(protected)/settings/page.tsx`).
+This document describes the test suite for the Settings page component (`app/(protected)/dashboard/settings/page.tsx`).
 
 ## Test Overview
 

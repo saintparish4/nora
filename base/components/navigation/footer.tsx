@@ -8,7 +8,7 @@ import WavyDivider from '@/components/ui/wavy-divider';
 const footerLinks = {
   product: [
     { href: '/how-it-works', label: 'How It Works' },
-    { href: '/providers', label: 'Find Providers' },
+    { href: '/dashboard/providers', label: 'Find Providers' },
     { href: '/quick-booking', label: 'Book Now' },
   ],
   company: [

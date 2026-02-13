@@ -2,58 +2,10 @@
 
 import Link from 'next/link';
 import { ArrowRight, RefreshCw, Shield } from 'lucide-react';
-import { useAuth } from '@/lib/auth/context';
 
 export default function DashboardPage() {
-  const { logout } = useAuth();
-
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden relative">
-      {/* Noise overlay */}
-      <div className="noise-overlay" />
-      
-      {/* Beam background gradient */}
-      <div 
-        className="absolute -top-[100px] -right-[100px] w-[400px] h-[400px] -z-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(224,242,194,0.4) 0%, rgba(239,238,236,0) 70%)',
-          filter: 'blur(40px)'
-        }}
-      />
-
-      <div className="max-w-[1400px] mx-auto px-10 relative z-10">
-        {/* Navigation */}
-        <nav className="flex justify-between items-center py-6 mb-6">
-          <Link href="/" className="font-serif text-2xl italic flex items-center gap-3">
-            <span className="w-px h-6 bg-foreground rotate-[15deg]" />
-            nora.ai
-          </Link>
-          
-          <div className="flex gap-8 text-[0.9rem]">
-            <Link href="#" className="font-medium">Health Records</Link>
-            <Link href="#" className="opacity-50 hover:opacity-100 transition-opacity">Care Team</Link>
-            <Link href="/dashboard/settings" className="opacity-50 hover:opacity-100 transition-opacity">Settings</Link>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 bg-white/40 py-1.5 pl-1.5 pr-4 rounded-full border border-[var(--glass-border)]">
-              <div className="w-8 h-8 rounded-full bg-[var(--beam-start)] flex items-center justify-center font-semibold text-[0.8rem]">
-                EB
-              </div>
-              <span className="text-[0.85rem] font-medium">Elena Berg</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => logout()}
-              className="text-[0.85rem] font-medium opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
-            >
-              Log out
-            </button>
-          </div>
-        </nav>
-
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-12 gap-6 pb-16">
+    <div className="grid grid-cols-12 gap-6 pb-16">
           
           {/* Hero Summary Card */}
           <div className="col-span-12 lg:col-span-8 rounded-3xl p-10 relative overflow-hidden bg-gradient-to-br from-white/60 to-white/20 backdrop-blur-[10px] border border-[var(--glass-border)]">
@@ -127,7 +79,11 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
-            <Link href="/providers" className="flex items-center justify-between p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
+            <Link href="/dashboard/get-care" className="flex items-center justify-between p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
+              <span>Get Care</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link href="/dashboard/providers" className="flex items-center justify-between p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
               <span>Book Specialist</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -240,7 +196,7 @@ export default function DashboardPage() {
               </div>
               
               <Link 
-                href="/appointments" 
+                href="/dashboard/appointments" 
                 className="flex items-center justify-center p-5 rounded-[20px] border border-dashed border-[var(--glass-border)] bg-transparent hover:bg-white/20 transition-all"
               >
                 <div className="text-center">
@@ -250,9 +206,6 @@ export default function DashboardPage() {
               </Link>
             </div>
           </div>
-          
         </div>
-      </div>
-    </div>
   );
 }

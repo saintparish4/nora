@@ -55,7 +55,7 @@ export default function Header({ variant = 'light' }: HeaderProps) {
           <div className="hidden md:flex items-center gap-2">
             {[
               { href: '/how-it-works', label: 'How It Works' },
-              { href: '/providers', label: 'Providers' },
+              { href: '/dashboard/providers', label: 'Providers' },
               { href: '/for-providers', label: 'For Providers' },
             ].map((item) => (
               <Link
@@ -112,7 +112,7 @@ export default function Header({ variant = 'light' }: HeaderProps) {
             <div className="flex flex-col gap-1">
               {[
                 { href: '/how-it-works', label: 'How It Works' },
-                { href: '/providers', label: 'Providers' },
+                { href: '/dashboard/providers', label: 'Providers' },
                 { href: '/for-providers', label: 'For Providers' },
                 { href: '/login', label: 'Sign In' },
               ].map((item) => (

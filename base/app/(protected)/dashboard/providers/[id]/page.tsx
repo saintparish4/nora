@@ -3,9 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getProvider, getAvailableSlots, bookAppointment, Provider, TimeSlot, AvailableSlotsResponse } from '@/lib/api';
-import { AuthProtected } from '@/components/dashboard/auth-protected';
-import { PatientSidebar } from '@/components/dashboard/patient-sidebar';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function ProviderDetailPage() {
   const params = useParams();
@@ -18,7 +15,6 @@ export default function ProviderDetailPage() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   
-  // Booking modal state
   const [showModal, setShowModal] = useState(false);
   const [notes, setNotes] = useState('');
   const [booking, setBooking] = useState(false);
@@ -74,7 +70,6 @@ export default function ProviderDetailPage() {
       
       setBookingSuccess(true);
       
-      // Reload slots to remove booked slot
       const slotsResponse = await getAvailableSlots(providerId);
       setSlotsData(slotsResponse);
     } catch (error: unknown) {
@@ -85,7 +80,7 @@ export default function ProviderDetailPage() {
 
   const handleCloseModal = () => {
     if (bookingSuccess) {
-      router.push('/appointments');
+      router.push('/dashboard/appointments');
     } else {
       setShowModal(false);
       setNotes('');
@@ -114,7 +109,7 @@ export default function ProviderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[40vh]">
         <div className="text-xl">Loading provider details...</div>
       </div>
     );
@@ -122,7 +117,7 @@ export default function ProviderDetailPage() {
 
   if (!provider) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[40vh]">
         <div className="text-xl">Provider not found</div>
       </div>
     );
@@ -132,14 +127,10 @@ export default function ProviderDetailPage() {
   const slotsForSelectedDate = selectedDate && slotsData ? slotsData.slots[selectedDate] || [] : [];
 
   return (
-    <AuthProtected>
-      <SidebarProvider suppressHydrationWarning>
-        <PatientSidebar />
-        <SidebarInset>
-          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-6">
-            <div className="max-w-7xl mx-auto w-full px-4 py-8">
+    <div className="flex flex-1 flex-col gap-6 pb-16">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Provider Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-[var(--glass-border)]">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-24 h-24 bg-gray-200 rounded-full flex-shrink-0"></div>
             <div className="flex-1">
@@ -175,7 +166,7 @@ export default function ProviderDetailPage() {
         </div>
 
         {/* Available Slots Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 border border-[var(--glass-border)]">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Book an Appointment
           </h2>
@@ -186,7 +177,6 @@ export default function ProviderDetailPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Date Selector */}
               <div className="md:col-span-1">
                 <h3 className="text-lg font-semibold mb-4 text-black">
                   Select a Date
@@ -219,54 +209,52 @@ export default function ProviderDetailPage() {
                 </div>
               </div>
 
-              {/* Time Slots */}
               <div className="md:col-span-2">
                 <h3 className="text-lg font-semibold mb-4 text-black">
                   Available Times for {selectedDate ? formatDate(selectedDate) : '...'}
                 </h3>
                 <div>
-                {slotsForSelectedDate.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No available slots for this date
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {slotsForSelectedDate.map((slot: TimeSlot, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`px-4 py-3 rounded-lg border-2 font-semibold transition-all ${
-                          selectedSlot === slot
-                            ? 'border-[#CC342D] bg-[#CC342D] text-white'
-                            : 'border-gray-300 hover:border-[#CC342D] hover:bg-[#CC342D] hover:bg-opacity-10 text-black'
-                        }`}
-                      >
-                        {slot.time}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  {slotsForSelectedDate.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      No available slots for this date
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {slotsForSelectedDate.map((slot: TimeSlot, index: number) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedSlot(slot)}
+                          className={`px-4 py-3 rounded-lg border-2 font-semibold transition-all ${
+                            selectedSlot === slot
+                              ? 'border-[#CC342D] bg-[#CC342D] text-white'
+                              : 'border-gray-300 hover:border-[#CC342D] hover:bg-[#CC342D] hover:bg-opacity-10 text-black'
+                          }`}
+                        >
+                          {slot.time}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                {/* Booking Preview */}
-                {selectedSlot && (
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border-2 border-[#CC342D]">
-                    <h4 className="font-semibold text-lg mb-3 text-black">
-                      Selected Appointment
-                    </h4>
-                    <p className="text-sm text-black mb-2">
-                      <strong>Date:</strong> {formatDate(selectedSlot.date)}
-                    </p>
-                    <p className="text-sm text-black mb-2">
-                      <strong>Time:</strong> {selectedSlot.time}
-                    </p>
-                    <p className="text-sm text-black mb-4">
-                      <strong>Duration:</strong> 30 minutes
-                    </p>
-                    <button onClick={handleBookingClick} className="w-full bg-[#CC342D] text-white py-3 rounded-lg font-semibold hover:bg-[#a82a24] transition">
-                      Book Appointment - ${parseFloat(provider.hourly_rate.toString()).toFixed(0)}
-                    </button>
-                  </div>
-                )}
+                  {selectedSlot && (
+                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border-2 border-[#CC342D]">
+                      <h4 className="font-semibold text-lg mb-3 text-black">
+                        Selected Appointment
+                      </h4>
+                      <p className="text-sm text-black mb-2">
+                        <strong>Date:</strong> {formatDate(selectedSlot.date)}
+                      </p>
+                      <p className="text-sm text-black mb-2">
+                        <strong>Time:</strong> {selectedSlot.time}
+                      </p>
+                      <p className="text-sm text-black mb-4">
+                        <strong>Duration:</strong> 30 minutes
+                      </p>
+                      <button onClick={handleBookingClick} className="w-full bg-[#CC342D] text-white py-3 rounded-lg font-semibold hover:bg-[#a82a24] transition">
+                        Book Appointment - ${parseFloat(provider.hourly_rate.toString()).toFixed(0)}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,11 +263,9 @@ export default function ProviderDetailPage() {
 
         {/* Booking Modal */}
         {showModal && selectedSlot && provider && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            {bookingSuccess ? (
-              <>
-                {/* Success Screen */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+              {bookingSuccess ? (
                 <div className="p-6">
                   <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -295,92 +281,87 @@ export default function ProviderDetailPage() {
                     Your appointment has been successfully booked.
                   </p>
                   <div className="space-y-4 mb-6">
-                  <div className="border-b pb-3">
-                    <p className="text-sm text-gray-500">Provider</p>
-                    <p className="font-semibold text-black">{provider.name}</p>
+                    <div className="border-b pb-3">
+                      <p className="text-sm text-gray-500">Provider</p>
+                      <p className="font-semibold text-black">{provider.name}</p>
                     </div>
                     <div className="border-b pb-3">
-                    <p className="text-sm text-gray-500">Date & Time</p>
-                    <p className="font-semibold text-black">
-                      {formatDate(selectedSlot.date)} at {selectedSlot.time}
-                    </p>
+                      <p className="text-sm text-gray-500">Date & Time</p>
+                      <p className="font-semibold text-black">
+                        {formatDate(selectedSlot.date)} at {selectedSlot.time}
+                      </p>
                     </div>
                     <div className="border-b pb-3">
-                    <p className="text-sm text-gray-500">Duration</p>
-                    <p className="font-semibold text-black">30 minutes</p>
+                      <p className="text-sm text-gray-500">Duration</p>
+                      <p className="font-semibold text-black">30 minutes</p>
                     </div>
                   </div>
                   <button onClick={handleCloseModal} className="w-full bg-[#CC342D] text-white py-3 rounded-lg font-semibold hover:bg-[#a82a24] transition">
                     View My Appointments
                   </button>
                 </div>
-              </>
-            ) : (
-              <>
-                {/* Booking Form */}
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-6 text-black">
-                  Confirm Booking
-                </h2>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 pb-4 border-b">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                    <div>
-                      <p className="font-semibold text-black">{provider.name}</p>
-                      <p className="text-sm text-gray-600">{provider.specialty}</p>
+              ) : (
+                <>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-black">
+                      Confirm Booking
+                    </h2>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 pb-4 border-b">
+                        <div className="w-12 h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                        <div>
+                          <p className="font-semibold text-black">{provider.name}</p>
+                          <p className="text-sm text-gray-600">{provider.specialty}</p>
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold mb-2 text-black">
+                          Appointment Details
+                        </h3>
+                        <p className="text-sm mb-1 text-black">
+                          {formatDate(selectedSlot.date)} at {selectedSlot.time}
+                        </p>
+                        <p className="text-sm text-gray-600">Duration: 30 minutes</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-black">
+                          Notes (Optional)
+                        </label>
+                        <textarea
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#CC342D] focus:border-transparent text-black"
+                          placeholder="Any special requests or information..."
+                        />
+                      </div>
+                      {bookingError && (
+                        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                          {bookingError}
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center pt-4 border-t">
+                        <span className="font-semibold text-black">Total</span>
+                        <span className="text-2xl font-bold text-[#CC342D]">
+                          ${parseFloat(provider.hourly_rate.toString()).toFixed(0)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2 text-black">
-                    Appointment Details
-                    </h3>
-                    <p className="text-sm mb-1 text-black">
-                      {formatDate(selectedSlot.date)} at {selectedSlot.time}
-                    </p>
-                    <p className="text-sm text-gray-600">Duration: 30 minutes</p>
+                  <div className="flex gap-3 px-6 pb-6">
+                    <button onClick={handleCloseModal} className="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                      Cancel
+                    </button>
+                    <button onClick={handleBookAppointment} disabled={booking} className="flex-1 bg-[#CC342D] text-white py-3 rounded-lg font-semibold hover:bg-[#a82a24] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      {booking ? 'Booking...' : 'Confirm Booking'}
+                    </button>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-black">
-                      Notes (Optional)
-                    </label>
-                    <textarea
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#CC342D] focus:border-transparent text-black"
-                      placeholder="Any special requests or information..."
-                    />
-                  </div>
-                  {bookingError && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-                      {bookingError}
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center pt-4 border-t">
-                    <span className="font-semibold text-black">Total</span>
-                    <span className="text-2xl font-bold text-[#CC342D]">
-                      ${parseFloat(provider.hourly_rate.toString()).toFixed(0)}
-                    </span>
-                  </div>
-                </div>
-                </div>
-                <div className="flex gap-3 px-6 pb-6">
-                  <button onClick={handleCloseModal} className="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
-                    Cancel
-                  </button>
-                  <button onClick={handleBookAppointment} disabled={booking} className="flex-1 bg-[#CC342D] text-white py-3 rounded-lg font-semibold hover:bg-[#a82a24] transition disabled:opacity-50 disabled:cursor-not-allowed">
-                    {booking ? 'Booking...' : 'Confirm Booking'}
-                  </button>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
         )}
       </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </AuthProtected>
+    </div>
   );
 }

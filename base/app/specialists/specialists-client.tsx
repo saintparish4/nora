@@ -288,13 +288,13 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
                 </p>
                 <div className="flex justify-between items-center pt-6 border-t border-[var(--glass-border)]">
                   <Link
-                    href={`/providers/${s.id}`}
+                    href={`/dashboard/providers/${s.id}`}
                     className="text-[var(--ink-color)] text-[0.9rem] font-medium no-underline flex items-center gap-2 hover:[&>svg]:translate-x-1 [&>svg]:transition-transform [&>svg]:duration-300"
                   >
                     View Profile <ArrowRightIcon />
                   </Link>
                   <Link
-                    href={`/providers/${s.id}`}
+                    href={`/dashboard/providers/${s.id}`}
                     className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] bg-transparent cursor-pointer transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
                   >
                     Book Now

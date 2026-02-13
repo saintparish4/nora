@@ -143,6 +143,19 @@ function LoginContent() {
               ENCRYPTED PATIENT PORTAL
             </div>
 
+            <div
+              className="mt-6 p-4 rounded-xl text-left"
+              style={{
+                background: 'rgba(107, 123, 255, 0.08)',
+                border: '1px solid rgba(107, 123, 255, 0.2)',
+              }}
+            >
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.06em] opacity-80 mb-2">Try the demo</p>
+              <p className="text-[0.85rem] opacity-90">
+                Use <code className="px-1.5 py-0.5 rounded bg-white/60 text-[var(--ink-color)] font-mono text-[0.8rem]">demo@nora.com</code> and password <code className="px-1.5 py-0.5 rounded bg-white/60 text-[var(--ink-color)] font-mono text-[0.8rem]">password123</code> to explore the application.
+              </p>
+            </div>
+
             <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--glass-border)' }}>
               <p className="text-[0.9rem] opacity-80 mb-3">New to Aura Health AI?</p>
               <Link

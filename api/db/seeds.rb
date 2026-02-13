@@ -21,7 +21,7 @@ ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='u
 # Create test user
 puts "Creating test user..."
 test_user = User.create!(
-  email: 'saintparish6@gmail.com',
+  email: 'demo@nora.com',
   password: 'password123',
   password_confirmation: 'password123',
   booking_confirmations: true,
@@ -225,5 +225,5 @@ providers.first(10).each do |provider|
 end
 puts ""
 puts "Test Login Credentials:"
-puts "   Email: saintparish6@gmail.com"
+puts "   Email: demo@nora.com"
 puts "   Password: password123"

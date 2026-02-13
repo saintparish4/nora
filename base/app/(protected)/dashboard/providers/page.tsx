@@ -5,10 +5,10 @@ import { getProviders, Provider } from '@/lib/api';
 import Link from 'next/link';
 import { 
   Activity, 
-  Dumbbell, 
-  Apple, 
-  Sparkles, 
-  Brain, 
+  Heart, 
+  Eye, 
+  Smile, 
+  Baby, 
   Users,
   Star,
   MapPin,
@@ -24,39 +24,39 @@ const SPECIALTY_CARDS = [
     activeColor: 'bg-gray-800 text-white'
   },
   { 
-    id: 'Physical Therapy', 
-    label: 'Physical Therapy', 
+    id: 'Primary Care', 
+    label: 'Primary Care', 
     icon: Activity, 
     color: 'bg-blue-50 hover:bg-blue-100 text-blue-700',
     activeColor: 'bg-blue-600 text-white'
   },
   { 
-    id: 'Personal Training', 
-    label: 'Personal Training', 
-    icon: Dumbbell, 
-    color: 'bg-orange-50 hover:bg-orange-100 text-orange-700',
-    activeColor: 'bg-orange-600 text-white'
+    id: 'Cardiology', 
+    label: 'Cardiology', 
+    icon: Heart, 
+    color: 'bg-red-50 hover:bg-red-100 text-red-700',
+    activeColor: 'bg-red-600 text-white'
   },
   { 
-    id: 'Nutrition Counseling', 
-    label: 'Nutrition', 
-    icon: Apple, 
+    id: 'Ophthalmology', 
+    label: 'Ophthalmology', 
+    icon: Eye, 
+    color: 'bg-cyan-50 hover:bg-cyan-100 text-cyan-700',
+    activeColor: 'bg-cyan-600 text-white'
+  },
+  { 
+    id: 'Dentistry', 
+    label: 'Dentistry', 
+    icon: Smile, 
     color: 'bg-green-50 hover:bg-green-100 text-green-700',
     activeColor: 'bg-green-600 text-white'
   },
   { 
-    id: 'Yoga Instruction', 
-    label: 'Yoga', 
-    icon: Sparkles, 
-    color: 'bg-purple-50 hover:bg-purple-100 text-purple-700',
-    activeColor: 'bg-purple-600 text-white'
-  },
-  { 
-    id: 'Mental Health Counseling', 
-    label: 'Mental Health', 
-    icon: Brain, 
-    color: 'bg-teal-50 hover:bg-teal-100 text-teal-700',
-    activeColor: 'bg-teal-600 text-white'
+    id: 'Pediatrics', 
+    label: 'Pediatrics', 
+    icon: Baby, 
+    color: 'bg-amber-50 hover:bg-amber-100 text-amber-700',
+    activeColor: 'bg-amber-600 text-white'
   },
 ];
 
@@ -144,8 +144,8 @@ export default function ProvidersPage() {
               >
                 <option value="">Most Recent</option>
                 <option value="rating_desc">Highest Rated</option>
-                <option value="hourly_rate_asc">Lowest Price</option>
-                <option value="hourly_rate_desc">Highest Price</option>
+                <option value="price_asc">Lowest Price</option>
+                <option value="price_desc">Highest Price</option>
                 <option value="experience_desc">Most Experience</option>
               </select>
             </div>

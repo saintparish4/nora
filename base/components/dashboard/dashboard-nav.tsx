@@ -9,7 +9,7 @@ export function DashboardNav() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  const displayName = user?.email?.split('@')[0] || 'Elena Berg';
+  const displayName = user?.email?.split('@')[0] || 'Nora Ai';
   const initials = displayName
     .split(' ')
     .map((n) => n[0])

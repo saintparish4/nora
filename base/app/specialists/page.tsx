@@ -1,7 +1,6 @@
 import type { ProvidersResponse } from '@/types';
+import { API_URL } from '@/lib/api/client';
 import SpecialistsClient from './specialists-client';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 /**
  * Server Component – fetches providers during SSR so data is available on

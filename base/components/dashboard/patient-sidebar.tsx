@@ -3,14 +3,8 @@
 import * as React from "react"
 import {
   CalendarDays,
-  FileText,
-  FlaskConical,
   Home,
-  Inbox,
-  Receipt,
   Settings2,
-  Stethoscope,
-  Pill,
   LogOut,
   HeartPulse,
   Users,
@@ -18,7 +12,6 @@ import {
 
 import { useAuth } from "@/lib/auth/context"
 import { NavMain } from "@/components/navigation/nav-main"
-import { NavProjects } from "@/components/navigation/nav-projects"
 import { NavUser } from "@/components/navigation/nav-user"
 import { TeamSwitcher } from "@/components/navigation/team-switcher"
 import {
@@ -39,73 +32,31 @@ const navConfig = {
       url: "/dashboard",
       icon: Home,
       isActive: true,
-      items: [], // No dropdown - direct link
+      items: [],
     },
     {
       title: "Get Care",
       url: "/get-care",
       icon: HeartPulse,
-      items: [], // No dropdown - unified wizard
+      items: [],
     },
     {
       title: "Browse Providers",
       url: "/providers",
       icon: Users,
-      items: [], // No dropdown - direct link
+      items: [],
     },
     {
       title: "Appointments",
       url: "/appointments",
       icon: CalendarDays,
-      items: [], // No dropdown - direct link
-    },
-    {
-      title: "Messages",
-      url: "/dashboard/messages",
-      icon: Inbox,
-      items: [], // No dropdown - combined inbox/compose
-    },
-    {
-      title: "Lab Results",
-      url: "/dashboard/labs",
-      icon: FlaskConical,
-      items: [
-        { title: "Recent", url: "/dashboard/labs" },
-        { title: "All Results", url: "/dashboard/labs/all" },
-      ],
-    },
-    {
-      title: "Medications",
-      url: "/dashboard/medications",
-      icon: Pill,
-      items: [
-        { title: "Active", url: "/dashboard/medications" },
-        { title: "Refills", url: "/dashboard/medications/refills" },
-      ],
-    },
-    {
-      title: "Documents",
-      url: "/dashboard/documents",
-      icon: FileText,
-      items: [
-        { title: "Forms", url: "/dashboard/documents/forms" },
-        { title: "Records", url: "/dashboard/documents/records" },
-      ],
-    },
-    {
-      title: "Billing",
-      url: "/dashboard/billing",
-      icon: Receipt,
-      items: [
-        { title: "Statements", url: "/dashboard/billing" },
-        { title: "Payments", url: "/dashboard/billing/payments" },
-      ],
+      items: [],
     },
     {
       title: "Settings",
       url: "/settings",
       icon: Settings2,
-      items: [], // No dropdown - direct link
+      items: [],
     },
     {
       title: "Logout",
@@ -113,9 +64,6 @@ const navConfig = {
       icon: LogOut,
       items: [],
     },
-  ],
-  projects: [
-    { name: "Care Plan", url: "#", icon: Stethoscope },
   ],
 }
 
@@ -135,7 +83,6 @@ export function PatientSidebar({ ...props }: React.ComponentProps<typeof Sidebar
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navConfig.navMain} />
-        <NavProjects projects={navConfig.projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} onLogout={logout} />

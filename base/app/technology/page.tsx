@@ -215,18 +215,15 @@ export default function TechnologyPage() {
   // ------- Book with provider -------
   const handleBookProvider = useCallback(
     (provider: ChatProvider) => {
-      // Build the quick-booking URL with pre-fill params
-      const bookingUrl = `/quick-booking?specialty=${encodeURIComponent(
+      const bookingUrl = `/dashboard/get-care?specialty=${encodeURIComponent(
         provider.specialty
       )}&provider_id=${provider.id}`;
 
       if (!user) {
-        // Not logged in — redirect to login with returnUrl
         router.push(
           `/login?returnUrl=${encodeURIComponent(bookingUrl)}`
         );
       } else {
-        // Already logged in — go directly to quick-booking
         router.push(bookingUrl);
       }
     },

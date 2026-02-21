@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       { source: "/providers", destination: "/dashboard/providers", permanent: true },
       { source: "/providers/specialties", destination: "/dashboard/providers/specialties", permanent: true },
       { source: "/providers/:id", destination: "/dashboard/providers/:id", permanent: true },
+      { source: "/quick-booking", destination: "/dashboard/get-care", permanent: true },
     ];
   },
 };

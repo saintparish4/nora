@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { formatDate, formatTime, getUrgencyColor } from '@/lib/format';
@@ -30,9 +30,14 @@ const QUICK_REASONS = [
   { id: 'other', label: 'Describe Symptoms', icon: MessageSquare },
 ];
 
-export default function GetCarePage() {
+function GetCareContent() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<Step>('start');
+  const searchParams = useSearchParams();
+  const prefillSpecialty = searchParams.get('specialty');
+  const prefillProviderId = searchParams.get('provider_id');
+  const hasPrefilled = useRef(false);
+
+  const [currentStep, setCurrentStep] = useState<Step>(prefillSpecialty ? 'symptoms' : 'start');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -41,6 +46,44 @@ export default function GetCarePage() {
   const [providers, setProviders] = useState<(Provider & { next_available_slots: TimeSlot[] })[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider & { next_available_slots: TimeSlot[] } | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+
+  // Prefill from SymptomX chat or external link with ?specialty=X&provider_id=Y
+  useEffect(() => {
+    if (!prefillSpecialty || hasPrefilled.current) return;
+    hasPrefilled.current = true;
+
+    const prefillDescription = `I need to see a ${prefillSpecialty} specialist`;
+    setDescription(prefillDescription);
+    setLoading(true);
+
+    quickBookingAnalyze(prefillDescription)
+      .then((result) => {
+        setAnalysis(result.analysis);
+        setProviders(result.providers);
+
+        if (result.providers.length === 0) {
+          setError('No providers available for this specialty. Please try again later.');
+          return;
+        }
+
+        if (prefillProviderId) {
+          const match = result.providers.find(
+            (p: Provider & { next_available_slots: TimeSlot[] }) => String(p.id) === prefillProviderId
+          );
+          if (match) {
+            setSelectedProvider(match);
+            setCurrentStep('slots');
+            return;
+          }
+        }
+
+        setCurrentStep('providers');
+      })
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Failed to load providers');
+      })
+      .finally(() => setLoading(false));
+  }, [prefillSpecialty, prefillProviderId]);
 
   const handleQuickSelect = (reasonId: string) => {
     if (reasonId === 'other') {
@@ -520,5 +563,17 @@ export default function GetCarePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GetCarePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-1 items-center justify-center py-20">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    }>
+      <GetCareContent />
+    </Suspense>
   );
 }

@@ -26,7 +26,13 @@ async function fetchProviders(): Promise<ProvidersResponse> {
   } catch {
     // If the API is unreachable during SSR (e.g. cold start), return empty
     // data and let the client-side SWR retry.
-    return { providers: [], total: 0 };
+    return {
+      providers: [],
+      total: 0,
+      page: 1,
+      per_page: 20,
+      total_pages: 0,
+    };
   }
 }
 

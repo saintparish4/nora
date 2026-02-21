@@ -27,11 +27,11 @@ export function DashboardNav() {
       <NoraLogo href="/dashboard" className="font-serif text-2xl italic flex items-center gap-3 text-foreground no-underline" />
 
       <div className="flex gap-8 text-[0.9rem]">
-        <Link href="/dashboard/labs" className={navLinkClass('/dashboard/labs')}>
-          Health Records
+        <Link href="/dashboard/providers" className={navLinkClass('/dashboard/providers')}>
+          Providers
         </Link>
-        <Link href="/dashboard/messages" className={navLinkClass('/dashboard/messages')}>
-          Care Team
+        <Link href="/dashboard/appointments" className={navLinkClass('/dashboard/appointments')}>
+          Appointments
         </Link>
         <Link href="/dashboard/settings" className={navLinkClass('/dashboard/settings')}>
           Settings

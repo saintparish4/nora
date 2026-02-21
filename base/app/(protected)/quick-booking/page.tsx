@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
 import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { Button } from '@/components/ui/button';
+import { formatDate, formatTime, getUrgencyColor } from '@/lib/format';
 import { Check, Clock, MapPin, Star, ArrowRight, Sparkles, Calendar } from 'lucide-react';
 
 type Step = 'symptoms' | 'providers' | 'slots' | 'confirm' | 'success';
@@ -124,25 +125,6 @@ function QuickBookingContent() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  };
-
-  const getUrgencyColor = (urgency: string) => {
-    const colors: Record<string, string> = {
-      routine: 'bg-green-100 text-green-800 border-green-300',
-      urgent: 'bg-orange-100 text-orange-800 border-orange-300',
-      emergency: 'bg-red-100 text-red-800 border-red-300'
-    };
-    return colors[urgency] || colors.routine;
   };
 
   return (

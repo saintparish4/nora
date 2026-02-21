@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getProvider, getAvailableSlots, bookAppointment, Provider, TimeSlot, AvailableSlotsResponse } from '@/lib/api';
+import { formatDate } from '@/lib/format';
 
 export default function ProviderDetailPage() {
   const params = useParams();
@@ -85,25 +86,6 @@ export default function ProviderDetailPage() {
       setShowModal(false);
       setNotes('');
       setBookingError('');
-    }
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today';
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow';
-    } else {
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        month: 'short', 
-        day: 'numeric' 
-      });
     }
   };
 
@@ -198,7 +180,7 @@ export default function ProviderDetailPage() {
                         }`}
                       >
                         <div className="font-semibold text-black">
-                          {formatDate(date)}
+                          {formatDate(date, { relative: true })}
                         </div>
                         <div className="text-sm text-gray-600">
                           {slotsCount} slot{slotsCount !== 1 ? 's' : ''} available
@@ -211,7 +193,7 @@ export default function ProviderDetailPage() {
 
               <div className="md:col-span-2">
                 <h3 className="text-lg font-semibold mb-4 text-black">
-                  Available Times for {selectedDate ? formatDate(selectedDate) : '...'}
+                  Available Times for {selectedDate ? formatDate(selectedDate, { relative: true }) : '...'}
                 </h3>
                 <div>
                   {slotsForSelectedDate.length === 0 ? (
@@ -242,7 +224,7 @@ export default function ProviderDetailPage() {
                         Selected Appointment
                       </h4>
                       <p className="text-sm text-black mb-2">
-                        <strong>Date:</strong> {formatDate(selectedSlot.date)}
+                        <strong>Date:</strong> {formatDate(selectedSlot.date, { relative: true })}
                       </p>
                       <p className="text-sm text-black mb-2">
                         <strong>Time:</strong> {selectedSlot.time}
@@ -288,7 +270,7 @@ export default function ProviderDetailPage() {
                     <div className="border-b pb-3">
                       <p className="text-sm text-gray-500">Date & Time</p>
                       <p className="font-semibold text-black">
-                        {formatDate(selectedSlot.date)} at {selectedSlot.time}
+                        {formatDate(selectedSlot.date, { relative: true })} at {selectedSlot.time}
                       </p>
                     </div>
                     <div className="border-b pb-3">
@@ -319,7 +301,7 @@ export default function ProviderDetailPage() {
                           Appointment Details
                         </h3>
                         <p className="text-sm mb-1 text-black">
-                          {formatDate(selectedSlot.date)} at {selectedSlot.time}
+                          {formatDate(selectedSlot.date, { relative: true })} at {selectedSlot.time}
                         </p>
                         <p className="text-sm text-gray-600">Duration: 30 minutes</p>
                       </div>

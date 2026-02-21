@@ -19,10 +19,8 @@ module Api
           log_phi_access("Appointment", appointment.id, :create)
           render json: {
             message: 'Appointment booked successfully!',
-            appointment: appointment.as_json(
-              include: {
-                provider: { only: [:id, :name, :specialty, :avatar_url] }
-              }
+            appointment: appointment.as_json.merge(
+              provider: appointment.provider.as_summary_json
             )
           }, status: :created
         else
@@ -47,16 +45,8 @@ module Api
         (upcoming + past).each { |appt| log_phi_access("Appointment", appt.id, :view) }
 
         render json: {
-          upcoming: upcoming.as_json(
-            include: {
-              provider: { only: [:id, :name, :specialty, :avatar_url, :location] }
-            }
-          ),
-          past: past.as_json(
-            include: {
-              provider: { only: [:id, :name, :specialty, :avatar_url, :location] }
-            }
-          )
+          upcoming: upcoming.map { |a| a.as_json.merge(provider: a.provider.as_summary_json) },
+          past: past.map { |a| a.as_json.merge(provider: a.provider.as_summary_json) }
         }
       end
 
@@ -65,10 +55,8 @@ module Api
         appointment = current_user.appointments.find(params[:id])
         log_phi_access("Appointment", appointment.id, :view)
         render json: {
-          appointment: appointment.as_json(
-            include: {
-              provider: { only: [:id, :name, :specialty, :avatar_url, :location, :hourly_rate] }
-            }
+          appointment: appointment.as_json.merge(
+            provider: appointment.provider.as_detail_json
           )
         }
       rescue ActiveRecord::RecordNotFound
@@ -89,19 +77,12 @@ module Api
 
         if appointment.update(status: 'cancelled')
           log_phi_access("Appointment", appointment.id, :update)
-          begin
-            Notifications::NotificationService.send_cancellation_notifications(appointment, 'patient')
-          rescue => e
-            Rails.logger.error("Failed to send cancellation notifications: #{e.message}")
-            # Continue even if notification fails - appointment is already cancelled
-          end
-          
+          AppointmentMailer.cancellation_notice(appointment, "patient").deliver_later
+
           render json: {
             message: 'Appointment cancelled successfully',
-            appointment: appointment.as_json(
-              include: {
-                provider: { only: [:id, :name, :specialty, :avatar_url, :location] }
-              }
+            appointment: appointment.as_json.merge(
+              provider: appointment.provider.as_summary_json
             )
           }
         else 

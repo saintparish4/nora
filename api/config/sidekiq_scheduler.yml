@@ -1,1 +1,4 @@
-# No scheduled jobs currently configured
+appointment_reminders:
+  cron: "0 * * * *"
+  class: AppointmentReminderJob
+  description: "Send 24-hour appointment reminder emails"

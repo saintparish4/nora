@@ -1,6 +1,8 @@
 class Provider < ApplicationRecord
     has_many :availabilities, dependent: :destroy
     has_many :appointments, dependent: :destroy
+    has_many :blocked_slots, dependent: :destroy
+    has_many :provider_conditions, dependent: :destroy
 
     before_validation :set_default_avatar_url, on: :create
 
@@ -38,8 +40,19 @@ class Provider < ApplicationRecord
         where(specialty: matching_specialties)
     }
     scope :by_specialty, ->(specialty) { where(specialty: specialty) if specialty.present? }
-    scope :by_location, ->(location) { where('location ILIKE ?', "%#{location}%") if location.present? }
+    scope :by_location, ->(location) { where("LOWER(location) LIKE LOWER(?)", "%#{location}%") if location.present? }
     scope :rated_above, ->(rating) { where('rating >= ?', rating) if rating.present? }
+
+    SUMMARY_FIELDS = %i[id name specialty avatar_url location].freeze
+    DETAIL_FIELDS  = %i[id name specialty avatar_url location bio rating hourly_rate experience_years].freeze
+
+    def as_summary_json(extra = {})
+        as_json(only: SUMMARY_FIELDS).merge(extra)
+    end
+
+    def as_detail_json(extra = {})
+        as_json(only: DETAIL_FIELDS).merge(extra)
+    end
 
     private
 

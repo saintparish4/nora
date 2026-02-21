@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getAppointments, cancelAppointment, Appointment } from '@/lib/api';
+import { formatDateTime } from '@/lib/format';
 import Link from 'next/link';
 
 export default function AppointmentsPage() {
@@ -42,17 +43,6 @@ export default function AppointmentsPage() {
     } finally {
       setCancelling(null);
     }
-  };
-
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    });
   };
 
   if (loading) {

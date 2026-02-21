@@ -13,10 +13,16 @@ RSpec.describe Appointment, type: :model do
   end
   
   describe 'callbacks' do
-    it 'sends booking notifications after create' do
+    it 'enqueues booking confirmation email after create' do
       appointment = build(:appointment)
-      expect(Notifications::NotificationService).to receive(:send_booking_notifications).with(appointment)
-      appointment.save
+      mailer_double = instance_double(ActionMailer::MessageDelivery)
+      allow(AppointmentMailer).to receive(:booking_confirmation).and_return(mailer_double)
+      allow(mailer_double).to receive(:deliver_later)
+
+      appointment.save!
+
+      expect(AppointmentMailer).to have_received(:booking_confirmation).with(appointment)
+      expect(mailer_double).to have_received(:deliver_later)
     end
   end
   

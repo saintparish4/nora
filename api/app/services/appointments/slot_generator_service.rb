@@ -53,9 +53,15 @@ module Appointments
     end
     
     def slot_unavailable?(start_time, end_time)
-      @provider.appointments
-               .where.not(status: 'cancelled')
-               .where('start_time < ? AND end_time > ?', end_time, start_time)
+      booked = @provider.appointments
+                        .where.not(status: "cancelled")
+                        .where("start_time < ? AND end_time > ?", end_time, start_time)
+                        .exists?
+
+      return true if booked
+
+      @provider.blocked_slots
+               .where("start_time < ? AND end_time > ?", end_time, start_time)
                .exists?
     end
   end

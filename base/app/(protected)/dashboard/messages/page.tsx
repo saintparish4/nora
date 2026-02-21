@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { formatMessageDate } from '@/lib/format';
 import { 
   Inbox, 
   Send, 
@@ -98,20 +99,6 @@ export default function MessagesPage() {
     subject: '',
     body: '',
   });
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    } else if (diffDays < 7) {
-      return date.toLocaleDateString('en-US', { weekday: 'short' });
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
-  };
 
   const handleSelectMessage = (message: typeof MOCK_MESSAGES[0]) => {
     setSelectedMessage(message);
@@ -245,7 +232,7 @@ export default function MessagesPage() {
                                     {message.from}
                                   </span>
                                   <span className="text-sm text-gray-500 flex-shrink-0 ml-2">
-                                    {formatDate(message.date)}
+                                    {formatMessageDate(message.date)}
                                   </span>
                                 </div>
                                 <p className={`text-sm truncate ${message.unread ? 'font-medium text-gray-900' : 'text-gray-600'}`}>

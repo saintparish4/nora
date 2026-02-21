@@ -39,9 +39,7 @@ module Api
 
         render json: {
           providers: @providers.map { |p|
-            p.as_json(except: :availabilities).merge(
-              has_availability: p.availabilities.any?
-            )
+            p.as_detail_json(has_availability: p.availabilities.any?)
           },
           total: @providers.length,
           ai_filtered: params[:ai_specialty].present?
@@ -52,7 +50,7 @@ module Api
       def show
         provider = Provider.find(params[:id])
         render json: {
-          provider: provider.as_json(include: :availabilities)
+          provider: provider.as_detail_json(availabilities: provider.availabilities)
         }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Provider not found' }, status: :not_found

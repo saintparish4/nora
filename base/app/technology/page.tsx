@@ -8,6 +8,7 @@ import { ChatMessageList } from '@/components/chat/chat-message-list';
 import type { ChatMessageData } from '@/components/chat/chat-message';
 import { sendSymptomChatMessage } from '@/lib/api/symptom-chat';
 import { useAuth } from '@/lib/auth/context';
+import { formatDate, getUrgencyColor } from '@/lib/format';
 import type { SymptomAnalysis, ChatProvider } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -54,12 +55,6 @@ function ProviderCard({
   providers: ChatProvider[];
   onBook: (provider: ChatProvider) => void;
 }) {
-  const urgencyColors: Record<string, string> = {
-    routine: 'bg-green-50 text-green-800 border-green-200',
-    urgent: 'bg-orange-50 text-orange-800 border-orange-200',
-    emergency: 'bg-red-50 text-red-800 border-red-200',
-  };
-
   return (
     <div className="self-start max-w-[90%] animate-fade-in">
       {/* Analysis summary */}
@@ -74,9 +69,7 @@ function ProviderCard({
             {analysis.specialty_name}
           </span>
           <span
-            className={`px-3 py-1 rounded-full text-[0.8rem] font-medium border ${
-              urgencyColors[analysis.urgency] ?? urgencyColors.routine
-            }`}
+            className={`px-3 py-1 rounded-full text-[0.8rem] font-medium border ${getUrgencyColor(analysis.urgency)}`}
           >
             {analysis.urgency.charAt(0).toUpperCase() + analysis.urgency.slice(1)}
           </span>
@@ -120,13 +113,7 @@ function ProviderCard({
                   {provider.next_available_slots.length > 0 && (
                     <p className="text-[0.78rem] text-green-700 mt-1">
                       Next available:{' '}
-                      {new Date(
-                        provider.next_available_slots[0].start_time
-                      ).toLocaleDateString('en-US', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatDate(provider.next_available_slots[0].start_time)}
                     </p>
                   )}
                 </div>

@@ -89,20 +89,7 @@ module Api
         analyzer = Triage::SymptomAnalyzerService.new(transcript)
         analysis = analyzer.analyze
 
-        # --- Match providers ---
-        ai_specialty = analysis[:specialty]
-        matching_specialties = Provider::SPECIALTY_MAPPINGS[ai_specialty] || [analysis[:specialty_name]]
-        providers = Provider.where(specialty: matching_specialties)
-                            .order(rating: :desc)
-                            .limit(5)
-
-        providers_with_slots = providers.map do |provider|
-          all_slots = Appointments::SlotGeneratorService.new(provider).generate_available_slots
-          next_slots = all_slots.take(3)
-
-          provider.as_json(only: [:id, :name, :specialty, :avatar_url, :rating, :location, :hourly_rate])
-                  .merge(next_available_slots: next_slots)
-        end
+        providers_with_slots = Providers::MatchAndSlotService.new(analysis).call
 
         # --- Build assistant summary ---
         assistant_msg = build_recommendation_message(analysis, providers_with_slots)
@@ -129,27 +116,6 @@ module Api
       end
 
       private
-
-      # Attempt to authenticate without failing — returns user or nil
-      def current_user_if_present
-        return @_current_user if defined?(@_current_user)
-
-        @_current_user = nil
-
-        if session[:user_id]
-          @_current_user = User.find_by(id: session[:user_id])
-          return @_current_user if @_current_user
-        end
-
-        header = request.headers['Authorization']
-        if header.present?
-          token = header.split(' ').last
-          decoded = JsonWebToken.decode(token)
-          @_current_user = User.find_by(id: decoded[:user_id]) if decoded
-        end
-
-        @_current_user
-      end
 
       def build_recommendation_message(analysis, providers)
         specialty = analysis[:specialty_name]

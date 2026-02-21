@@ -14,33 +14,17 @@ module Api
           }, status: :unprocessable_entity
         end
 
-        # Step 1: Analyze symptoms
         analyzer = Triage::SymptomAnalyzerService.new(description)
         analysis = analyzer.analyze
 
-        # Step 2: Get matching providers based on AI specialty
-        ai_specialty = analysis[:specialty]
-        matching_specialties = Provider::SPECIALTY_MAPPINGS[ai_specialty] || [analysis[:specialty_name]]
-        
-        providers = Provider.where(specialty: matching_specialties)
-                           .order(rating: :desc)
-                           .limit(5)
-
-        # Step 3: Get next available slots for each provider
-        providers_with_slots = providers.map do |provider|
-          all_slots = Appointments::SlotGeneratorService.new(provider).generate_available_slots
-          next_slots = all_slots.take(3) # Get first 3 available slots
-
-          provider.as_json(only: [:id, :name, :specialty, :avatar_url, :rating, :location, :hourly_rate])
-                  .merge(next_available_slots: next_slots)
-        end
+        providers_with_slots = Providers::MatchAndSlotService.new(analysis).call
 
         log_phi_access("SymptomAnalysis", request.request_id, :create)
 
         render json: {
           analysis: analysis,
           providers: providers_with_slots,
-          total_providers: providers.count
+          total_providers: providers_with_slots.size
         }
       rescue StandardError => e
         Rails.logger.error "Quick booking analysis error: #{e.message}"
@@ -65,20 +49,12 @@ module Api
 
         if appointment.save
           log_phi_access("Appointment", appointment.id, :create)
-          # Send notifications asynchronously
-          begin
-            Notifications::NotificationService.send_booking_notifications(appointment)
-          rescue => e
-            Rails.logger.error("Failed to send booking notifications: #{e.message}")
-          end
 
           render json: {
             success: true,
             message: 'Appointment booked successfully!',
-            appointment: appointment.as_json(
-              include: {
-                provider: { only: [:id, :name, :specialty, :avatar_url, :location, :hourly_rate] }
-              }
+            appointment: appointment.as_json.merge(
+              provider: appointment.provider.as_detail_json
             )
           }, status: :created
         else

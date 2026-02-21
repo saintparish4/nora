@@ -18,14 +18,37 @@ class ApplicationController < ActionController::API
         if header.present?
             token = header.split(' ').last
             decoded = JsonWebToken.decode(token)
-            @current_user = User.find_by(id: decoded[:user_id]) if decoded 
-        end 
+            @current_user = User.find_by(id: decoded[:user_id]) if decoded
+        end
 
         render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
     rescue ActiveRecord::RecordNotFound
         render json: { error: 'User not found' }, status: :unauthorized
     end
+
     def current_user
         @current_user
+    end
+
+    # Attempt to authenticate without requiring it — returns user or nil.
+    # Useful for endpoints accessible to both guests and logged-in users.
+    def current_user_if_present
+        return @_current_user if defined?(@_current_user)
+
+        @_current_user = nil
+
+        if session[:user_id]
+            @_current_user = User.find_by(id: session[:user_id])
+            return @_current_user if @_current_user
+        end
+
+        header = request.headers["Authorization"]
+        if header.present?
+            token = header.split(" ").last
+            decoded = JsonWebToken.decode(token)
+            @_current_user = User.find_by(id: decoded[:user_id]) if decoded
+        end
+
+        @_current_user
     end
 end

@@ -102,6 +102,7 @@ Backend and frontend each use their own env file. Copy from `.env.example` / `.e
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `SECRET_KEY_BASE` | **Yes** | Secret for signing/verifying JWTs (and Rails session cookie). Use a long random string in dev; e.g. `openssl rand -hex 64`. |
 | `OPENAI_API_KEY` | **Yes** | OpenAI API key for symptom analysis (gpt-4o-mini). |
 | `RESEND_API_KEY` | **Yes** (production) | Resend API key for email; optional in dev (mailer can log only). |
 | `RESEND_FROM_EMAIL` | No | Sender address; defaults to Resend onboarding address. |

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_08_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_21_000001) do
   create_table "appointments", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.integer "provider_id", null: false
@@ -189,6 +189,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_000002) do
     t.integer "provider_id"
     t.json "booking_patterns", default: {}
     t.json "health_history", default: {}
+    t.string "first_name"
+    t.string "last_name"
+    t.string "state"
+    t.string "phone"
     t.index ["provider_id"], name: "index_users_on_provider_id"
   end
 

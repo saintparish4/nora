@@ -1,16 +1,27 @@
 import { authFetch, setToken, removeToken, getToken } from "./client";
 import type { AuthResponse, User } from "@/types";
 
-export async function signup(
-  email: string,
-  password: string
-): Promise<AuthResponse> {
+export interface SignupFields {
+  email: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
+  state?: string;
+  phone?: string;
+}
+
+export async function signup(fields: SignupFields): Promise<AuthResponse> {
+  const { email, password, first_name, last_name, state, phone } = fields;
   const res = await authFetch("/api/v1/auth/signup", {
     method: "POST",
     body: JSON.stringify({
       email,
       password,
       password_confirmation: password,
+      first_name,
+      last_name,
+      state,
+      phone,
     }),
   });
 

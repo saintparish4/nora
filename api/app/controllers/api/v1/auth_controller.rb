@@ -12,7 +12,7 @@ module Api
           session[:user_id] = user.id # Set session
           
           render json: { 
-            user: user.as_json(only: [:id, :email]),
+            user: user.as_json(only: [:id, :email, :first_name, :last_name, :state, :phone]),
             token: token, # JWT for mobile clients
             message: 'Account created successfully' 
           }, status: :created
@@ -48,7 +48,7 @@ module Api
       # GET /api/v1/auth/me
       def me
         log_phi_access("User", current_user.id, :view)
-        render json: { user: current_user.as_json(only: [:id, :email]) }
+        render json: { user: current_user.as_json(only: [:id, :email, :first_name, :last_name, :state, :phone]) }
       end
       
       # PATCH /api/v1/auth/preferences
@@ -67,7 +67,7 @@ module Api
       private
       
       def user_params
-        params.permit(:email, :password, :password_confirmation)
+        params.permit(:email, :password, :password_confirmation, :first_name, :last_name, :state, :phone)
       end
       
       def preference_params

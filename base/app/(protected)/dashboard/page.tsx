@@ -22,7 +22,7 @@ const RECENT_ACTIVITY_LIMIT = 2;
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const displayName = user?.email?.split('@')[0] || 'there';
+  const displayName = user?.first_name?.trim() || user?.email?.split('@')[0] || 'there';
 
   const [upcoming, setUpcoming] = useState<Appointment[]>([]);
   const [past, setPast] = useState<Appointment[]>([]);

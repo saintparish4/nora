@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, signup as apiSignup, login as apiLogin, logout as apiLogout, getCurrentUser } from '../api';
+import { User, signup as apiSignup, login as apiLogin, logout as apiLogout, getCurrentUser, SignupFields } from '../api';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string, returnUrl?: string) => Promise<void>;
-  signup: (email: string, password: string, returnUrl?: string) => Promise<void>;
+  signup: (fields: SignupFields, returnUrl?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push(safeReturnUrl(returnUrl));
   };
 
-  const signup = async (email: string, password: string, returnUrl?: string) => {
-    const data = await apiSignup(email, password);
+  const signup = async (fields: SignupFields, returnUrl?: string) => {
+    const data = await apiSignup(fields);
     setUser(data.user);
     router.push(safeReturnUrl(returnUrl));
   };

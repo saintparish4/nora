@@ -1,116 +1,85 @@
-# Settings Page Tests
+# Frontend Test Suite
 
-This document describes the test suite for the Settings page component (`app/(protected)/dashboard/settings/page.tsx`).
+Test suite for the Nora frontend application covering API clients, authentication, and protected routing.
 
-## Test Overview
+## Test Suites
 
-The test suite covers the core functionality of the Settings page, including:
+### `settings.test.tsx` — Utility Functions
+Smoke tests for shared utilities (`cn` class-name merging).
 
-1. **Component Rendering** - Verifies the page renders correctly
-2. **User Preferences Display** - Ensures current user preferences are shown
-3. **Successful Save** - Tests the happy path when saving preferences
-4. **Error Handling** - Tests error scenarios when API calls fail
+### `lib/api/client.test.ts` — API Client (8 tests)
+Tests the core `authFetch` helper and token management:
+- **Token management**: `getToken`, `setToken`, `removeToken` lifecycle
+- **authFetch headers**: Content-Type always set, Authorization included only when token exists
+- **URL handling**: relative paths prepended with API_URL, absolute URLs passed through
 
-## Test Structure
+### `lib/api/auth.test.ts` — Auth API Functions (11 tests)
+Tests all authentication API functions against mocked fetch:
+- **signup**: stores token on success, throws on 422
+- **login**: stores token on success, throws on invalid credentials
+- **logout**: removes token, skips API call when no token present
+- **getCurrentUser**: returns user on valid token, clears token on 401, returns null with no token, handles network errors
+- **updateEmailPreferences**: returns success message, throws on failure
 
-### Mock Setup
+### `lib/auth/context.test.tsx` — AuthContext (5 tests)
+Tests the React auth context provider using a test consumer component:
+- Starts in loading state, resolves to no user
+- Loads existing user on mount via `getCurrentUser`
+- `login` sets user state and redirects to `/dashboard`
+- `signup` sets user state and redirects to `/dashboard`
+- `logout` clears user and redirects to `/login`
+- Throws when `useAuth` is called outside `AuthProvider`
 
-The tests use Jest mocks to isolate the component from external dependencies:
-
-```typescript
-// Mock API functions
-const mockUpdateEmailPreferences = jest.fn()
-const mockGetCurrentUser = jest.fn()
-
-jest.mock('@/lib/api', () => ({
-  updateEmailPreferences: mockUpdateEmailPreferences,
-  getCurrentUser: mockGetCurrentUser,
-}))
-```
-
-### Test Cases
-
-#### 1. `renders settings page`
-- **Purpose**: Basic smoke test to ensure the component renders without crashing
-- **What it tests**: Component mounts successfully and displays the main heading
-- **Mock setup**: Uses default user data from `beforeEach`
-
-#### 2. `displays current preferences`
-- **Purpose**: Verifies that user preferences are correctly displayed
-- **What it tests**: Checkboxes show the correct state based on user data
-- **Mock setup**: Uses default user data with all preferences enabled
-
-#### 3. `updates preferences on save`
-- **Purpose**: Tests the successful save flow
-- **What it tests**: 
-  - User can click save button
-  - API is called with correct parameters
-  - Success message is displayed
-- **Mock setup**: Uses default successful API response
-
-#### 4. `shows error message on API failure`
-- **Purpose**: Tests error handling when API calls fail
-- **What it tests**:
-  - Error is properly caught and displayed
-  - User sees appropriate error message
-- **Mock setup**: Overrides global fetch mock to return error response
-
-## Key Testing Patterns
-
-### Mock Management
-- **beforeEach**: Sets up default mocks for all tests
-- **Individual tests**: Override specific mocks when needed
-- **Global fetch mock**: Used for error testing since API functions use fetch internally
-
-### Async Testing
-- Uses `act()` to wrap async operations
-- Uses `waitFor()` to wait for DOM updates
-- Properly handles component lifecycle events
-
-### Error Testing Strategy
-The error test was challenging because:
-1. The API function uses `fetch` internally
-2. Global fetch mock was always returning success
-3. Solution: Override global fetch mock for error scenarios
-
-```typescript
-// Mock fetch to return an error response
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: false,
-    json: () => Promise.resolve({ error: 'API Error' })
-  })
-) as jest.MockedFunction<typeof fetch>
-```
-
-## Coverage
-
-Current test coverage for the Settings page:
-- **Statements**: 76.92%
-- **Branches**: 46.66%
-- **Functions**: 50%
-- **Lines**: 76.92%
+### `components/auth-protected.test.tsx` — AuthProtected Guard (3 tests)
+Tests the route protection wrapper:
+- Shows loading state while auth is resolving
+- Renders children when user is authenticated
+- Redirects to `/login` when not authenticated
 
 ## Running Tests
 
 ```bash
-# Run all settings tests
-npm test -- __tests__/settings.test.tsx
+# Run all tests
+pnpm test
 
-# Run with coverage
-npm test -- __tests__/settings.test.tsx --coverage
+# Run a specific suite
+pnpm test -- __tests__/lib/api/auth.test.ts
+
+# Watch mode
+pnpm test:watch
+
+# Coverage report
+pnpm test:coverage
 ```
+
+## Testing Patterns
+
+### Mock Response Helper
+jsdom does not provide a `Response` constructor, so API tests use a lightweight mock:
+
+```typescript
+function mockResponse(body: object, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: () => Promise.resolve(body),
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    text: () => Promise.resolve(JSON.stringify(body)),
+  } as unknown as Response
+}
+```
+
+### Auth Mocking in Component Tests
+Component tests mock `@/lib/api` or `@/lib/auth/context` at the module level and control return values per test via `jest.fn()`.
+
+### Global Setup (`jest.setup.ts`)
+- Mocks `global.fetch` for all tests
+- Mocks `next/navigation` (useRouter, usePathname, etc.)
+- Sets `IS_REACT_ACT_ENVIRONMENT = true` for React concurrent mode
 
 ## Dependencies
 
-- `@testing-library/react` - Component rendering and interaction
-- `@testing-library/jest-dom` - Custom matchers (auto-imported)
-- `jest` - Test framework and mocking
-- `@jest/globals` - Jest globals for TypeScript
-
-## Notes
-
-- Tests use `AuthProvider` wrapper to provide authentication context
-- Mock functions are properly typed with `as never` to avoid TypeScript issues
-- Error testing required understanding of the fetch mock hierarchy
-- All tests are isolated and don't depend on external services
+- `jest` / `@jest/globals` — Test framework
+- `@testing-library/react` — Component rendering and queries
+- `@testing-library/user-event` — User interaction simulation
+- `@testing-library/jest-dom` — Custom DOM matchers

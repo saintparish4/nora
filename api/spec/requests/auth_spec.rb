@@ -3,11 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Auth API', type: :request do
-  def auth_headers(user)
-    token = JsonWebToken.encode(user_id: user.id)
-    { 'Authorization' => "Bearer #{token}" }
-  end
-
   # -----------------------------------------------------------------
   # GET /api/v1/auth/me
   # -----------------------------------------------------------------
@@ -128,9 +123,46 @@ RSpec.describe 'Auth API', type: :request do
     end
   end
 
-  private
+  # -----------------------------------------------------------------
+  # DELETE /api/v1/auth/logout
+  # -----------------------------------------------------------------
+  describe 'DELETE /api/v1/auth/logout' do
+    let(:user) { create(:user) }
 
-  def parsed_body
-    JSON.parse(response.body)
+    it 'returns 200 with logged out message' do
+      delete '/api/v1/auth/logout', headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_body['message']).to eq('Logged out successfully')
+    end
+  end
+
+  # -----------------------------------------------------------------
+  # PATCH /api/v1/auth/update_preferences
+  # -----------------------------------------------------------------
+  describe 'PATCH /api/v1/auth/update_preferences' do
+    let(:user) { create(:user, booking_confirmations: true, reminders_24h: true, cancellation_notices: true) }
+
+    context 'with valid params' do
+      it 'updates preferences and returns the updated user' do
+        patch '/api/v1/auth/update_preferences',
+              params: { booking_confirmations: false, reminders_24h: false },
+              headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(parsed_body['message']).to eq('Preferences updated successfully')
+        expect(parsed_body['user']['booking_confirmations']).to be false
+        expect(parsed_body['user']['reminders_24h']).to be false
+        expect(parsed_body['user']['cancellation_notices']).to be true
+      end
+    end
+
+    context 'without auth' do
+      it 'returns 401 Unauthorized' do
+        patch '/api/v1/auth/update_preferences', params: { booking_confirmations: false }
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 end

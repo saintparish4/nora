@@ -1,6 +1,9 @@
 // Jest DOM matchers are automatically available in modern Jest setups
 // No need to import @testing-library/jest-dom as it's deprecated
 
+// Enable React concurrent act() environment for testing
+(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
+
 // Add fetch polyfill for test environment
 global.fetch = jest.fn(() =>
   Promise.resolve({

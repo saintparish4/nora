@@ -3,11 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'PHI access audit log integration', type: :request do
-  def auth_headers(user)
-    token = JsonWebToken.encode(user_id: user.id)
-    { 'Authorization' => "Bearer #{token}" }
-  end
-
   describe 'GET /api/v1/auth/me' do
     let(:user) { create(:user) }
 

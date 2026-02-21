@@ -75,7 +75,6 @@ RSpec.describe 'Providers API', type: :request do
 
     context 'when the provider has availability' do
       before do
-        # Create availability for tomorrow's day_of_week so slots are generated
         tomorrow_wday = Date.tomorrow.wday
         provider.availabilities.create!(
           day_of_week: tomorrow_wday,
@@ -113,11 +112,5 @@ RSpec.describe 'Providers API', type: :request do
         expect(parsed_body['error']).to eq('Provider not found')
       end
     end
-  end
-
-  private
-
-  def parsed_body
-    JSON.parse(response.body)
   end
 end

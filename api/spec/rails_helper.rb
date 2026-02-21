@@ -1,5 +1,6 @@
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['SECRET_KEY_BASE'] ||= 'test-secret-key-base-for-rspec-do-not-use-in-production'
 require_relative '../config/environment'
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -25,6 +26,8 @@ VCR.configure do |config|
   config.filter_sensitive_data('<OPENAI_API_KEY>') { ENV['OPENAI_API_KEY'] }
 end
 
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
@@ -38,6 +41,9 @@ RSpec.configure do |config|
 
   # Time helpers (travel_to, freeze_time, etc.)
   config.include ActiveSupport::Testing::TimeHelpers
+
+  # Shared request helpers (auth_headers, parsed_body)
+  config.include RequestHelpers, type: :request
   
   # Clear enqueued jobs before and after each test
   config.around(:each) do |example|

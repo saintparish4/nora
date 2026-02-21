@@ -67,10 +67,4 @@ RSpec.describe 'Symptoms API', type: :request do
       end
     end
   end
-
-  private
-
-  def parsed_body
-    JSON.parse(response.body)
-  end
 end

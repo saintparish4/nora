@@ -3,11 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Appointments API', type: :request do
-  def auth_headers(user)
-    token = JsonWebToken.encode(user_id: user.id)
-    { 'Authorization' => "Bearer #{token}" }
-  end
-
   let(:user) { create(:user) }
   let(:provider) { create(:provider) }
 
@@ -72,6 +67,30 @@ RSpec.describe 'Appointments API', type: :request do
         expect(parsed_body['errors']).to be_present
       end
     end
+
+    context 'with an overlapping appointment' do
+      let!(:existing) do
+        create(:appointment,
+          provider: provider,
+          patient: create(:user),
+          start_time: 3.days.from_now.change(hour: 10),
+          end_time: 3.days.from_now.change(hour: 10, min: 30)
+        )
+      end
+
+      it 'returns 422 with overlap error' do
+        post '/api/v1/appointments',
+             params: {
+               provider_id: provider.id,
+               start_time: 3.days.from_now.change(hour: 10, min: 15),
+               end_time: 3.days.from_now.change(hour: 10, min: 45)
+             },
+             headers: auth_headers(user)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(parsed_body['error']).to include('no longer available')
+      end
+    end
   end
 
   # -----------------------------------------------------------------
@@ -125,7 +144,7 @@ RSpec.describe 'Appointments API', type: :request do
   end
 
   # -----------------------------------------------------------------
-  # PATCH /api/v1/appointments/:id/cancel – happy path + error
+  # PATCH /api/v1/appointments/:id/cancel – happy path + edge cases
   # -----------------------------------------------------------------
   describe 'PATCH /api/v1/appointments/:id/cancel' do
     context 'with own confirmed appointment' do
@@ -140,6 +159,39 @@ RSpec.describe 'Appointments API', type: :request do
       end
     end
 
+    context 'with an already-cancelled appointment' do
+      let!(:cancelled_appointment) do
+        create(:appointment, patient: user, provider: provider, status: 'cancelled')
+      end
+
+      it 'returns 422 with already-cancelled error' do
+        patch "/api/v1/appointments/#{cancelled_appointment.id}/cancel", headers: auth_headers(user)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(parsed_body['error']).to eq('Appointment is already cancelled')
+      end
+    end
+
+    context 'with a past appointment' do
+      let!(:past_appointment) do
+        travel_to(3.days.ago) do
+          create(:appointment,
+            patient: user,
+            provider: provider,
+            start_time: 1.day.from_now.change(hour: 10),
+            end_time: 1.day.from_now.change(hour: 10, min: 30)
+          )
+        end
+      end
+
+      it 'returns 422 with cannot-cancel-past error' do
+        patch "/api/v1/appointments/#{past_appointment.id}/cancel", headers: auth_headers(user)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(parsed_body['error']).to eq('Cannot cancel past appointments')
+      end
+    end
+
     context 'with a non-existent appointment id' do
       it 'returns 404 Appointment not found' do
         patch '/api/v1/appointments/0/cancel', headers: auth_headers(user)
@@ -148,11 +200,5 @@ RSpec.describe 'Appointments API', type: :request do
         expect(parsed_body['error']).to eq('Appointment not found')
       end
     end
-  end
-
-  private
-
-  def parsed_body
-    JSON.parse(response.body)
   end
 end

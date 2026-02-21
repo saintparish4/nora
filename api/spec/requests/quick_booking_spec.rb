@@ -3,11 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Quick Booking API', type: :request do
-  def auth_headers(user)
-    token = JsonWebToken.encode(user_id: user.id)
-    { 'Authorization' => "Bearer #{token}" }
-  end
-
   let(:user) { create(:user) }
 
   # Stub external email delivery
@@ -37,7 +32,6 @@ RSpec.describe 'Quick Booking API', type: :request do
     end
 
     before do
-      # Stub the analyzer so we don't hit OpenAI
       analyzer_double = instance_double(Triage::SymptomAnalyzerService, analyze: analysis_result)
       allow(Triage::SymptomAnalyzerService).to receive(:new).and_return(analyzer_double)
     end
@@ -91,11 +85,5 @@ RSpec.describe 'Quick Booking API', type: :request do
         expect(response).to have_http_status(:unauthorized)
       end
     end
-  end
-
-  private
-
-  def parsed_body
-    JSON.parse(response.body)
   end
 end

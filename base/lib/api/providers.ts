@@ -6,6 +6,8 @@ export async function getProviders(params?: {
   location?: string;
   min_rating?: number;
   sort?: string;
+  page?: number;
+  per_page?: number;
 }): Promise<ProvidersResponse> {
   const queryParams = new URLSearchParams();
 
@@ -14,6 +16,8 @@ export async function getProviders(params?: {
   if (params?.min_rating)
     queryParams.set("rating", params.min_rating.toString());
   if (params?.sort) queryParams.set("sort", params.sort);
+  if (params?.page) queryParams.set("page", params.page.toString());
+  if (params?.per_page) queryParams.set("per_page", params.per_page.toString());
 
   const url = `/api/v1/providers${
     queryParams.toString() ? `?${queryParams}` : ""

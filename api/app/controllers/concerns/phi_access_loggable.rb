@@ -52,6 +52,50 @@ module PhiAccessLoggable
     # doesn't silently rot in log files.
   end
 
+  # Bulk-log PHI access for a collection of records in a single INSERT.
+  #
+  # Use this instead of calling log_phi_access in a loop (e.g. the
+  # appointments index which may return dozens of records). insert_all
+  # bypasses AR callbacks, which is intentional here — PhiAccessLog's
+  # readonly! guard would fire on each instantiated record otherwise.
+  #
+  # @param resource_type  [String]         e.g. "Appointment"
+  # @param resource_ids   [Array<#to_s>]   primary keys of accessed records
+  # @param action         [String, Symbol] one of: view, create, update, delete
+  # @param user_id        [Integer, nil]   override; defaults to current_user&.id
+  def log_phi_access_batch(resource_type, resource_ids, action, user_id: current_user_id)
+    return if resource_ids.blank?
+
+    now        = Time.current
+    sid        = guest_session_id
+    rid        = request.request_id
+    ip         = request.remote_ip
+    action_str = action.to_s
+    type_str   = resource_type.to_s
+
+    records = resource_ids.map do |id|
+      {
+        user_id:       user_id,
+        resource_type: type_str,
+        resource_id:   id.to_s,
+        action:        action_str,
+        session_id:    sid,
+        request_id:    rid,
+        ip_address:    ip,
+        created_at:    now,
+        updated_at:    now
+      }
+    end
+
+    PhiAccessLog.insert_all(records)
+  rescue StandardError => e
+    Rails.logger.error(
+      "[PHI_AUDIT_FAILURE] batch resource=#{resource_type} " \
+      "ids=#{resource_ids.inspect} action=#{action} " \
+      "user=#{user_id} error=#{e.class}: #{e.message}"
+    )
+  end
+
   # Resolve the acting user's id. Returns nil for unauthenticated requests.
   # Override this if your auth setup uses a different method name.
   def current_user_id

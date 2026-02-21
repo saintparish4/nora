@@ -21,21 +21,29 @@ module Triage
       'emergency' => { priority: 3, color: 'red', message: 'Seek immediate medical attention' },
     }.freeze
 
-    def initialize(description)
+    # @param description [String]  symptom text (single-shot) or conversation
+    #                              transcript (chat flow)
+    # @param cacheable   [Boolean] set to false when the description is a
+    #                              multi-turn conversation transcript — transcripts
+    #                              are effectively unique per session so caching
+    #                              wastes memory and returns stale results as the
+    #                              conversation evolves. Keep true (default) for
+    #                              the single-shot /analyze-symptoms endpoint.
+    def initialize(description, cacheable: true)
       @description = description
-      @client = OpenAI::Client.new
+      @cacheable   = cacheable
+      @client      = OpenAI::Client.new
     end
 
     def analyze
-      # Check cache first
-      cached_result = check_cache
-      return cached_result if cached_result
+      if @cacheable
+        cached_result = check_cache
+        return cached_result if cached_result
+      end
 
-      # Call OpenAI API
       result = call_openai_api
 
-      # Cache the result
-      cache_result(result) if result
+      cache_result(result) if result && @cacheable
 
       result
     end
@@ -43,20 +51,13 @@ module Triage
     private
 
     def check_cache
-      cache_key = generate_cache_key(@description)
-      cached = Rails.cache.read(cache_key)
-
-      if cached
-        Rails.logger.info "Cache hit for symptom analysis"
-        return cached
-      end
-
-      nil
+      cached = Rails.cache.read(generate_cache_key(@description))
+      Rails.logger.info "Cache hit for symptom analysis" if cached
+      cached
     end
 
     def cache_result(result)
-      cache_key = generate_cache_key(@description)
-      Rails.cache.write(cache_key, result, expires_in: 7.days)
+      Rails.cache.write(generate_cache_key(@description), result, expires_in: 7.days)
     end
 
     def generate_cache_key(description)

@@ -18,6 +18,9 @@ export interface Provider {
 export interface ProvidersResponse {
   providers: Provider[];
   total: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
 }
 
 export interface ProviderStats {

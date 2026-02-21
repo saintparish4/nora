@@ -42,7 +42,7 @@ module Api
         upcoming = appointments.upcoming
         past = appointments.past
 
-        (upcoming + past).each { |appt| log_phi_access("Appointment", appt.id, :view) }
+        log_phi_access_batch("Appointment", (upcoming + past).map(&:id), :view)
 
         render json: {
           upcoming: upcoming.map { |a| a.as_json.merge(provider: a.provider.as_summary_json) },

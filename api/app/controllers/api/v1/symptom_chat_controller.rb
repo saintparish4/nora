@@ -85,8 +85,12 @@ module Api
         end
 
         # --- Full analysis ---
+        # Conversation transcripts are unique per session and grow with each
+        # turn, so caching them wastes cache space and can return a stale
+        # result if the user adds more context. Disable caching here; the
+        # single-shot /analyze-symptoms endpoint keeps caching enabled.
         transcript = conversation.transcript
-        analyzer = Triage::SymptomAnalyzerService.new(transcript)
+        analyzer = Triage::SymptomAnalyzerService.new(transcript, cacheable: false)
         analysis = analyzer.analyze
 
         providers_with_slots = Providers::MatchAndSlotService.new(analysis).call

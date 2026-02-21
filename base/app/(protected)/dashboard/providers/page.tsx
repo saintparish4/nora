@@ -60,26 +60,35 @@ const SPECIALTY_CARDS = [
   },
 ];
 
+const PER_PAGE = 20;
+
 export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [specialty, setSpecialty] = useState('');
   const [sortBy, setSortBy] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const loadProviders = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getProviders({ 
+      const data = await getProviders({
         specialty: specialty || undefined,
-        sort: sortBy || undefined
+        sort: sortBy || undefined,
+        page,
+        per_page: PER_PAGE,
       });
       setProviders(data.providers);
+      setTotal(data.total);
+      setTotalPages(data.total_pages ?? 1);
     } catch (error) {
       console.error('Failed to load providers:', error);
     } finally {
       setLoading(false);
     }
-  }, [specialty, sortBy]);
+  }, [specialty, sortBy, page]);
 
   useEffect(() => {
     loadProviders();
@@ -87,6 +96,7 @@ export default function ProvidersPage() {
 
   const handleSpecialtyClick = (specId: string) => {
     setSpecialty(specId);
+    setPage(1);
   };
 
   return (
@@ -132,14 +142,14 @@ export default function ProvidersPage() {
           {/* Sort & Results Count */}
           <div className="flex items-center justify-between mb-6">
             <p className="text-gray-600">
-              {loading ? 'Loading...' : `${providers.length} provider${providers.length !== 1 ? 's' : ''} found`}
+              {loading ? 'Loading...' : `${total} provider${total !== 1 ? 's' : ''} found`}
               {specialty && ` in ${specialty}`}
             </p>
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-600">Sort by:</label>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
                 className="px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
               >
                 <option value="">Most Recent</option>
@@ -242,6 +252,51 @@ export default function ProvidersPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+                .reduce<(number | 'ellipsis')[]>((acc, p, idx, arr) => {
+                  if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('ellipsis');
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, idx) =>
+                  p === 'ellipsis' ? (
+                    <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p as number)}
+                      className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                        page === p
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

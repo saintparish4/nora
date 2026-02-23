@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { formatDate, formatTime, getUrgencyColor } from '@/lib/format';
@@ -80,7 +81,9 @@ function GetCareContent() {
         setCurrentStep('providers');
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : 'Failed to load providers');
+        const msg = err instanceof Error ? err.message : 'Failed to load providers';
+        setError(msg);
+        toast.error(msg);
       })
       .finally(() => setLoading(false));
   }, [prefillSpecialty, prefillProviderId]);
@@ -119,7 +122,9 @@ function GetCareContent() {
         setCurrentStep('providers');
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to analyze symptoms');
+      const msg = err instanceof Error ? err.message : 'Failed to analyze symptoms';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -151,7 +156,9 @@ function GetCareContent() {
 
       setCurrentStep('success');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to book appointment');
+      const msg = err instanceof Error ? err.message : 'Failed to book appointment';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -226,12 +233,14 @@ function GetCareContent() {
       {/* Main Content */}
       <div className="flex-1">
         <div className="max-w-3xl mx-auto">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-              <p>{error}</p>
-            </div>
-          )}
+          <div aria-live="polite" aria-atomic="true">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-800 flex items-start gap-3" role="alert">
+                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <p>{error}</p>
+              </div>
+            )}
+          </div>
 
           {currentStep === 'start' && (
             <div className="space-y-6">
@@ -370,8 +379,12 @@ function GetCareContent() {
                     {providers.map((provider) => (
                       <div
                         key={provider.id}
-                        className="border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all cursor-pointer group"
+                        className="border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all cursor-pointer group focus-within:ring-2 focus-within:ring-rose-300"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Select ${provider.name}, ${provider.specialty}`}
                         onClick={() => handleSelectProvider(provider)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectProvider(provider); } }}
                       >
                         <div className="flex items-start gap-4">
                           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-400 to-orange-400 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
@@ -428,8 +441,12 @@ function GetCareContent() {
                     {selectedProvider.next_available_slots.map((slot, index) => (
                       <div
                         key={index}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Select slot on ${formatDate(slot.start_time)}`}
                         onClick={() => handleSelectSlot(slot)}
-                        className="border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all cursor-pointer group"
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectSlot(slot); } }}
+                        className="border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all cursor-pointer group focus-within:ring-2 focus-within:ring-rose-300"
                       >
                         <div className="flex items-center justify-between">
                           <div>

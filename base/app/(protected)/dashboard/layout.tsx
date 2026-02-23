@@ -2,6 +2,7 @@
 
 import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { DashboardNav } from '@/components/dashboard/dashboard-nav';
+import { SiteFooter } from '@/components/navigation/site-footer';
 
 export default function DashboardLayout({
   children,
@@ -26,8 +27,11 @@ export default function DashboardLayout({
 
         <div className="max-w-[1400px] mx-auto px-10 relative z-10">
           <DashboardNav />
-          {children}
+          <main id="main-content">
+            {children}
+          </main>
         </div>
+        <SiteFooter />
       </div>
     </AuthProtected>
   );

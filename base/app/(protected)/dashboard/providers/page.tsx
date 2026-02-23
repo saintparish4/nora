@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import { getProviders, Provider } from '@/lib/api';
 import Link from 'next/link';
 import { 
@@ -85,6 +86,7 @@ export default function ProvidersPage() {
       setTotalPages(data.total_pages ?? 1);
     } catch (error) {
       console.error('Failed to load providers:', error);
+      toast.error('Failed to load providers. Please try again.');
     } finally {
       setLoading(false);
     }

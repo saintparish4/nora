@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Symptom Analyzer | Aura Health AI',
+  title: 'Symptom Analyzer | Nora',
   description:
     'Clinical-grade AI symptom assistant. Describe your symptoms and get evidence-based guidance. Not a diagnosis.',
 };

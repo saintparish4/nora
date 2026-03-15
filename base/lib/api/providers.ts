@@ -1,4 +1,5 @@
-import { authFetch } from "./client";
+import { authFetch, validateResponse } from "./client";
+import { ProvidersResponseSchema, ProviderSchema } from "./schemas";
 import type { ProvidersResponse, Provider, AvailableSlotsResponse } from "@/types";
 
 export async function getProviders(params?: {
@@ -29,14 +30,15 @@ export async function getProviders(params?: {
     throw new Error("Failed to fetch providers");
   }
 
-  return res.json();
+  const data = await res.json();
+  return validateResponse(ProvidersResponseSchema, data);
 }
 
 export async function getProvider(id: number): Promise<Provider> {
   const res = await authFetch(`/api/v1/providers/${id}`);
   if (!res.ok) throw new Error("Provider not found");
   const data = await res.json();
-  return data.provider;
+  return validateResponse(ProviderSchema, data.provider);
 }
 
 export async function getAvailableSlots(
@@ -79,5 +81,6 @@ export async function getProvidersByAISpecialty(
     throw new Error("Failed to fetch providers");
   }
 
-  return res.json();
+  const data = await res.json();
+  return validateResponse(ProvidersResponseSchema, data);
 }

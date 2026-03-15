@@ -1,4 +1,5 @@
-import { authFetch, setToken, removeToken, getToken } from "./client";
+import { authFetch, setToken, removeToken, getToken, validateResponse } from "./client";
+import { UserSchema } from "./schemas";
 import type { AuthResponse, User } from "@/types";
 
 export interface SignupFields {
@@ -88,7 +89,7 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 
     const data = await res.json();
-    return data.user;
+    return validateResponse(UserSchema, data.user);
   } catch {
     removeToken();
     return null;

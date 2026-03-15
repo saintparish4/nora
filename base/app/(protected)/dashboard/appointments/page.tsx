@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
-import { getAppointments, cancelAppointment, Appointment } from '@/lib/api';
+import { useAppointments, cancelAppointment, type Appointment } from '@/lib/api';
 import { formatDateTime } from '@/lib/format';
 import Link from 'next/link';
 import { AppointmentsPageSkeleton } from '@/components/ui/page-skeleton';
@@ -17,30 +17,12 @@ import {
 } from '@/components/ui/dialog';
 
 export default function AppointmentsPage() {
-  const [upcoming, setUpcoming] = useState<Appointment[]>([]);
-  const [past, setPast] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, mutate } = useAppointments();
+  const upcoming = data?.upcoming ?? [];
+  const past = data?.past ?? [];
+
   const [cancelling, setCancelling] = useState<number | null>(null);
   const [confirmId, setConfirmId] = useState<number | null>(null);
-
-  useEffect(() => {
-    loadAppointments();
-  }, []);
-
-  const loadAppointments = async () => {
-    setLoading(true);
-    try {
-      const data = await getAppointments();
-      setUpcoming(data.upcoming || []);
-      setPast(data.past || []);
-    } catch (error) {
-      Sentry.captureException(error);
-      console.error('Failed to load appointments:', error);
-      toast.error('Failed to load appointments. Please refresh.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCancelConfirm = async () => {
     if (confirmId == null) return;
@@ -50,7 +32,7 @@ export default function AppointmentsPage() {
     try {
       await cancelAppointment(id);
       toast.success('Appointment cancelled successfully.');
-      await loadAppointments();
+      await mutate();
     } catch (error: unknown) {
       Sentry.captureException(error);
       console.error('Error cancelling appointment:', error);
@@ -60,7 +42,7 @@ export default function AppointmentsPage() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <AppointmentsPageSkeleton />;
   }
 

@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import * as Sentry from '@sentry/nextjs';
-import { toast } from 'sonner';
 import {
-  getProvider,
-  getAvailableSlots,
+  useProvider,
+  useProviderSlots,
   bookAppointment,
-  Provider,
-  TimeSlot,
-  AvailableSlotsResponse,
+  type TimeSlot,
 } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
@@ -29,9 +26,10 @@ export default function ProviderDetailPage() {
   const router = useRouter();
   const providerId = Number(params.id);
 
-  const [provider, setProvider] = useState<Provider | null>(null);
-  const [slotsData, setSlotsData] = useState<AvailableSlotsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: provider, isLoading: providerLoading } = useProvider(providerId);
+  const { data: slotsData, mutate: mutateSlots, isLoading: slotsLoading } = useProviderSlots(providerId);
+  const loading = providerLoading || slotsLoading;
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
 
@@ -41,33 +39,15 @@ export default function ProviderDetailPage() {
   const [bookingError, setBookingError] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-  const loadProviderData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [providerData, slotsResponse] = await Promise.all([
-        getProvider(providerId),
-        getAvailableSlots(providerId),
-      ]);
-
-      setProvider(providerData);
-      setSlotsData(slotsResponse);
-
-      const dates = Object.keys(slotsResponse.slots);
+  // Auto-select the first available date whenever slot data loads/changes.
+  useEffect(() => {
+    if (slotsData) {
+      const dates = Object.keys(slotsData.slots);
       if (dates.length > 0) {
         setSelectedDate(dates[0]);
       }
-    } catch (error) {
-      Sentry.captureException(error);
-      console.error('Failed to load provider:', error);
-      toast.error('Failed to load provider details. Please try again.');
-    } finally {
-      setLoading(false);
     }
-  }, [providerId]);
-
-  useEffect(() => {
-    loadProviderData();
-  }, [loadProviderData]);
+  }, [slotsData]);
 
   const handleBookingClick = () => {
     if (selectedSlot) {
@@ -91,9 +71,7 @@ export default function ProviderDetailPage() {
       });
 
       setBookingSuccess(true);
-
-      const slotsResponse = await getAvailableSlots(providerId);
-      setSlotsData(slotsResponse);
+      await mutateSlots();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to book appointment';
       setBookingError(message);

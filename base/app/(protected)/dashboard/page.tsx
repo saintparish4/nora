@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -14,7 +13,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
-import { getAppointments, type Appointment } from '@/lib/api';
+import { useAppointments, type Appointment } from '@/lib/api';
 import { formatDateTime, formatDate } from '@/lib/format';
 
 const UPCOMING_LIMIT = 3;
@@ -24,32 +23,9 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const displayName = user?.first_name?.trim() || user?.email?.split('@')[0] || 'there';
 
-  const [upcoming, setUpcoming] = useState<Appointment[]>([]);
-  const [past, setPast] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    getAppointments()
-      .then((data) => {
-        if (!cancelled) {
-          setUpcoming(data.upcoming ?? []);
-          setPast(data.past ?? []);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setUpcoming([]);
-          setPast([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data, isLoading: loading } = useAppointments();
+  const upcoming = data?.upcoming ?? [];
+  const past = data?.past ?? [];
 
   const greeting = (() => {
     const hour = new Date().getHours();

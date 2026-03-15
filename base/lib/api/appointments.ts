@@ -1,4 +1,5 @@
-import { authFetch } from "./client";
+import { authFetch, validateResponse } from "./client";
+import { AppointmentsResponseSchema } from "./schemas";
 import type { Appointment, AppointmentsResponse } from "@/types";
 
 export async function bookAppointment(params: {
@@ -42,7 +43,8 @@ export async function getAppointments(): Promise<AppointmentsResponse> {
     throw new Error("Failed to fetch appointments");
   }
 
-  return res.json();
+  const data = await res.json();
+  return validateResponse(AppointmentsResponseSchema, data);
 }
 
 export async function cancelAppointment(id: number): Promise<Appointment> {

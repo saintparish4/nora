@@ -18,7 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Aura Health AI",
+  title: "Nora",
   description: "The clarity of data, the warmth of care. AI-powered precision medicine and diagnostics.",
 };
 

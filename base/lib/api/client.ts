@@ -1,7 +1,9 @@
+import * as Sentry from '@sentry/nextjs';
+import { z } from 'zod';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-// Token management
-const TOKEN_KEY = "mai_auth_token";
+const TOKEN_KEY = "nora_auth_token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -26,7 +28,10 @@ function toHeaderRecord(init: HeadersInit | undefined): Record<string, string> {
   return { ...init };
 }
 
-// Shared authFetch helper to eliminate duplicated token/header boilerplate
+// Shared authFetch helper to eliminate duplicated token/header boilerplate.
+// Globally handles 401 responses: clears the stored token and redirects to
+// /login with returnUrl + reason=session_expired so the login page can surface
+// a contextual message to the user.
 export async function authFetch(
   url: string,
   options: RequestInit = {}
@@ -49,7 +54,40 @@ export async function authFetch(
     credentials: options.credentials || "include",
   });
 
+  if (response.status === 401 && typeof window !== "undefined") {
+    removeToken();
+    const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `/login?returnUrl=${returnUrl}&reason=session_expired`;
+    // Throw so callers don't attempt to process the unauthenticated response.
+    throw new Error("Session expired");
+  }
+
   return response;
+}
+
+/**
+ * Validates API response data against a Zod schema.
+ *
+ * - Development: `schema.parse(data)` — throws immediately on any mismatch,
+ *   surfacing backend contract breaks as early as possible.
+ * - Production: `schema.safeParse(data)` — logs failures to Sentry and returns
+ *   the raw data anyway so the UI degrades gracefully rather than crashing.
+ */
+export function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
+  if (process.env.NODE_ENV === "development") {
+    return schema.parse(data);
+  }
+
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    Sentry.captureException(
+      new Error("API response validation failed"),
+      { extra: { issues: result.error.issues } }
+    );
+    // Resilient fallback: return raw data so the UI doesn't crash on schema drift.
+    return data as T;
+  }
+  return result.data;
 }
 
 export { API_URL };

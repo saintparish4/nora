@@ -22,11 +22,6 @@ module Api
             end_date: (Date.current + 14.days).to_s
           }
         }
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "Provider not found" }, status: :not_found
-      rescue => e
-        Rails.logger.error "Error generating slots: #{e.message}"
-        render json: { error: "Unable to generate available slots" }, status: :internal_server_error
       end
     end
   end

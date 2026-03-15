@@ -1,4 +1,5 @@
-import { authFetch } from "./client";
+import { authFetch, validateResponse } from "./client";
+import { SymptomAnalysisResponseSchema } from "./schemas";
 import type { SymptomAnalysisResponse } from "@/types";
 
 export async function analyzeSymptoms(
@@ -15,5 +16,5 @@ export async function analyzeSymptoms(
     throw new Error(data.error || "Failed to analyze symptoms");
   }
 
-  return data;
+  return validateResponse(SymptomAnalysisResponseSchema, data);
 }

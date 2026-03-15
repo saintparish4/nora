@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Locations | Aura Health AI',
+  title: 'Locations | Nora',
   description:
     'Find advanced AI-integrated healthcare at one of our flagship centers or boutique clinics across the region.',
 };

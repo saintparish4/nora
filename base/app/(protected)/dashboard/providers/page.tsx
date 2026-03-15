@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import * as Sentry from '@sentry/nextjs';
-import { toast } from 'sonner';
-import { getProviders, Provider } from '@/lib/api';
+import { useState } from 'react';
+import { useProviders, type Provider } from '@/lib/api';
 import Link from 'next/link';
 import { 
   Activity, 
@@ -65,38 +63,20 @@ const SPECIALTY_CARDS = [
 const PER_PAGE = 20;
 
 export default function ProvidersPage() {
-  const [providers, setProviders] = useState<Provider[]>([]);
-  const [loading, setLoading] = useState(true);
   const [specialty, setSpecialty] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
 
-  const loadProviders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await getProviders({
-        specialty: specialty || undefined,
-        sort: sortBy || undefined,
-        page,
-        per_page: PER_PAGE,
-      });
-      setProviders(data.providers);
-      setTotal(data.total);
-      setTotalPages(data.total_pages ?? 1);
-    } catch (error) {
-      Sentry.captureException(error);
-      console.error('Failed to load providers:', error);
-      toast.error('Failed to load providers. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, [specialty, sortBy, page]);
+  const { data, isLoading: loading } = useProviders({
+    specialty: specialty || undefined,
+    sort: sortBy || undefined,
+    page,
+    per_page: PER_PAGE,
+  });
 
-  useEffect(() => {
-    loadProviders();
-  }, [loadProviders]);
+  const providers = data?.providers ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = data?.total_pages ?? 1;
 
   const handleSpecialtyClick = (specId: string) => {
     setSpecialty(specId);

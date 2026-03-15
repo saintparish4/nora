@@ -1,27 +1,6 @@
-import { Availability } from './appointments';
+import type { Provider, ProvidersResponse } from '@/lib/api/schemas';
 
-export interface Provider {
-  id: number;
-  name: string;
-  specialty: string;
-  bio: string;
-  location: string;
-  hourly_rate: number;
-  experience_years: number;
-  rating: number;
-  avatar_url: string;
-  availabilities?: Availability[];
-  /** Returned by the list endpoint instead of full availabilities */
-  has_availability?: boolean;
-}
-
-export interface ProvidersResponse {
-  providers: Provider[];
-  total: number;
-  page: number;
-  per_page: number;
-  total_pages: number;
-}
+export type { Provider, ProvidersResponse };
 
 export interface ProviderStats {
   total_appointments: number;

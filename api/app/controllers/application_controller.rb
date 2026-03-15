@@ -4,6 +4,20 @@ class ApplicationController < ActionController::API
 
     before_action :authenticate_request
 
+    rescue_from StandardError do |e|
+      Sentry.capture_exception(e)
+      Rails.logger.error({ event: "unhandled_error", error: e.class.name, message: e.message }.to_json)
+      render json: { error: "Internal server error" }, status: :internal_server_error
+    end
+
+    rescue_from ActiveRecord::RecordNotFound do
+      render json: { error: "Resource not found" }, status: :not_found
+    end
+
+    rescue_from ActionController::ParameterMissing do |e|
+      render json: { error: "Missing parameter: #{e.param}" }, status: :bad_request
+    end
+
     # For lograge: add request_id, ip, user_id to the request payload (production JSON logs).
     def append_info_to_payload(payload)
       super

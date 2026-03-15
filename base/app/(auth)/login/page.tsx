@@ -8,6 +8,7 @@ import Link from 'next/link';
 function LoginContent() {
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') ?? undefined;
+  const sessionExpired = searchParams.get('reason') === 'session_expired';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,6 +78,19 @@ function LoginContent() {
               border: '1px solid var(--glass-border)',
             }}
           >
+            {sessionExpired && (
+              <div
+                className="mb-6 px-4 py-3 rounded-xl text-sm text-left"
+                style={{
+                  background: 'rgba(255, 156, 107, 0.1)',
+                  border: '1px solid rgba(255, 156, 107, 0.3)',
+                  color: '#C27045',
+                }}
+              >
+                Your session has expired. Please sign in again to continue.
+              </div>
+            )}
+
             <div className="mb-10">
               <h1 className="font-serif text-[2.5rem] font-normal tracking-[-0.02em] mb-2">Welcome back</h1>
               <p className="text-[0.95rem] opacity-60">Access your clinical insights and unified medical records.</p>
@@ -159,7 +173,7 @@ function LoginContent() {
             )}
 
             <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--glass-border)' }}>
-              <p className="text-[0.9rem] opacity-80 mb-3">New to Aura Health AI?</p>
+              <p className="text-[0.9rem] opacity-80 mb-3">New to Nora?</p>
               <Link
                 href={returnUrl ? `/signup?returnUrl=${encodeURIComponent(returnUrl)}` : '/signup'}
                 className="text-[var(--ink-color)] no-underline font-semibold text-[0.85rem] relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-[var(--ink-color)] after:opacity-30 hover:after:opacity-100 after:transition-opacity"

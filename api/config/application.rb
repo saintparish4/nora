@@ -14,7 +14,7 @@ module Api
 
     # Enable sessions
     config.session_store :cookie_store,
-    key: "_mai_session",
+    key: "_nora_session",
     same_site: :none, # Required for cross-origin cookies
     secure: Rails.env.production?, # HTTPs only in production
     httponly: true # Prevent XSS attacks

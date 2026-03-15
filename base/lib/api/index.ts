@@ -7,6 +7,7 @@ export * from "./appointments";
 export * from "./symptoms";
 export * from "./quick-booking";
 export * from "./symptom-chat";
+export * from "./hooks";
 
 // Re-export types for convenience
 export * from "@/types";

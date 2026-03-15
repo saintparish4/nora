@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import useSWR from 'swr';
 import { NoraLogo } from '@/components/navigation/nora-logo';
 import { getProviders } from '@/lib/api';
@@ -326,13 +327,12 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
                     />
                   )}
                   <div className="flex gap-5 mb-6">
-                    <img
+                    <Image
                       src={s.image}
                       alt={`Photo of ${s.name}`}
-                      className="w-20 h-20 rounded-full object-cover border border-[var(--glass-border)] bg-gradient-to-br from-[#ddd] to-[#eee]"
-                      loading="lazy"
                       width={80}
                       height={80}
+                      className="w-20 h-20 rounded-full object-cover border border-[var(--glass-border)] bg-gradient-to-br from-[#ddd] to-[#eee]"
                     />
                     <div>
                       <h3 className="font-serif text-2xl mb-1 font-normal">{s.name}</h3>

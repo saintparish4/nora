@@ -11,7 +11,7 @@ class CreateBlockedSlots < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :blocked_slots, [:provider_id, :start_time]
+    add_index :blocked_slots, [ :provider_id, :start_time ]
     add_index :blocked_slots, :external_event_id
   end
 end

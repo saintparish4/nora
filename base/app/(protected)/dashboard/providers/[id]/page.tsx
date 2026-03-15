@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import {
   getProvider,
@@ -56,6 +57,7 @@ export default function ProviderDetailPage() {
         setSelectedDate(dates[0]);
       }
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Failed to load provider:', error);
       toast.error('Failed to load provider details. Please try again.');
     } finally {

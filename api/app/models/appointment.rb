@@ -1,20 +1,20 @@
 class Appointment < ApplicationRecord
-  belongs_to :patient, class_name: 'User', foreign_key: 'patient_id'
+  belongs_to :patient, class_name: "User", foreign_key: "patient_id"
   belongs_to :provider
 
-  validates :start_time, presence: true 
-  validates :end_time, presence: true 
+  validates :start_time, presence: true
+  validates :end_time, presence: true
   validates :status, inclusion: { in: %w[pending confirmed cancelled completed] }
 
   validate :end_time_after_start_time
   validate :no_overlapping_appointments
   validate :not_in_the_past
 
-  scope :upcoming, -> { where('start_time >= ?', Time.current).order(:start_time) }
-  scope :past, -> { where('start_time < ?', Time.current).order(start_time: :desc) }
+  scope :upcoming, -> { where("start_time >= ?", Time.current).order(:start_time) }
+  scope :past, -> { where("start_time < ?", Time.current).order(start_time: :desc) }
   scope :for_provider, ->(provider_id) { where(provider_id: provider_id) }
   scope :for_patient, ->(patient_id) { where(patient_id: patient_id) }
-  scope :confirmed, -> { where(status: 'confirmed') }
+  scope :confirmed, -> { where(status: "confirmed") }
   scope :active, -> { where(status: %w[pending confirmed]) }
 
   after_create :send_booking_notifications
@@ -51,8 +51,8 @@ class Appointment < ApplicationRecord
     overlapping = Appointment.where(provider_id: provider_id)
                              .where.not(id: id)
                              .where(status: %w[pending confirmed])
-                             .where('start_time < ? AND end_time > ?', end_time, start_time)
-    
+                             .where("start_time < ? AND end_time > ?", end_time, start_time)
+
     if overlapping.exists?
       errors.add(:base, "This time slot is no longer available")
     end

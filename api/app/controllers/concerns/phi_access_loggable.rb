@@ -48,8 +48,7 @@ module PhiAccessLoggable
       "resource=#{resource_type}##{resource_id} action=#{action} " \
       "user=#{user_id} error=#{e.class}: #{e.message}"
     )
-    # TODO: Send to error tracker (Sentry, Honeybadger, etc.) so this
-    # doesn't silently rot in log files.
+    Sentry.capture_exception(e) if defined?(Sentry)
   end
 
   # Bulk-log PHI access for a collection of records in a single INSERT.
@@ -94,6 +93,7 @@ module PhiAccessLoggable
       "ids=#{resource_ids.inspect} action=#{action} " \
       "user=#{user_id} error=#{e.class}: #{e.message}"
     )
+    Sentry.capture_exception(e) if defined?(Sentry)
   end
 
   # Resolve the acting user's id. Returns nil for unauthenticated requests.

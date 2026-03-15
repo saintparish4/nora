@@ -9,7 +9,7 @@ class CreateConversations < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :conversations, :session_id 
-    add_index :conversations, :status 
+    add_index :conversations, :session_id
+    add_index :conversations, :status
   end
 end

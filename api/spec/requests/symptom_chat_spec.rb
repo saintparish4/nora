@@ -108,7 +108,7 @@ RSpec.describe 'Symptom Chat API', type: :request do
           specialty: 'orthopedics',
           urgency: 'routine',
           reasoning: 'Lower back pain suggests musculoskeletal issue.',
-          keywords: ['back pain'],
+          keywords: [ 'back pain' ],
           red_flags: [],
           specialty_name: 'Orthopedics',
           urgency_details: { priority: 1, color: 'green', message: 'Schedule within 1-2 weeks' }
@@ -145,7 +145,7 @@ RSpec.describe 'Symptom Chat API', type: :request do
       it 'includes matching providers when available' do
         provider = create(:provider, specialty: 'Orthopedics', rating: 4.8)
         provider_data = provider.as_detail_json(next_available_slots: [])
-        allow_any_instance_of(Providers::MatchAndSlotService).to receive(:call).and_return([provider_data])
+        allow_any_instance_of(Providers::MatchAndSlotService).to receive(:call).and_return([ provider_data ])
 
         post '/api/v1/symptom-chat/send', params: {
           session_id: session_id,
@@ -311,5 +311,4 @@ RSpec.describe 'Symptom Chat API', type: :request do
       end
     end
   end
-
 end

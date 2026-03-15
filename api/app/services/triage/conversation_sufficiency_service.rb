@@ -16,7 +16,7 @@ module Triage
     def check
       messages = @conversation.conversation_messages.ordered
 
-      user_messages = messages.select { |m| m.role == 'user' }
+      user_messages = messages.select { |m| m.role == "user" }
 
       # If the very first user message is too short, skip the LLM call
       if user_messages.size == 1 && user_messages.first.content.length < MIN_FIRST_MESSAGE_LENGTH
@@ -49,21 +49,21 @@ module Triage
         parameters: {
           model: "gpt-4o-mini",
           messages: [
-            { role: 'system', content: sufficiency_system_prompt },
-            { role: 'user', content: transcript }
+            { role: "system", content: sufficiency_system_prompt },
+            { role: "user", content: transcript }
           ],
           temperature: 0.1,
           max_tokens: 200
         }
       )
 
-      content = response.dig('choices', 0, 'message', 'content')
-      content = content.gsub(/```json\n?/, '').gsub(/```\n?/, '').strip
+      content = response.dig("choices", 0, "message", "content")
+      content = content.gsub(/```json\n?/, "").gsub(/```\n?/, "").strip
       parsed = JSON.parse(content)
 
       {
-        sufficient: parsed['sufficient'] == true,
-        follow_up_question: parsed['follow_up_question']
+        sufficient: parsed["sufficient"] == true,
+        follow_up_question: parsed["follow_up_question"]
       }
     rescue JSON::ParserError
       # If we can't parse, assume not sufficient and ask a generic follow-up
@@ -74,7 +74,7 @@ module Triage
     end
 
     def heuristic_check(user_messages)
-      combined = user_messages.map(&:content).join(' ')
+      combined = user_messages.map(&:content).join(" ")
       has_duration = combined.match?(/\b(day|week|month|hour|morning|yesterday|ago|since|started)\b/i)
       long_enough = combined.length >= 50
 

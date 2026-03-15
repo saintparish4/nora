@@ -16,13 +16,10 @@ export default function FlowingLine({
   animated = true,
 }: FlowingLineProps) {
   const pathRef = useRef<SVGPathElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(!animated);
 
   useEffect(() => {
-    if (!animated) {
-      setIsVisible(true);
-      return;
-    }
+    if (!animated) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

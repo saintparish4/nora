@@ -26,11 +26,11 @@ module Api
         message    = params[:message].to_s.strip
 
         if session_id.blank?
-          return render json: { error: 'session_id is required' }, status: :unprocessable_entity
+          return render json: { error: "session_id is required" }, status: :unprocessable_entity
         end
 
         if message.blank?
-          return render json: { error: 'message is required' }, status: :unprocessable_entity
+          return render json: { error: "message is required" }, status: :unprocessable_entity
         end
 
         # --- Minimum character enforcement (client-side is primary, this is a safety net) ---
@@ -47,7 +47,7 @@ module Api
         # --- Find or create conversation ---
         conversation = Conversation.find_or_create_by!(session_id: session_id) do |c|
           c.user = current_user_if_present
-          c.status = 'active'
+          c.status = "active"
           c.context = {}
         end
 
@@ -58,7 +58,7 @@ module Api
 
         # --- Persist user message ---
         conversation.conversation_messages.create!(
-          role: 'user',
+          role: "user",
           content: message
         )
 
@@ -69,7 +69,7 @@ module Api
           # Store the follow-up question as an assistant message
           assistant_msg = sufficiency[:follow_up_question]
           conversation.conversation_messages.create!(
-            role: 'assistant',
+            role: "assistant",
             content: assistant_msg
           )
 
@@ -98,7 +98,7 @@ module Api
         # --- Build assistant summary ---
         assistant_msg = build_recommendation_message(analysis, providers_with_slots)
         conversation.conversation_messages.create!(
-          role: 'assistant',
+          role: "assistant",
           content: assistant_msg
         )
 
@@ -115,7 +115,7 @@ module Api
         Rails.logger.error "SymptomChat error: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
         render json: {
-          error: 'Something went wrong. Please try again.'
+          error: "Something went wrong. Please try again."
         }, status: :internal_server_error
       end
 
@@ -130,9 +130,9 @@ module Api
         msg += "#{reasoning} "
 
         case urgency
-        when 'emergency'
+        when "emergency"
           msg += "This appears urgent — please seek immediate medical attention or call 911 if you're in danger."
-        when 'urgent'
+        when "urgent"
           msg += "I'd suggest scheduling an appointment within the next 24–48 hours."
         else
           msg += "You can schedule this at your convenience within the next week or two."

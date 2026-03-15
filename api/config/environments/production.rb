@@ -45,7 +45,7 @@ Rails.application.configure do
 
   # Replace the default in-process memory cache store with a durable alternative.
   config.cache_store = :redis_cache_store, {
-    url: ENV.fetch('REDIS_URL'),
+    url: ENV.fetch("REDIS_URL"),
     expires_in: 7.days
   }
 
@@ -58,18 +58,18 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: 'mai-omega.vercel.app' }
+  config.action_mailer.default_url_options = { host: "mai-omega.vercel.app" }
 
   # Configure Resend SMTP for email delivery
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    address: 'smtp.resend.com',
+    address: "smtp.resend.com",
     port: 587,
-    domain: 'mai-omega.vercel.app',
-    user_name: 'resend',
-    password: ENV['RESEND_API_KEY'],
-    authentication: 'plain',
+    domain: "mai-omega.vercel.app",
+    user_name: "resend",
+    password: ENV["RESEND_API_KEY"],
+    authentication: "plain",
     enable_starttls_auto: true
   }
 

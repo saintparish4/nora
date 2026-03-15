@@ -16,7 +16,7 @@ RSpec.describe 'Quick Booking API', type: :request do
       specialty: 'dermatology',
       urgency: 'routine',
       reasoning: 'Skin-related symptoms suggest a dermatologist.',
-      keywords: ['acne', 'face'],
+      keywords: [ 'acne', 'face' ],
       red_flags: [],
       specialty_name: 'Dermatology',
       urgency_details: { priority: 1, color: 'green', message: 'Schedule within 1-2 weeks' }

@@ -1,7 +1,7 @@
 module Api
   module V1
     class ProvidersController < ApplicationController
-      skip_before_action :authenticate_request, only: [:index, :show]
+      skip_before_action :authenticate_request, only: [ :index, :show ]
 
       # GET /api/v1/providers
       #
@@ -23,16 +23,16 @@ module Api
 
         # Sorting
         @providers = case params[:sort]
-                     when 'rating_desc'    then @providers.order(rating: :desc)
-                     when 'rating_asc'     then @providers.order(rating: :asc)
-                     when 'price_desc'     then @providers.order(hourly_rate: :desc)
-                     when 'price_asc'      then @providers.order(hourly_rate: :asc)
-                     when 'experience_desc' then @providers.order(experience_years: :desc)
-                     else                      @providers.order(created_at: :desc)
-                     end
+        when "rating_desc"    then @providers.order(rating: :desc)
+        when "rating_asc"     then @providers.order(rating: :asc)
+        when "price_desc"     then @providers.order(hourly_rate: :desc)
+        when "price_asc"      then @providers.order(hourly_rate: :asc)
+        when "experience_desc" then @providers.order(experience_years: :desc)
+        else                      @providers.order(created_at: :desc)
+        end
 
         # Pagination
-        per_page    = [ [params[:per_page].to_i, 1].max, 100 ].min
+        per_page    = [ [ params[:per_page].to_i, 1 ].max, 100 ].min
         per_page    = 20 if params[:per_page].blank?
         page        = [ params[:page].to_i, 1 ].max
         page        = 1  if params[:page].blank?
@@ -66,7 +66,7 @@ module Api
           provider: provider.as_detail_json(availabilities: provider.availabilities)
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Provider not found' }, status: :not_found
+        render json: { error: "Provider not found" }, status: :not_found
       end
     end
   end

@@ -35,7 +35,7 @@ module Providers
 
       score += (provider.rating || 0) * 5
 
-      score += [provider.experience_years || 0, 10].min
+      score += [ provider.experience_years || 0, 10 ].min
 
       if provider.availabilities.any?
         score += 10

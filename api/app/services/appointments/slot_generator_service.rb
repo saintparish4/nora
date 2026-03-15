@@ -56,7 +56,7 @@ module Appointments
             start_time: current_time.iso8601,
             end_time: slot_end.iso8601,
             date: date.to_s,
-            time: current_time.strftime('%I:%M %p')
+            time: current_time.strftime("%I:%M %p")
           }
         end
 

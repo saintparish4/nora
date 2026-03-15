@@ -51,6 +51,6 @@ class Rack::Attack
       retry_after: 60
     }.to_json
 
-    [429, headers, [body]]
+    [ 429, headers, [ body ] ]
   end
 end

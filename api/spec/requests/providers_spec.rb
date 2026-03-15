@@ -36,7 +36,7 @@ RSpec.describe 'Providers API', type: :request do
 
         expect(response).to have_http_status(:ok)
         names = parsed_body['providers'].map { |p| p['name'] }
-        expect(names).to eq(['Dr. Alpha', 'Dr. Beta'])
+        expect(names).to eq([ 'Dr. Alpha', 'Dr. Beta' ])
       end
     end
   end

@@ -17,20 +17,20 @@ class Provider < ApplicationRecord
     # Every key the analyzer can return must be present so chat recommendations
     # always find matching providers when they exist in the database.
     SPECIALTY_MAPPINGS = {
-        'primary_care' => ['Primary Care'],
-        'cardiology' => ['Cardiology'],
-        'dermatology' => ['Dermatology'],
-        'urgent_care' => ['Urgent Care'],
-        'emergency' => ['Emergency Room', 'Emergency Medicine'],
-        'mental_health' => ['Mental Health Counseling', 'Psychiatry', 'Psychology'],
-        'pediatrics' => ['Pediatrics'],
-        'gynecology' => ['Gynecology', 'OB-GYN'],
-        'oncology' => ['Oncology'],
-        'orthopedics' => ['Orthopedics', 'Orthopedic Surgery'],
-        'physical_therapy' => ['Physical Therapy'],
-        'nutrition' => ['Nutrition Counseling', 'Nutrition'],
-        'ophthalmology' => ['Ophthalmology'],
-        'dentistry' => ['Dentistry']
+        "primary_care" => [ "Primary Care" ],
+        "cardiology" => [ "Cardiology" ],
+        "dermatology" => [ "Dermatology" ],
+        "urgent_care" => [ "Urgent Care" ],
+        "emergency" => [ "Emergency Room", "Emergency Medicine" ],
+        "mental_health" => [ "Mental Health Counseling", "Psychiatry", "Psychology" ],
+        "pediatrics" => [ "Pediatrics" ],
+        "gynecology" => [ "Gynecology", "OB-GYN" ],
+        "oncology" => [ "Oncology" ],
+        "orthopedics" => [ "Orthopedics", "Orthopedic Surgery" ],
+        "physical_therapy" => [ "Physical Therapy" ],
+        "nutrition" => [ "Nutrition Counseling", "Nutrition" ],
+        "ophthalmology" => [ "Ophthalmology" ],
+        "dentistry" => [ "Dentistry" ]
     }.freeze
 
     scope :by_ai_specialty, ->(ai_specialty) {
@@ -41,7 +41,7 @@ class Provider < ApplicationRecord
     }
     scope :by_specialty, ->(specialty) { where(specialty: specialty) if specialty.present? }
     scope :by_location, ->(location) { where("LOWER(location) LIKE LOWER(?)", "%#{location}%") if location.present? }
-    scope :rated_above, ->(rating) { where('rating >= ?', rating) if rating.present? }
+    scope :rated_above, ->(rating) { where("rating >= ?", rating) if rating.present? }
 
     SUMMARY_FIELDS = %i[id name specialty avatar_url location].freeze
     DETAIL_FIELDS  = %i[id name specialty avatar_url location bio rating hourly_rate experience_years].freeze

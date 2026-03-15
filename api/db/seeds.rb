@@ -130,11 +130,11 @@ specialty_mappings = {
 # Create all providers with automatic schedule assignment based on specialty
 providers_data.each_with_index do |provider_data, index|
   provider = Provider.create!(provider_data)
-  
+
   # Get the appropriate schedule template for this provider's specialty
   template_key = specialty_mappings[provider_data[:specialty]] || :medical_specialist
   schedule = schedule_templates[template_key]
-  
+
   # Create availability slots
   schedule.each do |slot|
     provider.availabilities.create!(
@@ -144,7 +144,7 @@ providers_data.each_with_index do |provider_data, index|
       is_available: slot[:available]
     )
   end
-  
+
   puts "Created provider: #{provider.name} (#{provider.specialty}) in #{provider.location}"
   puts "   #{schedule.length} time slots - Template: #{template_key}"
 end
@@ -175,14 +175,14 @@ providers = Provider.all.to_a
 
 appointment_data.each do |apt|
   provider = providers[apt[:provider_index]]
-  
+
   # Skip if provider doesn't exist (safety check)
   next unless provider
-  
+
   # Combine date and time into datetime objects
   start_datetime = Time.zone.parse("#{apt[:date]} #{apt[:start_time]}")
   end_datetime = Time.zone.parse("#{apt[:date]} #{apt[:end_time]}")
-  
+
   appointment = Appointment.create!(
     patient: test_user,
     provider: provider,

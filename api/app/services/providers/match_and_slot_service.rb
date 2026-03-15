@@ -18,7 +18,7 @@ module Providers
 
     def find_matching_providers
       ai_specialty = @analysis[:specialty]
-      matching_specialties = Provider::SPECIALTY_MAPPINGS[ai_specialty] || [@analysis[:specialty_name]]
+      matching_specialties = Provider::SPECIALTY_MAPPINGS[ai_specialty] || [ @analysis[:specialty_name] ]
 
       Provider.where(specialty: matching_specialties)
               .order(rating: :desc)

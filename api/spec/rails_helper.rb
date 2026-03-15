@@ -21,7 +21,7 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.configure_rspec_metadata!
   config.allow_http_connections_when_no_cassette = false
-  
+
   # Filter sensitive data
   config.filter_sensitive_data('<OPENAI_API_KEY>') { ENV['OPENAI_API_KEY'] }
 end
@@ -35,7 +35,7 @@ RSpec.configure do |config|
 
   # Factory Bot
   config.include FactoryBot::Syntax::Methods
-  
+
   # ActiveJob test helpers
   config.include ActiveJob::TestHelper
 
@@ -44,7 +44,7 @@ RSpec.configure do |config|
 
   # Shared request helpers (auth_headers, parsed_body)
   config.include RequestHelpers, type: :request
-  
+
   # Clear enqueued jobs before and after each test
   config.around(:each) do |example|
     clear_enqueued_jobs

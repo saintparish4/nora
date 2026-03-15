@@ -1,7 +1,7 @@
 module Api
   module V1
     class SlotsController < ApplicationController
-      skip_before_action :authenticate_request, only: [:available_slots]
+      skip_before_action :authenticate_request, only: [ :available_slots ]
 
       # GET /api/v1/providers/:id/available_slots
       def available_slots
@@ -23,10 +23,10 @@ module Api
           }
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Provider not found' }, status: :not_found
+        render json: { error: "Provider not found" }, status: :not_found
       rescue => e
         Rails.logger.error "Error generating slots: #{e.message}"
-        render json: { error: 'Unable to generate available slots' }, status: :internal_server_error
+        render json: { error: "Unable to generate available slots" }, status: :internal_server_error
       end
     end
   end

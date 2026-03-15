@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/context';
 import { updateEmailPreferences } from '@/lib/api';
@@ -32,6 +33,7 @@ export default function SettingsPage() {
       });
       toast.success('Preferences saved successfully!');
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Failed to save preferences:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to save preferences');
     } finally {

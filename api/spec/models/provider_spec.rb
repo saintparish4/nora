@@ -74,7 +74,7 @@ RSpec.describe Provider, type: :model do
 
     describe '.by_specialty' do
       it 'filters by exact specialty string' do
-        expect(Provider.by_specialty('Cardiology')).to eq([cardiologist])
+        expect(Provider.by_specialty('Cardiology')).to eq([ cardiologist ])
       end
     end
 

@@ -7,7 +7,7 @@ RSpec.describe AppointmentMailer, type: :mailer do
 
       mail = described_class.booking_confirmation(appointment)
 
-      expect(mail.to).to eq([appointment.patient.email])
+      expect(mail.to).to eq([ appointment.patient.email ])
       expect(mail.subject).to include("Appointment Confirmed")
       expect(mail.subject).to include(appointment.provider.name)
     end
@@ -29,7 +29,7 @@ RSpec.describe AppointmentMailer, type: :mailer do
 
       mail = described_class.cancellation_notice(appointment, "patient")
 
-      expect(mail.to).to eq([appointment.patient.email])
+      expect(mail.to).to eq([ appointment.patient.email ])
       expect(mail.subject).to include("Appointment Cancelled")
       expect(mail.subject).to include(appointment.provider.name)
     end
@@ -51,7 +51,7 @@ RSpec.describe AppointmentMailer, type: :mailer do
 
       mail = described_class.reminder_24h(appointment)
 
-      expect(mail.to).to eq([appointment.patient.email])
+      expect(mail.to).to eq([ appointment.patient.email ])
       expect(mail.subject).to include("Reminder")
       expect(mail.subject).to include(appointment.provider.name)
     end

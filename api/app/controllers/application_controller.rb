@@ -4,6 +4,14 @@ class ApplicationController < ActionController::API
 
     before_action :authenticate_request
 
+    # For lograge: add request_id, ip, user_id to the request payload (production JSON logs).
+    def append_info_to_payload(payload)
+      super
+      payload[:request_id] = request.request_id
+      payload[:ip] = request.remote_ip
+      payload[:user_id] = current_user&.id
+    end
+
     private
 
     def authenticate_request
@@ -14,16 +22,16 @@ class ApplicationController < ActionController::API
         end
 
         # Fallback to JWT auth (for mobile/API clients)
-        header = request.headers['Authorization']
+        header = request.headers["Authorization"]
         if header.present?
-            token = header.split(' ').last
+            token = header.split(" ").last
             decoded = JsonWebToken.decode(token)
             @current_user = User.find_by(id: decoded[:user_id]) if decoded
         end
 
-        render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
+        render json: { error: "Unauthorized" }, status: :unauthorized unless @current_user
     rescue ActiveRecord::RecordNotFound
-        render json: { error: 'User not found' }, status: :unauthorized
+        render json: { error: "User not found" }, status: :unauthorized
     end
 
     def current_user

@@ -1,7 +1,7 @@
-require 'sidekiq-scheduler'
+require "sidekiq-scheduler"
 
 Sidekiq.configure_server do |_config|
-  schedule_file = Rails.root.join('config', 'sidekiq_scheduler.yml')
+  schedule_file = Rails.root.join("config", "sidekiq_scheduler.yml")
   if File.exist?(schedule_file)
     raw_yaml = ERB.new(File.read(schedule_file)).result
     schedule = YAML.safe_load(raw_yaml, aliases: true)
@@ -11,5 +11,3 @@ Sidekiq.configure_server do |_config|
     end
   end
 end
-
-

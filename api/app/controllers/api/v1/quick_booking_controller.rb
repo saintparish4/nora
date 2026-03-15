@@ -1,7 +1,7 @@
 module Api
   module V1
     class QuickBookingController < ApplicationController
-      before_action :authenticate_request, only: [:book]
+      before_action :authenticate_request, only: [ :book ]
 
       # POST /api/v1/quick-booking/analyze
       # Returns symptom analysis + matching providers + available slots
@@ -10,7 +10,7 @@ module Api
 
         if description.blank? || description.length < 10
           return render json: {
-            error: 'Please provide more details about your symptoms (at least 10 characters)'
+            error: "Please provide more details about your symptoms (at least 10 characters)"
           }, status: :unprocessable_entity
         end
 
@@ -30,7 +30,7 @@ module Api
         Rails.logger.error "Quick booking analysis error: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
         render json: {
-          error: 'Unable to process your request. Please try again.'
+          error: "Unable to process your request. Please try again."
         }, status: :internal_server_error
       end
 
@@ -44,7 +44,7 @@ module Api
           start_time: params[:start_time],
           end_time: params[:end_time],
           notes: params[:notes],
-          status: 'confirmed'
+          status: "confirmed"
         )
 
         if appointment.save
@@ -52,22 +52,22 @@ module Api
 
           render json: {
             success: true,
-            message: 'Appointment booked successfully!',
+            message: "Appointment booked successfully!",
             appointment: appointment.as_json.merge(
               provider: appointment.provider.as_detail_json
             )
           }, status: :created
         else
           render json: {
-            error: appointment.errors.full_messages.first || 'Failed to book appointment',
+            error: appointment.errors.full_messages.first || "Failed to book appointment",
             errors: appointment.errors.full_messages
           }, status: :unprocessable_entity
         end
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Provider not found' }, status: :not_found
+        render json: { error: "Provider not found" }, status: :not_found
       rescue StandardError => e
         Rails.logger.error "Quick booking error: #{e.message}"
-        render json: { error: 'Failed to book appointment' }, status: :internal_server_error
+        render json: { error: "Failed to book appointment" }, status: :internal_server_error
       end
     end
   end

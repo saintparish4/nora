@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth/context';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NoraLogo } from '@/components/navigation/nora-logo';
 
 const SPECIALTY_REQUIRED_ERROR = 'Please enter a specialty to search for specialists (e.g. primary care, cardiology, pediatrics).';
@@ -107,7 +108,7 @@ export default function Home() {
 
           {/* Subheadline */}
           <p className="text-[0.85rem] sm:text-[0.95rem] md:text-base leading-[1.6] sm:leading-[1.7] opacity-70 max-w-[90%] sm:max-w-[480px] md:max-w-[540px] mb-8 sm:mb-10 md:mb-12 px-2">
-            We don't just interpret your symptoms—we match you to the right specialist and book the visit.
+            We don&apos;t just interpret your symptoms—we match you to the right specialist and book the visit.
           </p>
 
           {/* Search Engine */}
@@ -215,14 +216,14 @@ export default function Home() {
                     <div className="flex shrink-0 items-center gap-12 sm:gap-16 md:gap-20 lg:gap-24" aria-hidden={false}>
                       {partners.map((item) => (
                         <div key={item.name} className={cellClass}>
-                          <img src={item.logo} alt={item.name} className={logoClass} />
+                          <Image src={item.logo} alt={item.name} width={280} height={80} className={logoClass} />
                         </div>
                       ))}
                     </div>
                     <div className="flex shrink-0 items-center gap-12 sm:gap-16 md:gap-20 lg:gap-24" aria-hidden>
                       {partners.map((item) => (
                         <div key={item.name} className={cellClass}>
-                          <img src={item.logo} alt="" className={logoClass} />
+                          <Image src={item.logo} alt="" width={280} height={80} className={logoClass} />
                         </div>
                       ))}
                     </div>

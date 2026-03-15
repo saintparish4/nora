@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { getAppointments, cancelAppointment, Appointment } from '@/lib/api';
 import { formatDateTime } from '@/lib/format';
@@ -33,6 +34,7 @@ export default function AppointmentsPage() {
       setUpcoming(data.upcoming || []);
       setPast(data.past || []);
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Failed to load appointments:', error);
       toast.error('Failed to load appointments. Please refresh.');
     } finally {
@@ -50,6 +52,7 @@ export default function AppointmentsPage() {
       toast.success('Appointment cancelled successfully.');
       await loadAppointments();
     } catch (error: unknown) {
+      Sentry.captureException(error);
       console.error('Error cancelling appointment:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to cancel appointment');
     } finally {

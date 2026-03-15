@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { getProviders, Provider } from '@/lib/api';
 import Link from 'next/link';
@@ -85,6 +86,7 @@ export default function ProvidersPage() {
       setTotal(data.total);
       setTotalPages(data.total_pages ?? 1);
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Failed to load providers:', error);
       toast.error('Failed to load providers. Please try again.');
     } finally {

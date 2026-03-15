@@ -10,12 +10,12 @@
 # enforcement below is a guardrail, not a security boundary — the real
 # protection is Postgres row-level policies or a restricted DB role in prod.
 class PhiAccessLog < ApplicationRecord
-    # -----------------------------------------------------------------
+  # -----------------------------------------------------------------
   # Validations
   # -----------------------------------------------------------------
   ALLOWED_ACTIONS = %w[view create update delete].freeze
-  validates :resource_type, presence: true 
-  validates :resource_id, presence: true 
+  validates :resource_type, presence: true
+  validates :resource_id, presence: true
   validates :action, presence: true, inclusion: { in: ALLOWED_ACTIONS }
 
   # -----------------------------------------------------------------
@@ -27,10 +27,10 @@ class PhiAccessLog < ApplicationRecord
   before_destroy { raise ActiveRecord::ReadOnlyRecord, "PHI audit logs cannot be destroyed" }
 
   # -----------------------------------------------------------------
-  # Scopes ( for compliance queries ) 
+  # Scopes ( for compliance queries )
   # -----------------------------------------------------------------
-  scope :for_user, ->(uid) { where(user_id: uid) } 
-  scope :for_resource, ->(type, id) { where(resource_type: type, resource_id: id.to_s) } 
-  scope :between, ->(from, to) { where(created_at: from..to) } 
-  scope :by_action, ->(act) { where(action: act) } 
-end 
+  scope :for_user, ->(uid) { where(user_id: uid) }
+  scope :for_resource, ->(type, id) { where(resource_type: type, resource_id: id.to_s) }
+  scope :between, ->(from, to) { where(created_at: from..to) }
+  scope :by_action, ->(act) { where(action: act) }
+end

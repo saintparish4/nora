@@ -20,22 +20,21 @@
 #     "all access in time range", not combinations of all three.
 
 class CreatePhiAccessLogs < ActiveRecord::Migration[8.0]
-    def change 
+    def change
         create_table :phi_access_logs do |t|
             t.bigint :user_id, null: true # nullable for unauthenticated flows
             t.string :resource_type, null: false # "Appointment", "Conversation"
-            t.string :resource_id, null: false # id of the accessed record 
-            t.string :action, null: false # view / create / update / delete 
-            t.string :session_id, null: true # fallback identifier for guests 
-            t.string :request_id, null: true # Rails request.request_id for correlation 
-            t.string :ip_address, null: true # source IP (usefule for breach forensics) 
-            
-            t.datetime :created_at, null: false # no updated_at - rows are immutable 
+            t.string :resource_id, null: false # id of the accessed record
+            t.string :action, null: false # view / create / update / delete
+            t.string :session_id, null: true # fallback identifier for guests
+            t.string :request_id, null: true # Rails request.request_id for correlation
+            t.string :ip_address, null: true # source IP (usefule for breach forensics)
+
+            t.datetime :created_at, null: false # no updated_at - rows are immutable
         end
 
         add_index :phi_access_logs, :user_id
-        add_index :phi_access_logs, [:resource_type, :resource_id] 
-        add_index :phi_access_logs, :created_at 
+        add_index :phi_access_logs, [ :resource_type, :resource_id ]
+        add_index :phi_access_logs, :created_at
     end
 end
-

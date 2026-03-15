@@ -20,7 +20,7 @@ class AppointmentMailer < ApplicationMailer
     # In a real app, provider would have an email field
     # For now, send to a placeholder or skip
     # Returning without calling mail() will return nil
-    return
+    nil
   end
 
   def cancellation_notice(appointment, cancelled_by)

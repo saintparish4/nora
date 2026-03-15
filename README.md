@@ -107,6 +107,8 @@ Backend and frontend each use their own env file. Copy from `.env.example` / `.e
 | `RESEND_API_KEY` | **Yes** (production) | Resend API key for email; optional in dev (mailer can log only). |
 | `RESEND_FROM_EMAIL` | No | Sender address; defaults to Resend onboarding address. |
 | `REDIS_URL` | No (dev) | Defaults to `redis://localhost:6379/0`; required in production if using Redis cache/queue. |
+| `SENTRY_DSN` | No | Sentry DSN for backend error tracking; optional in dev. |
+| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
 
 **Frontend (`base/.env.local`):**
 
@@ -114,6 +116,8 @@ Backend and frontend each use their own env file. Copy from `.env.example` / `.e
 |----------|----------|-------------|
 | `NEXT_PUBLIC_API_URL` | **Yes** | Backend API base URL (e.g. `http://localhost:3001` for local). |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the locations/map feature. |
+| `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking; optional in dev. |
+| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
 
 ### Development commands
 
@@ -123,6 +127,17 @@ See [Makefile](Makefile) for common commands:
 - `make test` — Run all tests
 - `make setup` — Initial project setup (install + db create/migrate/seed)
 - `make db-reset` — Reset database
+
+## Branch protection and CI
+
+Two GitHub Actions workflows run on push and pull requests to `main` and `develop`:
+
+| Workflow | File | What it checks |
+|----------|------|----------------|
+| **Run Tests** | [.github/workflows/test.yml](.github/workflows/test.yml) | Backend: RuboCop, Brakeman, RSpec. Frontend: ESLint, Next.js build, Jest. |
+| **API CI** | [.github/workflows/api-ci.yml](.github/workflows/api-ci.yml) | Brakeman, RuboCop, and Rails tests when `api/**` files change. |
+
+Both workflows must pass before merging. Configure branch protection in your repository settings to require status checks for `test-backend`, `test-frontend`, and (if you use it) the API CI jobs.
 
 ## Architecture
 

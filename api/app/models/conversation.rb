@@ -4,11 +4,11 @@ class Conversation < ApplicationRecord
 
   validates :session_id, presence: true, uniqueness: true
 
-  scope :active, -> { where(status: 'active') }
+  scope :active, -> { where(status: "active") }
   scope :by_session, ->(sid) { where(session_id: sid) }
 
   def complete!
-    update!(status: 'completed', completed_at: Time.current)
+    update!(status: "completed", completed_at: Time.current)
   end
 
   # Build a text transcript of the conversation for the symptom analyzer.

@@ -25,7 +25,7 @@ Rails.application.configure do
 
   # Change to :null_store to avoid any caching.
   config.cache_store = :redis_cache_store, {
-    url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'),
+    url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"),
     expires_in: 7.days
   }
 
@@ -45,7 +45,7 @@ Rails.application.configure do
   # This allows you to see email content in the console without Resend
   config.action_mailer.delivery_method = :logger
   config.action_mailer.perform_deliveries = true
-  
+
   # Uncomment below and add ENV["RESEND_API_KEY"] when ready to test with Resend
   # config.action_mailer.delivery_method = :smtp
   # config.action_mailer.smtp_settings = {

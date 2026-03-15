@@ -1,24 +1,24 @@
 module Triage
   class SymptomAnalyzerService
     SPECIALTIES = {
-      'primary_care' => 'Primary Care',
-      'cardiology' => 'Cardiology',
-      'dermatology' => 'Dermatology',
-      'urgent_care' => 'Urgent Care',
-      'emergency' => 'Emergency Room',
-      'mental_health' => 'Mental Health Counseling',
-      'pediatrics' => 'Pediatrics',
-      'gynecology' => 'Gynecology',
-      'oncology' => 'Oncology',
-      'orthopedics' => 'Orthopedics',
-      'physical_therapy' => 'Physical Therapy',
-      'nutrition' => 'Nutrition Counseling',
+      "primary_care" => "Primary Care",
+      "cardiology" => "Cardiology",
+      "dermatology" => "Dermatology",
+      "urgent_care" => "Urgent Care",
+      "emergency" => "Emergency Room",
+      "mental_health" => "Mental Health Counseling",
+      "pediatrics" => "Pediatrics",
+      "gynecology" => "Gynecology",
+      "oncology" => "Oncology",
+      "orthopedics" => "Orthopedics",
+      "physical_therapy" => "Physical Therapy",
+      "nutrition" => "Nutrition Counseling"
     }.freeze
 
     URGENCY_LEVELS = {
-      'routine' => { priority: 1, color: 'green', message: 'Schedule within 1-2 weeks' },
-      'urgent' => { priority: 2, color: 'orange', message: 'Schedule within 24-48 hours' },
-      'emergency' => { priority: 3, color: 'red', message: 'Seek immediate medical attention' },
+      "routine" => { priority: 1, color: "green", message: "Schedule within 1-2 weeks" },
+      "urgent" => { priority: 2, color: "orange", message: "Schedule within 24-48 hours" },
+      "emergency" => { priority: 3, color: "red", message: "Seek immediate medical attention" }
     }.freeze
 
     # @param description [String]  symptom text (single-shot) or conversation
@@ -62,7 +62,7 @@ module Triage
 
     def generate_cache_key(description)
       # Normalize description for caching
-      normalized = description.downcase.strip.gsub(/\s+/, ' ')
+      normalized = description.downcase.strip.gsub(/\s+/, " ")
       "symptom_analysis:#{Digest::MD5.hexdigest(normalized)}"
     end
 
@@ -73,11 +73,11 @@ module Triage
         parameters: {
           model: "gpt-4o-mini", # Cost-effective model
           messages: [
-            { role: 'system', content: system_prompt },
-            { role: 'user', content: prompt } 
+            { role: "system", content: system_prompt },
+            { role: "user", content: prompt }
           ],
           temperature: 0.3, # Lower temperature for consistent medical advice
-          max_tokens: 500 
+          max_tokens: 500
         }
       )
 
@@ -90,7 +90,7 @@ module Triage
     end
 
     def system_prompt
-      <<~PROMPT 
+      <<~PROMPT
         You are a medical triage assistant helping patients find the right type of healthcare provider.
 
         Your job is to:
@@ -100,10 +100,10 @@ module Triage
         4. Extract key symptoms
 
         IMPORTANT SAFETY RULES:
-        - Always err on the side of caution 
-        - Route chest pain, severe bleeding, difficult breathing to EMERGENCY 
+        - Always err on the side of caution#{' '}
+        - Route chest pain, severe bleeding, difficult breathing to EMERGENCY#{' '}
         - You are NOT diagnosing - only helping with provider matching
-        - Be clear about urgency without causing panic 
+        - Be clear about urgency without causing panic#{' '}
 
         Respond ONLY with valid JSON. No markdown, no explanations outside the JSON.
       PROMPT
@@ -142,22 +142,22 @@ module Triage
     end
 
     def parse_response(response)
-      content = response.dig('choices', 0, 'message', 'content')
+      content = response.dig("choices", 0, "message", "content")
 
       # Clean up response (remove markdown code blocks if present)
-      content = content.gsub(/```json\n?/, '').gsub(/```\n?/, '').strip
+      content = content.gsub(/```json\n?/, "").gsub(/```\n?/, "").strip
 
       parsed = JSON.parse(content)
 
       # Validate and normalize
       {
-        specialty: validate_specialty(parsed['specialty']),
-        urgency: validate_urgency(parsed['urgency']),
-        reasoning: parsed['reasoning'] || 'Unable to provide reasoning',
-        keywords: parsed['keywords'] || [],
-        red_flags: parsed['red_flags'] || [],
-        specialty_name: SPECIALTIES[validate_specialty(parsed['specialty'])],
-        urgency_details: URGENCY_LEVELS[validate_urgency(parsed['urgency'])]
+        specialty: validate_specialty(parsed["specialty"]),
+        urgency: validate_urgency(parsed["urgency"]),
+        reasoning: parsed["reasoning"] || "Unable to provide reasoning",
+        keywords: parsed["keywords"] || [],
+        red_flags: parsed["red_flags"] || [],
+        specialty_name: SPECIALTIES[validate_specialty(parsed["specialty"])],
+        urgency_details: URGENCY_LEVELS[validate_urgency(parsed["urgency"])]
       }
     rescue JSON::ParserError => e
       Rails.logger.error "Failed to parse OpenAI response: #{e.message}"
@@ -165,22 +165,22 @@ module Triage
     end
 
     def validate_specialty(specialty)
-      SPECIALTIES.key?(specialty) ? specialty : 'primary_care'
+      SPECIALTIES.key?(specialty) ? specialty : "primary_care"
     end
 
     def validate_urgency(urgency)
-      URGENCY_LEVELS.key?(urgency) ? urgency : 'routine'
+      URGENCY_LEVELS.key?(urgency) ? urgency : "routine"
     end
 
     def fallback_response
       {
-        specialty: 'primary_care',
-        urgency: 'routine',
-        reasoning: 'For your safety, we recommend consulting a primary care provider.',
+        specialty: "primary_care",
+        urgency: "routine",
+        reasoning: "For your safety, we recommend consulting a primary care provider.",
         keywords: [],
         red_flags: [],
-        specialty_name: 'Primary Care',
-        urgency_details: URGENCY_LEVELS['routine']
+        specialty_name: "Primary Care",
+        urgency_details: URGENCY_LEVELS["routine"]
       }
     end
   end

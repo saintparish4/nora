@@ -1,4 +1,4 @@
-.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed
+.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
 
 # Default target
 help:
@@ -14,6 +14,12 @@ help:
 	@echo "  make db-migrate   - Run database migrations"
 	@echo "  make db-seed      - Seed database"
 	@echo "  make clean        - Clean build artifacts and dependencies"
+	@echo "  make lint         - Run frontend (ESLint) and backend (RuboCop) linters"
+	@echo "  make lint-frontend - Run ESLint in base/"
+	@echo "  make lint-backend  - Run RuboCop in api/"
+	@echo "  make lint-fix     - Auto-fix with ESLint and RuboCop"
+	@echo "  make lint-fix-frontend - ESLint --fix in base/"
+	@echo "  make lint-fix-backend  - RuboCop -a in api/"
 
 # Installation
 install:
@@ -95,11 +101,20 @@ clean-all: clean
 	@echo "Full clean complete!"
 
 # Linting
-lint:
-	@echo "Running linters..."
-	cd base && pnpm run lint
+lint: lint-frontend lint-backend
+
+lint-frontend:
+	@echo "Running frontend linter..."
+	cd base && pnpm eslint
+
+lint-backend:
+	@echo "Running backend linter..."
 	cd api && bundle exec rubocop
 
-lint-fix:
-	cd base && pnpm run lint -- --fix
+lint-fix: lint-fix-frontend lint-fix-backend
+
+lint-fix-frontend:
+	cd base && pnpm eslint -- --fix
+
+lint-fix-backend:
 	cd api && bundle exec rubocop -a

@@ -10,7 +10,7 @@ Rails.application.configure do
     {
       request_id: event.payload[:request_id],
       ip: event.payload[:ip],
-      user_id: event.payload[:user_id],
+      user_id: event.payload[:user_id]
     }.compact
   end
 end

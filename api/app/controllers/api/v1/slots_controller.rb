@@ -22,6 +22,8 @@ module Api
             end_date: (Date.current + 14.days).to_s
           }
         }
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Provider not found" }, status: :not_found
       end
     end
   end

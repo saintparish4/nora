@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useAppointments, cancelAppointment, type Appointment } from '@/lib/api';
@@ -25,14 +26,24 @@ export default function AppointmentsPage() {
   const [confirmId, setConfirmId] = useState<number | null>(null);
 
   const handleCancelConfirm = async () => {
-    if (confirmId == null) return;
+    if (confirmId == null || !data) return;
     const id = confirmId;
     setConfirmId(null);
     setCancelling(id);
+
+    const optimisticData = {
+      ...data,
+      upcoming: data.upcoming.map((a) =>
+        a.id === id ? { ...a, status: 'cancelled' } : a
+      ),
+    };
+
     try {
-      await cancelAppointment(id);
+      await mutate(
+        cancelAppointment(id).then(() => undefined),
+        { optimisticData, rollbackOnError: true, revalidate: true }
+      );
       toast.success('Appointment cancelled successfully.');
-      await mutate();
     } catch (error: unknown) {
       Sentry.captureException(error);
       console.error('Error cancelling appointment:', error);
@@ -76,10 +87,25 @@ export default function AppointmentsPage() {
               >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                   <div className="flex gap-4">
-                    <div
-                      aria-hidden="true"
-                      className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0"
-                    />
+                    {appointment.provider?.avatar_url ? (
+                      <Image
+                        src={appointment.provider.avatar_url}
+                        alt=""
+                        role="presentation"
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 rounded-full object-cover flex-shrink-0 border border-border bg-muted"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k="
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="w-16 h-16 bg-brand/15 text-brand rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold"
+                      >
+                        {appointment.provider?.name?.charAt(0) ?? '?'}
+                      </div>
+                    )}
                     <div className="flex-1">
                       <h3 className="text-xl font-bold text-gray-900 mb-1">
                         {appointment.provider?.name}
@@ -141,7 +167,22 @@ export default function AppointmentsPage() {
                 className="bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border text-muted-foreground"
               >
                 <div className="flex gap-4">
-                  <div aria-hidden="true" className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0" />
+                  {appointment.provider?.avatar_url ? (
+                    <Image
+                      src={appointment.provider.avatar_url}
+                      alt=""
+                      role="presentation"
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0 border border-border bg-muted"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k="
+                    />
+                  ) : (
+                    <div aria-hidden="true" className="w-16 h-16 bg-brand/15 text-brand rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold">
+                      {appointment.provider?.name?.charAt(0) ?? '?'}
+                    </div>
+                  )}
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-1">
                       {appointment.provider?.name}

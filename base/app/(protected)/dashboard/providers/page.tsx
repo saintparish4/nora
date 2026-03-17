@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useProviders, type Provider } from '@/lib/api';
+import { useState, useEffect } from 'react';
+import { useProviders, prefetchProvider, type Provider } from '@/lib/api';
 import Link from 'next/link';
 import { 
   Activity, 
@@ -77,6 +77,11 @@ export default function ProvidersPage() {
   const providers = data?.providers ?? [];
   const total = data?.total ?? 0;
   const totalPages = data?.total_pages ?? 1;
+
+  // Warm the cache for the first few providers so detail pages load instantly.
+  useEffect(() => {
+    providers.slice(0, 3).forEach((p) => prefetchProvider(p.id));
+  }, [providers]);
 
   const handleSpecialtyClick = (specId: string) => {
     setSpecialty(specId);

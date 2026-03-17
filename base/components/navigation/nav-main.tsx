@@ -27,6 +27,7 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    onPrefetch?: () => void
     items?: {
       title: string
       url: string
@@ -43,7 +44,7 @@ export function NavMain({
           // Direct link without dropdown
           if (!hasSubItems) {
             return (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={item.title} onMouseEnter={item.onPrefetch}>
                 <SidebarMenuButton tooltip={item.title} asChild>
                   <Link href={item.url}>
                     {item.icon && <item.icon />}

@@ -3,7 +3,8 @@
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { quickBookingAnalyze, quickBookingBook, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
+import { quickBookingAnalyze, quickBookingBook, prefetchProvider, Provider, TimeSlot, SymptomAnalysis } from '@/lib/api';
+import { useAnalysisProgress } from '@/hooks/useAnalysisProgress';
 import { Button } from '@/components/ui/button';
 import { formatDate, formatTime, getUrgencyColor } from '@/lib/format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,6 +43,7 @@ function GetCareContent() {
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const analysisProgress = useAnalysisProgress(loading && currentStep === 'symptoms');
   
   const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
   const [providers, setProviders] = useState<(Provider & { next_available_slots: TimeSlot[] })[]>([]);
@@ -66,6 +68,9 @@ function GetCareContent() {
           setError('No providers available for this specialty. Please try again later.');
           return;
         }
+
+        // Warm provider detail caches for recommended providers.
+        result.providers.slice(0, 5).forEach((p: Provider & { next_available_slots: TimeSlot[] }) => prefetchProvider(p.id));
 
         if (prefillProviderId) {
           const match = result.providers.find(
@@ -115,7 +120,10 @@ function GetCareContent() {
       const result = await quickBookingAnalyze(description);
       setAnalysis(result.analysis);
       setProviders(result.providers);
-      
+
+      // Warm provider detail caches while the user reads recommendations.
+      result.providers.slice(0, 5).forEach((p) => prefetchProvider(p.id));
+
       if (result.providers.length === 0) {
         setError('No providers available for your symptoms. Please try again later.');
       } else {
@@ -234,9 +242,7 @@ function GetCareContent() {
       <div className="flex-1">
         <div className="max-w-3xl mx-auto">
           <p className="sr-only" aria-live="polite" aria-atomic="true">
-            {loading
-              ? 'Loading. Please wait.'
-              : ''}
+            {loading ? analysisProgress : ''}
           </p>
           <div aria-live="polite" aria-atomic="true">
             {error && (
@@ -316,8 +322,8 @@ function GetCareContent() {
                     disabled={loading || description.length < 10}
                     className="bg-rose-500 hover:bg-rose-600"
                   >
-                    {loading ? 'Analyzing...' : 'Find Providers'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {loading ? analysisProgress : 'Find Providers'}
+                    {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
                   </Button>
                 </div>
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">

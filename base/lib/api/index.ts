@@ -8,6 +8,7 @@ export * from "./symptoms";
 export * from "./quick-booking";
 export * from "./symptom-chat";
 export * from "./hooks";
+export * from "./prefetch";
 
 // Re-export types for convenience
 export * from "@/types";

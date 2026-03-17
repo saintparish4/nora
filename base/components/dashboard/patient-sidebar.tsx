@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 
 import { useAuth } from "@/lib/auth/context"
+import { prefetchProviders, prefetchAppointments } from "@/lib/api"
 import { NavMain } from "@/components/navigation/nav-main"
 import { NavUser } from "@/components/navigation/nav-user"
 import { TeamSwitcher } from "@/components/navigation/team-switcher"
@@ -45,12 +46,14 @@ const navConfig = {
       url: "/dashboard/providers",
       icon: Users,
       items: [],
+      onPrefetch: prefetchProviders,
     },
     {
       title: "Appointments",
       url: "/dashboard/appointments",
       icon: CalendarDays,
       items: [],
+      onPrefetch: prefetchAppointments,
     },
     {
       title: "Settings",

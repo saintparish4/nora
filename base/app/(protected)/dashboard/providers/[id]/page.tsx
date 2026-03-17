@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import * as Sentry from '@sentry/nextjs';
 import {
   useProvider,
@@ -114,10 +115,25 @@ export default function ProviderDetailPage() {
         {/* Provider Header */}
         <div className="bg-surface-elevated rounded-2xl shadow-sm p-6 mb-8 border border-border">
           <div className="flex flex-col md:flex-row gap-6">
-            <div
-              aria-hidden="true"
-              className="w-24 h-24 bg-gray-200 rounded-full flex-shrink-0"
-            />
+            {provider.avatar_url ? (
+              <Image
+                src={provider.avatar_url}
+                alt=""
+                role="presentation"
+                width={96}
+                height={96}
+                className="w-24 h-24 rounded-full object-cover flex-shrink-0 border border-border bg-muted"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k="
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="w-24 h-24 bg-brand/15 text-brand rounded-full flex-shrink-0 flex items-center justify-center text-3xl font-bold"
+              >
+                {provider.name.charAt(0)}
+              </div>
+            )}
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{provider.name}</h1>
               <p className="text-lg text-[var(--brand)] mb-3">{provider.specialty}</p>

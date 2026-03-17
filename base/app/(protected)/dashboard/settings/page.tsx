@@ -1,45 +1,75 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/context';
 import { updateEmailPreferences } from '@/lib/api';
-import { Button } from '@/components/ui/button';
+
+type Prefs = {
+  booking_confirmations: boolean;
+  reminders_24h: boolean;
+  cancellation_notices: boolean;
+};
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const [bookingConfirmations, setBookingConfirmations] = useState(true);
-  const [reminders24h, setReminders24h] = useState(true);
-  const [cancellationNotices, setCancellationNotices] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [prefs, setPrefs] = useState<Prefs>({
+    booking_confirmations: true,
+    reminders_24h: true,
+    cancellation_notices: false,
+  });
+
+  // Track whether we've seeded from the user object so we don't overwrite
+  // in-flight changes on a background revalidation.
+  const seeded = useRef(false);
 
   useEffect(() => {
-    if (user) {
-      setBookingConfirmations(user.booking_confirmations ?? true);
-      setReminders24h(user.reminders_24h ?? true);
-      setCancellationNotices(user.cancellation_notices ?? true);
+    if (user && !seeded.current) {
+      seeded.current = true;
+      setPrefs({
+        booking_confirmations: user.booking_confirmations ?? true,
+        reminders_24h: user.reminders_24h ?? true,
+        cancellation_notices: user.cancellation_notices ?? false,
+      });
     }
   }, [user]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const handleToggle = async (key: keyof Prefs, newValue: boolean) => {
+    const previous = prefs;
+
+    // Optimistic update — show the new state immediately.
+    setPrefs((p) => ({ ...p, [key]: newValue }));
+    toast.success('Preferences saved');
 
     try {
-      await updateEmailPreferences({
-        booking_confirmations: bookingConfirmations,
-        reminders_24h: reminders24h,
-        cancellation_notices: cancellationNotices,
-      });
-      toast.success('Preferences saved successfully!');
+      await updateEmailPreferences({ ...previous, [key]: newValue });
     } catch (error) {
+      // Roll back on failure.
+      setPrefs(previous);
       Sentry.captureException(error);
       console.error('Failed to save preferences:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to save preferences');
-    } finally {
-      setSaving(false);
     }
   };
+
+  const TOGGLES: { key: keyof Prefs; label: string; description: string }[] = [
+    {
+      key: 'booking_confirmations',
+      label: 'Booking Confirmations',
+      description: 'Receive an email when you book a new appointment',
+    },
+    {
+      key: 'reminders_24h',
+      label: '24-Hour Reminders',
+      description: 'Get reminded about your appointments 24 hours in advance',
+    },
+    {
+      key: 'cancellation_notices',
+      label: 'Cancellation Notices',
+      description: 'Be notified when appointments are cancelled',
+    },
+  ];
 
   return (
     <div className="flex flex-1 flex-col gap-6 pb-16">
@@ -57,75 +87,29 @@ export default function SettingsPage() {
           <fieldset className="space-y-6 border-0 p-0 m-0">
             <legend className="sr-only">Email notification preferences</legend>
 
-            <div className="flex items-start">
-              <div className="flex items-center h-5 mt-1">
-                <input
-                  id="booking-confirmations"
-                  type="checkbox"
-                  checked={bookingConfirmations}
-                  onChange={(e) => setBookingConfirmations(e.target.checked)}
-                  className="w-5 h-5 accent-[var(--brand)] border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3">
-                <label htmlFor="booking-confirmations" className="font-medium text-gray-900 cursor-pointer">
-                  Booking Confirmations
-                </label>
-                <p className="text-sm text-gray-500">
-                  Receive an email when you book a new appointment
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="flex items-center h-5 mt-1">
-                <input
-                  id="reminders"
-                  type="checkbox"
-                  checked={reminders24h}
-                  onChange={(e) => setReminders24h(e.target.checked)}
-                  className="w-5 h-5 accent-[var(--brand)] border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3">
-                <label htmlFor="reminders" className="font-medium text-gray-900 cursor-pointer">
-                  24-Hour Reminders
-                </label>
-                <p className="text-sm text-gray-500">
-                  Get reminded about your appointments 24 hours in advance
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="flex items-center h-5 mt-1">
-                <input
-                  id="cancellations"
-                  type="checkbox"
-                  checked={cancellationNotices}
-                  onChange={(e) => setCancellationNotices(e.target.checked)}
-                  className="w-5 h-5 accent-[var(--brand)] border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3">
-                <label htmlFor="cancellations" className="font-medium text-gray-900 cursor-pointer">
-                  Cancellation Notices
-                </label>
-                <p className="text-sm text-gray-500">
-                  Be notified when appointments are cancelled
-                </p>
-              </div>
-            </div>
+            {TOGGLES.map(({ key, label, description }) => {
+              const inputId = key.replace(/_/g, '-');
+              return (
+                <div key={key} className="flex items-start">
+                  <div className="flex items-center h-5 mt-1">
+                    <input
+                      id={inputId}
+                      type="checkbox"
+                      checked={prefs[key]}
+                      onChange={(e) => handleToggle(key, e.target.checked)}
+                      className="w-5 h-5 accent-[var(--brand)] border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <label htmlFor={inputId} className="font-medium text-gray-900 cursor-pointer">
+                      {label}
+                    </label>
+                    <p className="text-sm text-gray-500">{description}</p>
+                  </div>
+                </div>
+              );
+            })}
           </fieldset>
-
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Saving…' : 'Save Preferences'}
-            </Button>
-          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,13 @@ import { getProviders } from '@/lib/api';
 import { SiteFooter } from '@/components/navigation/site-footer';
 import type { Provider as ApiProvider, ProvidersResponse } from '@/types';
 
+// Tiny 10×10 gray JPEG used as blur placeholder for avatar images loaded from
+// external domains (Next.js requires a blurDataURL when placeholder="blur").
+const AVATAR_BLUR_DATA_URL =
+  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARC' +
+  'AAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oA' +
+  'DAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k=';
+
 type SpecialistTag = { label: string; availability?: boolean };
 
 function mapProviderToSpecialist(p: ApiProvider) {
@@ -320,6 +327,8 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
                       height={80}
                       className="w-20 h-20 rounded-full object-cover border border-border bg-muted"
                       role="presentation"
+                      placeholder="blur"
+                      blurDataURL={AVATAR_BLUR_DATA_URL}
                     />
                     <div>
                       <h3 className="font-serif text-2xl mb-1 font-normal text-foreground">{s.name}</h3>

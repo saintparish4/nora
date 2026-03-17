@@ -39,7 +39,7 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 ### Testing
 
 - **Backend**: Run `cd api && bundle exec rspec`
-- **Frontend**: Run `cd base && npm test` (Jest)
+- **Frontend**: Run `cd base && pnpm test` (Jest)
 
 ### Code Style
 
@@ -87,9 +87,9 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 ## What We’d Change If Rebuilding / Production Readiness
 
 - **Auth**: Move away from JWT in localStorage toward httpOnly cookies (or short-lived access + refresh tokens) and CSRF protection; add rate limiting and lockout for auth endpoints.
-- **Observability**: Add structured logging (e.g. request IDs, user/session), metrics (latency, errors, queue depth), and optional distributed tracing so we can debug and monitor in production.
-- **API**: Add request validation (e.g. strong params or schema validation), consistent error payloads and HTTP status usage, and API docs (OpenAPI) generated or kept in sync with the codebase.
-- **Frontend**: Consider moving token handling and auth state into a single module with clear refresh/retry and logout-on-401 behavior; add error boundaries and basic runtime checks for critical paths.
+- **Observability**: Sentry error tracking (backend + frontend) and lograge structured JSON logging are in place. Next step: metrics (latency, errors, queue depth) and distributed tracing.
+- **API**: Centralized `rescue_from` error handling gives consistent error payloads. Zod schemas in `base/lib/api/schemas.ts` provide runtime contract validation. Remaining gap: OpenAPI/Swagger docs.
+- **Frontend**: Global 401 interceptor centralizes auth expiry handling. Next.js error boundaries (`error.tsx`) are in place at root and dashboard levels. SWR hooks standardize data fetching.
 - **Infra**: Use PostgreSQL in all environments (no SQLite in dev) to avoid environment drift; define backup, restore, and migration rollback; consider feature flags and phased rollouts for risky changes.
 - **Testing**: Broaden coverage on critical paths (auth, booking, payments if added); add a small set of smoke or contract tests for the API used by the frontend.
 
@@ -103,26 +103,37 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 
 ## Known Technical Debt
 
-- **Auth storage**: JWT in localStorage is a known security tradeoff; no refresh flow or token rotation yet.
-- **SQLite in development**: Differs from production PostgreSQL; can cause subtle bugs (e.g. SQL or locking behavior).
-- **No formal API contract**: No OpenAPI/Swagger; types and docs can drift from the real API.
-- **Limited error handling**: Some endpoints may not return consistent error shapes or status codes; frontend may not handle all failure modes.
-- **Background jobs**: Sidekiq in use but retries, dead-letter handling, and idempotency are not fully documented or standardized.
-- **Frontend API layer**: No global retry/backoff or request deduplication; auth refresh on 401 may not be centralized.
+- **Auth storage**: JWT in localStorage is a known security tradeoff; no refresh flow or token rotation yet. Moving to httpOnly cookies is a tracked future improvement.
+- **SQLite in development**: Differs from production PostgreSQL; can cause subtle bugs (e.g. SQL or locking behavior). Consider PostgreSQL in dev for full environment parity.
+- **No formal API contract**: No OpenAPI/Swagger; Zod schemas in `base/lib/api/schemas.ts` provide runtime validation but no generated docs.
 - **Tests**: Gaps on edge cases and some integration paths; coverage is not yet at a consistent baseline for critical flows.
+
+*Items resolved since initial draft: centralized `rescue_from` error handling, global 401 interceptor, Sentry error tracking (backend + frontend), structured JSON request logging (lograge), Next.js error boundaries, and ApplicationJob retry/discard policies.*
 
 ## Environment Variables
 
+Copy `api/.env.example` → `api/.env` and `base/.env.local.example` → `base/.env.local` to get started. See `README.md` for the full table with descriptions.
+
 ### Backend (`api/.env`)
 
-- `OPENAI_API_KEY` - OpenAI API key for symptom analysis
-- `RESEND_FROM_EMAIL` - Email sender address
-- `GOOGLE_CLIENT_ID` - Google Calendar OAuth client ID
-- `GOOGLE_CLIENT_SECRET` - Google Calendar OAuth secret
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SECRET_KEY_BASE` | **Yes** | Signs/verifies JWTs and the Rails session cookie. |
+| `OPENAI_API_KEY` | **Yes** | OpenAI API key for symptom analysis (gpt-4o-mini). |
+| `RESEND_API_KEY` | Yes (prod) | Resend API key for transactional email. |
+| `RESEND_FROM_EMAIL` | No | Sender address; defaults to Resend onboarding address. |
+| `REDIS_URL` | No (dev) | Defaults to `redis://localhost:6379/0`; required in production. |
+| `SENTRY_DSN` | No | Sentry DSN for backend error tracking. |
+| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for source map uploads in CI. |
 
 ### Frontend (`base/.env.local`)
 
-- `NEXT_PUBLIC_API_URL` - Backend API URL (default: `http://localhost:3001`)
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_API_URL` | **Yes** | Backend API base URL (e.g. `http://localhost:3001` for local). |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the /locations map feature. |
+| `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking. |
+| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for source map uploads in CI. |
 
 ## Deployment
 

@@ -1,77 +1,79 @@
-# Harmony Health API
+# Nora — API
 
-Medical appointment coordination platform backend.
-
-**🌐 Live Demo:** https://harmony-health-client.vercel.app
-
-## Overview
-Full-stack appointment booking system enabling patients to discover healthcare providers and schedule appointments.
+Rails API backend for the Nora AI healthcare booking platform.
 
 ## Tech Stack
-- Ruby on Rails 7.2 (API mode)
-- PostgreSQL
+
+- Ruby 3.4.x
+- Rails 8.0 (API mode)
+- SQLite (development) / PostgreSQL (production)
 - JWT authentication
-- Service-oriented architecture
-
-## Key Features
-- User authentication (patients & providers)
-- Dynamic appointment slot generation
-- Conflict detection and validation
-- RESTful API design
-
-## Architecture Highlights
-- `SlotGeneratorService` - Generates available time slots based on provider availability
-- Time overlap detection prevents double-booking
-- Status-aware appointment queries
+- Sidekiq for background jobs
+- Sentry for error tracking
+- Lograge for structured JSON request logging
 
 ## Setup
+
 ```bash
 bundle install
 rails db:create db:migrate db:seed
 rails server
 ```
 
-## API Endpoints
-- `POST /auth/signup` - User registration
-- `POST /auth/login` - User authentication
-- `GET /providers` - List all providers
-- `GET /providers/:id/available_slots` - Get available appointment slots
-- `POST /appointments` - Book appointment
-- `GET /appointments` - List user's appointments
+Copy `.env.example` to `.env` and fill in the required values before running.
 
-## Email Notifications
-Uses Resend API for transactional emails:
-- Booking confirmations
-- Cancellation notices  
-- 24-hour appointment reminders
+## Environment Variables
 
-## Configuration
+See `.env.example` for the full list. Required variables:
 
-### Environment Variables
-Set the following in your production environment:
-```bash
-# Required
-OPENAI_API_KEY=sk-your-openai-api-key-here
-RESEND_API_KEY=re_your_api_key_here
-
-# Optional
-RESEND_FROM_EMAIL="Your App <noreply@yourdomain.com>"  # Defaults to onboarding@resend.dev
+```
+SECRET_KEY_BASE=   # openssl rand -hex 64
+OPENAI_API_KEY=    # for AI symptom analysis (gpt-4o-mini)
 ```
 
-**Setting up OpenAI:**
-1. Get your API key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. The app uses `gpt-4o-mini` for cost-effective symptom analysis
-3. Estimated cost: ~$0.0002 per symptom analysis
+Optional in development, required in production:
 
-**Setting up Resend (Email):**
-1. Get your API key from [resend.com/api-keys](https://resend.com/api-keys)
-2. Add and verify your domain at [resend.com/domains](https://resend.com/domains)
-3. For testing, you can use Resend's default: `onboarding@resend.dev`
+```
+RESEND_API_KEY=    # transactional email
+SENTRY_DSN=        # error tracking
+REDIS_URL=         # background jobs / caching
+```
 
-**For local development:**
-1. Copy `.env.example` to `.env`
-2. Add your API keys
-3. Run `bundle install`
+## API Endpoints
+
+All routes are versioned under `/api/v1/`.
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /api/v1/auth/signup` | User registration |
+| `POST /api/v1/auth/login` | User authentication |
+| `POST /api/v1/auth/logout` | Invalidate session |
+| `GET /api/v1/auth/me` | Current user profile |
+| `GET /api/v1/providers` | List all providers |
+| `GET /api/v1/providers/:id` | Provider detail |
+| `GET /api/v1/providers/:id/available_slots` | Available appointment slots |
+| `POST /api/v1/appointments` | Book appointment |
+| `GET /api/v1/appointments` | List user's appointments |
+| `DELETE /api/v1/appointments/:id` | Cancel appointment |
+| `POST /api/v1/quick-booking/analyze` | AI symptom analysis + provider match |
+| `POST /api/v1/quick-booking/book` | Book from quick-booking flow |
+
+## Architecture Highlights
+
+- `Triage::SymptomAnalyzerService` — OpenAI-powered symptom analysis
+- `Providers::ProviderMatchingService` — Matches symptoms to providers
+- `Appointments::SlotGeneratorService` — Generates slots from provider availability
+- `PhiAccessLoggable` concern — Logs access to PHI per HIPAA best practices
+- `ApplicationController#rescue_from` — Centralised error responses (404, 400, 500)
+
+## Email Notifications
+
+Uses Resend for transactional email via `AppointmentMailer`:
+
+- Booking confirmations
+- Cancellation notices
+- 24-hour appointment reminders
 
 ## Portfolio Project
-This is a demonstration project showcasing full-stack development skills. Provider data is fictional for demo purposes.
+
+This is a demonstration project. All healthcare provider data is fictional for demo purposes.

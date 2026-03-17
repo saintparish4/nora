@@ -23,6 +23,7 @@
 /base/out
 /base/build
 /base/.env*
+/base/package-lock.json
 
 # General ignores
 /notebook

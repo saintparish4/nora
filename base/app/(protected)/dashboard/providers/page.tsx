@@ -86,7 +86,7 @@ export default function ProvidersPage() {
   return (
     <div className="flex flex-1 flex-col pb-16">
       {/* Header */}
-      <div className="border-b bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-8 mb-6 rounded-2xl border border-[var(--glass-border)]">
+      <div className="border-b bg-surface-elevated px-6 py-8 mb-6 rounded-2xl border border-border shadow-sm">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Browse Providers
@@ -98,7 +98,7 @@ export default function ProvidersPage() {
       </div>
 
       {/* Specialty Cards */}
-      <div className="border-b bg-white px-6 py-6 mb-6 rounded-2xl border border-[var(--glass-border)]">
+      <div className="border-b bg-surface-elevated px-6 py-6 mb-6 rounded-2xl border border-border shadow-sm">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap gap-3">
             {SPECIALTY_CARDS.map((spec) => {
@@ -149,7 +149,7 @@ export default function ProvidersPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-xl p-6 animate-pulse border border-[var(--glass-border)]">
+                <div key={i} className="bg-surface-elevated rounded-2xl p-6 animate-pulse border border-border">
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-14 h-14 rounded-full bg-gray-200" />
                     <div className="flex-1">
@@ -163,7 +163,7 @@ export default function ProvidersPage() {
               ))}
             </div>
           ) : providers.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-xl border border-[var(--glass-border)]">
+            <div className="text-center py-16 bg-surface-elevated rounded-2xl border border-border shadow-sm">
               <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
               <p className="text-gray-500">
@@ -181,20 +181,22 @@ export default function ProvidersPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {providers.map((provider) => (
-                <div 
-                  key={provider.id} 
-                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-all group border border-[var(--glass-border)]"
+                <Link
+                  key={provider.id}
+                  href={`/dashboard/providers/${provider.id}`}
+                  className="bg-surface-elevated rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-all group border border-border block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label={`${provider.name}, ${provider.specialty}. View profile.`}
                 >
                   <div className="p-6">
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                      <div className="w-14 h-14 rounded-full bg-brand/15 text-brand flex items-center justify-center text-xl font-bold flex-shrink-0">
                         {provider.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
+                        <h3 className="text-lg font-semibold text-foreground mb-1 truncate">
                           {provider.name}
                         </h3>
-                        <p className="text-sm text-blue-600 font-medium">
+                        <p className="text-sm text-brand font-medium">
                           {provider.specialty}
                         </p>
                       </div>
@@ -202,39 +204,36 @@ export default function ProvidersPage() {
 
                     <div className="flex items-center gap-4 mb-3 text-sm">
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-medium text-gray-900">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden />
+                        <span className="font-medium text-foreground">
                           {typeof provider.rating === 'number' ? provider.rating.toFixed(1) : 'N/A'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Clock className="h-4 w-4" />
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Clock className="h-4 w-4" aria-hidden />
                         <span>{provider.experience_years} yrs exp</span>
                       </div>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                       {provider.bio}
                     </p>
 
                     <div className="flex items-center justify-between mb-4 text-sm">
-                      <span className="text-gray-500 flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-4 w-4" aria-hidden />
                         {provider.location}
                       </span>
-                      <span className="font-bold text-gray-900">
+                      <span className="font-bold text-foreground">
                         ${typeof provider.hourly_rate === 'number' ? provider.hourly_rate.toFixed(0) : 'N/A'}/hr
                       </span>
                     </div>
 
-                    <Link
-                      href={`/dashboard/providers/${provider.id}`}
-                      className="w-full bg-gray-900 text-white text-center py-2.5 px-4 rounded-lg hover:bg-gray-800 transition-colors block font-medium"
-                    >
+                    <span className="mt-1 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground">
                       View Profile
-                    </Link>
+                    </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

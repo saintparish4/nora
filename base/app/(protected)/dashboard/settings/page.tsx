@@ -48,7 +48,7 @@ export default function SettingsPage() {
         <p className="text-gray-600">Manage your account preferences</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[var(--glass-border)]">
+      <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">
             Email Notifications

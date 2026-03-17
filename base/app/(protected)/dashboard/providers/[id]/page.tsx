@@ -112,7 +112,7 @@ export default function ProviderDetailPage() {
     <div className="flex flex-1 flex-col gap-6 pb-16">
       <div className="max-w-7xl mx-auto w-full">
         {/* Provider Header */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-[var(--glass-border)]">
+        <div className="bg-surface-elevated rounded-2xl shadow-sm p-6 mb-8 border border-border">
           <div className="flex flex-col md:flex-row gap-6">
             <div
               aria-hidden="true"
@@ -144,7 +144,7 @@ export default function ProviderDetailPage() {
         </div>
 
         {/* Available Slots Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-[var(--glass-border)]">
+        <div className="bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Book an Appointment</h2>
 
           {availableDates.length === 0 ? (

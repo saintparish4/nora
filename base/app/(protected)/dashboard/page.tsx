@@ -42,15 +42,15 @@ export default function DashboardPage() {
     <div className="grid grid-cols-12 gap-6 pb-16">
 
       {/* Hero / Welcome Card */}
-      <div className="col-span-12 lg:col-span-8 rounded-3xl p-10 relative overflow-hidden bg-gradient-to-br from-white/60 to-white/20 backdrop-blur-[10px] border border-[var(--glass-border)]">
-        <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+      <div className="col-span-12 lg:col-span-8 rounded-2xl p-10 relative overflow-hidden bg-surface-elevated/70 backdrop-blur-[10px] border border-border shadow-sm">
+        <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
           WELCOME BACK
         </div>
         <h1 className="font-serif text-[3.5rem] leading-[1.1] mb-4 font-normal tracking-[-0.01em]">
           {greeting}, <br />
           <span className="italic">{displayName}.</span>
         </h1>
-        <p className="text-[1.1rem] opacity-70 max-w-[500px] mb-8">
+        <p className="text-[1.1rem] text-muted-foreground max-w-[500px] mb-8">
           Your health dashboard — manage appointments, find providers, and get AI-powered care recommendations.
         </p>
         <Link
@@ -65,55 +65,55 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="col-span-12 lg:col-span-4 flex flex-col gap-3">
-        <Link href="/dashboard/get-care" className="flex items-center gap-4 p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
+        <Link href="/dashboard/get-care" className="flex items-center gap-4 p-6 bg-surface-elevated border border-border rounded-2xl hover:translate-x-1 hover:border-foreground transition-all shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">
-            <HeartPulse className="w-5 h-5 text-rose-500" />
+            <HeartPulse className="w-5 h-5 text-rose-500" aria-hidden />
           </div>
           <div className="flex-1">
-            <span className="font-medium">Get Care</span>
-            <p className="text-xs opacity-50">AI-powered symptom analysis</p>
+            <span className="font-medium text-foreground">Get Care</span>
+            <p className="text-xs text-muted-foreground">AI-powered symptom analysis</p>
           </div>
-          <ArrowRight className="w-4 h-4 opacity-40" />
+          <ArrowRight className="w-4 h-4 text-muted-foreground" aria-hidden />
         </Link>
-        <Link href="/dashboard/providers" className="flex items-center gap-4 p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
+        <Link href="/dashboard/providers" className="flex items-center gap-4 p-6 bg-surface-elevated border border-border rounded-2xl hover:translate-x-1 hover:border-foreground transition-all shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-            <Users className="w-5 h-5 text-blue-500" />
+            <Users className="w-5 h-5 text-blue-500" aria-hidden />
           </div>
           <div className="flex-1">
-            <span className="font-medium">Browse Providers</span>
-            <p className="text-xs opacity-50">Find specialists near you</p>
+            <span className="font-medium text-foreground">Browse Providers</span>
+            <p className="text-xs text-muted-foreground">Find specialists near you</p>
           </div>
-          <ArrowRight className="w-4 h-4 opacity-40" />
+          <ArrowRight className="w-4 h-4 text-muted-foreground" aria-hidden />
         </Link>
-        <Link href="/dashboard/appointments" className="flex items-center gap-4 p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 hover:border-foreground transition-all">
+        <Link href="/dashboard/appointments" className="flex items-center gap-4 p-6 bg-surface-elevated border border-border rounded-2xl hover:translate-x-1 hover:border-foreground transition-all shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center">
-            <CalendarDays className="w-5 h-5 text-teal-500" />
+            <CalendarDays className="w-5 h-5 text-teal-500" aria-hidden />
           </div>
           <div className="flex-1">
-            <span className="font-medium">Appointments</span>
-            <p className="text-xs opacity-50">View & manage bookings</p>
+            <span className="font-medium text-foreground">Appointments</span>
+            <p className="text-xs text-muted-foreground">View & manage bookings</p>
           </div>
-          <ArrowRight className="w-4 h-4 opacity-40" />
+          <ArrowRight className="w-4 h-4 text-muted-foreground" aria-hidden />
         </Link>
-        <Link href="/technology" className="flex items-center gap-4 p-5 bg-[var(--ink-color)] text-[var(--bg-color)] border border-[var(--glass-border)] rounded-2xl hover:translate-x-1 transition-all">
-          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-            <Sparkles className="w-5 h-5" />
+        <Link href="/technology" className="flex items-center gap-4 p-6 bg-foreground text-background border border-border rounded-2xl hover:translate-x-1 transition-all shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-background/10 flex items-center justify-center">
+            <Sparkles className="w-5 h-5" aria-hidden />
           </div>
           <div className="flex-1">
             <span className="font-medium">SymptomX Chat</span>
-            <p className="text-xs opacity-50">Talk to our AI assistant</p>
+            <p className="text-xs text-background/80">Talk to our AI assistant</p>
           </div>
-          <ArrowRight className="w-4 h-4 opacity-40" />
+          <ArrowRight className="w-4 h-4 text-background/70" aria-hidden />
         </Link>
       </div>
 
       {/* Get Started onboarding — when user has no appointments */}
       {hasNoData && (
-        <div className="col-span-12 rounded-3xl p-6 bg-gradient-to-br from-rose-50/80 to-teal-50/80 backdrop-blur-[10px] border border-[var(--glass-border)]">
-          <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+        <div className="col-span-12 rounded-2xl p-6 bg-gradient-to-br from-rose-50/80 to-teal-50/80 backdrop-blur-[10px] border border-border shadow-sm">
+          <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
             GET STARTED
           </div>
-          <p className="text-[1rem] opacity-80 mb-6 max-w-xl">
+          <p className="text-[1rem] text-muted-foreground mb-6 max-w-xl">
             Welcome to Nora. Here are a few ways to get the most out of your care.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -168,13 +168,13 @@ export default function DashboardPage() {
 
       {/* Upcoming Appointments — real data */}
       {!hasNoData && (
-        <div className="col-span-12 rounded-3xl p-6 bg-white/40 backdrop-blur-[10px] border border-[var(--glass-border)]">
-          <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+        <div className="col-span-12 rounded-2xl p-6 bg-surface-elevated/50 backdrop-blur-[10px] border border-border shadow-sm">
+          <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
             UPCOMING APPOINTMENTS
           </div>
           {loading ? (
-            <div className="flex items-center gap-2 text-gray-500">
-              <span className="inline-block w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+            <div className="flex items-center gap-2 text-muted-foreground" aria-live="polite" aria-busy="true">
+              <span className="inline-block w-4 h-4 border-2 border-muted border-t-foreground rounded-full animate-spin" aria-hidden />
               Loading appointments…
             </div>
           ) : upcomingSlice.length === 0 ? (
@@ -226,8 +226,8 @@ export default function DashboardPage() {
 
       {/* Recent Activity — from past appointments */}
       {!hasNoData && !loading && recentActivity.length > 0 && (
-        <div className="col-span-12 rounded-3xl p-6 bg-white/40 backdrop-blur-[10px] border border-[var(--glass-border)]">
-          <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+        <div className="col-span-12 rounded-2xl p-6 bg-surface-elevated/50 backdrop-blur-[10px] border border-border shadow-sm">
+          <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
             RECENT ACTIVITY
           </div>
           <ul className="space-y-3">
@@ -254,8 +254,8 @@ export default function DashboardPage() {
       )}
 
       {/* Coming Soon */}
-      <div className="col-span-12 rounded-3xl p-6 bg-white/40 backdrop-blur-[10px] border border-[var(--glass-border)]">
-        <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+      <div className="col-span-12 rounded-2xl p-6 bg-surface-elevated/50 backdrop-blur-[10px] border border-border shadow-sm">
+        <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
           COMING SOON
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -267,46 +267,46 @@ export default function DashboardPage() {
           ].map((feature) => (
             <div
               key={feature.label}
-              className="flex items-start gap-3 p-4 bg-white/30 border border-dashed border-[var(--glass-border)] rounded-2xl opacity-70"
+              className="flex items-start gap-3 p-4 bg-muted/30 border border-dashed border-border rounded-2xl"
             >
-              <span className="text-xl mt-0.5">{feature.icon}</span>
+              <span className="text-xl mt-0.5" aria-hidden>{feature.icon}</span>
               <div>
-                <h4 className="font-medium text-[0.9rem]">{feature.label}</h4>
-                <p className="text-[0.75rem] opacity-50">{feature.description}</p>
+                <h4 className="font-medium text-[0.9rem] text-foreground">{feature.label}</h4>
+                <p className="text-[0.75rem] text-muted-foreground">{feature.description}</p>
               </div>
-              <Clock className="w-3.5 h-3.5 opacity-30 ml-auto mt-1 flex-shrink-0" />
+              <Clock className="w-3.5 h-3.5 text-muted-foreground ml-auto mt-1 flex-shrink-0" aria-hidden />
             </div>
           ))}
         </div>
       </div>
 
       {/* Quick Access */}
-      <div className="col-span-12 rounded-3xl p-6 bg-white/40 backdrop-blur-[10px] border border-[var(--glass-border)]">
-        <div className="text-xs uppercase tracking-[0.1em] font-semibold opacity-50 mb-5">
+      <div className="col-span-12 rounded-2xl p-6 bg-surface-elevated/50 backdrop-blur-[10px] border border-border shadow-sm">
+        <div className="text-xs uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-5">
           QUICK ACCESS
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             href="/dashboard/get-care"
-            className="bg-gradient-to-br from-rose-50 to-teal-50 border border-[var(--glass-border)] p-5 rounded-[20px] hover:shadow-md transition-all"
+            className="bg-gradient-to-br from-rose-50 to-teal-50 border border-border p-6 rounded-2xl hover:shadow-md transition-all"
           >
-            <div className="font-semibold text-[0.95rem] mb-1">Book an Appointment</div>
-            <div className="text-[0.8rem] opacity-60">Describe symptoms, get matched with a provider</div>
+            <div className="font-semibold text-[0.95rem] mb-1 text-foreground">Book an Appointment</div>
+            <div className="text-[0.8rem] text-muted-foreground">Describe symptoms, get matched with a provider</div>
           </Link>
           <Link
             href="/dashboard/providers"
-            className="bg-white/20 border border-[var(--glass-border)] p-5 rounded-[20px] hover:shadow-md transition-all"
+            className="bg-surface-elevated/80 border border-border p-6 rounded-2xl hover:shadow-md transition-all"
           >
-            <div className="font-semibold text-[0.95rem] mb-1">Browse Specialists</div>
-            <div className="text-[0.8rem] opacity-60">Explore providers by specialty and location</div>
+            <div className="font-semibold text-[0.95rem] mb-1 text-foreground">Browse Specialists</div>
+            <div className="text-[0.8rem] text-muted-foreground">Explore providers by specialty and location</div>
           </Link>
           <Link
             href="/dashboard/appointments"
-            className="flex items-center justify-center p-5 rounded-[20px] border border-dashed border-[var(--glass-border)] bg-transparent hover:bg-white/20 transition-all"
+            className="flex items-center justify-center p-6 rounded-2xl border border-dashed border-border bg-transparent hover:bg-muted/20 transition-all"
           >
             <div className="text-center">
-              <CalendarDays className="w-6 h-6 mx-auto mb-2 opacity-60" />
-              <div className="text-[0.8rem] font-medium">View All Appointments</div>
+              <CalendarDays className="w-6 h-6 mx-auto mb-2 text-muted-foreground" aria-hidden />
+              <div className="text-[0.8rem] font-medium text-foreground">View All Appointments</div>
             </div>
           </Link>
         </div>

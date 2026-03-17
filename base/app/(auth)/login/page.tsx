@@ -57,7 +57,10 @@ function LoginContent() {
           </Link>
         </nav>
 
-        <section className="min-h-[calc(100vh-120px)] flex items-center justify-center py-10 relative">
+        <section
+          id="main-content"
+          className="min-h-[calc(100vh-120px)] flex items-center justify-center py-10 relative"
+        >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150px] h-[70vh] -z-[1] pointer-events-none">
             <div
               className="w-full h-full"
@@ -80,12 +83,8 @@ function LoginContent() {
           >
             {sessionExpired && (
               <div
-                className="mb-6 px-4 py-3 rounded-xl text-sm text-left"
-                style={{
-                  background: 'rgba(255, 156, 107, 0.1)',
-                  border: '1px solid rgba(255, 156, 107, 0.3)',
-                  color: '#C27045',
-                }}
+                className="mb-6 px-4 py-3 rounded-2xl text-sm text-left border border-status-warning/30 bg-status-warning-bg text-status-warning"
+                role="status"
               >
                 Your session has expired. Please sign in again to continue.
               </div>
@@ -93,7 +92,7 @@ function LoginContent() {
 
             <div className="mb-10">
               <h1 className="font-serif text-[2.5rem] font-normal tracking-[-0.02em] mb-2">Welcome back</h1>
-              <p className="text-[0.95rem] opacity-60">Access your clinical insights and unified medical records.</p>
+              <p className="text-[0.95rem] text-muted-foreground">Access your clinical insights and unified medical records.</p>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -127,7 +126,7 @@ function LoginContent() {
                   className="w-full px-5 py-4 rounded-xl border bg-white/50 font-sans text-base text-[var(--ink-color)] outline-none transition-all duration-300 focus:border-[var(--ink-color)] focus:bg-white/80"
                   style={{ borderColor: 'var(--glass-border)' }}
                 />
-                <Link href="/forgot-password" className="block text-right text-[0.8rem] mt-2 opacity-60 no-underline font-semibold text-[var(--ink-color)] relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-[var(--ink-color)] after:opacity-30 hover:after:opacity-100 after:transition-opacity">
+                <Link href="/forgot-password" className="block text-right text-[0.8rem] mt-2 text-muted-foreground no-underline font-semibold text-foreground hover:text-foreground relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-border after:opacity-100 hover:after:bg-foreground after:transition-colors">
                   Trouble signing in?
                 </Link>
               </div>
@@ -192,7 +191,7 @@ function LoginFallback() {
   return (
     <div className="min-h-screen bg-[var(--bg-color)] text-[var(--ink-color)] font-sans overflow-x-hidden relative flex items-center justify-center">
       <div className="noise-overlay" />
-      <p className="text-[var(--ink-color)] opacity-60">Loading...</p>
+      <p className="text-muted-foreground">Loading…</p>
     </div>
   );
 }

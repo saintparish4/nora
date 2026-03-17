@@ -323,7 +323,10 @@ export default function LocationsPage() {
         </header>
 
         {/* Locations layout: list + map */}
-        <main className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-10 h-auto lg:h-[700px] mb-20">
+        <main
+          id="main-content"
+          className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-10 h-auto lg:h-[700px] mb-20"
+        >
           <aside
             className="overflow-y-auto pr-3 flex flex-col gap-4 locations-list-scroll"
             role="list"
@@ -354,7 +357,7 @@ export default function LocationsPage() {
                       loc.tagStyle === 'beam'
                         ? 'var(--beam-start)'
                         : loc.tagStyle === 'sage'
-                          ? '#8e9e72'
+                          ? 'var(--organic-sage)'
                           : 'var(--ink-color)',
                   }}
                 >

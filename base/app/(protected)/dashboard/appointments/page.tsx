@@ -57,7 +57,7 @@ export default function AppointmentsPage() {
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Upcoming</h2>
         {upcoming.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm p-8 text-center border border-[var(--glass-border)]">
+          <div className="bg-surface-elevated rounded-2xl shadow-sm p-8 text-center border border-border">
             <p className="text-gray-600 mb-4">No upcoming appointments</p>
             <Button asChild>
               <Link href="/dashboard/providers">Browse Providers</Link>
@@ -68,7 +68,11 @@ export default function AppointmentsPage() {
             {upcoming.map((appointment: Appointment) => (
               <div
                 key={appointment.id}
-                className={`bg-white rounded-2xl shadow-sm p-6 border border-[var(--glass-border)] ${appointment.status === 'cancelled' ? 'opacity-60' : ''}`}
+                className={`bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border ${
+                  appointment.status === 'cancelled'
+                    ? 'border-dashed bg-muted/40 text-muted-foreground'
+                    : ''
+                }`}
               >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                   <div className="flex gap-4">
@@ -126,7 +130,7 @@ export default function AppointmentsPage() {
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Past</h2>
         {past.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm p-8 text-center border border-[var(--glass-border)]">
+          <div className="bg-surface-elevated rounded-2xl shadow-sm p-8 text-center border border-border">
             <p className="text-gray-600">No past appointments</p>
           </div>
         ) : (
@@ -134,7 +138,7 @@ export default function AppointmentsPage() {
             {past.map((appointment: Appointment) => (
               <div
                 key={appointment.id}
-                className="bg-white rounded-2xl shadow-sm p-6 opacity-75 border border-[var(--glass-border)]"
+                className="bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border text-muted-foreground"
               >
                 <div className="flex gap-4">
                   <div aria-hidden="true" className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0" />

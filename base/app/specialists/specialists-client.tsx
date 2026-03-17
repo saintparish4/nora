@@ -42,25 +42,6 @@ const SPECIALTY_OPTIONS = [
   { value: 'Pediatrics', label: 'Pediatrics' },
 ] as const;
 
-function ArrowRightIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-
 /** SWR fetcher that returns the full ProvidersResponse */
 async function providersFetcher(): Promise<ProvidersResponse> {
   return getProviders();
@@ -297,7 +278,7 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
                 role="alert"
               >
                 <p className="text-[var(--ink-color)]/80 mb-2">Could not load specialists.</p>
-                <p className="text-sm opacity-60">
+                <p className="text-sm text-muted-foreground">
                   {error instanceof Error ? error.message : 'Failed to load specialists'}
                 </p>
               </div>
@@ -312,8 +293,13 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
               specialists.map((s) => (
                 <article
                   key={s.id}
-                  className="specialist-card bg-[rgba(255,255,255,0.4)] border border-[var(--glass-border)] rounded-[var(--radius-card)] p-8 transition-all duration-[0.4s] ease-[cubic-bezier(0.165,0.84,0.44,1)] relative overflow-hidden hover:bg-[rgba(255,255,255,0.8)] hover:-translate-y-1 hover:border-[var(--ink-color)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.03)]"
+                  className="specialist-card bg-surface-elevated/80 border border-border rounded-2xl p-6 transition-all duration-300 relative overflow-hidden hover:shadow-organic-sm hover:-translate-y-0.5 hover:border-foreground/20"
                 >
+                  <Link
+                    href={`/dashboard/providers/${s.id}`}
+                    className="absolute inset-x-0 top-0 bottom-[5.75rem] z-0 rounded-t-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                    aria-label={`View profile for ${s.name}, ${s.specialty}`}
+                  />
                   {s.hasBeam && (
                     <div
                       className="absolute -top-[50px] -right-[50px] w-[150px] h-[150px] rounded-full pointer-events-none"
@@ -326,50 +312,51 @@ export default function SpecialistsClient({ initialData }: SpecialistsClientProp
                       aria-hidden="true"
                     />
                   )}
-                  <div className="flex gap-5 mb-6">
+                  <div className="relative z-[1] pointer-events-none flex gap-5 mb-6">
                     <Image
                       src={s.image}
-                      alt={`Photo of ${s.name}`}
+                      alt=""
                       width={80}
                       height={80}
-                      className="w-20 h-20 rounded-full object-cover border border-[var(--glass-border)] bg-gradient-to-br from-[#ddd] to-[#eee]"
+                      className="w-20 h-20 rounded-full object-cover border border-border bg-muted"
+                      role="presentation"
                     />
                     <div>
-                      <h3 className="font-serif text-2xl mb-1 font-normal">{s.name}</h3>
-                      <span className="text-[0.9rem] opacity-60 block mb-2">{s.specialty}</span>
-                      <div className="flex items-center gap-1 text-[0.85rem] font-medium">
+                      <h3 className="font-serif text-2xl mb-1 font-normal text-foreground">{s.name}</h3>
+                      <span className="text-[0.9rem] text-muted-foreground block mb-2">{s.specialty}</span>
+                      <div className="flex items-center gap-1 text-[0.85rem] font-medium text-foreground">
                         <span aria-hidden="true">✦</span>{' '}
-                        <span aria-label={`${s.rating} star rating`}>{s.rating}</span>{' '}
-                        <span className="opacity-40 font-normal">({s.reviewCount} reviews)</span>
+                        <span aria-label={`${s.rating} out of 5 stars`}>{s.rating}</span>{' '}
+                        <span className="text-muted-foreground font-normal">({s.reviewCount} reviews)</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-3 mb-6" role="list" aria-label="Attributes">
+                  <div
+                    className="relative z-[1] pointer-events-none flex flex-wrap gap-3 mb-6"
+                    role="list"
+                    aria-label="Attributes"
+                  >
                     {s.tags.map((tag, i) => (
                       <span
                         key={i}
                         role="listitem"
-                        className={`text-[0.75rem] px-3 py-1 rounded-[var(--radius-pill)] border border-transparent ${
+                        className={`text-[0.75rem] px-3 py-1 rounded-full border border-transparent ${
                           tag.availability
-                            ? 'bg-[rgba(224,242,194,0.4)] text-[#4a5c2d]'
-                            : 'bg-[rgba(15,17,21,0.05)]'
+                            ? 'bg-status-success-bg text-status-success'
+                            : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {tag.label}
                       </span>
                     ))}
                   </div>
-                  <p className="text-[0.9rem] leading-[1.5] opacity-70 mb-6">{s.bio}</p>
-                  <div className="flex justify-between items-center pt-6 border-t border-[var(--glass-border)]">
-                    <Link
-                      href={`/dashboard/providers/${s.id}`}
-                      className="text-[var(--ink-color)] text-[0.9rem] font-medium no-underline flex items-center gap-2 hover:[&>svg]:translate-x-1 [&>svg]:transition-transform [&>svg]:duration-300"
-                    >
-                      View Profile <ArrowRightIcon />
-                    </Link>
+                  <p className="relative z-[1] pointer-events-none text-[0.9rem] leading-relaxed text-muted-foreground mb-6">
+                    {s.bio}
+                  </p>
+                  <div className="relative z-10 flex justify-end items-center pt-6 border-t border-border">
                     <Link
                       href={`/dashboard/get-care?specialty=${encodeURIComponent(s.specialty)}&provider_id=${s.id}`}
-                      className="px-6 py-2.5 border border-[var(--ink-color)] rounded-[var(--radius-pill)] text-[0.9rem] no-underline text-[var(--ink-color)] bg-transparent cursor-pointer transition-all duration-300 hover:bg-[var(--ink-color)] hover:text-[var(--bg-color)]"
+                      className="inline-flex px-6 py-2.5 border border-foreground rounded-full text-[0.9rem] no-underline text-foreground bg-transparent transition-colors hover:bg-foreground hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       aria-label={`Book appointment with ${s.name}`}
                     >
                       Book Now

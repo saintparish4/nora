@@ -233,6 +233,11 @@ function GetCareContent() {
       {/* Main Content */}
       <div className="flex-1">
         <div className="max-w-3xl mx-auto">
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {loading
+              ? 'Loading. Please wait.'
+              : ''}
+          </p>
           <div aria-live="polite" aria-atomic="true">
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-800 flex items-start gap-3" role="alert">

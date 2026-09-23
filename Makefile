@@ -1,4 +1,4 @@
-.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
+.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed test-backend-postgres lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
 
 # Default target
 help:
@@ -14,6 +14,7 @@ help:
 	@echo "  make db-reset     - Reset database (drop, create, migrate, seed)"
 	@echo "  make db-migrate   - Run database migrations"
 	@echo "  make db-seed      - Seed database"
+	@echo "  make test-backend-postgres - RSpec against PostgreSQL (needs docker compose up -d postgres)"
 	@echo "  make clean        - Clean build artifacts and dependencies"
 	@echo "  make lint         - Run frontend (ESLint) and backend (RuboCop) linters"
 	@echo "  make lint-frontend - Run ESLint in base/"
@@ -119,3 +120,12 @@ lint-fix-frontend:
 
 lint-fix-backend:
 	cd api && bundle exec rubocop -a
+
+# Runs the backend suite against PostgreSQL instead of SQLite. The two differ
+# on locking, transaction semantics, and case sensitivity, so a green SQLite
+# run says nothing about the database the application is meant to run on.
+# CI runs this as its own job; this is the local equivalent.
+test-backend-postgres:
+	@echo "Requires: docker compose up -d postgres"
+	cd api && DATABASE_URL=postgres://nora:nora@localhost:5432/nora_test bundle exec rails db:prepare
+	cd api && DATABASE_URL=postgres://nora:nora@localhost:5432/nora_test bundle exec rspec

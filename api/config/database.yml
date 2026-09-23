@@ -1,26 +1,43 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
+# NORA runs SQLite for zero-setup local development and PostgreSQL everywhere
+# correctness depends on it. Which one you get is decided by DATABASE_URL:
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+#   unset                        -> SQLite, as before. `make setup` still works
+#                                   with nothing installed.
+#   postgres://... (or postgresql://)
+#                                -> PostgreSQL. This is what CI's parity job
+#                                   and any production-like environment use.
 #
+# The two differ in ways that bite: locking behaviour, transaction semantics,
+# case sensitivity, and what a concurrent booking does under load. Running the
+# suite against both is the only way to find out before a patient does.
+#
+#   docker compose up -d postgres
+#   DATABASE_URL=postgres://nora:nora@localhost:5432/nora_test bin/rails db:prepare
+#
+<% postgres = ENV["DATABASE_URL"].to_s.match?(%r{\Apostgres(ql)?://}) %>
 default: &default
-  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+<%= postgres ? "  adapter: postgresql\n  encoding: unicode" : "  adapter: sqlite3\n  timeout: 5000" %>
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: <%= postgres ? "nora_development" : "storage/development.sqlite3" %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: <%= postgres ? "nora_test" : "storage/test.sqlite3" %>
 
 
+# Production is deliberately untouched by the switch above. It is a
+# four-database solid_cache/solid_queue/solid_cable layout, and moving it to
+# PostgreSQL is a deployment change that needs to be made against a real
+# environment rather than inferred here. Note the drift: README and
+# docs/ARCHITECTURE.md describe production as PostgreSQL while this file says
+# SQLite. One of the two is wrong and it is not safe to guess which.
+#
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.
 production:

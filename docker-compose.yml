@@ -14,8 +14,33 @@ services:
     volumes:
       - redis_data:/data
 
+  # Parity with the database the application is meant to run on. Development
+  # defaults to SQLite so a fresh clone needs nothing installed; point
+  # DATABASE_URL at this service when you want the real thing:
+  #
+  #   DATABASE_URL=postgres://nora:nora@localhost:5432/nora_development
+  postgres:
+    image: postgres:16-alpine
+    container_name: nora-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: nora
+      POSTGRES_PASSWORD: nora
+      POSTGRES_DB: nora_development
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nora"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   redis_data:
+    driver: local
+  postgres_data:
     driver: local
 
 

@@ -52,4 +52,61 @@ RSpec.describe User, type: :model do
       expect(user.authenticate('wrong')).to be_falsey
     end
   end
+
+  describe 'login lockout' do
+    let(:user) { create(:user) }
+
+    it 'starts unlocked with no failed attempts' do
+      expect(user.failed_login_attempts).to be_zero
+      expect(user).not_to be_locked
+      expect(user.lockout_seconds_remaining).to be_zero
+    end
+
+    it 'counts each failure without locking below the threshold' do
+      (User::MAX_FAILED_LOGIN_ATTEMPTS - 1).times { user.register_failed_login! }
+
+      expect(user.failed_login_attempts).to eq(User::MAX_FAILED_LOGIN_ATTEMPTS - 1)
+      expect(user).not_to be_locked
+    end
+
+    it 'locks at the threshold and reports the time remaining' do
+      User::MAX_FAILED_LOGIN_ATTEMPTS.times { user.register_failed_login! }
+
+      expect(user).to be_locked
+      expect(user.lockout_seconds_remaining).to be_between(1, User::LOCKOUT_DURATION.to_i)
+    end
+
+    it 'expires the lock after the lockout duration' do
+      User::MAX_FAILED_LOGIN_ATTEMPTS.times { user.register_failed_login! }
+
+      travel_to(User::LOCKOUT_DURATION.from_now + 1.second) do
+        expect(user).not_to be_locked
+        expect(user.lockout_seconds_remaining).to be_zero
+      end
+    end
+
+    it 'clears the counter and the lock on a successful login' do
+      User::MAX_FAILED_LOGIN_ATTEMPTS.times { user.register_failed_login! }
+
+      user.register_successful_login!
+
+      expect(user.reload.failed_login_attempts).to be_zero
+      expect(user.reload.locked_until).to be_nil
+      expect(user).not_to be_locked
+    end
+
+    it 'skips the write when there is nothing to clear' do
+      expect(user).not_to receive(:update_columns)
+
+      user.register_successful_login!
+    end
+
+    it 'does not bump updated_at, so a lock is not mistaken for a profile edit' do
+      original = user.updated_at
+
+      user.register_failed_login!
+
+      expect(user.reload.updated_at).to eq(original)
+    end
+  end
 end

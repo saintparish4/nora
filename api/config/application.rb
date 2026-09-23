@@ -12,12 +12,30 @@ module Api
     config.autoload_lib(ignore: %w[assets tasks])
     config.api_only = true
 
-    # Enable sessions
+    # Session cookie.
+    #
+    # SameSite has to differ by environment, and getting it wrong fails
+    # silently — the browser simply drops the cookie and the patient looks
+    # logged out with nothing in the logs.
+    #
+    #   production  :none  — the Next.js app and this API are on different
+    #                        sites (Vercel and Render), so the cookie has to
+    #                        survive a cross-site request. Browsers require
+    #                        Secure alongside None, which HTTPS provides.
+    #
+    #   development :lax   — localhost:3000 and localhost:3001 are the *same*
+    #                        site (port is not part of a site), so Lax is both
+    #                        sufficient and stricter. None would be rejected
+    #                        here: browsers refuse SameSite=None without
+    #                        Secure, and dev is plain HTTP.
+    #
+    # curl does not enforce that rule, so this cannot be caught by hitting the
+    # API from a shell — it only shows up in a real browser.
     config.session_store :cookie_store,
     key: "_nora_session",
-    same_site: :none, # Required for cross-origin cookies
-    secure: Rails.env.production?, # HTTPs only in production
-    httponly: true # Prevent XSS attacks
+    same_site: Rails.env.production? ? :none : :lax,
+    secure: Rails.env.production?, # HTTPS only in production
+    httponly: true # Keep it out of reach of JavaScript, and therefore of XSS
 
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options

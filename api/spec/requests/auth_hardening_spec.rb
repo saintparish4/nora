@@ -36,6 +36,28 @@ RSpec.describe 'Auth hardening', type: :request do
       expect(set_cookie).to match(/HttpOnly/i)
     end
 
+    it 'never sends SameSite=None without Secure' do
+      # Browsers drop such a cookie outright and say nothing, so the patient
+      # just looks logged out. curl does not enforce the rule, which means this
+      # cannot be caught by hitting the API from a shell — only here, or in a
+      # real browser.
+      post '/api/v1/auth/login', params: { email: user.email, password: password }
+
+      set_cookie = response.headers['Set-Cookie'].to_s
+      expect(set_cookie).to match(/Secure/i) if set_cookie.match?(/SameSite=None/i)
+    end
+
+    it 'uses a SameSite policy the current environment can actually deliver' do
+      post '/api/v1/auth/login', params: { email: user.email, password: password }
+
+      set_cookie = response.headers['Set-Cookie'].to_s
+
+      # Test runs without HTTPS, so the cookie must be Lax: localhost:3000 and
+      # localhost:3001 are the same site, so nothing is lost by it.
+      expect(set_cookie).to match(/SameSite=Lax/i)
+      expect(set_cookie).not_to match(/SameSite=None/i)
+    end
+
     it 'gives an explicit API client a bearer token and a refresh token' do
       body = login_as_api_client
 

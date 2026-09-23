@@ -33,8 +33,16 @@ module Api
           return render json: { error: "message is required" }, status: :unprocessable_entity
         end
 
+        # --- Deterministic emergency screening ---
+        # Runs ahead of both conversational gates below. The length minimum and
+        # the sufficiency check exist to improve the quality of a routine
+        # recommendation; neither is a reason to ask someone describing a heart
+        # attack to write more words first. "I have chest pain" is 17
+        # characters, and under the old order it got a "tell me more" prompt.
+        red_flag = Triage::RedFlagScreenerService.screen(message)
+
         # --- Minimum character enforcement (client-side is primary, this is a safety net) ---
-        if message.length < MIN_MESSAGE_LENGTH
+        if message.length < MIN_MESSAGE_LENGTH && red_flag.nil?
           return render json: {
             session_id: session_id,
             assistant_message: "Please describe your symptoms in a bit more detail (at least #{MIN_MESSAGE_LENGTH} characters) so I can help you effectively.",
@@ -63,7 +71,10 @@ module Api
         )
 
         # --- Sufficiency check ---
-        sufficiency = Triage::ConversationSufficiencyService.new(conversation).check
+        # Skipped outright when the screener fired. Asking a clarifying question
+        # of someone reporting stroke signs is not a product decision we get to
+        # make for the sake of a better specialty match.
+        sufficiency = red_flag ? { sufficient: true } : Triage::ConversationSufficiencyService.new(conversation).check
 
         unless sufficiency[:sufficient]
           # Store the follow-up question as an assistant message
@@ -93,7 +104,20 @@ module Api
         analyzer = Triage::SymptomAnalyzerService.new(transcript, cacheable: false)
         analysis = analyzer.analyze
 
-        providers_with_slots = Providers::MatchAndSlotService.new(analysis).call
+        # No slot list for an emergency, whether it came from the rules or from
+        # the model. Offering a bookable appointment next to "call 911" invites
+        # exactly the wrong choice.
+        providers_with_slots =
+          if analysis[:urgency] == "emergency"
+            []
+          else
+            Providers::MatchAndSlotService.new(analysis).call
+          end
+
+        # --- Persist the risk assessment (signed-in patients only) ---
+        # Best-effort: the recorder swallows its own failures so a history write
+        # never costs the patient their recommendation.
+        Triage::RiskAssessmentService.record(conversation: conversation, analysis: analysis)
 
         # --- Build assistant summary ---
         assistant_msg = build_recommendation_message(analysis, providers_with_slots)
@@ -122,29 +146,60 @@ module Api
       private
 
       def build_recommendation_message(analysis, providers)
+        # Two states get their own copy rather than the normal
+        # "see a <specialty> specialist" framing, because in both of them
+        # offering a bookable appointment as the answer would mislead.
+        return emergency_message(analysis) if analysis[:urgency] == "emergency"
+        return degraded_message(analysis) if analysis[:assessment_failed]
+
         specialty = analysis[:specialty_name]
-        urgency = analysis[:urgency]
         reasoning = analysis[:reasoning]
 
         msg = "Based on what you've described, I'd recommend seeing a **#{specialty}** specialist. "
         msg += "#{reasoning} "
 
-        case urgency
-        when "emergency"
-          msg += "This appears urgent — please seek immediate medical attention or call 911 if you're in danger."
-        when "urgent"
-          msg += "I'd suggest scheduling an appointment within the next 24–48 hours."
+        msg += if analysis[:urgency] == "urgent"
+                 "I'd suggest scheduling an appointment within the next 24–48 hours."
         else
-          msg += "You can schedule this at your convenience within the next week or two."
+                 "You can schedule this at your convenience within the next week or two."
         end
 
-        if providers.any?
-          msg += " I found #{providers.size} provider#{'s' if providers.size > 1} who can help."
+        msg += if providers.any?
+                 " I found #{providers.size} provider#{'s' if providers.size > 1} who can help."
         else
-          msg += " I wasn't able to find providers in this specialty right now, but you can check back soon."
+                 " I wasn't able to find providers in this specialty right now, but you can check back soon."
         end
 
-        msg
+        msg + safety_net
+      end
+
+      # An emergency is not a booking problem. Lead with the action and do not
+      # bury it under a provider count — scheduling anything is the wrong next
+      # step here.
+      def emergency_message(analysis)
+        msg = "**Please seek emergency care now.** #{analysis[:reasoning]} "
+
+        flags = Array(analysis[:red_flags]).compact_blank
+        msg += "What stood out: #{flags.to_sentence.downcase}. " if flags.any?
+
+        msg + "If you are in the US, call 911 or go to your nearest emergency room. " \
+              "If you are having thoughts of harming yourself, call or text 988 to reach the " \
+              "Suicide & Crisis Lifeline."
+      end
+
+      # The analyzer could not reach or could not read the model. Say that
+      # plainly instead of dressing an absence of assessment up as a result.
+      def degraded_message(analysis)
+        "#{analysis[:reasoning]} " \
+        "I've pointed you to urgent care as the safer default, but this is not an assessment of " \
+        "your symptoms — it's us telling you our check didn't run."
+      end
+
+      # Every non-emergency recommendation carries its own escalation advice, so
+      # a patient told "routine" still knows what would change that.
+      def safety_net
+        " If your symptoms get worse, or you develop chest pain, trouble breathing, severe bleeding, " \
+        "or sudden weakness or confusion, treat it as an emergency and call 911."
       end
     end
   end

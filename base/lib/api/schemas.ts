@@ -80,6 +80,69 @@ export const UserSchema = z.object({
   cancellation_notices: z.boolean().optional(),
 });
 
+// ---------------------------------------------------------------------------
+// Symptom chat history
+// ---------------------------------------------------------------------------
+
+export const RiskAssessmentSchema = z.object({
+  id: z.number(),
+  care_level: z.string(),
+  confidence: z.number().nullable(),
+  reasoning: z.string().nullable(),
+  created_at: z.string(),
+  red_flags: z.array(z.string()),
+  recommended_specialties: z.array(z.string()),
+  self_care_options: z.array(z.string()),
+  escalation_triggers: z.array(z.string()),
+});
+
+export const ConversationMessageSchema = z.object({
+  id: z.number(),
+  role: z.string(),
+  content: z.string(),
+  created_at: z.string(),
+});
+
+export const ConversationSummarySchema = z.object({
+  id: z.number(),
+  session_id: z.string(),
+  status: z.string(),
+  preview: z.string().nullable(),
+  message_count: z.number(),
+  created_at: z.string(),
+  completed_at: z.string().nullable(),
+  latest_risk_assessment: RiskAssessmentSchema.nullable(),
+});
+
+export const ConversationsResponseSchema = z.object({
+  conversations: z.array(ConversationSummarySchema),
+});
+
+export const ConversationDetailSchema = ConversationSummarySchema.extend({
+  messages: z.array(ConversationMessageSchema),
+  risk_assessments: z.array(RiskAssessmentSchema),
+});
+
+export const ConversationResponseSchema = z.object({
+  conversation: ConversationDetailSchema,
+});
+
+// ---------------------------------------------------------------------------
+// Care preferences
+// ---------------------------------------------------------------------------
+
+export const CarePreferencesSchema = z.object({
+  preferred_location: z.string().nullable(),
+  preferred_times: z.array(z.string()),
+  insurance_info: z.string().nullable(),
+  provider_gender_preference: z.string().nullable(),
+  language_preferences: z.array(z.string()),
+});
+
+export const CarePreferencesResponseSchema = z.object({
+  care_preferences: CarePreferencesSchema,
+});
+
 const UrgencyDetailsSchema = z.object({
   priority: z.number(),
   color: z.string(),
@@ -94,6 +157,16 @@ export const SymptomAnalysisSchema = z.object({
   red_flags: z.array(z.string()),
   specialty_name: z.string(),
   urgency_details: UrgencyDetailsSchema,
+  // How the API arrived at this result:
+  //   'red_flag_rules' — deterministic emergency screening, model not consulted
+  //   'model'          — normal OpenAI analysis
+  //   'fallback'       — the analysis did not run (see assessment_failed)
+  // Optional so a cached or older response still parses; zod strips unknown
+  // keys, so these have to be declared here to reach the UI at all.
+  triage_source: z.enum(['red_flag_rules', 'model', 'fallback']).optional(),
+  // True when the backend could not assess the symptoms and escalated as a
+  // precaution. The UI must not present this as a recommendation.
+  assessment_failed: z.boolean().optional(),
 });
 
 export const SymptomAnalysisResponseSchema = z.object({
@@ -116,3 +189,9 @@ export type AppointmentsResponse = z.infer<typeof AppointmentsResponseSchema>;
 export type ProvidersResponse = z.infer<typeof ProvidersResponseSchema>;
 export type SymptomAnalysis = z.infer<typeof SymptomAnalysisSchema>;
 export type SymptomAnalysisResponse = z.infer<typeof SymptomAnalysisResponseSchema>;
+export type RiskAssessment = z.infer<typeof RiskAssessmentSchema>;
+export type ConversationMessage = z.infer<typeof ConversationMessageSchema>;
+export type ConversationSummary = z.infer<typeof ConversationSummarySchema>;
+export type ConversationDetail = z.infer<typeof ConversationDetailSchema>;
+export type ConversationsResponse = z.infer<typeof ConversationsResponseSchema>;
+export type CarePreferences = z.infer<typeof CarePreferencesSchema>;

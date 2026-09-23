@@ -17,7 +17,15 @@ module Api
         analyzer = Triage::SymptomAnalyzerService.new(description)
         analysis = analyzer.analyze
 
-        providers_with_slots = Providers::MatchAndSlotService.new(analysis).call
+        # Same rule as the chat flow: an emergency is not a booking. Returning
+        # slots alongside "seek immediate medical attention" invites the patient
+        # to pick the appointment.
+        providers_with_slots =
+          if analysis[:urgency] == "emergency"
+            []
+          else
+            Providers::MatchAndSlotService.new(analysis).call
+          end
 
         log_phi_access("SymptomAnalysis", request.request_id, :create)
 

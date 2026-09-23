@@ -79,6 +79,11 @@ const URGENCY_COLORS: Record<string, string> = {
   emergency: 'bg-red-100 text-red-800 border-red-300',
 };
 
+// An unrecognised urgency means the value fell outside the contract, so it
+// must not inherit the calm green of "routine" — that is the display-layer
+// version of the fail-open bug the analyzer had. Render it neutral instead.
+const UNKNOWN_URGENCY_COLOR = 'bg-slate-100 text-slate-800 border-slate-300';
+
 export function getUrgencyColor(urgency: string): string {
-  return URGENCY_COLORS[urgency] || URGENCY_COLORS.routine;
+  return URGENCY_COLORS[urgency] || UNKNOWN_URGENCY_COLOR;
 }

@@ -63,7 +63,7 @@ group :development, :test do
   gem "dotenv-rails"
 
   # Testing framework
-  gem "rspec-rails", "~> 8.0.0"
+  gem "rspec-rails", "~> 8.0.4"
   gem "factory_bot_rails"
   gem "faker"
   gem "shoulda-matchers"

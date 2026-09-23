@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { FileText, FileStack, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_RECENT = [
   { id: 1, name: 'Visit Summary – Dr. Jenkins', date: 'Jan 20, 2025', type: 'Record' },
@@ -8,8 +11,11 @@ const SAMPLE_RECENT = [
 ];
 
 export default function DocumentsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Documents" />
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Documents</h1>
       <p className="text-muted-foreground mb-8">Forms and medical records.</p>
 

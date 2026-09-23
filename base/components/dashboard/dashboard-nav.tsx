@@ -18,6 +18,7 @@ export function DashboardNav() {
 
   const NAV_LINKS = [
     { href: '/dashboard/get-care', label: 'Get Care' },
+    { href: '/dashboard/symptoms', label: 'Symptom Checker' },
     { href: '/dashboard/providers', label: 'Providers' },
     { href: '/dashboard/appointments', label: 'Appointments' },
     { href: '/dashboard/settings', label: 'Settings' },

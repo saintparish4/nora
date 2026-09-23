@@ -4,7 +4,7 @@ Rails API backend for the Nora AI healthcare booking platform.
 
 ## Tech Stack
 
-- Ruby 3.4.x
+- Ruby 3.4.8 (see `.ruby-version`)
 - Rails 8.0 (API mode)
 - SQLite (development) / PostgreSQL (production)
 - JWT authentication
@@ -38,6 +38,17 @@ RESEND_API_KEY=    # transactional email
 SENTRY_DSN=        # error tracking
 REDIS_URL=         # background jobs / caching
 ```
+
+## Tests
+
+```bash
+bundle exec rspec                       # whole suite
+bundle exec rspec spec/requests         # one directory
+```
+
+SimpleCov writes an HTML report to `coverage/index.html` on every run. There is
+no checked-in coverage summary on purpose — the previous `TEST_COVERAGE.md`
+snapshot went stale within a week. Read the generated report instead.
 
 ## API Endpoints
 

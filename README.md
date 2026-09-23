@@ -28,7 +28,12 @@ git clone <repository-url> && cd nora
 make setup
 ```
 
-Create `api/.env` and `base/.env.local` with the required variables (see [Environment variables](#environment-variables)).
+```bash
+cp api/.env.example api/.env
+cp base/.env.local.example base/.env.local
+```
+
+Fill in the required variables (see [Environment variables](#environment-variables)).
 
 ```bash
 make dev
@@ -41,7 +46,7 @@ make dev
 
 | Layer    | Technology          | Version   |
 | -------- | ------------------- | --------- |
-| Backend  | Ruby                | 3.4.7     |
+| Backend  | Ruby                | 3.4.8     |
 | Backend  | Rails (API)         | 8.0.3     |
 | Frontend | Next.js             | 16.1.6    |
 | Frontend | React               | 19.2.1    |
@@ -58,7 +63,7 @@ SQLite in development; PostgreSQL-ready for production.
 ### Prerequisites
 
 - Ruby 3.4.x (backend)
-- Node.js 18+ and pnpm (frontend)
+- Node.js 22.13+ and pnpm 12 (frontend — pnpm 12 refuses to run on older Node)
 - PostgreSQL optional for local dev; required for production
 
 See the [Tech stack](#tech-stack) table above for exact versions.
@@ -96,7 +101,12 @@ See the [Tech stack](#tech-stack) table above for exact versions.
 
 ### Environment variables
 
-Backend and frontend each use their own env file. Copy from `.env.example` / `.env.local.example` when available.
+Backend and frontend each use their own env file, both templated in the repo:
+
+```bash
+cp api/.env.example api/.env
+cp base/.env.local.example base/.env.local
+```
 
 **Backend (`api/.env`):**
 
@@ -109,6 +119,8 @@ Backend and frontend each use their own env file. Copy from `.env.example` / `.e
 | `REDIS_URL` | No (dev) | Defaults to `redis://localhost:6379/0`; required in production if using Redis cache/queue. |
 | `SENTRY_DSN` | No | Sentry DSN for backend error tracking; optional in dev. |
 | `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
+| `FRONTEND_URL` | No (dev) | Base URL used to build links in outgoing email. Defaults to `http://localhost:3000`. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` | No | Read by `config/initializers/google_calendar.rb`. Inert today — the `calendar_connections` table exists but no OAuth flow is implemented. |
 
 **Frontend (`base/.env.local`):**
 
@@ -117,7 +129,9 @@ Backend and frontend each use their own env file. Copy from `.env.example` / `.e
 | `NEXT_PUBLIC_API_URL` | **Yes** | Backend API base URL (e.g. `http://localhost:3001` for local). |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the locations/map feature. |
 | `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking; optional in dev. |
+| `SENTRY_DSN` | No | Same DSN, read by the server and edge runtimes. |
 | `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
+| `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS` | No | Set to `true` to reveal the unbuilt dashboard sections (labs, billing, documents, medications, messages). Off by default — see [Preview sections](#preview-sections). |
 
 ### Development commands
 
@@ -130,14 +144,32 @@ See [Makefile](Makefile) for common commands:
 
 ## Branch protection and CI
 
-Two GitHub Actions workflows run on push and pull requests to `main` and `develop`:
+One GitHub Actions workflow runs on push and pull requests to `main` and `develop`:
 
-| Workflow | File | What it checks |
-|----------|------|----------------|
-| **Run Tests** | [.github/workflows/test.yml](.github/workflows/test.yml) | Backend: RuboCop, Brakeman, RSpec. Frontend: ESLint, Next.js build, Jest. |
-| **API CI** | [.github/workflows/api-ci.yml](.github/workflows/api-ci.yml) | Brakeman, RuboCop, and Rails tests when `api/**` files change. |
+| Workflow | File | Jobs |
+|----------|------|------|
+| **Run Tests** | [.github/workflows/test.yml](.github/workflows/test.yml) | `Rails Tests` — RuboCop, Brakeman, RSpec. `Next.js Tests` — ESLint, Next.js build, Jest. |
 
-Both workflows must pass before merging. Configure branch protection in your repository settings to require status checks for `test-backend`, `test-frontend`, and (if you use it) the API CI jobs.
+Require both jobs (`Rails Tests`, `Next.js Tests`) as status checks in branch protection.
+
+## Preview sections
+
+Five dashboard areas — **labs, billing, documents, medications, messages** — are
+designed but not built: they render realistic clinical content from hardcoded
+arrays with no table, model, or endpoint behind any of it.
+
+Showing invented lab values or account balances to a real patient is a
+credibility problem, not just tech debt, so those routes return 404 unless you
+opt in:
+
+```bash
+# base/.env.local
+NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS=true
+```
+
+With the flag on, each page carries a banner stating that the content is sample
+data. The flag goes away when the pages either get real endpoints or get
+deleted — see `base/lib/preview-sections.ts`.
 
 ## Architecture
 

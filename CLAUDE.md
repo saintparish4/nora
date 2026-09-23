@@ -14,8 +14,7 @@
   /lib/             - API client, auth context
   /types/           - TypeScript types and API contracts
 /docs/              - Architecture and project documentation
-.github/            - Workflows (test.yml: full-stack tests)
-api/.github/       - API-specific CI (brakeman, rubocop, rails test)
+.github/            - Workflows (test.yml: full-stack tests) + dependabot.yml
 ```
 
 ## Technology Stack
@@ -23,7 +22,7 @@ api/.github/       - API-specific CI (brakeman, rubocop, rails test)
 - **Backend:** Ruby 3.4.x, Rails 8 (API mode), SQLite (dev) / PostgreSQL (prod), RSpec, RuboCop, Sidekiq, JWT, Resend, OpenAI
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, pnpm, Jest, ESLint
 - **Build / run:** Make (optional), Bundler, pnpm
-- **CI:** GitHub Actions — root `.github/workflows/test.yml` (Rails + Next.js); `api/.github/workflows/ci.yml` (Rails lint, Brakeman, tests)
+- **CI:** GitHub Actions — a single workflow, `.github/workflows/test.yml`, with a `Rails Tests` job (RuboCop, Brakeman, RSpec) and a `Next.js Tests` job (ESLint, build, Jest)
 
 ## Local Development
 
@@ -148,15 +147,17 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **New API feature:** Add controller under `api/app/controllers/api/v1/`, domain logic in `api/app/services/`, routes in `config/routes.rb`, and RSpec in `api/spec/`.
 - **New frontend feature:** Add types in `base/types/`, API functions in `base/lib/api/`, components and pages under `base/app/`; add tests where appropriate.
 - **PHI / security:** Use existing patterns (e.g. `PhiAccessLog`, `PhiAccessLoggable`); log access to sensitive data and avoid logging PHI in plain text.
-- **Environment:** Required env vars are documented in `README.md` (e.g. `OPENAI_API_KEY`, `RESEND_API_KEY`, `NEXT_PUBLIC_API_URL`). Use `api/.env` and `base/.env.local`; no `.env.example` committed — copy from README or team docs.
+- **Environment:** Copy `api/.env.example` → `api/.env` and `base/.env.local.example` → `base/.env.local`. Both templates are committed (the `.gitignore` files negate them explicitly); keep them in step with the README tables when adding a variable.
 
 ## Common Gotchas
 
 - **Package manager:** Frontend uses **pnpm**, not npm. CI and local commands use `pnpm install`, `pnpm run dev`, `pnpm test`, etc.
-- **Ruby version:** Backend expects Ruby 3.4.x (see `api/.ruby-version`). Root workflow uses 3.2; consider aligning CI with .ruby-version for consistency.
+- **Ruby version:** Pinned to 3.4.8 in `api/.ruby-version`, `api/Gemfile`, and `api/Dockerfile` — change all three together. CI reads `.ruby-version` via `bundler-cache`.
+- **Node version:** Frontend needs Node >= 22.13; pnpm 12 hard-errors on anything older. `base/pnpm-workspace.yaml` lists the packages allowed to run install scripts — a new native dependency will fail `pnpm install` until it is added there.
+- **`pnpm run <script> -- --flag`:** pnpm 10+ forwards the `--` to the script, so `pnpm test -- --ci` reaches Jest as a path pattern and matches zero tests. Pass flags directly: `pnpm test --ci`.
 - **Database:** Development uses SQLite; production uses PostgreSQL. Behavior can differ (e.g. locking, SQL). Prefer PostgreSQL in dev for parity when possible.
 - **Auth:** JWT in localStorage is a known tradeoff; no refresh flow or httpOnly cookies yet. See `docs/ARCHITECTURE.md` for future auth improvements.
-- **Two CI setups:** `.github/workflows/test.yml` runs full-stack tests (Rails + Next.js) on push/PR to main/develop. `api/.github/workflows/ci.yml` runs Brakeman, Rubocop, and Rails tests (from api context). Ensure both pass when changing API or tooling.
+- **One CI workflow:** `.github/workflows/test.yml` runs both jobs on every push/PR to main/develop. The old `api/.github/workflows/ci.yml` (later `.github/workflows/api-ci.yml`) duplicated the Rails side and has been removed.
 
 ## Key Documentation
 

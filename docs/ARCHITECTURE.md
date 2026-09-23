@@ -6,19 +6,24 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 
 ## Backend Structure (`api/`)
 
-- **Controllers** (`app/controllers/api/v1/`): `auth`, `appointments`, `providers`, `quick_booking`, `slots`, `symptom_chat`, `symptoms`
-- **Services** (`app/services/`): `Appointments::SlotGeneratorService`, `Providers::ProviderMatchingService`, `Providers::MatchAndSlotService`, `Triage::SymptomAnalyzerService`, `Triage::ConversationSufficiencyService`
-- **Routes** (all under `/api/v1/`): auth (signup, login, logout, me, update_preferences), providers (index, show, available_slots), appointments (index, show, create, cancel), quick-booking (analyze, book), `/analyze-symptoms`, symptom-chat (send_message)
-- **Models**: User, Provider, Appointment, Availability, Conversation, ConversationMessage, UserPreference, PhiAccessLog
+- **Controllers** (`app/controllers/api/v1/`): `auth`, `appointments`, `care_preferences`, `conversations`, `providers`, `quick_booking`, `slots`, `symptom_chat`, `symptoms`
+- **Services** (`app/services/`): `Appointments::SlotGeneratorService`, `Providers::ProviderMatchingService`, `Providers::MatchAndSlotService`, `Triage::RedFlagScreenerService`, `Triage::SymptomAnalyzerService`, `Triage::ConversationSufficiencyService`, `Triage::RiskAssessmentService`
+- **Routes** (all under `/api/v1/`): auth (signup, login, logout, me, update_preferences, profile), care-preferences (show, update), providers (index, show, available_slots), appointments (index, show, create, cancel), conversations (index, show), quick-booking (analyze, book), `/analyze-symptoms`, symptom-chat (send_message)
+- **Models**: User, Provider, ProviderCondition, Appointment, Availability, BlockedSlot, Conversation, ConversationMessage, RiskAssessment, UserPreference, PhiAccessLog
 - **Jobs**: Active Job base; Sidekiq + sidekiq-scheduler in use for background work
-- **Mailers**: AppointmentMailer (booking confirmation, cancellation notice)
+- **Mailers**: AppointmentMailer (booking confirmation, cancellation notice, 24h reminder)
 
 ## Frontend Structure (`base/`)
 
-- **App routes**: `(auth)` login, signup; `(protected)` dashboard (and sub-routes: appointments, billing, documents, labs, medications, messages, providers, settings, symptoms), appointments, booking, get-care, providers, quick-booking, settings, logout; public: `/`, `/locations`, `/specialists`, `/technology`
-- **API client** (`lib/api/`): `client`, `auth`, `appointments`, `providers`, `quick-booking`, `symptom-chat`, `symptoms`
-- **Types** (`types/`): `auth`, `appointments`, `providers`, `quick-booking`, `symptom-chat`, `symptoms`
-- **Components**: `ui/` (shadcn primitives), `landing/`, `navigation/`, `dashboard/`, `chat/`
+- **App routes**
+  - `(auth)`: `/login`, `/signup`
+  - `(protected)`: `/dashboard`, `/dashboard/get-care`, `/dashboard/symptoms`, `/dashboard/symptoms/history`, `/dashboard/providers`, `/dashboard/providers/[id]`, `/dashboard/providers/specialties`, `/dashboard/appointments`, `/dashboard/appointments/history`, `/dashboard/settings`, `/dashboard/settings/profile`, `/dashboard/settings/preferences`, `/logout`
+  - `(protected)`, **preview only** — sample data, 404 unless `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS=true`: `/dashboard/labs`, `/dashboard/labs/all`, `/dashboard/billing`, `/dashboard/billing/payments`, `/dashboard/documents`, `/dashboard/documents/records`, `/dashboard/documents/forms`, `/dashboard/medications`, `/dashboard/medications/refills`, `/dashboard/messages`
+  - public: `/`, `/locations`, `/specialists`, `/technology`
+  - `next.config.ts` redirects the old top-level `/appointments`, `/providers`, `/settings`, `/get-care`, and `/quick-booking` paths into `/dashboard/*`
+- **API client** (`lib/api/`): `client`, `auth`, `appointments`, `conversations`, `preferences`, `providers`, `quick-booking`, `symptom-chat`, `symptoms`, plus `hooks` (SWR) and `prefetch`
+- **Types** (`types/`): `auth`, `appointments`, `conversations`, `preferences`, `providers`, `quick-booking`, `symptom-chat`, `symptoms` — most are re-exports of the Zod schemas in `lib/api/schemas.ts`
+- **Components**: `ui/` (shadcn primitives), `navigation/`, `dashboard/`, `chat/`
 
 ## Development Workflow
 
@@ -38,8 +43,11 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 
 ### Testing
 
-- **Backend**: Run `cd api && bundle exec rspec`
-- **Frontend**: Run `cd base && pnpm test` (Jest)
+- **Backend**: `cd api && bundle exec rspec` (SimpleCov writes `api/coverage/index.html`)
+- **Frontend**: `cd base && pnpm test` (Jest). Pass flags directly — `pnpm test --ci`,
+  not `pnpm test -- --ci`, which pnpm 10+ forwards to Jest as a path pattern.
+- **CI**: one workflow, `.github/workflows/test.yml`, with a `Rails Tests` job and
+  a `Next.js Tests` job.
 
 ### Code Style
 
@@ -78,6 +86,9 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 |----------|-----------|
 | All API under `/api/v1/` | Single version prefix; easy to route, document, and evolve. |
 | Services by domain (e.g. `Triage::`, `Appointments::`) | Clear ownership, easier testing, and alignment with product areas. |
+| Deterministic red-flag rules in front of the LLM | `Triage::RedFlagScreenerService` matches a fixed list of emergency presentations (cardiac, stroke, airway, anaphylaxis, hemorrhage, self-harm, altered consciousness, poisoning) before any model call. When a rule fires the model is not consulted at all. A probabilistic component must not be the only thing between a patient and an emergency room, and rules keep working when OpenAI is down. |
+| Triage fails **safe**, never open | Every degraded path — API error, unparseable JSON, urgency outside the contract — escalates to `urgent` and sets `assessment_failed: true`. It previously defaulted to `routine`, so one timeout silently turned a possible emergency into "schedule within 1-2 weeks". Degraded results are also never cached, so a single outage cannot serve a stale non-answer for 7 days. |
+| No bookable slots for an emergency | Both the chat and quick-booking flows return an empty provider list when urgency is `emergency`. Offering an appointment next to "call 911" invites the wrong choice. |
 | RSpec over Minitest | Personal preference and richer DSL for request/service specs. |
 | shadcn/ui for frontend | Accessible, customizable components without a heavy framework lock-in. |
 | API client split by domain in `lib/api/` | Mirrors backend; each module stays focused and easier to maintain. |
@@ -89,7 +100,7 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 - **Auth**: Move away from JWT in localStorage toward httpOnly cookies (or short-lived access + refresh tokens) and CSRF protection; add rate limiting and lockout for auth endpoints.
 - **Observability**: Sentry error tracking (backend + frontend) and lograge structured JSON logging are in place. Next step: metrics (latency, errors, queue depth) and distributed tracing.
 - **API**: Centralized `rescue_from` error handling gives consistent error payloads. Zod schemas in `base/lib/api/schemas.ts` provide runtime contract validation. Remaining gap: OpenAPI/Swagger docs.
-- **Frontend**: Global 401 interceptor centralizes auth expiry handling. Next.js error boundaries (`error.tsx`) are in place at root and dashboard levels. SWR hooks standardize data fetching.
+- **Frontend**: Global 401 interceptor centralizes auth expiry handling, scoped so login/signup and the on-mount session probe opt out — a 401 there means "wrong password" or "stale token", not "your session just died". Next.js error boundaries (`error.tsx`) are in place at root and dashboard levels. SWR hooks standardize data fetching.
 - **Infra**: Use PostgreSQL in all environments (no SQLite in dev) to avoid environment drift; define backup, restore, and migration rollback; consider feature flags and phased rollouts for risky changes.
 - **Testing**: Broaden coverage on critical paths (auth, booking, payments if added); add a small set of smoke or contract tests for the API used by the frontend.
 
@@ -98,17 +109,17 @@ NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js fronten
 | Table | Purpose | Status |
 |-------|---------|--------|
 | `calendar_connections` | OAuth tokens for syncing provider availability from Google Calendar. The `blocked_slots` table is populated manually today; calendar sync will auto-create blocked slots from external events. | Schema only — no model, service, or OAuth flow yet. |
-| `risk_assessments` | Persisted triage risk assessments linked to conversations and users. Enables longitudinal risk tracking and escalation workflows. | Schema only — no model or service yet. |
+| `risk_assessments` | Persisted triage risk assessments linked to conversations and users. Enables longitudinal risk tracking and escalation workflows. | **Live.** `RiskAssessment` + `Triage::RiskAssessmentService`, written on every completed chat analysis for a signed-in patient and surfaced under `/dashboard/symptoms/history`. `confidence`, `self_care_options`, and `escalation_triggers` stay empty until the analyzer prompt produces them. |
 | `follow_up_recommendations` | Post-appointment follow-up reminders (e.g. "schedule a check-up in 2 weeks"). Generated by providers or automated rules, delivered via email/notification. | Schema only — no model or delivery logic yet. |
 
 ## Known Technical Debt
 
-- **Auth storage**: JWT in localStorage is a known security tradeoff; no refresh flow or token rotation yet. Moving to httpOnly cookies is a tracked future improvement.
+- **Auth storage**: JWT in localStorage is a known security tradeoff; no refresh flow or token rotation yet. Moving to httpOnly cookies is a tracked future improvement, and the decision is coupled to deployment: the API (Render) and frontend (Vercel) are on different origins, so a cookie-only session needs `SameSite=None; Secure` or a shared custom domain. Server-side expiry *is* enforced — `JsonWebToken.encode` sets a 24h `exp` and `decode` rejects expired tokens. Per-account lockout (5 failed logins, 15 minutes) complements the per-IP Rack::Attack throttle.
 - **SQLite in development**: Differs from production PostgreSQL; can cause subtle bugs (e.g. SQL or locking behavior). Consider PostgreSQL in dev for full environment parity.
 - **No formal API contract**: No OpenAPI/Swagger; Zod schemas in `base/lib/api/schemas.ts` provide runtime validation but no generated docs.
 - **Tests**: Gaps on edge cases and some integration paths; coverage is not yet at a consistent baseline for critical flows.
 
-*Items resolved since initial draft: centralized `rescue_from` error handling, global 401 interceptor, Sentry error tracking (backend + frontend), structured JSON request logging (lograge), Next.js error boundaries, and ApplicationJob retry/discard policies.*
+*Items resolved since initial draft: centralized `rescue_from` error handling, global 401 interceptor, Sentry error tracking (backend + frontend), structured JSON request logging (lograge), Next.js error boundaries, ApplicationJob retry/discard policies, per-account login lockout, and `risk_assessments` wired end to end.*
 
 ## Environment Variables
 
@@ -134,6 +145,7 @@ Copy `api/.env.example` → `api/.env` and `base/.env.local.example` → `base/.
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the /locations map feature. |
 | `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking. |
 | `SENTRY_AUTH_TOKEN` | No | Sentry auth token for source map uploads in CI. |
+| `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS` | No | `true` reveals the unbuilt sample-data sections listed above. Off by default. |
 
 ## Deployment
 

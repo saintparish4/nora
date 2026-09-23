@@ -58,8 +58,9 @@ describe('AuthProtected', () => {
     })
   })
 
-  it('redirects to /login when not authenticated', async () => {
+  it('redirects to /login with a returnUrl when not authenticated', async () => {
     mockUseAuth.mockReturnValue({ user: null, loading: false })
+    window.history.replaceState({}, '', '/dashboard/appointments?filter=past')
 
     render(
       <AuthProtected>
@@ -68,7 +69,9 @@ describe('AuthProtected', () => {
     )
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/login')
+      expect(mockPush).toHaveBeenCalledWith(
+        '/login?returnUrl=%2Fdashboard%2Fappointments%3Ffilter%3Dpast'
+      )
     })
     expect(screen.queryByText('Protected Content')).toBeNull()
   })

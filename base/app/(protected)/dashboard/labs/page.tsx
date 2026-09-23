@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { FlaskConical, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_LABCORP_RESULTS = [
   { id: 1, name: 'Comprehensive Metabolic Panel', date: 'Jan 15, 2025', status: 'Optimal', statusClass: 'bg-[#E0F2C2]' },
@@ -9,8 +12,11 @@ const SAMPLE_LABCORP_RESULTS = [
 ];
 
 export default function LabsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Lab Results" />
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Lab Results</h1>
       <p className="text-muted-foreground mb-8">Recent results and updates from Labcorp.</p>
 

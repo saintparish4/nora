@@ -14,6 +14,9 @@ import {
   User,
   Paperclip
 } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 // Mock messages data
 const MOCK_MESSAGES = [
@@ -91,6 +94,12 @@ Dr. Sarah Chen`,
 type View = 'inbox' | 'detail' | 'compose';
 
 export default function MessagesPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
+  return <MessagesPreview />;
+}
+
+function MessagesPreview() {
   const [currentView, setCurrentView] = useState<View>('inbox');
   const [selectedMessage, setSelectedMessage] = useState<typeof MOCK_MESSAGES[0] | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,6 +152,7 @@ export default function MessagesPage() {
 
   return (
     <div className="flex flex-1 flex-col h-full pb-16">
+      <PreviewBanner section="Messages" />
       {/* Header */}
             <div className="border-b bg-white px-6 py-4">
               <div className="flex items-center justify-between">

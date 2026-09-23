@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { ArrowLeft, Pill, Send } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_REFILL_REQUESTS = [
   { id: 1, name: 'Lisinopril', dose: '5 mg', requested: 'Feb 10, 2025', status: 'Sent to pharmacy' },
@@ -7,8 +10,11 @@ const SAMPLE_REFILL_REQUESTS = [
 ];
 
 export default function MedicationsRefillsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Medications" />
       <Link
         href="/dashboard/medications"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

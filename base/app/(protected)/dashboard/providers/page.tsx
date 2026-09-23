@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useProviders, prefetchProvider, type Provider } from '@/lib/api';
 import Link from 'next/link';
 import { 
@@ -62,8 +63,13 @@ const SPECIALTY_CARDS = [
 
 const PER_PAGE = 20;
 
-export default function ProvidersPage() {
-  const [specialty, setSpecialty] = useState('');
+function ProvidersContent() {
+  // The specialties page links here with ?specialty=X. Read once as the initial
+  // value rather than syncing — after that the filter buttons own the state.
+  const searchParams = useSearchParams();
+  const [specialty, setSpecialty] = useState(
+    () => searchParams.get('specialty') ?? ''
+  );
   const [sortBy, setSortBy] = useState('');
   const [page, setPage] = useState(1);
 
@@ -74,7 +80,7 @@ export default function ProvidersPage() {
     per_page: PER_PAGE,
   });
 
-  const providers = data?.providers ?? [];
+  const providers = useMemo(() => data?.providers ?? [], [data]);
   const total = data?.total ?? 0;
   const totalPages = data?.total_pages ?? 1;
 
@@ -290,5 +296,19 @@ export default function ProvidersPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProvidersPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-1 items-center justify-center py-20">
+          <p className="text-gray-500">Loading…</p>
+        </div>
+      }
+    >
+      <ProvidersContent />
+    </Suspense>
   );
 }

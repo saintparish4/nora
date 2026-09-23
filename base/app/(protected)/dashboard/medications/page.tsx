@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { Pill, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_MEDICATIONS = [
   { id: 1, name: 'Atorvastatin', dose: '10 mg', frequency: 'Once daily', indication: 'Lipid control', time: '08:00 AM', refills: 3 },
@@ -9,8 +12,11 @@ const SAMPLE_MEDICATIONS = [
 ];
 
 export default function MedicationsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Medications" />
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Medications</h1>
       <p className="text-muted-foreground mb-8">Active medications and details.</p>
 

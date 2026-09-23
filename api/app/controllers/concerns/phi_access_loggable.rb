@@ -58,6 +58,11 @@ module PhiAccessLoggable
   # bypasses AR callbacks, which is intentional here — PhiAccessLog's
   # readonly! guard would fire on each instantiated record otherwise.
   #
+  # insert_all also bypasses timestamp handling, so created_at is set by hand.
+  # There is deliberately no updated_at: audit rows are immutable and the table
+  # has no such column. Including it raised UnknownAttributeError, which this
+  # method then swallowed — every batch write was silently dropped.
+  #
   # @param resource_type  [String]         e.g. "Appointment"
   # @param resource_ids   [Array<#to_s>]   primary keys of accessed records
   # @param action         [String, Symbol] one of: view, create, update, delete
@@ -81,8 +86,7 @@ module PhiAccessLoggable
         session_id:    sid,
         request_id:    rid,
         ip_address:    ip,
-        created_at:    now,
-        updated_at:    now
+        created_at:    now
       }
     end
 

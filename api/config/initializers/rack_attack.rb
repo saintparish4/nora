@@ -36,19 +36,24 @@ class Rack::Attack
   # Response
   # ---------------------------------------------------------------------------
 
-  self.throttled_responder = lambda do |matched, _period, _limit, _count|
-    now   = Time.now.utc
-    match = matched.to_s
+  # Rack::Attack 6 calls this with the request, and nothing else — the old
+  # (matched, period, limit, count) signature was removed. With the wrong arity
+  # every throttled request raised ArgumentError and came back as a 500, so the
+  # JSON 429 below was never actually served. Details come off the request env.
+  self.throttled_responder = lambda do |request|
+    match_data  = request.env["rack.attack.match_data"] || {}
+    period      = match_data[:period].to_i
+    retry_after = period.positive? ? period : 60
 
     headers = {
-      "Content-Type"  => "application/json",
-      "Retry-After"   => "60"
+      "Content-Type" => "application/json",
+      "Retry-After"  => retry_after.to_s
     }
 
     body = {
       error: "Rate limit exceeded",
-      throttle: match,
-      retry_after: 60
+      throttle: request.env["rack.attack.matched"].to_s,
+      retry_after: retry_after
     }.to_json
 
     [ 429, headers, [ body ] ]

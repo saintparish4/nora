@@ -21,6 +21,21 @@ module Triage
       "emergency" => { priority: 3, color: "red", message: "Seek immediate medical attention" }
     }.freeze
 
+    # Where triage goes when it cannot trust its own answer.
+    #
+    # The original code defaulted to "routine" on every failure path — an API
+    # timeout or one malformed JSON response silently converted a possible
+    # emergency into "schedule within 1-2 weeks". The system prompt says to err
+    # on the side of caution and the failure path did the exact opposite.
+    #
+    # Degraded triage now escalates. "urgent" rather than "emergency" is
+    # deliberate: we have no evidence of an emergency, only an absence of
+    # evidence of anything, and crying emergency on every OpenAI blip would
+    # train patients to ignore the word. The accompanying copy always tells
+    # them to call 911 if it feels like an emergency.
+    FAILSAFE_URGENCY   = "urgent".freeze
+    FAILSAFE_SPECIALTY = "urgent_care".freeze
+
     # @param description [String]  symptom text (single-shot) or conversation
     #                              transcript (chat flow)
     # @param cacheable   [Boolean] set to false when the description is a
@@ -36,6 +51,12 @@ module Triage
     end
 
     def analyze
+      # Deterministic rules run ahead of the cache and ahead of the model. If a
+      # hard red flag is present, nothing the model could say would change the
+      # disposition, so there is no reason to spend the latency asking it.
+      screened = red_flag_response
+      return screened if screened
+
       if @cacheable
         cached_result = check_cache
         return cached_result if cached_result
@@ -43,12 +64,38 @@ module Triage
 
       result = call_openai_api
 
-      cache_result(result) if result && @cacheable
+      # Never cache a degraded answer. A 7-day TTL on a fallback would let one
+      # transient OpenAI outage keep serving "we could not assess this" to every
+      # patient who describes the same symptoms for the rest of the week.
+      cache_result(result) if result && @cacheable && !result[:assessment_failed]
 
       result
     end
 
     private
+
+    def red_flag_response
+      screening = RedFlagScreenerService.screen(@description)
+      return nil unless screening
+
+      Rails.logger.warn(
+        "[RED_FLAG_SCREEN] rules=#{screening[:rule_ids].join(',')} " \
+        "urgency=emergency source=rules"
+      )
+
+      {
+        specialty: screening[:specialty],
+        urgency: screening[:care_level],
+        reasoning: "What you've described includes signs that need emergency care right now. " \
+                   "Please call 911 or go to the nearest emergency room. Do not wait for an appointment.",
+        keywords: screening[:red_flags],
+        red_flags: screening[:red_flags],
+        specialty_name: SPECIALTIES[screening[:specialty]],
+        urgency_details: URGENCY_LEVELS[screening[:care_level]],
+        triage_source: "red_flag_rules",
+        assessment_failed: false
+      }
+    end
 
     def check_cache
       cached = Rails.cache.read(generate_cache_key(@description))
@@ -157,7 +204,9 @@ module Triage
         keywords: parsed["keywords"] || [],
         red_flags: parsed["red_flags"] || [],
         specialty_name: SPECIALTIES[validate_specialty(parsed["specialty"])],
-        urgency_details: URGENCY_LEVELS[validate_urgency(parsed["urgency"])]
+        urgency_details: URGENCY_LEVELS[validate_urgency(parsed["urgency"])],
+        triage_source: "model",
+        assessment_failed: false
       }
     rescue JSON::ParserError => e
       Rails.logger.error "Failed to parse OpenAI response: #{e.message}"
@@ -168,19 +217,32 @@ module Triage
       SPECIALTIES.key?(specialty) ? specialty : "primary_care"
     end
 
+    # An unrecognized urgency means the model returned something outside the
+    # contract, so its judgement on this field is worthless. Escalate rather
+    # than quietly substituting the lowest level.
     def validate_urgency(urgency)
-      URGENCY_LEVELS.key?(urgency) ? urgency : "routine"
+      return urgency if URGENCY_LEVELS.key?(urgency)
+
+      Rails.logger.warn "[TRIAGE_FAILSAFE] unrecognized urgency=#{urgency.inspect}, escalating to #{FAILSAFE_URGENCY}"
+      FAILSAFE_URGENCY
     end
 
+    # Returned when the model could not be reached or could not be parsed.
+    # `assessment_failed` is the honest signal to every caller and to the UI:
+    # this is not a recommendation, it is an admission that we do not know.
     def fallback_response
       {
-        specialty: "primary_care",
-        urgency: "routine",
-        reasoning: "For your safety, we recommend consulting a primary care provider.",
+        specialty: FAILSAFE_SPECIALTY,
+        urgency: FAILSAFE_URGENCY,
+        reasoning: "We could not automatically assess your symptoms. Please have them reviewed by a " \
+                   "provider — and if this feels like an emergency, call 911 or go to the nearest " \
+                   "emergency room rather than waiting for an appointment.",
         keywords: [],
         red_flags: [],
-        specialty_name: "Primary Care",
-        urgency_details: URGENCY_LEVELS["routine"]
+        specialty_name: SPECIALTIES[FAILSAFE_SPECIALTY],
+        urgency_details: URGENCY_LEVELS[FAILSAFE_URGENCY],
+        triage_source: "fallback",
+        assessment_failed: true
       }
     end
   end

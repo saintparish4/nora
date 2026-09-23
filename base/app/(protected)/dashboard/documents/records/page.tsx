@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { ArrowLeft, FileStack, Download } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_RECORDS = [
   { id: 1, name: 'Visit Summary – Dr. Sarah Jenkins', date: 'Jan 20, 2025', type: 'Visit summary' },
@@ -11,8 +14,11 @@ const SAMPLE_RECORDS = [
 ];
 
 export default function DocumentsRecordsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Documents" />
       <Link
         href="/dashboard/documents"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

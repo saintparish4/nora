@@ -10,6 +10,12 @@ interface AuthContextType {
   login: (email: string, password: string, returnUrl?: string) => Promise<void>;
   signup: (fields: SignupFields, returnUrl?: string) => Promise<void>;
   logout: () => Promise<void>;
+  /**
+   * Replace the cached user after a successful profile update, so pages reading
+   * `user` see the new values without a reload. The context otherwise only
+   * loads the user once, on mount.
+   */
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,6 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push(safeReturnUrl(returnUrl));
   };
 
+  const updateUser = (updated: User) => {
+    setUser(updated);
+  };
+
   const logout = async () => {
     await apiLogout();
     setUser(null);
@@ -53,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { FileText, Download, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_STATEMENTS = [
   { id: 1, period: 'January 2025', date: 'Feb 1, 2025', amount: 245.0, status: 'Paid' },
@@ -8,8 +11,11 @@ const SAMPLE_STATEMENTS = [
 ];
 
 export default function BillingPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Billing" />
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Billing</h1>
       <p className="text-muted-foreground mb-8">Statements and balances.</p>
 

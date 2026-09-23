@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { ArrowLeft, CreditCard, CheckCircle } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_PAYMENTS = [
   { id: 1, date: 'Feb 5, 2025', amount: 245.0, method: 'Visa •••• 4242', status: 'Completed' },
@@ -8,8 +11,11 @@ const SAMPLE_PAYMENTS = [
 ];
 
 export default function BillingPaymentsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Billing" />
       <Link
         href="/dashboard/billing"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

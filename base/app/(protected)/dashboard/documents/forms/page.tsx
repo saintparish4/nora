@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { ArrowLeft, FileText, Download } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { PREVIEW_SECTIONS_ENABLED } from '@/lib/preview-sections';
+import { PreviewBanner } from '@/components/dashboard/preview-banner';
 
 const SAMPLE_FORMS = [
   { id: 1, name: 'Patient Registration Form', description: 'New patient intake and demographics', updated: 'Dec 1, 2024' },
@@ -9,8 +12,11 @@ const SAMPLE_FORMS = [
 ];
 
 export default function DocumentsFormsPage() {
+  if (!PREVIEW_SECTIONS_ENABLED) notFound();
+
   return (
     <div className="p-4 lg:p-6 pb-16">
+      <PreviewBanner section="Documents" />
       <Link
         href="/dashboard/documents"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

@@ -47,3 +47,9 @@ Thumbs.db
 
 # Personal 
 book/
+# Planning and strategy notes. This repo is public; these are not.
+directive/
+
+# Keep the committed env templates (they must survive the .env* rules above)
+!api/.env.example
+!base/.env.local.example

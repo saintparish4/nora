@@ -9,6 +9,7 @@
 import { preload } from 'swr';
 import { getAppointments } from './appointments';
 import { getProviders, getProvider } from './providers';
+import { getConversations } from './conversations';
 
 /** Preload the default (unfiltered, page 1) providers list. */
 export function prefetchProviders(): void {
@@ -23,4 +24,9 @@ export function prefetchAppointments(): void {
 /** Preload a single provider's profile by ID. */
 export function prefetchProvider(id: number): void {
   preload(['provider', id], () => getProvider(id));
+}
+
+/** Preload the patient's symptom check history. */
+export function prefetchConversations(): void {
+  preload('conversations', () => getConversations());
 }

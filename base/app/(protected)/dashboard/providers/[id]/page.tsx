@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import * as Sentry from '@sentry/nextjs';
@@ -40,15 +40,18 @@ export default function ProviderDetailPage() {
   const [bookingError, setBookingError] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-  // Auto-select the first available date whenever slot data loads/changes.
-  useEffect(() => {
-    if (slotsData) {
-      const dates = Object.keys(slotsData.slots);
-      if (dates.length > 0) {
-        setSelectedDate(dates[0]);
-      }
-    }
-  }, [slotsData]);
+  const availableDates = useMemo(
+    () => (slotsData ? Object.keys(slotsData.slots) : []),
+    [slotsData]
+  );
+
+  // Until the patient picks a date, show the first one with slots. Derived from
+  // the slot data rather than synced into state through an effect, so a
+  // revalidation that drops the chosen date falls back cleanly.
+  const activeDate =
+    selectedDate && availableDates.includes(selectedDate)
+      ? selectedDate
+      : availableDates[0] ?? '';
 
   const handleBookingClick = () => {
     if (selectedSlot) {
@@ -105,9 +108,8 @@ export default function ProviderDetailPage() {
     );
   }
 
-  const availableDates = slotsData ? Object.keys(slotsData.slots) : [];
   const slotsForSelectedDate =
-    selectedDate && slotsData ? slotsData.slots[selectedDate] || [] : [];
+    activeDate && slotsData ? slotsData.slots[activeDate] || [] : [];
 
   return (
     <div className="flex flex-1 flex-col gap-6 pb-16">
@@ -182,9 +184,9 @@ export default function ProviderDetailPage() {
                           setSelectedSlot(null);
                         }}
                         role="radio"
-                        aria-checked={selectedDate === date}
+                        aria-checked={activeDate === date}
                         className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:ring-offset-1 ${
-                          selectedDate === date
+                          activeDate === date
                             ? 'border-[var(--brand)] bg-[var(--brand)]/10'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
@@ -204,7 +206,7 @@ export default function ProviderDetailPage() {
               <div className="md:col-span-2">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">
                   Available Times for{' '}
-                  {selectedDate ? formatDate(selectedDate, { relative: true }) : '…'}
+                  {activeDate ? formatDate(activeDate, { relative: true }) : '…'}
                 </h3>
                 <div>
                   {slotsForSelectedDate.length === 0 ? (

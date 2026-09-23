@@ -142,6 +142,49 @@ RSpec.describe 'Symptom Chat API', type: :request do
         expect(body['providers']).to be_an(Array)
       end
 
+      it 'records a risk assessment for a signed-in patient' do
+        user = create(:user)
+
+        expect {
+          post '/api/v1/symptom-chat/send',
+               params: {
+                 session_id: session_id,
+                 message: 'I have had lower back pain for about two weeks now and it is getting worse'
+               },
+               headers: auth_headers(user)
+        }.to change(RiskAssessment, :count).by(1)
+
+        assessment = RiskAssessment.last
+        expect(assessment.user).to eq(user)
+        expect(assessment.care_level).to eq('routine')
+        expect(assessment.reasoning).to eq(analysis_result[:reasoning])
+        expect(assessment.recommended_specialties).to eq([ 'Orthopedics' ])
+      end
+
+      it 'records nothing for a guest — there is no account to attach it to' do
+        expect {
+          post '/api/v1/symptom-chat/send', params: {
+            session_id: session_id,
+            message: 'I have had lower back pain for about two weeks now and it is getting worse'
+          }
+        }.not_to change(RiskAssessment, :count)
+      end
+
+      it 'still answers the patient when the assessment write fails' do
+        user = create(:user)
+        allow(RiskAssessment).to receive(:create!).and_raise(ActiveRecord::StatementInvalid, 'boom')
+
+        post '/api/v1/symptom-chat/send',
+             params: {
+               session_id: session_id,
+               message: 'I have had lower back pain for about two weeks now and it is getting worse'
+             },
+             headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(parsed_body['analysis']['specialty']).to eq('orthopedics')
+      end
+
       it 'includes matching providers when available' do
         provider = create(:provider, specialty: 'Orthopedics', rating: 4.8)
         provider_data = provider.as_detail_json(next_available_slots: [])
@@ -308,6 +351,144 @@ RSpec.describe 'Symptom Chat API', type: :request do
         log = PhiAccessLog.last
         expect(log.resource_type).to eq('Conversation')
         expect(log.action).to eq('create')
+      end
+    end
+
+    # -----------------------------------------------------------------
+    # Deterministic emergency screening
+    #
+    # No stubs here on purpose. The whole point of the rule layer is that it
+    # works with no model, no network, and no conversation history, so these
+    # exercise the real path end to end.
+    # -----------------------------------------------------------------
+    context 'when the message contains a hard red flag' do
+      let(:emergency_message) { 'I have crushing chest pain and pain down my left arm' }
+
+      it 'returns an emergency analysis without calling the model' do
+        expect(Triage::ConversationSufficiencyService).not_to receive(:new)
+
+        post '/api/v1/symptom-chat/send',
+             params: { session_id: session_id, message: emergency_message }
+
+        expect(response).to have_http_status(:ok)
+        expect(parsed_body['analysis']['urgency']).to eq('emergency')
+        expect(parsed_body['analysis']['triage_source']).to eq('red_flag_rules')
+        expect(parsed_body['need_more_detail']).to be false
+      end
+
+      it 'tells the patient to call 911 rather than offering an appointment' do
+        post '/api/v1/symptom-chat/send',
+             params: { session_id: session_id, message: emergency_message }
+
+        expect(parsed_body['assistant_message']).to include('911')
+        expect(parsed_body['assistant_message']).to match(/seek emergency care now/i)
+        expect(parsed_body['providers']).to eq([])
+      end
+
+      it 'bypasses the minimum-length gate' do
+        # 17 characters. Under the old ordering this returned
+        # "please describe your symptoms in a bit more detail".
+        short = 'I have chest pain'
+        expect(short.length).to be < Api::V1::SymptomChatController::MIN_MESSAGE_LENGTH
+
+        post '/api/v1/symptom-chat/send', params: { session_id: session_id, message: short }
+
+        expect(parsed_body['need_more_detail']).to be false
+        expect(parsed_body['analysis']['urgency']).to eq('emergency')
+      end
+
+      it 'bypasses the sufficiency follow-up question' do
+        sufficiency_double = instance_double(
+          Triage::ConversationSufficiencyService,
+          check: { sufficient: false, follow_up_question: 'Tell me more.' }
+        )
+        allow(Triage::ConversationSufficiencyService).to receive(:new).and_return(sufficiency_double)
+
+        post '/api/v1/symptom-chat/send',
+             params: { session_id: session_id, message: emergency_message }
+
+        expect(parsed_body['assistant_message']).not_to include('Tell me more.')
+        expect(parsed_body['analysis']['urgency']).to eq('emergency')
+      end
+
+      it 'points a patient in crisis at the 988 lifeline' do
+        post '/api/v1/symptom-chat/send', params: {
+          session_id: session_id,
+          message: 'I have been feeling suicidal and I do not know what to do'
+        }
+
+        expect(parsed_body['assistant_message']).to include('988')
+        expect(parsed_body['analysis']['urgency']).to eq('emergency')
+      end
+
+      it 'records the escalation for a signed-in patient' do
+        user = create(:user)
+
+        expect {
+          post '/api/v1/symptom-chat/send',
+               params: { session_id: session_id, message: emergency_message },
+               headers: auth_headers(user)
+        }.to change(RiskAssessment, :count).by(1)
+
+        assessment = RiskAssessment.last
+        expect(assessment.care_level).to eq('emergency')
+        expect(assessment.red_flags).to include('Possible heart attack symptoms')
+      end
+
+      it 'still screens when the message is a denial plus a real flag' do
+        post '/api/v1/symptom-chat/send', params: {
+          session_id: session_id,
+          message: 'I have no chest pain but I have been coughing up blood since this morning'
+        }
+
+        expect(parsed_body['analysis']['urgency']).to eq('emergency')
+        expect(parsed_body['analysis']['red_flags']).to include('Uncontrolled bleeding')
+      end
+    end
+
+    # -----------------------------------------------------------------
+    # Degraded triage
+    # -----------------------------------------------------------------
+    context 'when the analyzer could not assess the symptoms' do
+      before do
+        sufficiency_double = instance_double(
+          Triage::ConversationSufficiencyService,
+          check: { sufficient: true, follow_up_question: nil }
+        )
+        allow(Triage::ConversationSufficiencyService).to receive(:new).and_return(sufficiency_double)
+
+        client = instance_double(OpenAI::Client)
+        allow(client).to receive(:chat).and_raise(StandardError, 'connection reset')
+        allow(OpenAI::Client).to receive(:new).and_return(client)
+
+        allow_any_instance_of(Providers::MatchAndSlotService).to receive(:call).and_return([])
+        allow(Rails.logger).to receive(:warn)
+      end
+
+      let(:message) { 'I have had a sore throat and a fever for the last three days' }
+
+      it 'escalates instead of returning routine' do
+        post '/api/v1/symptom-chat/send', params: { session_id: session_id, message: message }
+
+        expect(parsed_body['analysis']['urgency']).to eq('urgent')
+        expect(parsed_body['analysis']['assessment_failed']).to be true
+      end
+
+      it 'says plainly that the check did not run' do
+        post '/api/v1/symptom-chat/send', params: { session_id: session_id, message: message }
+
+        expect(parsed_body['assistant_message']).to match(/didn't run/)
+        expect(parsed_body['assistant_message']).not_to match(/I'd recommend seeing a/)
+      end
+
+      it 'records the escalated level, not routine' do
+        user = create(:user)
+
+        post '/api/v1/symptom-chat/send',
+             params: { session_id: session_id, message: message },
+             headers: auth_headers(user)
+
+        expect(RiskAssessment.last.care_level).to eq('urgent')
       end
     end
   end

@@ -4,7 +4,17 @@ import useSWR from 'swr';
 import * as Sentry from '@sentry/nextjs';
 import { getAppointments } from './appointments';
 import { getProviders, getProvider, getAvailableSlots } from './providers';
-import type { AppointmentsResponse, ProvidersResponse, Provider, AvailableSlotsResponse } from '@/types';
+import { getConversations, getConversation } from './conversations';
+import { getCarePreferences } from './preferences';
+import type {
+  AppointmentsResponse,
+  ProvidersResponse,
+  Provider,
+  AvailableSlotsResponse,
+  ConversationSummary,
+  ConversationDetail,
+  CarePreferences,
+} from '@/types';
 
 // Shared SWR config: no refetch on window focus (medical data doesn't change
 // every time a user tabs back in), and dedupe rapid repeated calls.
@@ -78,6 +88,41 @@ export function useProviderSlots(id: number | null) {
   return useSWR<AvailableSlotsResponse>(
     id ? ['provider-slots', id] : null,
     () => getAvailableSlots(id as number),
+    SWR_OPTIONS
+  );
+}
+
+/**
+ * Fetches the patient's symptom-chat history (newest first).
+ */
+export function useConversations() {
+  return useSWR<ConversationSummary[]>(
+    'conversations',
+    () => getConversations(),
+    SWR_OPTIONS
+  );
+}
+
+/**
+ * Fetches one past conversation with its transcript and risk assessments.
+ * Passing `null` disables the request (useful before a selection is made).
+ */
+export function useConversation(id: number | null) {
+  return useSWR<ConversationDetail>(
+    id ? ['conversation', id] : null,
+    () => getConversation(id as number),
+    SWR_OPTIONS
+  );
+}
+
+/**
+ * Fetches the patient's care preferences. Returns empty defaults for a patient
+ * who has never saved any, so the form can render without a special case.
+ */
+export function useCarePreferences() {
+  return useSWR<CarePreferences>(
+    'care-preferences',
+    () => getCarePreferences(),
     SWR_OPTIONS
   );
 }

@@ -56,12 +56,20 @@ updates:
           - "@types/react"
           - "@types/react-dom"
           - "eslint-config-next"
+          - "typescript"
       production:
         dependency-type: production
         exclude-patterns:
           - "react"
           - "react-dom"
           - "next"
+    ignore:
+      # typescript-eslint does not support TypeScript 7.x: ESLint hard-errors
+      # with "typescript-eslint does not support TS 7.0" and the Next.js Tests
+      # job fails. Held at 5.x until typescript-eslint ships TS 7 support, then
+      # remove this entry and take the major in its own PR.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"

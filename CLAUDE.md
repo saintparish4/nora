@@ -157,6 +157,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **`pnpm run <script> -- --flag`:** pnpm 10+ forwards the `--` to the script, so `pnpm test -- --ci` reaches Jest as a path pattern and matches zero tests. Pass flags directly: `pnpm test --ci`.
 - **Database:** Development uses SQLite; production uses PostgreSQL. Behavior can differ (e.g. locking, SQL). Prefer PostgreSQL in dev for parity when possible.
 - **Auth:** JWT in localStorage is a known tradeoff; no refresh flow or httpOnly cookies yet. See `docs/ARCHITECTURE.md` for future auth improvements.
+- **Brakeman exits non-zero on *warnings*, not just errors.** `bundle exec brakeman` exits 3 when it
+  reports anything, and CI runs it unpiped, so the `Rails Tests` job fails. Two traps: piping it
+  (`brakeman | tail`) throws the exit code away and looks clean, and `make lint` does **not** run
+  Brakeman at all — only CI does. Verify with `brakeman --no-pager; echo $?`.
+- **`main` can go red with no code change.** Brakeman's `EOLRails` check fails the build once the
+  pinned Rails version passes its end-of-support date (8.0.3 ended 2026-10-07 and broke the build
+  on that schedule). This is deliberate — running an unsupported Rails is a real finding, so it is
+  not suppressed. The mitigation is the `rails` group in `.github/dependabot.yml`, which keeps
+  Rails current; merge that PR promptly rather than ignoring the check.
 - **One CI workflow:** `.github/workflows/test.yml` runs both jobs on every push/PR to main/develop. The old `api/.github/workflows/ci.yml` (later `.github/workflows/api-ci.yml`) duplicated the Rails side and has been removed.
 
 ## Key Documentation

@@ -10,7 +10,13 @@ export function AuthProtected({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      // Carry the current page along so login can return the user to it.
+      // Read from window rather than useSearchParams() to keep this component
+      // out of a Suspense boundary.
+      const returnUrl = encodeURIComponent(
+        window.location.pathname + window.location.search
+      );
+      router.push(`/login?returnUrl=${returnUrl}`);
     }
   }, [user, loading, router]);
 

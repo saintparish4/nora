@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
-import { signup, login, logout, getCurrentUser, updateEmailPreferences } from '@/lib/api/auth'
+import { signup, login, logout, getCurrentUser, updateEmailPreferences, updateProfile } from '@/lib/api/auth'
 import { setToken, removeToken, getToken } from '@/lib/api/client'
 
 // localStorage mock
@@ -42,7 +42,7 @@ describe('Auth API functions', () => {
       }
       mockFetch.mockResolvedValueOnce(mockResponse(responseData, 201))
 
-      const result = await signup('new@example.com', 'password123')
+      const result = await signup({ email: 'new@example.com', password: 'password123' })
 
       expect(result.user.email).toBe('new@example.com')
       expect(result.token).toBe('jwt-signup-token')
@@ -52,7 +52,7 @@ describe('Auth API functions', () => {
     it('throws on error response', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse({ errors: ['Email has already been taken'] }, 422))
 
-      await expect(signup('taken@example.com', 'password123')).rejects.toThrow('Email has already been taken')
+      await expect(signup({ email: 'taken@example.com', password: 'password123' })).rejects.toThrow('Email has already been taken')
     })
   })
 
@@ -91,6 +91,34 @@ describe('Auth API functions', () => {
     it('skips the API call when no token is present', async () => {
       await logout()
       expect(mockFetch).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('updateProfile', () => {
+    it('PATCHes the profile fields and returns the updated user', async () => {
+      mockFetch.mockResolvedValueOnce(
+        mockResponse({
+          message: 'Profile updated successfully',
+          user: { id: 1, email: 'me@example.com', first_name: 'Ada', state: 'TX' },
+        })
+      )
+
+      const user = await updateProfile({ first_name: 'Ada', state: 'TX' })
+
+      const [url, options] = mockFetch.mock.calls[0]
+      expect(url).toMatch(/\/api\/v1\/auth\/profile$/)
+      expect(options?.method).toBe('PATCH')
+      expect(user.first_name).toBe('Ada')
+    })
+
+    it('surfaces validation errors from the API', async () => {
+      mockFetch.mockResolvedValueOnce(
+        mockResponse({ errors: ['Phone must be 10 digits'] }, 422)
+      )
+
+      await expect(updateProfile({ phone: '555' })).rejects.toThrow(
+        'Phone must be 10 digits'
+      )
     })
   })
 

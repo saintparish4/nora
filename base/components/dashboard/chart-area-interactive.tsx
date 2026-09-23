@@ -150,13 +150,13 @@ export function ChartAreaInteractive({
   data?: SeriesPoint[]
 }) {
   const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
+  const [selectedRange, setSelectedRange] = React.useState("90d")
 
-  React.useEffect(() => {
-    if (isMobile) {
-      setTimeRange("7d")
-    }
-  }, [isMobile])
+  // Small screens can't show 90 days legibly, so they default to a week.
+  // Derived rather than pushed into state from an effect, so an explicit choice
+  // still wins and no extra render is needed to apply it.
+  const timeRange = isMobile && selectedRange === "90d" ? "7d" : selectedRange
+  const setTimeRange = setSelectedRange
 
   const source = data && data.length > 0 ? data : chartData
   const filteredData = source.filter((item) => {

@@ -95,7 +95,7 @@ export default function DashboardPage() {
           </div>
           <ArrowRight className="w-4 h-4 text-muted-foreground" aria-hidden />
         </Link>
-        <Link href="/technology" className="flex items-center gap-4 p-6 bg-foreground text-background border border-border rounded-2xl hover:translate-x-1 transition-all shadow-sm">
+        <Link href="/dashboard/symptoms" className="flex items-center gap-4 p-6 bg-foreground text-background border border-border rounded-2xl hover:translate-x-1 transition-all shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-background/10 flex items-center justify-center">
             <Sparkles className="w-5 h-5" aria-hidden />
           </div>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
               </div>
             </Link>
             <Link
-              href="/technology"
+              href="/dashboard/symptoms"
               className="flex items-start gap-4 p-5 bg-white border border-[var(--glass-border)] rounded-2xl hover:shadow-md hover:border-teal-200 transition-all"
             >
               <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0">

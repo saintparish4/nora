@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 const MESSAGES = [
   'Reading your symptoms…',
@@ -11,22 +11,20 @@ const INTERVAL_MS = 2000;
 
 /**
  * Cycles through informative progress messages every 2 seconds while `active`
- * is true. Resets to the first message when deactivated, so the next analysis
- * starts fresh.
+ * is true. The returned message falls back to the first one whenever inactive,
+ * so the next analysis always starts fresh.
  */
 export function useAnalysisProgress(active: boolean): string {
   const [index, setIndex] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!active) {
-      setIndex(0);
-      return;
-    }
+    if (!active) return;
+
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
     const schedule = (i: number) => {
       if (i >= MESSAGES.length - 1) return;
-      timerRef.current = setTimeout(() => {
+      timer = setTimeout(() => {
         setIndex(i + 1);
         schedule(i + 1);
       }, INTERVAL_MS);
@@ -35,9 +33,12 @@ export function useAnalysisProgress(active: boolean): string {
     schedule(0);
 
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timer) clearTimeout(timer);
+      // Rewind for the next activation. Runs on teardown rather than in the
+      // effect body so it never triggers a cascading render.
+      setIndex(0);
     };
   }, [active]);
 
-  return MESSAGES[index];
+  return active ? MESSAGES[index] : MESSAGES[0];
 }

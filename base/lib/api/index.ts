@@ -7,6 +7,8 @@ export * from "./appointments";
 export * from "./symptoms";
 export * from "./quick-booking";
 export * from "./symptom-chat";
+export * from "./conversations";
+export * from "./preferences";
 export * from "./hooks";
 export * from "./prefetch";
 

@@ -42,7 +42,7 @@ function TestConsumer() {
     <div>
       <div data-testid="user">{user ? user.email : 'none'}</div>
       <button onClick={() => login('test@example.com', 'pass')}>Login</button>
-      <button onClick={() => signup('new@example.com', 'pass')}>Signup</button>
+      <button onClick={() => signup({ email: 'new@example.com', password: 'pass' })}>Signup</button>
       <button onClick={() => logout()}>Logout</button>
     </div>
   )

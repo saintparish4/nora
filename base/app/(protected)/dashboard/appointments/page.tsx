@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useAppointments, cancelAppointment, type Appointment } from '@/lib/api';
-import { formatDateTime } from '@/lib/format';
 import Link from 'next/link';
 import { AppointmentsPageSkeleton } from '@/components/ui/page-skeleton';
+import { AppointmentCard } from '@/components/dashboard/appointment-card';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -77,134 +76,39 @@ export default function AppointmentsPage() {
         ) : (
           <div className="space-y-4">
             {upcoming.map((appointment: Appointment) => (
-              <div
+              <AppointmentCard
                 key={appointment.id}
-                className={`bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border ${
-                  appointment.status === 'cancelled'
-                    ? 'border-dashed bg-muted/40 text-muted-foreground'
-                    : ''
-                }`}
-              >
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                  <div className="flex gap-4">
-                    {appointment.provider?.avatar_url ? (
-                      <Image
-                        src={appointment.provider.avatar_url}
-                        alt=""
-                        role="presentation"
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 rounded-full object-cover flex-shrink-0 border border-border bg-muted"
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k="
-                      />
-                    ) : (
-                      <div
-                        aria-hidden="true"
-                        className="w-16 h-16 bg-brand/15 text-brand rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold"
-                      >
-                        {appointment.provider?.name?.charAt(0) ?? '?'}
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">
-                        {appointment.provider?.name}
-                      </h3>
-                      <p className="text-[var(--brand)] mb-2">
-                        {appointment.provider?.specialty}
-                      </p>
-                      <p className="text-sm text-gray-600 mb-1">
-                        📅 {formatDateTime(appointment.start_time)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        📍 {appointment.provider?.location}
-                      </p>
-                      {appointment.notes && (
-                        <p className="text-sm text-gray-600 mt-2 italic">
-                          <strong>Note:</strong> {appointment.notes}
-                        </p>
-                      )}
-                      {appointment.status === 'cancelled' && (
-                        <span className="inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                          Cancelled
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    {appointment.status !== 'cancelled' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setConfirmId(appointment.id)}
-                        disabled={cancelling === appointment.id}
-                        className="text-red-600 border-red-600 hover:bg-red-50"
-                        aria-label={`Cancel appointment with ${appointment.provider?.name}`}
-                      >
-                        {cancelling === appointment.id ? 'Cancelling…' : 'Cancel'}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
+                appointment={appointment}
+                onCancel={setConfirmId}
+                cancelling={cancelling === appointment.id}
+              />
             ))}
           </div>
         )}
       </div>
 
-      {/* Past Appointments */}
+      {/* Past Appointments — most recent few; the history page has them all */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Past</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Past</h2>
+          {past.length > 0 && (
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/dashboard/appointments/history">View full history</Link>
+            </Button>
+          )}
+        </div>
         {past.length === 0 ? (
           <div className="bg-surface-elevated rounded-2xl shadow-sm p-8 text-center border border-border">
             <p className="text-gray-600">No past appointments</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {past.map((appointment: Appointment) => (
-              <div
+            {past.slice(0, 3).map((appointment: Appointment) => (
+              <AppointmentCard
                 key={appointment.id}
-                className="bg-surface-elevated rounded-2xl shadow-sm p-6 border border-border text-muted-foreground"
-              >
-                <div className="flex gap-4">
-                  {appointment.provider?.avatar_url ? (
-                    <Image
-                      src={appointment.provider.avatar_url}
-                      alt=""
-                      role="presentation"
-                      width={64}
-                      height={64}
-                      className="w-16 h-16 rounded-full object-cover flex-shrink-0 border border-border bg-muted"
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAAKAA0DASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUE/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAUREiExBv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCw7m1bQ8p2fDW2tRyQUUJWqdJPqWxjsqvGzstcjHVL1FRStFJbgAAAAAAAAAA/9k="
-                    />
-                  ) : (
-                    <div aria-hidden="true" className="w-16 h-16 bg-brand/15 text-brand rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold">
-                      {appointment.provider?.name?.charAt(0) ?? '?'}
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      {appointment.provider?.name}
-                    </h3>
-                    <p className="text-gray-600 mb-2">
-                      {appointment.provider?.specialty}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-2">
-                      📅 {formatDateTime(appointment.start_time)}
-                    </p>
-                    <span
-                      className={`inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full ${
-                        appointment.status === 'completed'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {appointment.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                appointment={appointment}
+                past
+              />
             ))}
           </div>
         )}

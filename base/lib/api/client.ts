@@ -28,18 +28,33 @@ function toHeaderRecord(init: HeadersInit | undefined): Record<string, string> {
   return { ...init };
 }
 
+export interface AuthFetchOptions extends RequestInit {
+  /**
+   * Opt out of the global 401 handler below.
+   *
+   * Set this on requests where a 401 is part of the endpoint's contract rather
+   * than a sign that the session died: the login call (401 = wrong password),
+   * and the session probe on mount (401 = the stored token is stale). Without
+   * it, a wrong password would bounce the user to /login?reason=session_expired
+   * instead of showing the real error, and a stale token would eject a visitor
+   * from a public page.
+   */
+  skipSessionExpiredRedirect?: boolean;
+}
+
 // Shared authFetch helper to eliminate duplicated token/header boilerplate.
 // Globally handles 401 responses: clears the stored token and redirects to
 // /login with returnUrl + reason=session_expired so the login page can surface
 // a contextual message to the user.
 export async function authFetch(
   url: string,
-  options: RequestInit = {}
+  options: AuthFetchOptions = {}
 ): Promise<Response> {
+  const { skipSessionExpiredRedirect, ...fetchOptions } = options;
   const token = getToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...toHeaderRecord(options.headers),
+    ...toHeaderRecord(fetchOptions.headers),
   };
 
   if (token) {
@@ -49,14 +64,23 @@ export async function authFetch(
   const fullUrl = url.startsWith("http") ? url : `${API_URL}${url}`;
 
   const response = await fetch(fullUrl, {
-    ...options,
+    ...fetchOptions,
     headers,
-    credentials: options.credentials || "include",
+    credentials: fetchOptions.credentials || "include",
   });
 
-  if (response.status === 401 && typeof window !== "undefined") {
+  if (
+    response.status === 401 &&
+    !skipSessionExpiredRedirect &&
+    typeof window !== "undefined"
+  ) {
     removeToken();
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    // A hard navigation rather than router.push(): this module is plain
+    // TypeScript with no router in scope, and a full reload is what we want here
+    // anyway — it drops every in-memory copy of the expired session along with
+    // the token.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = `/login?returnUrl=${returnUrl}&reason=session_expired`;
     // Throw so callers don't attempt to process the unauthenticated response.
     throw new Error("Session expired");

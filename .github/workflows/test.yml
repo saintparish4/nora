@@ -5,6 +5,9 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  # Lets the suite be run against any branch on demand, which is the only
+  # way to exercise a CI change before it reaches main.
+  workflow_dispatch:
 
 jobs:
   test-backend:

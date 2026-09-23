@@ -1,0 +1,27 @@
+# Native dependencies allowed to run install scripts.
+#   sharp          - Next.js image optimization
+#   @sentry/cli    - source map upload during production builds
+#   unrs-resolver  - native resolver used by eslint-config-next
+#   @parcel/watcher - native file watcher pulled in by tailwindcss
+allowBuilds:
+  '@parcel/watcher': true
+  '@sentry/cli': true
+  sharp: true
+  unrs-resolver: true
+# pnpm 12 holds brand-new releases back by default as a supply-chain cooldown.
+# These are excluded on purpose: next 16.3.6 is the first release that patches
+# the critical RCE in GHSA/CVE-2025-66478, so waiting out the cooldown was worse
+# than taking it immediately.
+minimumReleaseAgeExclude:
+  - '@next/env@16.3.6'
+  - '@next/swc-darwin-arm64@16.3.6'
+  - '@next/swc-darwin-x64@16.3.6'
+  - '@next/swc-linux-arm64-gnu@16.3.6'
+  - '@next/swc-linux-arm64-musl@16.3.6'
+  - '@next/swc-linux-x64-gnu@16.3.6'
+  - '@next/swc-linux-x64-musl@16.3.6'
+  - '@next/swc-win32-arm64-msvc@16.3.6'
+  - '@next/swc-win32-x64-msvc@16.3.6'
+  - next@16.3.6
+  - '@next/eslint-plugin-next@16.3.6'
+  - eslint-config-next@16.3.6

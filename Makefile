@@ -4,6 +4,7 @@
 help:
 	@echo "Available commands:"
 	@echo "  make install      - Install all dependencies (frontend + backend)"
+	@echo "                      (needs Node >= 22.13 and Ruby 3.4.x)"
 	@echo "  make setup        - Full project setup (install + database setup)"
 	@echo "  make test         - Run all tests (frontend + backend)"
 	@echo "  make dev          - Start development servers"
@@ -105,7 +106,7 @@ lint: lint-frontend lint-backend
 
 lint-frontend:
 	@echo "Running frontend linter..."
-	cd base && pnpm eslint
+	cd base && pnpm run lint
 
 lint-backend:
 	@echo "Running backend linter..."
@@ -114,7 +115,7 @@ lint-backend:
 lint-fix: lint-fix-frontend lint-fix-backend
 
 lint-fix-frontend:
-	cd base && pnpm eslint -- --fix
+	cd base && pnpm run lint --fix
 
 lint-fix-backend:
 	cd api && bundle exec rubocop -a

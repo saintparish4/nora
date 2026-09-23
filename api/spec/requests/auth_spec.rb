@@ -52,8 +52,10 @@ RSpec.describe 'Auth API', type: :request do
 
         expect(response).to have_http_status(:created)
         expect(parsed_body['user']['email']).to eq('newuser@example.com')
-        expect(parsed_body['token']).to be_present
         expect(parsed_body['message']).to eq('Account created successfully')
+        # A browser gets the httpOnly session cookie and nothing readable.
+        expect(parsed_body).not_to have_key('token')
+        expect(parsed_body).not_to have_key('refresh_token')
       end
     end
 
@@ -94,13 +96,13 @@ RSpec.describe 'Auth API', type: :request do
     let!(:user) { create(:user, email: 'login@example.com', password: 'password123', password_confirmation: 'password123') }
 
     context 'with valid credentials' do
-      it 'returns 200 with user and token' do
+      it 'returns 200 with the user and no readable credential' do
         post '/api/v1/auth/login', params: { email: 'login@example.com', password: 'password123' }
 
         expect(response).to have_http_status(:ok)
         expect(parsed_body['user']['email']).to eq('login@example.com')
-        expect(parsed_body['token']).to be_present
         expect(parsed_body['message']).to eq('Logged in successfully')
+        expect(parsed_body).not_to have_key('token')
       end
     end
 
@@ -268,7 +270,7 @@ RSpec.describe 'Auth API', type: :request do
         post '/api/v1/auth/login', params: { email: user.email, password: 'password123' }
 
         expect(response).to have_http_status(:ok)
-        expect(parsed_body['token']).to be_present
+        expect(parsed_body['user']).to be_present
       end
     end
 

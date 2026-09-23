@@ -36,6 +36,7 @@
     "@tanstack/react-table": "^9.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
     "lucide-react": "^1.47.0",
     "motion": "^13.4.0",
     "next": "^16.3.6",

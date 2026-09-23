@@ -1,7 +1,12 @@
 module Api
   module V1
     class AuthController < ApplicationController
-      skip_before_action :authenticate_request, only: [ :login, :signup ]
+      skip_before_action :authenticate_request, only: [ :login, :signup, :refresh, :csrf ]
+
+      # These three carry their own proof. refresh presents a secret an
+      # attacker cannot know; csrf is a safe read that hands the token out;
+      # login and signup have no session to protect yet.
+      skip_forgery_protection only: [ :login, :signup, :refresh, :csrf ]
 
       # Everything the frontend needs about the signed-in user, in one place so
       # signup, login, me, and the two update actions can't drift apart. The
@@ -18,14 +23,12 @@ module Api
         user = User.new(user_params)
 
         if user.save
-          token = JsonWebToken.encode(user_id: user.id)
-          session[:user_id] = user.id # Set session
+          session[:user_id] = user.id
 
           render json: {
             user: user.as_json(only: USER_FIELDS),
-            token: token, # JWT for mobile clients
             message: "Account created successfully"
-          }, status: :created
+          }.merge(api_client_credentials(user)), status: :created
         else
           render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
         end
@@ -54,19 +57,71 @@ module Api
         end
 
         user.register_successful_login!
-        token = JsonWebToken.encode(user_id: user.id)
-        session[:user_id] = user.id # Set session
+        session[:user_id] = user.id
 
         render json: {
           user: user.as_json(only: USER_FIELDS),
-          token: token, # JWT for mobile clients
           message: "Logged in successfully"
+        }.merge(api_client_credentials(user))
+      end
+
+      # GET /api/v1/auth/csrf
+      #
+      # The browser path authenticates with an httpOnly cookie it cannot read,
+      # so it needs a token it *can* read to prove a request came from our own
+      # page rather than someone else's.
+      def csrf
+        render json: { csrf_token: form_authenticity_token }
+      end
+
+      # POST /api/v1/auth/refresh
+      #
+      # Non-browser clients only. Exchanges a refresh token for a fresh access
+      # token, rotating the refresh token in the process so a stolen one is
+      # good for a single call.
+      def refresh
+        presented = params[:refresh_token].to_s
+        record = RefreshToken.find_by_raw(presented)
+
+        if record.nil?
+          return render json: { error: "Invalid refresh token" }, status: :unauthorized
+        end
+
+        # Already rotated, and presented again. Either it leaked or the client
+        # is replaying, and there is no way to tell which apart. Assume the
+        # worse one and end every session the user has.
+        if record.revoked_at.present?
+          RefreshToken.revoke_all_for!(record.user, reason: "refresh_token_reuse")
+          return render json: {
+            error: "Refresh token has already been used. All sessions have been signed out.",
+            code: "refresh_token_reuse"
+          }, status: :unauthorized
+        end
+
+        unless record.active?
+          return render json: { error: "Refresh token has expired" }, status: :unauthorized
+        end
+
+        raw, _successor = record.rotate!(
+          user_agent: request.user_agent,
+          ip_address: request.remote_ip
+        )
+
+        render json: {
+          token: JsonWebToken.encode(user_id: record.user_id),
+          refresh_token: raw,
+          expires_in: JsonWebToken::ACCESS_TOKEN_TTL.to_i,
+          user: record.user.as_json(only: USER_FIELDS)
         }
       end
 
       # DELETE /api/v1/auth/logout
       def logout
-        session[:user_id] = nil
+        # Clearing the cookie is not enough on its own: a refresh token issued
+        # to this account would still mint access tokens afterwards.
+        RefreshToken.revoke_all_for!(current_user, reason: "logout") if current_user
+
+        reset_session
         render json: { message: "Logged out successfully" }
       end
 
@@ -103,6 +158,32 @@ module Api
       end
 
       private
+
+      # Bearer credentials are handed out only when a client explicitly says it
+      # is not a browser. The web app authenticates with the httpOnly session
+      # cookie and must never receive a token, because anything JavaScript can
+      # read, an XSS can steal.
+      #
+      # Opt in with `X-Client-Type: api`.
+      def api_client_credentials(user)
+        return {} unless api_client?
+
+        raw, _record = RefreshToken.issue!(
+          user: user,
+          user_agent: request.user_agent,
+          ip_address: request.remote_ip
+        )
+
+        {
+          token: JsonWebToken.encode(user_id: user.id),
+          refresh_token: raw,
+          expires_in: JsonWebToken::ACCESS_TOKEN_TTL.to_i
+        }
+      end
+
+      def api_client?
+        request.headers["X-Client-Type"].to_s.casecmp?("api")
+      end
 
       def user_params
         params.permit(:email, :password, :password_confirmation, :first_name, :last_name, :state, :phone)

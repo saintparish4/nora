@@ -22,6 +22,14 @@ module Api
                 analyzer = Triage::SymptomAnalyzerService.new(description)
                 result = analyzer.analyze
 
+                # Recorded for a signed-in patient even though this endpoint is
+                # guest-accessible: the analysis is just as real as one from the
+                # chat flow, and dropping it threw away training data.
+                Triage::RiskAssessmentService.record(
+                    analysis: result,
+                    user: current_user_if_present
+                )
+
                 log_phi_access("SymptomAnalysis", request.request_id, :create)
 
                 render json: {

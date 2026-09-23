@@ -1,6 +1,16 @@
 class ApplicationController < ActionController::API
     include ActionController::Cookies
+    # ActionController::API leaves forgery protection out entirely. The session
+    # cookie is SameSite=None so the Next.js app on another origin can use it,
+    # which means the browser will attach it to cross-site requests — exactly
+    # the condition CSRF exploits. Put the protection back.
+    include ActionController::RequestForgeryProtection
     include PhiAccessLoggable
+
+    # Only the cookie path needs this. A JWT in an Authorization header cannot
+    # be forged cross-site because the browser never attaches it on its own, so
+    # demanding a CSRF token from API clients would be ceremony, not security.
+    protect_from_forgery with: :exception, if: :cookie_authenticated_request?
 
     before_action :authenticate_request
 
@@ -18,6 +28,16 @@ class ApplicationController < ActionController::API
       render json: { error: "Missing parameter: #{e.param}" }, status: :bad_request
     end
 
+    # Declared after the StandardError handler on purpose: rescue_from checks
+    # handlers in reverse declaration order, so an earlier, more specific
+    # handler would be shadowed by the catch-all above and surface as a 500.
+    rescue_from ActionController::InvalidAuthenticityToken do
+      render json: {
+        error: "Invalid or missing CSRF token. Fetch one from GET /api/v1/auth/csrf.",
+        code: "invalid_csrf_token"
+      }, status: :forbidden
+    end
+
     # For lograge: add request_id, ip, user_id to the request payload (production JSON logs).
     def append_info_to_payload(payload)
       super
@@ -27,6 +47,13 @@ class ApplicationController < ActionController::API
     end
 
     private
+
+    # True when this request is relying on the session cookie rather than a
+    # bearer token, and is doing something worth protecting. Safe verbs are
+    # excluded by protect_from_forgery itself.
+    def cookie_authenticated_request?
+      session[:user_id].present? && request.headers["Authorization"].blank?
+    end
 
     def authenticate_request
         # Try session auth first (NextJs frontend)

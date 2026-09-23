@@ -1,16 +1,18 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
 import { getCarePreferences, updateCarePreferences } from '@/lib/api/preferences'
+import { clearCsrfToken } from '@/lib/api/client'
 
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>
 
 function mockResponse(body: object, status = 200) {
-  return {
+  const res = {
     ok: status >= 200 && status < 300,
     status,
     json: () => Promise.resolve(body),
     headers: new Headers({ 'Content-Type': 'application/json' }),
     text: () => Promise.resolve(JSON.stringify(body)),
-  } as unknown as Response
+  }
+  return { ...res, clone: () => res } as unknown as Response
 }
 
 const PREFS = {
@@ -24,6 +26,9 @@ const PREFS = {
 describe('Care preferences API', () => {
   beforeEach(() => {
     mockFetch.mockReset()
+    // The CSRF token is cached module-wide; a stale one would eat the next
+    // queued response.
+    clearCsrfToken()
   })
 
   describe('getCarePreferences', () => {
@@ -65,12 +70,19 @@ describe('Care preferences API', () => {
   })
 
   describe('updateCarePreferences', () => {
+    // A mutating request fetches a CSRF token first, so the real response is
+    // the second one queued.
+    function mockCsrf() {
+      mockFetch.mockResolvedValueOnce(mockResponse({ csrf_token: 'csrf-token' }))
+    }
+
     it('PATCHes the preferences and returns the saved copy', async () => {
+      mockCsrf()
       mockFetch.mockResolvedValueOnce(mockResponse({ care_preferences: PREFS }))
 
       const prefs = await updateCarePreferences({ preferred_location: 'Austin, TX' })
 
-      const [url, options] = mockFetch.mock.calls[0]
+      const [url, options] = mockFetch.mock.calls[1]
       expect(url).toMatch(/\/api\/v1\/care-preferences$/)
       expect(options?.method).toBe('PATCH')
       expect(JSON.parse(options?.body as string)).toEqual({
@@ -80,6 +92,7 @@ describe('Care preferences API', () => {
     })
 
     it('surfaces validation errors', async () => {
+      mockCsrf()
       mockFetch.mockResolvedValueOnce(
         mockResponse({ errors: ['Preferred location is invalid'] }, 422)
       )

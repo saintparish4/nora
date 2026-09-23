@@ -5,6 +5,9 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  # Lets the suite be run against any branch on demand, which is the only
+  # way to exercise a CI change before it reaches main.
+  workflow_dispatch:
 
 jobs:
   test-backend:
@@ -44,6 +47,59 @@ jobs:
           RAILS_ENV: test
           SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE || 'test-secret-key-base-for-ci-only-not-used-in-production' }}
         run: bundle exec rspec
+
+  # The suite above runs on SQLite, which is what local development uses.
+  # This one runs the same suite on PostgreSQL, because the two disagree in
+  # exactly the places that matter here: locking, transaction semantics, case
+  # sensitivity, and what two people booking the same slot actually do. A green
+  # SQLite run is not evidence about any of that.
+  test-backend-postgres:
+    name: Rails Tests (PostgreSQL)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: nora
+          POSTGRES_PASSWORD: nora
+          POSTGRES_DB: nora_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://nora:nora@localhost:5432/nora_test
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE || 'test-secret-key-base-for-ci-only-not-used-in-production' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ./api
+          bundler-cache: true
+
+      - name: Set up database
+        working-directory: ./api
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
+      - name: Run RSpec tests
+        working-directory: ./api
+        run: bundle exec rspec
+
+      - name: Verify the seeds run on PostgreSQL
+        working-directory: ./api
+        run: bundle exec rails db:seed
 
   test-frontend:
     name: Next.js Tests

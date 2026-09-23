@@ -86,6 +86,9 @@ module Triage
       {
         specialty: screening[:specialty],
         urgency: screening[:care_level],
+        # A rule match is not a probabilistic judgement. It either fired or it
+        # did not, so the disposition is certain even though the diagnosis is not.
+        confidence: 100,
         reasoning: "What you've described includes signs that need emergency care right now. " \
                    "Please call 911 or go to the nearest emergency room. Do not wait for an appointment.",
         keywords: screening[:red_flags],
@@ -165,6 +168,7 @@ module Triage
          {
          "specialty": "primary_care|cardiology|dermatology|urgent_care|emergency|mental_health|pediatrics|gynecology|oncology|orthopedics|physical_therapy|nutrition",
          "urgency": "routine|urgent|emergency",
+         "confidence": 0-100,
          "reasoning": "brief explanation of your recommendation",
          "keywords": ["symptom1", "symptom2", "symptom3"],
          "red_flags": ["red_flag1", "red_flag2"] (if any emergency signs present)
@@ -180,6 +184,12 @@ module Triage
          - physical_therapy: musculoskeletal pain, joint pain, limited mobility, mobility issues, injury recovery
          - nutrition: diet concerns, weight management, digestive issues
 
+
+         Confidence Guidelines:
+         - An integer from 0 to 100 describing how sure you are of the urgency above.
+         - Be honest and calibrated: when you say 80 you should be right about 80% of the time.
+         - Vague, contradictory, or very short descriptions deserve a low number.
+         - Do not inflate confidence to sound helpful. A low number is useful information.
 
          Urgency Guidelines:
          - routine: can wait 1-2 weeks, preventive care, mild symptoms
@@ -200,6 +210,7 @@ module Triage
       {
         specialty: validate_specialty(parsed["specialty"]),
         urgency: validate_urgency(parsed["urgency"]),
+        confidence: validate_confidence(parsed["confidence"]),
         reasoning: parsed["reasoning"] || "Unable to provide reasoning",
         keywords: parsed["keywords"] || [],
         red_flags: parsed["red_flags"] || [],
@@ -215,6 +226,18 @@ module Triage
 
     def validate_specialty(specialty)
       SPECIALTIES.key?(specialty) ? specialty : "primary_care"
+    end
+
+    # Confidence is advisory, not safety-critical: an unusable value becomes nil
+    # rather than escalating, because "we do not know how sure we were" is the
+    # honest record and a made-up number would corrupt the calibration curve.
+    def validate_confidence(confidence)
+      return nil unless confidence.is_a?(Numeric) || confidence.to_s.match?(/\A\d+\z/)
+
+      value = confidence.to_i
+      return nil unless value.between?(0, 100)
+
+      value
     end
 
     # An unrecognized urgency means the model returned something outside the
@@ -234,6 +257,9 @@ module Triage
       {
         specialty: FAILSAFE_SPECIALTY,
         urgency: FAILSAFE_URGENCY,
+        # Zero, not nil: we are maximally unsure, and that is a real data point
+        # that should drag the calibration curve down rather than vanish.
+        confidence: 0,
         reasoning: "We could not automatically assess your symptoms. Please have them reviewed by a " \
                    "provider — and if this feels like an emergency, call 911 or go to the nearest " \
                    "emergency room rather than waiting for an appointment.",

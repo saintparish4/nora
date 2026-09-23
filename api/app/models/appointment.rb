@@ -1,10 +1,26 @@
 class Appointment < ApplicationRecord
+  # no_show is distinct from cancelled: a cancellation frees the slot, a
+  # no-show burns it. They are also different triage signals, and the no-show
+  # rate is the number a practice administrator already feels.
+  STATUSES = %w[pending confirmed cancelled completed no_show].freeze
+
+  # How a terminal status maps onto what the triage record should say happened.
+  # pending and confirmed are deliberately absent — nothing has happened yet.
+  OUTCOME_FOR_STATUS = {
+    "completed" => "attended",
+    "no_show" => "no_show",
+    "cancelled" => "cancelled"
+  }.freeze
+
   belongs_to :patient, class_name: "User", foreign_key: "patient_id"
   belongs_to :provider
 
+  # The triage that led here, when the booking came out of a recommendation.
+  has_many :risk_assessments, dependent: :nullify
+
   validates :start_time, presence: true
   validates :end_time, presence: true
-  validates :status, inclusion: { in: %w[pending confirmed cancelled completed] }
+  validates :status, inclusion: { in: STATUSES }
 
   validate :end_time_after_start_time
   validate :no_overlapping_appointments
@@ -18,6 +34,7 @@ class Appointment < ApplicationRecord
   scope :active, -> { where(status: %w[pending confirmed]) }
 
   after_create :send_booking_notifications
+  after_update :propagate_outcome_to_risk_assessments, if: :saved_change_to_status?
 
   def duration_in_minutes
     ((end_time - start_time) / 60).to_i
@@ -27,7 +44,24 @@ class Appointment < ApplicationRecord
     "#{start_time.strftime('%b %d, %Y at %I:%M %p')} - #{end_time.strftime('%I:%M %p')}"
   end
 
+  def no_show?
+    status == "no_show"
+  end
+
   private
+
+  # Closes the loop: once the appointment reaches a terminal state, the triage
+  # that produced it learns what happened. Best-effort — a reporting write must
+  # never block or roll back a real appointment update.
+  def propagate_outcome_to_risk_assessments
+    outcome = OUTCOME_FOR_STATUS[status]
+    return if outcome.blank?
+
+    risk_assessments.find_each { |assessment| assessment.record_outcome!(outcome) }
+  rescue StandardError => e
+    Rails.logger.error("[OUTCOME_PROPAGATION_FAILURE] appointment=#{id} error=#{e.class}: #{e.message}")
+    Sentry.capture_exception(e) if defined?(Sentry)
+  end
 
   def end_time_after_start_time
     return if end_time.blank? || start_time.blank?

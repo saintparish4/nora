@@ -155,7 +155,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Ruby version:** Pinned to 3.4.8 in `api/.ruby-version`, `api/Gemfile`, and `api/Dockerfile` — change all three together. CI reads `.ruby-version` via `bundler-cache`.
 - **Node version:** Frontend needs Node >= 22.13; pnpm 12 hard-errors on anything older. `base/pnpm-workspace.yaml` lists the packages allowed to run install scripts — a new native dependency will fail `pnpm install` until it is added there.
 - **`pnpm run <script> -- --flag`:** pnpm 10+ forwards the `--` to the script, so `pnpm test -- --ci` reaches Jest as a path pattern and matches zero tests. Pass flags directly: `pnpm test --ci`.
-- **Database:** Development uses SQLite; production uses PostgreSQL. Behavior can differ (e.g. locking, SQL). Prefer PostgreSQL in dev for parity when possible.
+- **Database:** `config/database.yml` picks its adapter from `DATABASE_URL` — unset means SQLite
+  (zero-setup local dev), a `postgres://` URL means PostgreSQL. CI runs the suite both ways; the
+  `Rails Tests (PostgreSQL)` job is the one that speaks to locking, transaction semantics, and
+  concurrent booking. Locally: `docker compose up -d postgres && make test-backend-postgres`.
+- **Production database is unresolved.** `README.md` and `docs/ARCHITECTURE.md` say production is
+  PostgreSQL; `config/database.yml` defines production as a four-database SQLite
+  solid_cache/solid_queue/solid_cable layout. One of them is wrong. Check the running deploy before
+  trusting either, and do not "fix" the config to match the docs without looking.
 - **Auth:** JWT in localStorage is a known tradeoff; no refresh flow or httpOnly cookies yet. See `docs/ARCHITECTURE.md` for future auth improvements.
 - **Brakeman exits non-zero on *warnings*, not just errors.** `bundle exec brakeman` exits 3 when it
   reports anything, and CI runs it unpiped, so the `Rails Tests` job fails. Two traps: piping it

@@ -3,7 +3,12 @@ class JsonWebToken
 
     raise "SECRET_KEY_BASE is not set. Configure Rails credentials or set the SECRET_KEY_BASE env var." if SECRET_KEY.blank?
 
-    def self.encode(payload, exp = 24.hours.from_now)
+    # Short by design. An access token cannot be revoked once issued, so its
+    # blast radius is bounded by how soon it expires; the refresh token is the
+    # revocable half of the pair.
+    ACCESS_TOKEN_TTL = 30.minutes
+
+    def self.encode(payload, exp = ACCESS_TOKEN_TTL.from_now)
         payload[:exp] = exp.to_i
         JWT.encode(payload, SECRET_KEY)
     end

@@ -1,4 +1,4 @@
-import { authFetch, setToken, removeToken, getToken, validateResponse } from "./client";
+import { authFetch, clearCsrfToken, validateResponse } from "./client";
 import { UserSchema } from "./schemas";
 import type { AuthResponse, User } from "@/types";
 
@@ -33,10 +33,9 @@ export async function signup(fields: SignupFields): Promise<AuthResponse> {
     throw new Error(data.error || data.errors?.join(", ") || "Signup failed");
   }
 
-  // Store token for future requests
-  if (data.token) {
-    setToken(data.token);
-  }
+  // Nothing to store. The API set an httpOnly session cookie, and the CSRF
+  // token belongs to the old session if we had one.
+  clearCsrfToken();
 
   return data;
 }
@@ -58,48 +57,42 @@ export async function login(
     throw new Error(data.error || "Login failed");
   }
 
-  // Store token for future requests
-  if (data.token) {
-    setToken(data.token);
-  }
+  clearCsrfToken();
 
   return data;
 }
 
 export async function logout(): Promise<void> {
-  const token = getToken();
-  if (token) {
+  // Always call it. The server has to clear the session cookie and revoke any
+  // outstanding refresh tokens; there is no local credential we could drop
+  // instead to end the session ourselves.
+  try {
     await authFetch("/api/v1/auth/logout", {
       method: "DELETE",
+      skipSessionExpiredRedirect: true,
     });
+  } finally {
+    clearCsrfToken();
   }
-  removeToken();
 }
 
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const token = getToken();
-    if (!token) {
-      return null;
-    }
-
-    // A 401 here means the stored token is stale. Handled below by clearing it
-    // and reporting "not signed in"; AuthProtected redirects if the page needs
-    // a user, so public pages are left alone.
+    // No local check to short-circuit on any more: the session cookie is
+    // httpOnly, so the only way to know whether we are signed in is to ask.
+    // A 401 means we are not, which on a public page is perfectly normal —
+    // AuthProtected handles redirecting the pages that do need a user.
     const res = await authFetch("/api/v1/auth/me", {
       skipSessionExpiredRedirect: true,
     });
 
     if (!res.ok) {
-      // Token is invalid, remove it
-      removeToken();
       return null;
     }
 
     const data = await res.json();
     return validateResponse(UserSchema, data.user);
   } catch {
-    removeToken();
     return null;
   }
 }

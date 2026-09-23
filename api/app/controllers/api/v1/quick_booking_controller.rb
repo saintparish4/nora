@@ -27,6 +27,11 @@ module Api
             Providers::MatchAndSlotService.new(analysis).call
           end
 
+        Triage::RiskAssessmentService.record(
+          analysis: analysis,
+          user: current_user_if_present
+        )
+
         log_phi_access("SymptomAnalysis", request.request_id, :create)
 
         render json: {
@@ -57,6 +62,9 @@ module Api
 
         if appointment.save
           log_phi_access("Appointment", appointment.id, :create)
+          # Credit the booking to the recommendation that produced it, so the
+          # prediction and its outcome end up on the same row.
+          RiskAssessment.attach_booking!(user: current_user, appointment: appointment)
 
           render json: {
             success: true,

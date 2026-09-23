@@ -3,21 +3,46 @@ import { z } from 'zod';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-const TOKEN_KEY = "nora_auth_token";
+/**
+ * Authentication is the httpOnly `_nora_session` cookie and nothing else.
+ *
+ * The JWT that used to live in localStorage is gone. Anything JavaScript can
+ * read, an XSS can steal, and a bearer token for a health record is the worst
+ * thing to leave lying around in a place script can reach. The API now hands
+ * bearer tokens only to clients that identify as non-browser
+ * (`X-Client-Type: api`), which this one never does.
+ *
+ * The cost of a cookie the browser attaches automatically is CSRF, so mutating
+ * requests carry a token the server hands out at GET /api/v1/auth/csrf. The
+ * cookie proves who you are; the header proves you meant it.
+ */
+let csrfToken: string | null = null;
 
-export function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS", "TRACE"]);
+
+export function clearCsrfToken(): void {
+  csrfToken = null;
 }
 
-export function setToken(token: string): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(TOKEN_KEY, token);
+async function fetchCsrfToken(): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/v1/auth/csrf`, {
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    csrfToken = data.csrf_token ?? null;
+    return csrfToken;
+  } catch {
+    // A missing CSRF token is not worth blocking the request over — the server
+    // is the one that decides, and it will answer 403 if it matters.
+    return null;
+  }
 }
 
-export function removeToken(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(TOKEN_KEY);
+async function ensureCsrfToken(): Promise<string | null> {
+  return csrfToken ?? (await fetchCsrfToken());
 }
 
 // Normalize RequestInit.headers into a plain record so we can add Authorization.
@@ -51,30 +76,44 @@ export async function authFetch(
   options: AuthFetchOptions = {}
 ): Promise<Response> {
   const { skipSessionExpiredRedirect, ...fetchOptions } = options;
-  const token = getToken();
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...toHeaderRecord(fetchOptions.headers),
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
+  const method = (fetchOptions.method ?? "GET").toUpperCase();
   const fullUrl = url.startsWith("http") ? url : `${API_URL}${url}`;
 
-  const response = await fetch(fullUrl, {
-    ...fetchOptions,
-    headers,
-    credentials: fetchOptions.credentials || "include",
-  });
+  const send = async (csrf: string | null): Promise<Response> => {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...toHeaderRecord(fetchOptions.headers),
+    };
+    if (csrf) headers["X-CSRF-Token"] = csrf;
+
+    return fetch(fullUrl, {
+      ...fetchOptions,
+      headers,
+      // The session cookie is the credential; it has to ride along.
+      credentials: fetchOptions.credentials || "include",
+    });
+  };
+
+  const needsCsrf = !SAFE_METHODS.has(method);
+  let response = await send(needsCsrf ? await ensureCsrfToken() : null);
+
+  // A cached token goes stale whenever the session is replaced — logging out
+  // and back in, most obviously. Refetch once and retry before surfacing it.
+  if (response.status === 403 && needsCsrf) {
+    const body = await response.clone().json().catch(() => null);
+    if (body?.code === "invalid_csrf_token") {
+      clearCsrfToken();
+      const fresh = await fetchCsrfToken();
+      if (fresh) response = await send(fresh);
+    }
+  }
 
   if (
     response.status === 401 &&
     !skipSessionExpiredRedirect &&
     typeof window !== "undefined"
   ) {
-    removeToken();
+    clearCsrfToken();
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
     // A hard navigation rather than router.push(): this module is plain
     // TypeScript with no router in scope, and a full reload is what we want here

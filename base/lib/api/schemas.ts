@@ -157,6 +157,10 @@ export const SymptomAnalysisSchema = z.object({
   red_flags: z.array(z.string()),
   specialty_name: z.string(),
   urgency_details: UrgencyDetailsSchema,
+  // 0-100, or null when the model gave no usable number. Nullable rather than
+  // defaulted: an invented confidence would corrupt the calibration curve the
+  // backend reports on.
+  confidence: z.number().int().min(0).max(100).nullable().optional(),
   // How the API arrived at this result:
   //   'red_flag_rules' — deterministic emergency screening, model not consulted
   //   'model'          — normal OpenAI analysis

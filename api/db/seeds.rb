@@ -9,11 +9,27 @@ Availability.destroy_all
 Provider.destroy_all
 User.destroy_all
 
-# Reset SQLite auto-increment counters
-ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='providers'")
-ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='availabilities'")
-ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='appointments'")
-ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name='users'")
+# Reset the primary-key counters so a reseed produces the same low IDs every
+# time. Where they live is adapter-specific — SQLite keeps them in the
+# sqlite_sequence table, PostgreSQL in real sequences — so branch rather than
+# hardcoding SQLite, which made this file fail against a production-like
+# database.
+def reset_pk_counters!(tables)
+  connection = ActiveRecord::Base.connection
+
+  case connection.adapter_name
+  when /sqlite/i
+    tables.each do |table|
+      connection.execute("DELETE FROM sqlite_sequence WHERE name = #{connection.quote(table)}")
+    end
+  when /postgres/i
+    tables.each { |table| connection.reset_pk_sequence!(table) }
+  else
+    puts "Skipping PK counter reset: unsupported adapter #{connection.adapter_name}"
+  end
+end
+
+reset_pk_counters!(%w[providers availabilities appointments users])
 
 # ============================================================================
 # TEST USER

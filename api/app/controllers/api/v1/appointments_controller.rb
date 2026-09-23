@@ -17,6 +17,9 @@ module Api
 
         if appointment.save
           log_phi_access("Appointment", appointment.id, :create)
+          # Credit the booking to the recommendation that produced it, so the
+          # prediction and its outcome end up on the same row.
+          RiskAssessment.attach_booking!(user: current_user, appointment: appointment)
           render json: {
             message: "Appointment booked successfully!",
             appointment: appointment.as_json.merge(

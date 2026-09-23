@@ -187,6 +187,51 @@ RSpec.describe Triage::SymptomAnalyzerService do
       end
     end
 
+    describe 'confidence' do
+      let(:description) { 'sore throat and fever for three days' }
+
+      it 'carries a calibrated integer through from the model' do
+        stub_openai({ specialty: 'primary_care', urgency: 'routine', confidence: 72,
+                      reasoning: 'Likely viral.', keywords: [], red_flags: [] }.to_json)
+
+        expect(service.analyze[:confidence]).to eq(72)
+      end
+
+      it 'reports nil rather than inventing a number when the model omits it' do
+        stub_openai({ specialty: 'primary_care', urgency: 'routine',
+                      reasoning: 'Likely viral.', keywords: [], red_flags: [] }.to_json)
+
+        expect(service.analyze[:confidence]).to be_nil
+      end
+
+      it 'discards a value outside 0-100' do
+        stub_openai({ specialty: 'primary_care', urgency: 'routine', confidence: 250,
+                      reasoning: 'Likely viral.', keywords: [], red_flags: [] }.to_json)
+
+        expect(service.analyze[:confidence]).to be_nil
+      end
+
+      it 'discards a non-numeric value' do
+        stub_openai({ specialty: 'primary_care', urgency: 'routine', confidence: 'very',
+                      reasoning: 'Likely viral.', keywords: [], red_flags: [] }.to_json)
+
+        expect(service.analyze[:confidence]).to be_nil
+      end
+
+      it 'is certain when a deterministic rule fired' do
+        expect(described_class.new('I have crushing chest pain').analyze[:confidence]).to eq(100)
+      end
+
+      it 'is zero, not nil, when the analysis did not run' do
+        allow(Rails.logger).to receive(:warn)
+        stub_openai_failure
+
+        # Maximally unsure is a real data point; nil would quietly drop it out
+        # of the calibration curve instead of dragging it down.
+        expect(service.analyze[:confidence]).to eq(0)
+      end
+    end
+
     context 'with caching' do
       let(:description) { 'sore throat and fever' }
 

@@ -117,7 +117,7 @@ module Api
         # --- Persist the risk assessment (signed-in patients only) ---
         # Best-effort: the recorder swallows its own failures so a history write
         # never costs the patient their recommendation.
-        Triage::RiskAssessmentService.record(conversation: conversation, analysis: analysis)
+        Triage::RiskAssessmentService.record(analysis: analysis, conversation: conversation)
 
         # --- Build assistant summary ---
         assistant_msg = build_recommendation_message(analysis, providers_with_slots)

@@ -4,28 +4,41 @@ module Triage
   #
   # Call this after every completed analysis. It is deliberately forgiving: a
   # failed write must not cost the patient their recommendation, so the caller
-  # gets nil instead of an exception. The row is an audit/history artifact, not
-  # part of the response the patient is waiting on.
+  # gets nil instead of an exception. The row is an audit and reporting
+  # artifact, not part of the response the patient is waiting on.
   class RiskAssessmentService
-    # @param conversation [Conversation]
-    # @param analysis [Hash] the hash returned by SymptomAnalyzerService#analyze
-    # @return [RiskAssessment, nil] nil when the conversation has no user
-    #   (guest chat), or when the write failed
-    def self.record(conversation:, analysis:)
-      new(conversation: conversation, analysis: analysis).record
+    # @param analysis     [Hash] the hash returned by SymptomAnalyzerService#analyze
+    # @param user         [User, nil] the signed-in patient, if any
+    # @param conversation [Conversation, nil] present for the chat flow only;
+    #   the single-shot endpoints have no conversation to attach to
+    # @param appointment  [Appointment, nil] set when the booking is already known
+    # @return [RiskAssessment, nil] nil for a guest (no account to attach the
+    #   history to), or when the write failed
+    def self.record(analysis:, user: nil, conversation: nil, appointment: nil)
+      new(
+        analysis: analysis,
+        user: user,
+        conversation: conversation,
+        appointment: appointment
+      ).record
     end
 
-    def initialize(conversation:, analysis:)
-      @conversation = conversation
+    def initialize(analysis:, user: nil, conversation: nil, appointment: nil)
       @analysis = analysis || {}
+      @conversation = conversation
+      # The chat flow passes only a conversation; fall back to its owner so
+      # both call styles work.
+      @user = user || conversation&.user
+      @appointment = appointment
     end
 
     def record
-      return nil if @conversation.nil? || @conversation.user_id.nil?
+      return nil if @user.nil?
 
       RiskAssessment.create!(
         conversation: @conversation,
-        user_id: @conversation.user_id,
+        user: @user,
+        appointment: @appointment,
         care_level: care_level,
         confidence: @analysis[:confidence],
         reasoning: @analysis[:reasoning],
@@ -38,7 +51,7 @@ module Triage
       )
     rescue StandardError => e
       Rails.logger.error(
-        "[RISK_ASSESSMENT_FAILURE] conversation=#{@conversation&.id} " \
+        "[RISK_ASSESSMENT_FAILURE] user=#{@user&.id} conversation=#{@conversation&.id} " \
         "error=#{e.class}: #{e.message}"
       )
       Sentry.capture_exception(e) if defined?(Sentry)
@@ -58,7 +71,7 @@ module Triage
       return urgency if RiskAssessment::CARE_LEVELS.include?(urgency)
 
       Rails.logger.warn(
-        "[RISK_ASSESSMENT_FAILSAFE] conversation=#{@conversation&.id} " \
+        "[RISK_ASSESSMENT_FAILSAFE] user=#{@user&.id} conversation=#{@conversation&.id} " \
         "unrecognized urgency=#{urgency.inspect}, recording " \
         "#{Triage::SymptomAnalyzerService::FAILSAFE_URGENCY}"
       )

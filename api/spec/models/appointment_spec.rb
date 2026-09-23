@@ -80,4 +80,44 @@ RSpec.describe Appointment, type: :model do
       end
     end
   end
+  describe 'outcome propagation to triage' do
+    let(:user) { create(:user) }
+    let(:appointment) { create(:appointment, patient: user, status: 'confirmed') }
+    let!(:assessment) { create(:risk_assessment, :single_shot, user: user, appointment: appointment) }
+
+    it 'accepts no_show as a status' do
+      expect(build(:appointment, status: 'no_show')).to be_valid
+    end
+
+    it 'records attendance when the appointment completes' do
+      expect { appointment.update!(status: 'completed') }
+        .to change { assessment.reload.outcome }.from(nil).to('attended')
+    end
+
+    it 'records a no-show distinctly from a cancellation' do
+      expect { appointment.update!(status: 'no_show') }
+        .to change { assessment.reload.outcome }.from(nil).to('no_show')
+    end
+
+    it 'records a cancellation' do
+      expect { appointment.update!(status: 'cancelled') }
+        .to change { assessment.reload.outcome }.from(nil).to('cancelled')
+    end
+
+    it 'records nothing while the appointment is merely confirmed' do
+      appointment.update!(status: 'pending')
+
+      expect(assessment.reload.outcome).to be_nil
+    end
+
+    it 'does not fail the appointment update when the triage write raises' do
+      allow_any_instance_of(RiskAssessment).to receive(:record_outcome!)
+        .and_raise(ActiveRecord::StatementInvalid, 'boom')
+      allow(Rails.logger).to receive(:error)
+
+      expect { appointment.update!(status: 'completed') }.not_to raise_error
+      expect(appointment.reload.status).to eq('completed')
+      expect(Rails.logger).to have_received(:error).with(/OUTCOME_PROPAGATION_FAILURE/)
+    end
+  end
 end

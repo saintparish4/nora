@@ -2,3 +2,8 @@ appointment_reminders:
   cron: "0 * * * *"
   class: AppointmentReminderJob
   description: "Send 24-hour appointment reminder emails"
+
+triage_outcome_sweep:
+  cron: "30 * * * *"
+  class: TriageOutcomeSweeperJob
+  description: "Mark recommendations that never became a booking as not_booked"

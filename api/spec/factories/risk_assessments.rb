@@ -10,6 +10,13 @@ FactoryBot.define do
     escalation_triggers { [] }
     recommended_specialties { [ "Orthopedics" ] }
 
+    # An analysis from /analyze-symptoms or /quick-booking/analyze, which have
+    # no conversation behind them.
+    trait :single_shot do
+      conversation { nil }
+      user { association :user }
+    end
+
     trait :urgent do
       care_level { "urgent" }
       red_flags { [ "worsening pain" ] }

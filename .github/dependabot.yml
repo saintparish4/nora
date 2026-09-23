@@ -57,6 +57,7 @@ updates:
           - "@types/react-dom"
           - "eslint-config-next"
           - "typescript"
+          - "eslint"
       production:
         dependency-type: production
         exclude-patterns:
@@ -69,6 +70,12 @@ updates:
       # job fails. Held at 5.x until typescript-eslint ships TS 7 support, then
       # remove this entry and take the major in its own PR.
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # ESLint 10 breaks eslint-plugin-react, which arrives via
+      # eslint-config-next: "Error while loading rule 'react/display-name':
+      # contextOrFilename.getFilename is not a function". Held at 9.x until
+      # eslint-config-next ships a flat-config build for ESLint 10.
+      - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions

@@ -6,6 +6,18 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# `cp .env.example .env` — the documented first step — leaves SECRET_KEY_BASE
+# blank, and dotenv loads a blank line as an empty string rather than leaving
+# the variable unset. Rails then rejects it with "`secret_key_base` for
+# development environment must be a type of String`", which says nothing about
+# the env file and sends you looking in the wrong place.
+#
+# Treat blank as absent, so the encrypted-credentials fallback still applies and
+# anyone without credentials gets an error naming the actual problem.
+if ENV["SECRET_KEY_BASE"].to_s.strip.empty?
+  ENV.delete("SECRET_KEY_BASE")
+end
+
 module Api
   class Application < Rails::Application
     config.load_defaults 8.0

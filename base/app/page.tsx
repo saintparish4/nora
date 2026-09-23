@@ -9,6 +9,7 @@ import { DiagnosticLine } from '@/components/marketing/diagnostic-line';
 import { MagneticButton } from '@/components/marketing/magnetic-button';
 import { Marquee, type MarqueeItem } from '@/components/marketing/marquee';
 import { SiteHeader, MARKETING_NAV } from '@/components/marketing/site-header';
+import { TriageDemo } from '@/components/marketing/triage-demo';
 import { FadeUp, RevealText } from '@/components/marketing/reveal';
 import { SearchConsole } from '@/components/marketing/search-console';
 import { useAuth } from '@/lib/auth/context';
@@ -179,6 +180,27 @@ export default function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* See it decide                                                     */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="mx-auto max-w-[1240px] px-6 pb-24 lg:px-10 lg:pb-32">
+        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <h2 className="max-w-[18ch] font-serif text-[2rem] leading-[1.1] tracking-[-0.02em] sm:text-[2.6rem]">
+            <RevealText as="span">See what it does with a sentence.</RevealText>
+          </h2>
+          <FadeUp>
+            <p className="max-w-[32ch] text-[0.92rem] leading-[1.7] text-[var(--ink-color)]/55">
+              Pick a description and watch where it routes — and, when a rule fires, why the model
+              never got a say.
+            </p>
+          </FadeUp>
+        </div>
+
+        <FadeUp delay={0.1}>
+          <TriageDemo />
+        </FadeUp>
       </section>
 
       {/* ---------------------------------------------------------------- */}

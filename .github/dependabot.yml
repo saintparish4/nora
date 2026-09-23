@@ -1,17 +1,75 @@
+# Grouped, weekly updates. Ungrouped dailies produced two dozen concurrent PRs
+# and nobody drained them; grouping lands the same upgrades as a handful of
+# reviewable batches instead.
 version: 2
 updates:
   - package-ecosystem: bundler
     directory: "/api"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Rails and its satellites move together or not at all.
+      rails:
+        patterns:
+          - "rails"
+          - "activerecord*"
+          - "actionpack*"
+          - "actionmailer*"
+          - "activesupport*"
+          - "activejob*"
+          - "railties"
+      # Anything that can't reach production gets one PR.
+      dev-and-test:
+        dependency-type: development
+      production:
+        dependency-type: production
+        exclude-patterns:
+          - "rails"
+          - "activerecord*"
+          - "actionpack*"
+          - "actionmailer*"
+          - "activesupport*"
+          - "activejob*"
+          - "railties"
+
   - package-ecosystem: npm
     directory: "/base"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # React and Next are a single upgrade decision.
+      react-and-next:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+          - "next"
+          - "eslint-config-next"
+      dev-and-test:
+        dependency-type: development
+        exclude-patterns:
+          - "@types/react"
+          - "@types/react-dom"
+          - "eslint-config-next"
+      production:
+        dependency-type: production
+        exclude-patterns:
+          - "react"
+          - "react-dom"
+          - "next"
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns:
+          - "*"

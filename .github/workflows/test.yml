@@ -21,10 +21,6 @@ jobs:
           working-directory: ./api
           bundler-cache: true
 
-      - name: Install dependencies
-        working-directory: ./api
-        run: bundle install
-
       - name: Run RuboCop
         working-directory: ./api
         run: bundle exec rubocop -f github
@@ -57,15 +53,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # pnpm 12 reads the allowBuilds allowlist in base/pnpm-workspace.yaml and
+      # requires Node >= 22.13, so the two versions below move together.
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 12
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
           cache-dependency-path: ./base/pnpm-lock.yaml
 
@@ -81,6 +79,8 @@ jobs:
         working-directory: ./base
         run: pnpm run build
 
+      # No `--` before the flags: pnpm 10+ passes it through to jest, which then
+      # treats `--ci` as a test path pattern and matches nothing.
       - name: Run Jest tests
         working-directory: ./base
-        run: pnpm test -- --ci --coverage --maxWorkers=2
+        run: pnpm test --ci --coverage --maxWorkers=2

@@ -25,6 +25,9 @@ gem "ruby-openai", "~> 8.3"
 # still passes in Rails 8.1, so every JSON column read raises ArgumentError.
 # Lift this once Rails supports json 3.
 gem "json", "~> 2.21"
+# Prior authorization packets are rendered to PDF; uploaded PDFs are read as text.
+gem "prawn", "~> 2.5"
+gem "pdf-reader", "~> 2.14"
 gem "redis", "~> 6.0"
 gem "sentry-ruby", "~> 6.7"
 gem "sentry-rails", "~> 6.4", ">= 6.4.1"

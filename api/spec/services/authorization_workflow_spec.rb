@@ -169,6 +169,7 @@ RSpec.describe 'Prior authorization workflow services' do
       expect(pdf).to start_with('%PDF')
       text = PDF::Reader.new(StringIO.new(pdf)).pages.map(&:text).join(' ')
       expect(text).to include('Prior authorization request', 'BMI 34.2', 'Approved by')
+      expect(text).to match(/Approved by: .* (EDT|EST)/)
     end
   end
 

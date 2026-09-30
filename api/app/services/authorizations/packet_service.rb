@@ -35,7 +35,7 @@ module Authorizations
       field(pdf, "Requesting clinician", @pa.requested_by.full_name)
       field(pdf, "Practice", @pa.organization.name + (@pa.organization.npi.present? ? ", NPI #{@pa.organization.npi}" : ""))
       field(pdf, "Policy", "#{@pa.policy_template.title}#{@pa.policy_template.generic? ? ' (generic criteria)' : ''}")
-      field(pdf, "Approved by", "#{approval.approved_by.full_name} on #{approval.created_at.strftime('%m/%d/%Y %H:%M %Z')}")
+      field(pdf, "Approved by", "#{approval.approved_by.full_name} on #{approval.created_at.in_time_zone(@pa.organization.timezone).strftime('%m/%d/%Y %H:%M %Z')}")
       pdf.move_down 16
 
       write pdf, "Criteria and supporting documentation", size: 13, style: :bold

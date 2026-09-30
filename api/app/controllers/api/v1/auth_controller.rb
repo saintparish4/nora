@@ -9,28 +9,37 @@ module Api
       skip_forgery_protection only: [ :login, :signup, :refresh, :csrf ]
 
       # Everything the frontend needs about the signed-in user, in one place so
-      # signup, login, me, and the two update actions can't drift apart. The
-      # email preference booleans belong here: the settings page reads them off
-      # this payload, and without them it silently displayed its own defaults
-      # instead of what the patient had saved.
-      USER_FIELDS = [
-        :id, :email, :first_name, :last_name, :state, :phone,
-        :booking_confirmations, :reminders_24h, :cancellation_notices
-      ].freeze
+      # signup, login, me, refresh, and profile updates can't drift apart.
+      USER_FIELDS = [ :id, :email, :first_name, :last_name, :state, :phone, :role ].freeze
+
+      def self.user_json(user)
+        user.as_json(only: USER_FIELDS).merge("organization" => user.organization.as_api_json.stringify_keys)
+      end
 
       # POST /api/v1/auth/signup
+      #
+      # Signing up creates a practice and makes the new user its first admin.
+      # Everyone else joins through an admin (POST /organization/members).
       def signup
-        user = User.new(user_params)
+        organization = Organization.new(name: params[:organization_name].to_s.strip)
+        user = User.new(user_params.merge(role: "admin", organization: organization))
 
-        if user.save
+        # Validate both up front so one response lists every problem.
+        if [ organization.valid?, user.valid? ].all?
+          ActiveRecord::Base.transaction do
+            organization.save!
+            user.save!
+          end
           session[:user_id] = user.id
 
           render json: {
-            user: user.as_json(only: USER_FIELDS),
+            user: self.class.user_json(user),
             message: "Account created successfully"
           }.merge(api_client_credentials(user)), status: :created
         else
-          render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+          errors = organization.errors.full_messages.map { |m| "Practice #{m.sub(/\AName/, 'name')}" }
+          errors += user.errors.full_messages.reject { |m| m.start_with?("Organization") }
+          render json: { errors: errors }, status: :unprocessable_entity
         end
       end
 
@@ -60,7 +69,7 @@ module Api
         session[:user_id] = user.id
 
         render json: {
-          user: user.as_json(only: USER_FIELDS),
+          user: self.class.user_json(user),
           message: "Logged in successfully"
         }.merge(api_client_credentials(user))
       end
@@ -111,7 +120,7 @@ module Api
           token: JsonWebToken.encode(user_id: record.user_id),
           refresh_token: raw,
           expires_in: JsonWebToken::ACCESS_TOKEN_TTL.to_i,
-          user: record.user.as_json(only: USER_FIELDS)
+          user: self.class.user_json(record.user)
         }
       end
 
@@ -128,20 +137,7 @@ module Api
       # GET /api/v1/auth/me
       def me
         log_phi_access("User", current_user.id, :view)
-        render json: { user: current_user.as_json(only: USER_FIELDS) }
-      end
-
-      # PATCH /api/v1/auth/preferences
-      def update_preferences
-        if current_user.update(preference_params)
-          log_phi_access("User", current_user.id, :update)
-          render json: {
-            message: "Preferences updated successfully",
-            user: current_user.as_json(only: USER_FIELDS)
-          }
-        else
-          render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
-        end
+        render json: { user: self.class.user_json(current_user) }
       end
 
       # PATCH /api/v1/auth/profile
@@ -150,7 +146,7 @@ module Api
           log_phi_access("User", current_user.id, :update)
           render json: {
             message: "Profile updated successfully",
-            user: current_user.as_json(only: USER_FIELDS)
+            user: self.class.user_json(current_user)
           }
         else
           render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
@@ -187,10 +183,6 @@ module Api
 
       def user_params
         params.permit(:email, :password, :password_confirmation, :first_name, :last_name, :state, :phone)
-      end
-
-      def preference_params
-        params.permit(:booking_confirmations, :reminders_24h, :cancellation_notices)
       end
 
       # Email is deliberately absent: changing it is an identity change that

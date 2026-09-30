@@ -25,7 +25,7 @@ export default function DashboardLayout({
           }}
         />
 
-        <div className="max-w-[1400px] mx-auto px-10 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-10 relative z-10">
           <DashboardNav />
           <main id="main-content">
             {children}

@@ -1,189 +1,113 @@
-# NORA - Medical AI Booking Platform
+# Nora
 
-## What NORA solves
+**Healthcare, followed through.** Nora helps outpatient practices finish the
+administrative work that starts once a clinician decides what a patient needs.
 
-**Problem:** Patients struggle to find the right specialist for their symptoms, face fragmented scheduling (calls, multiple portals), and often book the wrong type of visit.
+The first capability is **Nora Auth**: prior authorization evidence and packet
+preparation. A medical assistant adds a patient's chart notes, picks the
+medication and payer, and Nora:
 
-**Solution:** NORA uses AI to analyze symptoms, recommend the right provider, and get from "I have these symptoms" to a confirmed appointment in under 2 minutes in one flow.
+1. checks the chart against the payer's criteria,
+2. quotes the exact chart text that documents each criterion, or says what is missing,
+3. opens follow-up tasks for the ordering clinician when documentation is missing,
+4. requires staff to verify every quote and a clinician to approve the packet,
+5. renders the approved packet as a PDF and tracks the request to a payer decision.
 
-NORA is an AI-powered healthcare booking platform that intelligently matches patients with the right providers and eliminates scheduling friction.
+Nora never decides medical necessity and never marks a requirement met on its
+own. People verify evidence and approve; Nora prepares and keeps the record.
 
-## Features
-
-| Feature | Description |
-|---------|-------------|
-| **Quick Booking** | Go from symptoms to booked appointment in under 2 minutes with our streamlined booking flow |
-| **AI-Powered Matching** | Intelligent symptom analysis that recommends the most appropriate medical specialists |
-| **Smart Scheduling** | Real-time availability and instant appointment booking |
-| **Secure Authentication** | JWT-based user authentication and authorization |
-| **Automated Notifications** | Email reminders and confirmations for appointments |
-| **Provider Management** | Comprehensive provider profiles with specialties and availability |
-
-## Quick start (under 5 commands)
-
-From clone to app running locally:
+## Quick start
 
 ```bash
-git clone <repository-url> && cd nora
-make setup
-```
-
-```bash
-cp api/.env.example api/.env
+make setup                                   # install, create, migrate, seed
+cp api/.env.example api/.env                 # set SECRET_KEY_BASE
 cp base/.env.local.example base/.env.local
-```
-
-Fill in the required variables (see [Environment variables](#environment-variables)).
-
-```bash
 make dev
 ```
 
-- Backend: http://localhost:3001  
-- Frontend: http://localhost:3000  
+- Backend: http://localhost:3001
+- Frontend: http://localhost:3000
+
+Sign in with a synthetic demo account (password `password123`):
+
+| Email | Role |
+|---|---|
+| `demo@nora.com` | Admin |
+| `clinician@nora.com` | Clinician (can approve) |
+| `ma@nora.com` | Staff |
+
+The seeds create a demo practice with five synthetic patients and a GLP-1
+policy library. Every name and note is invented.
+
+Without `OPENAI_API_KEY`, evidence extraction runs the rule pass only and says
+so on screen. That is enough to try the whole flow.
 
 ## Tech stack
 
-| Layer    | Technology          | Version   |
-| -------- | ------------------- | --------- |
-| Backend  | Ruby                | 3.4.8     |
-| Backend  | Rails (API)         | 8.0.3     |
-| Frontend | Next.js             | 16.1.6    |
-| Frontend | React               | 19.2.1    |
-| Frontend | TypeScript          | 5.x       |
-| Frontend | Tailwind CSS        | 4.1.17    |
-| Database | SQLite / PostgreSQL | —         |
-| AI       | OpenAI              | gpt-4o-mini |
-| Other    | JWT, Resend, Redis  | optional in dev |
-
-SQLite in development; PostgreSQL-ready for production.
-
-## Getting Started
+| Layer | Technology |
+|---|---|
+| Backend | Ruby 4.0.7, Rails 8.1 (API mode), SQLite in development, PostgreSQL via `DATABASE_URL` |
+| Background jobs | Active Job (async in development, solid_queue in production) |
+| AI | OpenAI through a single adapter, `Ai::Client` (default `gpt-4o-mini`) |
+| PDF | prawn (packets), pdf-reader (uploaded chart PDFs) |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, SWR, Zod |
+| Other | Resend, Sentry, Lograge, Rack::Attack, Redis cache |
 
 ### Prerequisites
 
-- Ruby 3.4.x (backend)
-- Node.js 22.13+ and pnpm 12 (frontend — pnpm 12 refuses to run on older Node)
-- PostgreSQL optional for local dev; required for production
+- Ruby 4.0.x
+- Node.js 22.13+ and pnpm 12 (pnpm 12 refuses to run on older Node)
+- Docker, only to run the PostgreSQL test suite locally
 
-See the [Tech stack](#tech-stack) table above for exact versions.
-
-### Setup (detailed)
-
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd nora
-   ```
-
-2. **Backend setup**:
-   ```bash
-   cd api
-   bundle install
-   rails db:create db:migrate db:seed
-   ```
-
-3. **Frontend setup**:
-   ```bash
-   cd base
-   pnpm install
-   ```
-
-4. **Environment variables** — see [Environment variables](#environment-variables).
-
-5. **Run development servers**:
-   ```bash
-   make dev
-   # Or separately:
-   # cd api && rails server        # Backend on http://localhost:3001
-   # cd base && pnpm run dev       # Frontend on http://localhost:3000
-   ```
-
-### Environment variables
-
-Backend and frontend each use their own env file, both templated in the repo:
-
-```bash
-cp api/.env.example api/.env
-cp base/.env.local.example base/.env.local
-```
+## Environment variables
 
 **Backend (`api/.env`):**
 
 | Variable | Required | Description |
-|----------|----------|-------------|
-| `SECRET_KEY_BASE` | **Yes** | Secret for signing/verifying JWTs (and Rails session cookie). Use a long random string in dev; e.g. `openssl rand -hex 64`. |
-| `OPENAI_API_KEY` | **Yes** | OpenAI API key for symptom analysis (gpt-4o-mini). |
-| `RESEND_API_KEY` | **Yes** (production) | Resend API key for email; optional in dev (mailer can log only). |
-| `RESEND_FROM_EMAIL` | No | Sender address; defaults to Resend onboarding address. |
-| `REDIS_URL` | No (dev) | Defaults to `redis://localhost:6379/0`; required in production if using Redis cache/queue. |
-| `SENTRY_DSN` | No | Sentry DSN for backend error tracking; optional in dev. |
-| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
-| `FRONTEND_URL` | No (dev) | Base URL used to build links in outgoing email. Defaults to `http://localhost:3000`. |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` | No | Read by `config/initializers/google_calendar.rb`. Inert today — the `calendar_connections` table exists but no OAuth flow is implemented. |
+|---|---|---|
+| `SECRET_KEY_BASE` | **Yes** | Signs the session cookie and JWTs. `openssl rand -hex 64`. |
+| `OPENAI_API_KEY` | No | Enables the model pass of evidence extraction. Without it, only rules run. |
+| `OPENAI_MODEL` | No | Defaults to `gpt-4o-mini`. |
+| `AI_PHI_BAA_CONFIRMED` | Production | Must be `true` before production sends chart text to the model. Set it only once a BAA with zero data retention covers the key. |
+| `RESEND_API_KEY` | Production | Transactional email. |
+| `RESEND_FROM_EMAIL` | No | Sender address. |
+| `FRONTEND_URL` | No | Base URL for links in email. |
+| `REDIS_URL` | Production | Rails cache store. Defaults to `redis://localhost:6379/0` in development. |
+| `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | No | Error tracking. |
+| `DATABASE_URL` | No | A `postgres://` URL switches the app to PostgreSQL. |
 
 **Frontend (`base/.env.local`):**
 
 | Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | **Yes** | Backend API base URL (e.g. `http://localhost:3001` for local). |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the locations/map feature. |
-| `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking; optional in dev. |
-| `SENTRY_DSN` | No | Same DSN, read by the server and edge runtimes. |
-| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for uploading source maps in CI/build. |
-| `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS` | No | Set to `true` to reveal the unbuilt dashboard sections (labs, billing, documents, medications, messages). Off by default — see [Preview sections](#preview-sections). |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | **Yes** | API base URL, e.g. `http://localhost:3001`. |
+| `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | No | Error tracking. |
 
-### Development commands
-
-See [Makefile](Makefile) for common commands:
-
-- `make dev` — Start both backend and frontend
-- `make test` — Run all tests
-- `make setup` — Initial project setup (install + db create/migrate/seed)
-- `make db-reset` — Reset database
-
-## Branch protection and CI
-
-One GitHub Actions workflow runs on push and pull requests to `main` and `develop`:
-
-| Workflow | File | Jobs |
-|----------|------|------|
-| **Run Tests** | [.github/workflows/test.yml](.github/workflows/test.yml) | `Rails Tests` — RuboCop, Brakeman, RSpec. `Next.js Tests` — ESLint, Next.js build, Jest. |
-
-Require both jobs (`Rails Tests`, `Next.js Tests`) as status checks in branch protection.
-
-## Preview sections
-
-Five dashboard areas — **labs, billing, documents, medications, messages** — are
-designed but not built: they render realistic clinical content from hardcoded
-arrays with no table, model, or endpoint behind any of it.
-
-Showing invented lab values or account balances to a real patient is a
-credibility problem, not just tech debt, so those routes return 404 unless you
-opt in:
+## Commands
 
 ```bash
-# base/.env.local
-NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS=true
+make test                   # RSpec + Jest
+make test-backend-postgres  # RSpec against PostgreSQL (docker compose up -d postgres)
+make lint                   # RuboCop + ESLint (Brakeman runs in CI; see CLAUDE.md)
+make db-reset               # drop, create, migrate, seed
 ```
 
-With the flag on, each page carries a banner stating that the content is sample
-data. The flag goes away when the pages either get real endpoints or get
-deleted — see `base/lib/preview-sections.ts`.
+## CI
 
-## Architecture
+One workflow, [.github/workflows/test.yml](.github/workflows/test.yml), runs on
+pushes and pull requests to `main` and `develop`:
 
-For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+| Job | Runs |
+|---|---|
+| `Rails Tests` | RuboCop, Brakeman, RSpec on SQLite |
+| `Rails Tests (PostgreSQL)` | RSpec and the seeds on PostgreSQL 16 |
+| `Next.js Tests` | ESLint, production build, Jest |
 
-The project follows a monorepo structure:
+## Data and compliance
 
-- `api/` — Rails API backend (all routes under `/api/v1/`)
-- `base/` — Next.js frontend with organized components and API clients
-
-## Tech tradeoffs
-
-| Decision | Rationale | Future plans |
-|----------|-----------|--------------|
-| **Web-first approach** | Built as a web application to accelerate development and enable rapid iteration | Native Android and iOS apps planned for future releases |
-| **API versioning** | All routes under `/api/v1/` for consistency and future-proofing | Easy to add `/api/v2/` when needed |
-| **Monorepo structure** | Keeps frontend and backend in sync, simplifies deployment | Consider splitting if teams grow significantly |
+Use synthetic data only until a practice has a signed business associate
+agreement with you, and until the model provider's BAA covers your API key.
+Chart text is stored as text only, redacted of direct identifiers before it is
+sent to the model, and every read or write of patient data is recorded in
+`phi_access_logs`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
+safety rules the code enforces.

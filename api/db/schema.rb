@@ -10,101 +10,123 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_000003) do
-  create_table "appointments", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2026_09_30_000007) do
+  create_table "approvals", force: :cascade do |t|
+    t.integer "approvable_id", null: false
+    t.string "approvable_type", null: false
+    t.integer "approved_by_id", null: false
+    t.string "content_digest", null: false
     t.datetime "created_at", null: false
-    t.datetime "end_time", null: false
-    t.text "notes"
-    t.integer "patient_id", null: false
-    t.integer "provider_id", null: false
-    t.datetime "start_time", null: false
+    t.index ["approvable_type", "approvable_id"], name: "index_approvals_on_approvable"
+    t.index ["approved_by_id"], name: "index_approvals_on_approved_by_id"
+  end
+
+  create_table "authorization_evidence", force: :cascade do |t|
+    t.integer "authorization_requirement_id", null: false
+    t.integer "chart_document_id", null: false
+    t.decimal "confidence", precision: 4, scale: 3
+    t.datetime "created_at", null: false
+    t.integer "end_offset", null: false
+    t.text "excerpt", null: false
+    t.string "extracted_by", null: false
+    t.text "rationale"
+    t.datetime "rejected_at"
+    t.integer "rejected_by_id"
+    t.integer "start_offset", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "verified_at"
+    t.integer "verified_by_id"
+    t.index ["authorization_requirement_id"], name: "index_authorization_evidence_on_authorization_requirement_id"
+    t.index ["chart_document_id"], name: "index_authorization_evidence_on_chart_document_id"
+    t.index ["rejected_by_id"], name: "index_authorization_evidence_on_rejected_by_id"
+    t.index ["verified_by_id"], name: "index_authorization_evidence_on_verified_by_id"
+  end
+
+  create_table "authorization_requirements", force: :cascade do |t|
+    t.text "ai_summary"
+    t.datetime "created_at", null: false
+    t.text "note"
+    t.integer "policy_criterion_id", null: false
+    t.integer "prior_authorization_id", null: false
+    t.datetime "reviewed_at"
+    t.integer "reviewed_by_id"
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
-    t.index ["patient_id", "start_time"], name: "index_appointments_on_patient_id_and_start_time"
-    t.index ["patient_id"], name: "index_appointments_on_patient_id"
-    t.index ["provider_id", "start_time"], name: "index_appointments_on_provider_id_and_start_time"
-    t.index ["provider_id"], name: "index_appointments_on_provider_id"
-    t.index ["status"], name: "index_appointments_on_status"
+    t.index ["policy_criterion_id"], name: "index_authorization_requirements_on_policy_criterion_id"
+    t.index ["prior_authorization_id", "policy_criterion_id"], name: "index_auth_requirements_on_pa_and_criterion", unique: true
+    t.index ["prior_authorization_id"], name: "index_authorization_requirements_on_prior_authorization_id"
+    t.index ["reviewed_by_id"], name: "index_authorization_requirements_on_reviewed_by_id"
   end
 
-  create_table "availabilities", force: :cascade do |t|
+  create_table "chart_documents", force: :cascade do |t|
+    t.text "body", null: false
+    t.string "content_type"
     t.datetime "created_at", null: false
-    t.integer "day_of_week", null: false
-    t.time "end_time", null: false
-    t.boolean "is_available", default: true
-    t.integer "provider_id", null: false
-    t.time "start_time", null: false
+    t.string "kind", null: false
+    t.date "occurred_on"
+    t.integer "organization_id", null: false
+    t.string "original_filename"
+    t.integer "patient_id", null: false
+    t.string "source", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["provider_id", "day_of_week"], name: "index_availabilities_on_provider_id_and_day_of_week"
-    t.index ["provider_id"], name: "index_availabilities_on_provider_id"
+    t.integer "uploaded_by_id", null: false
+    t.index ["organization_id"], name: "index_chart_documents_on_organization_id"
+    t.index ["patient_id"], name: "index_chart_documents_on_patient_id"
+    t.index ["uploaded_by_id"], name: "index_chart_documents_on_uploaded_by_id"
   end
 
-  create_table "blocked_slots", force: :cascade do |t|
+  create_table "insurance_plans", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "end_time", null: false
-    t.string "external_event_id"
-    t.integer "provider_id", null: false
-    t.string "reason"
-    t.string "source", default: "manual"
-    t.datetime "start_time", null: false
+    t.string "name", null: false
+    t.integer "payer_id", null: false
+    t.string "plan_type"
     t.datetime "updated_at", null: false
-    t.index ["external_event_id"], name: "index_blocked_slots_on_external_event_id"
-    t.index ["provider_id", "start_time"], name: "index_blocked_slots_on_provider_id_and_start_time"
-    t.index ["provider_id"], name: "index_blocked_slots_on_provider_id"
+    t.index ["payer_id", "name"], name: "index_insurance_plans_on_payer_id_and_name", unique: true
+    t.index ["payer_id"], name: "index_insurance_plans_on_payer_id"
   end
 
-  create_table "calendar_connections", force: :cascade do |t|
-    t.text "access_token"
-    t.boolean "active", default: true
-    t.string "calendar_id"
+  create_table "organizations", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "expires_at"
-    t.datetime "last_synced_at"
-    t.integer "provider_id", null: false
-    t.text "refresh_token"
+    t.string "name", null: false
+    t.string "npi"
+    t.string "timezone", default: "America/New_York", null: false
     t.datetime "updated_at", null: false
-    t.index ["provider_id"], name: "index_calendar_connections_on_provider_id"
   end
 
-  create_table "conversation_messages", force: :cascade do |t|
-    t.text "content"
-    t.integer "conversation_id", null: false
+  create_table "patient_coverages", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.json "metadata", default: {}
-    t.string "role"
+    t.date "effective_on"
+    t.string "group_number"
+    t.integer "insurance_plan_id", null: false
+    t.string "member_id", null: false
+    t.integer "patient_id", null: false
+    t.boolean "primary", default: true, null: false
     t.datetime "updated_at", null: false
-    t.index ["conversation_id", "created_at"], name: "index_conversation_messages_on_conversation_id_and_created_at"
-    t.index ["conversation_id"], name: "index_conversation_messages_on_conversation_id"
+    t.index ["insurance_plan_id"], name: "index_patient_coverages_on_insurance_plan_id"
+    t.index ["patient_id"], name: "index_patient_coverages_on_patient_id"
   end
 
-  create_table "conversations", force: :cascade do |t|
-    t.datetime "completed_at"
-    t.json "context", default: {}
+  create_table "patients", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "session_id"
-    t.string "status", default: "active"
+    t.date "date_of_birth", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "mrn"
+    t.integer "organization_id", null: false
+    t.string "sex"
     t.datetime "updated_at", null: false
-    t.integer "user_id"
-    t.index ["session_id"], name: "index_conversations_on_session_id"
-    t.index ["status"], name: "index_conversations_on_status"
-    t.index ["user_id"], name: "index_conversations_on_user_id"
+    t.index ["organization_id", "last_name", "first_name"], name: "index_patients_on_organization_id_and_last_name_and_first_name"
+    t.index ["organization_id", "mrn"], name: "index_patients_on_organization_id_and_mrn", unique: true, where: "mrn IS NOT NULL"
+    t.index ["organization_id"], name: "index_patients_on_organization_id"
   end
 
-  create_table "follow_up_recommendations", force: :cascade do |t|
-    t.boolean "acknowledged", default: false
-    t.integer "appointment_id", null: false
+  create_table "payers", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "message"
-    t.json "metadata", default: {}
-    t.string "recommendation_type"
-    t.datetime "scheduled_for"
-    t.datetime "sent_at"
+    t.string "name", null: false
+    t.string "payer_code"
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["appointment_id"], name: "index_follow_up_recommendations_on_appointment_id"
-    t.index ["recommendation_type"], name: "index_follow_up_recommendations_on_recommendation_type"
-    t.index ["user_id", "scheduled_for"], name: "index_follow_up_recommendations_on_user_id_and_scheduled_for"
-    t.index ["user_id"], name: "index_follow_up_recommendations_on_user_id"
+    t.index ["name"], name: "index_payers_on_name", unique: true
   end
 
   create_table "phi_access_logs", force: :cascade do |t|
@@ -121,30 +143,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_000003) do
     t.index ["user_id"], name: "index_phi_access_logs_on_user_id"
   end
 
-  create_table "provider_conditions", force: :cascade do |t|
-    t.integer "cases_treated", default: 0
-    t.string "condition_name"
+  create_table "policy_criteria", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "expertise_level"
-    t.integer "provider_id", null: false
+    t.json "hint", default: {}, null: false
+    t.string "kind", null: false
+    t.boolean "optional", default: false, null: false
+    t.integer "policy_template_id", null: false
+    t.integer "position", null: false
+    t.text "text", null: false
     t.datetime "updated_at", null: false
-    t.index ["provider_id", "condition_name"], name: "index_provider_conditions_on_provider_id_and_condition_name"
-    t.index ["provider_id"], name: "index_provider_conditions_on_provider_id"
+    t.index ["policy_template_id", "position"], name: "index_policy_criteria_on_policy_template_id_and_position", unique: true
+    t.index ["policy_template_id"], name: "index_policy_criteria_on_policy_template_id"
   end
 
-  create_table "providers", force: :cascade do |t|
-    t.string "avatar_url"
-    t.text "bio"
+  create_table "policy_templates", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "experience_years"
-    t.decimal "hourly_rate", precision: 8, scale: 2
-    t.string "location"
-    t.string "name", null: false
-    t.decimal "rating", precision: 3, scale: 2, default: "0.0"
-    t.string "specialty", null: false
+    t.date "effective_on"
+    t.string "item_code"
+    t.string "item_kind", null: false
+    t.string "item_name", null: false
+    t.text "notes"
+    t.integer "payer_id"
+    t.string "source_url"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["location"], name: "index_providers_on_location"
-    t.index ["specialty"], name: "index_providers_on_specialty"
+    t.integer "version", default: 1, null: false
+    t.index ["item_name", "payer_id", "version"], name: "index_policy_templates_on_item_name_and_payer_id_and_version", unique: true
+    t.index ["payer_id"], name: "index_policy_templates_on_payer_id"
+  end
+
+  create_table "prior_authorizations", force: :cascade do |t|
+    t.integer "assigned_to_id"
+    t.datetime "created_at", null: false
+    t.integer "created_by_id", null: false
+    t.datetime "decided_at"
+    t.datetime "extracted_at"
+    t.string "extraction_error"
+    t.string "extraction_status", default: "idle", null: false
+    t.string "item_code"
+    t.string "item_name", null: false
+    t.integer "organization_id", null: false
+    t.integer "patient_coverage_id", null: false
+    t.integer "patient_id", null: false
+    t.string "payer_reference"
+    t.integer "policy_template_id", null: false
+    t.integer "prep_minutes_reported"
+    t.integer "requested_by_id", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to_id"], name: "index_prior_authorizations_on_assigned_to_id"
+    t.index ["created_by_id"], name: "index_prior_authorizations_on_created_by_id"
+    t.index ["organization_id", "status"], name: "index_prior_authorizations_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_prior_authorizations_on_organization_id"
+    t.index ["patient_coverage_id"], name: "index_prior_authorizations_on_patient_coverage_id"
+    t.index ["patient_id"], name: "index_prior_authorizations_on_patient_id"
+    t.index ["policy_template_id"], name: "index_prior_authorizations_on_policy_template_id"
+    t.index ["requested_by_id"], name: "index_prior_authorizations_on_requested_by_id"
   end
 
   create_table "refresh_tokens", force: :cascade do |t|
@@ -163,79 +218,88 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_000003) do
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
-  create_table "risk_assessments", force: :cascade do |t|
-    t.string "actual_care_level"
-    t.integer "appointment_id"
-    t.string "care_level"
-    t.integer "confidence"
-    t.integer "conversation_id"
+  create_table "tasks", force: :cascade do |t|
+    t.integer "assignee_id"
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
-    t.json "escalation_triggers", default: []
-    t.string "outcome"
-    t.datetime "outcome_recorded_at"
-    t.text "reasoning"
-    t.json "recommended_specialties", default: []
-    t.json "red_flags", default: []
-    t.json "self_care_options", default: []
+    t.date "due_on"
+    t.integer "organization_id", null: false
+    t.integer "source_id"
+    t.string "source_type"
+    t.string "status", default: "open", null: false
+    t.integer "subject_id", null: false
+    t.string "subject_type", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["actual_care_level"], name: "index_risk_assessments_on_actual_care_level"
-    t.index ["appointment_id"], name: "index_risk_assessments_on_appointment_id"
-    t.index ["care_level"], name: "index_risk_assessments_on_care_level"
-    t.index ["conversation_id"], name: "index_risk_assessments_on_conversation_id"
-    t.index ["outcome"], name: "index_risk_assessments_on_outcome"
-    t.index ["user_id"], name: "index_risk_assessments_on_user_id"
-  end
-
-  create_table "user_preferences", force: :cascade do |t|
-    t.json "communication_preferences", default: {}
-    t.datetime "created_at", null: false
-    t.string "insurance_info"
-    t.json "language_preferences", default: []
-    t.string "preferred_location"
-    t.json "preferred_times", default: []
-    t.string "provider_gender_preference"
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
+    t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
+    t.index ["organization_id", "status"], name: "index_tasks_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_tasks_on_organization_id"
+    t.index ["source_type", "source_id"], name: "index_tasks_on_source"
+    t.index ["subject_type", "subject_id"], name: "index_tasks_on_subject"
   end
 
   create_table "users", force: :cascade do |t|
-    t.boolean "booking_confirmations", default: true
-    t.json "booking_patterns", default: {}
-    t.boolean "cancellation_notices", default: true
     t.datetime "created_at", null: false
     t.string "email"
     t.integer "failed_login_attempts", default: 0, null: false
     t.string "first_name"
-    t.json "health_history", default: {}
-    t.boolean "is_provider", default: false
     t.string "last_name"
     t.datetime "locked_until"
+    t.integer "organization_id", null: false
     t.string "password_digest"
     t.string "phone"
-    t.integer "provider_id"
-    t.boolean "reminders_24h", default: true
+    t.string "role", default: "staff", null: false
     t.string "state"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["provider_id"], name: "index_users_on_provider_id"
+    t.index ["organization_id"], name: "index_users_on_organization_id"
   end
 
-  add_foreign_key "appointments", "providers"
-  add_foreign_key "appointments", "users", column: "patient_id"
-  add_foreign_key "availabilities", "providers"
-  add_foreign_key "blocked_slots", "providers"
-  add_foreign_key "calendar_connections", "providers"
-  add_foreign_key "conversation_messages", "conversations"
-  add_foreign_key "conversations", "users", on_delete: :nullify
-  add_foreign_key "follow_up_recommendations", "appointments"
-  add_foreign_key "follow_up_recommendations", "users"
-  add_foreign_key "provider_conditions", "providers"
+  create_table "workflow_events", force: :cascade do |t|
+    t.integer "actor_id"
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.string "from_status"
+    t.integer "organization_id", null: false
+    t.json "payload", default: {}, null: false
+    t.integer "subject_id", null: false
+    t.string "subject_type", null: false
+    t.string "to_status"
+    t.index ["actor_id"], name: "index_workflow_events_on_actor_id"
+    t.index ["organization_id"], name: "index_workflow_events_on_organization_id"
+    t.index ["subject_type", "subject_id", "created_at"], name: "idx_on_subject_type_subject_id_created_at_c6a21a9d6b"
+    t.index ["subject_type", "subject_id"], name: "index_workflow_events_on_subject"
+  end
+
+  add_foreign_key "approvals", "users", column: "approved_by_id"
+  add_foreign_key "authorization_evidence", "authorization_requirements"
+  add_foreign_key "authorization_evidence", "chart_documents"
+  add_foreign_key "authorization_evidence", "users", column: "rejected_by_id"
+  add_foreign_key "authorization_evidence", "users", column: "verified_by_id"
+  add_foreign_key "authorization_requirements", "policy_criteria"
+  add_foreign_key "authorization_requirements", "prior_authorizations"
+  add_foreign_key "authorization_requirements", "users", column: "reviewed_by_id"
+  add_foreign_key "chart_documents", "organizations"
+  add_foreign_key "chart_documents", "patients"
+  add_foreign_key "chart_documents", "users", column: "uploaded_by_id"
+  add_foreign_key "insurance_plans", "payers"
+  add_foreign_key "patient_coverages", "insurance_plans"
+  add_foreign_key "patient_coverages", "patients"
+  add_foreign_key "patients", "organizations"
+  add_foreign_key "policy_criteria", "policy_templates"
+  add_foreign_key "policy_templates", "payers"
+  add_foreign_key "prior_authorizations", "organizations"
+  add_foreign_key "prior_authorizations", "patient_coverages"
+  add_foreign_key "prior_authorizations", "patients"
+  add_foreign_key "prior_authorizations", "policy_templates"
+  add_foreign_key "prior_authorizations", "users", column: "assigned_to_id"
+  add_foreign_key "prior_authorizations", "users", column: "created_by_id"
+  add_foreign_key "prior_authorizations", "users", column: "requested_by_id"
   add_foreign_key "refresh_tokens", "refresh_tokens", column: "replaced_by_id"
   add_foreign_key "refresh_tokens", "users"
-  add_foreign_key "risk_assessments", "appointments"
-  add_foreign_key "risk_assessments", "conversations"
-  add_foreign_key "risk_assessments", "users"
-  add_foreign_key "user_preferences", "users"
+  add_foreign_key "tasks", "organizations"
+  add_foreign_key "tasks", "users", column: "assignee_id"
+  add_foreign_key "users", "organizations"
+  add_foreign_key "workflow_events", "organizations"
+  add_foreign_key "workflow_events", "users", column: "actor_id"
 end

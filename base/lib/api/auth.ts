@@ -3,6 +3,7 @@ import { UserSchema } from "./schemas";
 import type { AuthResponse, User } from "@/types";
 
 export interface SignupFields {
+  organization_name: string;
   email: string;
   password: string;
   first_name?: string;
@@ -12,11 +13,12 @@ export interface SignupFields {
 }
 
 export async function signup(fields: SignupFields): Promise<AuthResponse> {
-  const { email, password, first_name, last_name, state, phone } = fields;
+  const { organization_name, email, password, first_name, last_name, state, phone } = fields;
   const res = await authFetch("/api/v1/auth/signup", {
     method: "POST",
     skipSessionExpiredRedirect: true,
     body: JSON.stringify({
+      organization_name,
       email,
       password,
       password_confirmation: password,
@@ -105,7 +107,7 @@ export interface ProfileFields {
 }
 
 /**
- * Updates the patient's name, state, and phone.
+ * Updates the signed-in user's name, state, and phone.
  *
  * Email is deliberately not updatable here — changing it is an identity change
  * that needs a confirmation flow, and the API ignores the field.
@@ -125,23 +127,4 @@ export async function updateProfile(fields: ProfileFields): Promise<User> {
   }
 
   return validateResponse(UserSchema, data.user);
-}
-
-export async function updateEmailPreferences(preferences: {
-  booking_confirmations?: boolean;
-  reminders_24h?: boolean;
-  cancellation_notices?: boolean;
-}): Promise<{ message: string }> {
-  const res = await authFetch("/api/v1/auth/update_preferences", {
-    method: "PATCH",
-    body: JSON.stringify(preferences),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to update preferences");
-  }
-
-  return data;
 }

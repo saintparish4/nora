@@ -12,6 +12,8 @@ const config: Config = {
   testEnvironment: 'jsdom',
   // Ensure Testing Library matchers are available
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  // Shared test data, not tests.
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/__tests__/fixtures/'],
   // Mirror tsconfig path aliases
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',

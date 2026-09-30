@@ -1,16 +1,8 @@
-// Barrel re-export for backward compatibility
-// All existing imports from "@/lib/api" will continue to work
-
+// Barrel re-export so pages can import from "@/lib/api".
 export * from "./auth";
-export * from "./providers";
-export * from "./appointments";
-export * from "./symptoms";
-export * from "./quick-booking";
-export * from "./symptom-chat";
-export * from "./conversations";
-export * from "./preferences";
+export * from "./workspace";
+export * from "./prior-authorizations";
 export * from "./hooks";
-export * from "./prefetch";
+export { DOCUMENT_KINDS, PA_STATUSES, REQUIREMENT_STATUSES } from "./schemas";
 
-// Re-export types for convenience
 export * from "@/types";

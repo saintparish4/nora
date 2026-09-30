@@ -13,13 +13,18 @@ RSpec.describe PhiAccessLoggable, type: :controller do
       end
 
       def index
-        log_phi_access("Appointment", 42, :view)
+        log_phi_access("Patient", 42, :view)
         render json: { ok: true }
       end
 
       def create
-        log_phi_access("Appointment", 99, :create, user_id: nil)
+        log_phi_access("Patient", 99, :create, user_id: nil)
         render json: { ok: true }, status: :created
+      end
+
+      def batch
+        log_phi_access_batch("Patient", params[:ids].to_s.split(","), :view)
+        render json: { ok: true }
       end
     end
 
@@ -27,6 +32,7 @@ RSpec.describe PhiAccessLoggable, type: :controller do
       routes.draw do
         get  "index" => "anonymous#index"
         post "create" => "anonymous#create"
+        get  "batch" => "anonymous#batch"
       end
     end
 
@@ -47,7 +53,7 @@ RSpec.describe PhiAccessLoggable, type: :controller do
 
           log = PhiAccessLog.last
           expect(log.user_id).to eq(7)
-          expect(log.resource_type).to eq("Appointment")
+          expect(log.resource_type).to eq("Patient")
           expect(log.resource_id).to eq("42")
           expect(log.action).to eq("view")
           expect(log.request_id).to be_present
@@ -63,7 +69,7 @@ RSpec.describe PhiAccessLoggable, type: :controller do
 
           log = PhiAccessLog.last
           expect(log.user_id).to be_nil
-          expect(log.resource_type).to eq("Appointment")
+          expect(log.resource_type).to eq("Patient")
           expect(log.resource_id).to eq("99")
           expect(log.action).to eq("create")
         end
@@ -86,6 +92,26 @@ RSpec.describe PhiAccessLoggable, type: :controller do
           expect(Rails.logger).to receive(:error).with(/PHI_AUDIT_FAILURE/)
           get :index
         end
+      end
+    end
+
+    # The batch path once carried an updated_at key the table doesn't have, so
+    # every insert_all raised and the rescue swallowed it: the largest reads in
+    # the app went unaudited. Pin it here now that no index action exercises it.
+    describe "#log_phi_access_batch" do
+      before { allow(controller).to receive(:current_user).and_return(user) }
+
+      it "writes one row per id with a created_at" do
+        expect { get :batch, params: { ids: "1,2,3" } }.to change(PhiAccessLog, :count).by(3)
+
+        logs = PhiAccessLog.where(resource_type: "Patient", action: "view")
+        expect(logs.pluck(:resource_id)).to match_array(%w[1 2 3])
+        expect(logs.pluck(:user_id).uniq).to eq([ 7 ])
+        expect(logs.pluck(:created_at)).to all(be_present)
+      end
+
+      it "writes nothing for an empty collection" do
+        expect { get :batch, params: { ids: "" } }.not_to change(PhiAccessLog, :count)
       end
     end
   end

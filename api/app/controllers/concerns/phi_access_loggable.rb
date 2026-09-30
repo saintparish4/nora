@@ -6,12 +6,12 @@
 # touch PHI) and call `log_phi_access` after each successful action.
 #
 # Usage:
-#   log_phi_access("Appointment", @appointment.id, :view)
-#   log_phi_access("Conversation", conversation.id, :create, user_id: nil)
+#   log_phi_access("Patient", @patient.id, :view)
+#   log_phi_access("ChartDocument", document.id, :create)
 #
 # The helper is intentionally fire-and-forget: a failed audit INSERT must
 # NOT break the user-facing request. We log the failure so ops can
-# investigate, but the patient still gets their response.
+# investigate, but the user still gets their response.
 #
 # Why not use an around_action or after_action hook?
 #   Because we need the resource_type and resource_id which are only known
@@ -26,7 +26,7 @@ module PhiAccessLoggable
   # Log a PHI access event. Call this AFTER the action succeeds so we
   # record actual access, not attempted access.
   #
-  # @param resource_type [String]  e.g. "Appointment", "Conversation"
+  # @param resource_type [String]  e.g. "Patient", "ChartDocument"
   # @param resource_id   [#to_s]  primary key of the accessed record
   # @param action        [String, Symbol]  one of: view, create, update, delete
   # @param user_id       [Integer, nil]  override; defaults to current_user&.id
@@ -54,7 +54,7 @@ module PhiAccessLoggable
   # Bulk-log PHI access for a collection of records in a single INSERT.
   #
   # Use this instead of calling log_phi_access in a loop (e.g. the
-  # appointments index which may return dozens of records). insert_all
+  # patients index, which may return dozens of records). insert_all
   # bypasses AR callbacks, which is intentional here — PhiAccessLog's
   # readonly! guard would fire on each instantiated record otherwise.
   #
@@ -63,7 +63,7 @@ module PhiAccessLoggable
   # has no such column. Including it raised UnknownAttributeError, which this
   # method then swallowed — every batch write was silently dropped.
   #
-  # @param resource_type  [String]         e.g. "Appointment"
+  # @param resource_type  [String]         e.g. "Patient"
   # @param resource_ids   [Array<#to_s>]   primary keys of accessed records
   # @param action         [String, Symbol] one of: view, create, update, delete
   # @param user_id        [Integer, nil]   override; defaults to current_user&.id

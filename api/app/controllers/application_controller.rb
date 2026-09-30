@@ -38,6 +38,11 @@ class ApplicationController < ActionController::API
       }, status: :forbidden
     end
 
+    # A workflow rule refused the action; the message is written for the user.
+    rescue_from Authorizations::Error do |e|
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+
     # For lograge: add request_id, ip, user_id to the request payload (production JSON logs).
     def append_info_to_payload(payload)
       super
@@ -77,6 +82,31 @@ class ApplicationController < ActionController::API
 
     def current_user
         @current_user
+    end
+
+    # Every workflow query starts here, so one practice can never read
+    # another's records.
+    def current_organization
+        current_user&.organization
+    end
+
+    def require_admin!
+        render json: { error: "Only an admin can do that." }, status: :forbidden unless current_user&.admin?
+    end
+
+    # 1-based page number and a bounded page size from the query string.
+    def pagination(default_per: 25, max_per: 100)
+        page = [ params[:page].to_i, 1 ].max
+        per = params[:per_page].to_i
+        per = default_per if per <= 0
+        [ page, [ per, max_per ].min ]
+    end
+
+    def paginate(scope, default_per: 25)
+        page, per = pagination(default_per: default_per)
+        total = scope.count
+        records = scope.offset((page - 1) * per).limit(per)
+        [ records, { page: page, per_page: per, total: total, total_pages: (total.to_f / per).ceil } ]
     end
 
     # Attempt to authenticate without requiring it — returns user or nil.

@@ -8,7 +8,7 @@
 #                                   and any production-like environment use.
 #
 # The two differ in ways that bite: locking behaviour, transaction semantics,
-# case sensitivity, and what a concurrent booking does under load. Running the
+# case sensitivity, and what concurrent status transitions do under load. Running the
 # suite against both is the only way to find out before a patient does.
 #
 #   docker compose up -d postgres

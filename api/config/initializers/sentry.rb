@@ -15,5 +15,17 @@ Sentry.init do |config|
   # Sample 10% of performance traces in production.
   config.traces_sample_rate = 0.1
 
-  config.breadcrumbs_logger = %i[active_support_logger http_logger]
+  # No active_support_logger breadcrumbs: they carry SQL, and SQL can carry
+  # chart text.
+  config.breadcrumbs_logger = %i[http_logger]
+
+  # A database error's message is the failing statement, values included. For
+  # an insert into chart_documents that is the note itself. Keep the class and
+  # drop the message.
+  config.before_send = lambda do |event, hint|
+    if hint[:exception].is_a?(ActiveRecord::StatementInvalid)
+      event.exception&.values&.each { |value| value.value = "#{value.type}: [SQL redacted]" }
+    end
+    event
+  end
 end

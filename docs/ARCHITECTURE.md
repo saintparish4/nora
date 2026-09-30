@@ -1,162 +1,118 @@
-# NORA Architecture Documentation
+# Nora architecture
 
-## Overview
+Nora is a monorepo: a Rails API (`api/`) that owns workflow state, rules, and
+the audit trail, and a Next.js console (`base/`) for practice staff. AI is one
+tool inside the API, behind a single adapter; it is not the product.
 
-NORA is a monorepo containing a Rails API backend (`api/`) and a Next.js frontend (`base/`). This document outlines the project structure, conventions, and guidelines for developers.
+## The workflow
 
-## Backend Structure (`api/`)
+```
+Patient + coverage + chart documents
+        │
+        ▼
+PriorAuthorization (created from a PolicyTemplate: one requirement per criterion)
+        │  extract (job)
+        ▼
+Rule pass ──► Model pass on redacted text ──► keep only verbatim quotes
+        │
+        ▼
+Requirements: pending (evidence to verify) · missing · unclear
+        │  staff verify / reject evidence, cite text, mark met / not applicable
+        ▼
+ready_for_review ──► clinician approves (digest pinned) ──► packet PDF
+        │
+        ▼
+submitted ──► payer_pending ──► approved_by_payer | denied ──► appealed ──► closed
+```
 
-- **Controllers** (`app/controllers/api/v1/`): `auth`, `appointments`, `care_preferences`, `conversations`, `providers`, `quick_booking`, `slots`, `symptom_chat`, `symptoms`
-- **Services** (`app/services/`): `Appointments::SlotGeneratorService`, `Providers::ProviderMatchingService`, `Providers::MatchAndSlotService`, `Triage::RedFlagScreenerService`, `Triage::SymptomAnalyzerService`, `Triage::ConversationSufficiencyService`, `Triage::RiskAssessmentService`
-- **Routes** (all under `/api/v1/`): auth (signup, login, logout, me, update_preferences, profile), care-preferences (show, update), providers (index, show, available_slots), appointments (index, show, create, cancel), conversations (index, show), quick-booking (analyze, book), `/analyze-symptoms`, symptom-chat (send_message)
-- **Models**: User, Provider, ProviderCondition, Appointment, Availability, BlockedSlot, Conversation, ConversationMessage, RiskAssessment, UserPreference, PhiAccessLog
-- **Jobs**: Active Job base; Sidekiq + sidekiq-scheduler in use for background work
-- **Mailers**: AppointmentMailer (booking confirmation, cancellation notice, 24h reminder)
+Missing or unclear requirements open a task for the ordering clinician; the
+task closes when the requirement is resolved.
 
-## Frontend Structure (`base/`)
+## Rules the code enforces
 
-- **App routes**
-  - `(auth)`: `/login`, `/signup`
-  - `(protected)`: `/dashboard`, `/dashboard/get-care`, `/dashboard/symptoms`, `/dashboard/symptoms/history`, `/dashboard/providers`, `/dashboard/providers/[id]`, `/dashboard/providers/specialties`, `/dashboard/appointments`, `/dashboard/appointments/history`, `/dashboard/settings`, `/dashboard/settings/profile`, `/dashboard/settings/preferences`, `/logout`
-  - `(protected)`, **preview only** — sample data, 404 unless `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS=true`: `/dashboard/labs`, `/dashboard/labs/all`, `/dashboard/billing`, `/dashboard/billing/payments`, `/dashboard/documents`, `/dashboard/documents/records`, `/dashboard/documents/forms`, `/dashboard/medications`, `/dashboard/medications/refills`, `/dashboard/messages`
-  - public: `/`, `/locations`, `/specialists`, `/technology`
-  - `next.config.ts` redirects the old top-level `/appointments`, `/providers`, `/settings`, `/get-care`, and `/quick-booking` paths into `/dashboard/*`
-- **API client** (`lib/api/`): `client`, `auth`, `appointments`, `conversations`, `preferences`, `providers`, `quick-booking`, `symptom-chat`, `symptoms`, plus `hooks` (SWR) and `prefetch`
-- **Types** (`types/`): `auth`, `appointments`, `conversations`, `preferences`, `providers`, `quick-booking`, `symptom-chat`, `symptoms` — most are re-exports of the Zod schemas in `lib/api/schemas.ts`
-- **Components**: `ui/` (shadcn primitives), `navigation/`, `dashboard/`, `chat/`
+| Rule | Where |
+|---|---|
+| Every status change goes through one service and writes an event with its actor | `Authorizations::TransitionService`; `PriorAuthorization` rejects a status write without it |
+| Allowed transitions are a fixed table | `PriorAuthorization::TRANSITIONS` |
+| A requirement is met only with evidence a person verified | `AuthorizationRequirement#met_requires_verified_evidence` |
+| Not applicable needs a written reason | `AuthorizationRequirement#not_applicable_requires_note` |
+| Evidence must be the exact document text at its offsets | `AuthorizationEvidence#excerpt_matches_document` |
+| Chart documents cannot be edited once saved, so citations never move | `ChartDocument#body_unchanged` |
+| Only clinicians and admins approve; approval pins a SHA-256 digest of the requirements and evidence | `Authorizations::ApproveService`, `PriorAuthorization#content_digest` |
+| Any edit after approval voids it and returns the request to review | `Authorizations::StatusSyncService` |
+| Submission requires a current approval | `Authorizations::ManualTransitionService` |
+| Model failures fail closed: rule evidence stays, other requirements become unclear, nothing is cached | `Authorizations::EvidenceExtractionService` |
+| Model quotes not found in the chart are discarded and counted | `EvidenceExtractionService#apply_response`, `QuoteLocator` |
+| Patient name, MRN, DOB, and member ID are replaced before text reaches the model | `Chart::Redactor` |
+| Prompts are never logged; production refuses to call the model until `AI_PHI_BAA_CONFIRMED=true` | `Ai::Client` |
+| Events, approvals, and PHI access logs are append-only | `readonly!` guards on `WorkflowEvent`, `Approval`, `PhiAccessLog` |
+| Every query is scoped to the signed-in user's practice | `ApplicationController#current_organization` |
 
-## Development Workflow
+## Backend (`api/`)
 
-### Adding a New Feature
+**Models**
 
-1. **Backend**:
-   - Create controller under `app/controllers/api/v1/`
-   - Add service under appropriate domain in `app/services/`
-   - Add routes to `config/routes.rb` under `/api/v1/`
-   - Write RSpec tests in `spec/`
+| Model | Purpose |
+|---|---|
+| `Organization` | A practice. Owns users, patients, documents, requests, tasks. |
+| `User` | Staff account with a role: `staff`, `clinician`, or `admin`. |
+| `Patient`, `PatientCoverage` | The subject of a workflow and their insurance. Patients never sign in. |
+| `Payer`, `InsurancePlan` | Reference data. |
+| `ChartDocument` | Pasted or uploaded chart text. Uploads keep text only. |
+| `PolicyTemplate`, `PolicyCriterion` | Criteria per item, per payer or generic. `hint` drives the rule pass. |
+| `PriorAuthorization` | The request and its status machine. |
+| `AuthorizationRequirement`, `AuthorizationEvidence` | One criterion applied to one request, and the excerpts behind it. |
+| `Approval`, `WorkflowEvent` | Sign-offs and the append-only history. |
+| `Task` | Follow-up work, usually generated from a requirement. |
+| `PhiAccessLog`, `RefreshToken` | Audit log and API-client refresh tokens. |
 
-2. **Frontend**:
-   - Add types to `types/` directory
-   - Add API functions to `lib/api/` module
-   - Create components in appropriate subdirectory
-   - Add pages in `app/` directory
+**Services**
 
-### Testing
+| Namespace | Services |
+|---|---|
+| `Ai::` | `Client` |
+| `Chart::` | `Redactor`, `TextExtractor` |
+| `Authorizations::` | `CreateService`, `StartExtractionService`, `EvidenceExtractionService`, `QuoteLocator`, `RequirementReviewService`, `EvidenceReviewService`, `AddEvidenceService`, `StatusSyncService`, `TransitionService`, `ApproveService`, `ManualTransitionService`, `PacketService` |
+| `Tasks::` | `SyncService` |
+| `Workspace::` | `TodayService`, `MetricsService` |
 
-- **Backend**: `cd api && bundle exec rspec` (SimpleCov writes `api/coverage/index.html`)
-- **Frontend**: `cd base && pnpm test` (Jest). Pass flags directly — `pnpm test --ci`,
-  not `pnpm test -- --ci`, which pnpm 10+ forwards to Jest as a path pattern.
-- **CI**: one workflow, `.github/workflows/test.yml`, with a `Rails Tests` job and
-  a `Next.js Tests` job.
+`ExtractEvidenceJob` runs extraction off the request cycle.
 
-### Code Style
+**Routes** (all under `/api/v1/`)
 
-- **Backend**: Follow Ruby style guide, use RuboCop
-- **Frontend**: Use ESLint and Prettier, follow Next.js conventions
+| Area | Routes |
+|---|---|
+| Auth | `auth/signup` (creates a practice), `login`, `logout`, `csrf`, `refresh`, `me`, `profile` |
+| Practice | `GET/PATCH organization`, `organization/members` (index, create, update) |
+| Console | `GET today`, `GET metrics`, `tasks` (index, update) |
+| Patients | `patients` (index, show, create, update), `patients/:id/coverages`, `patients/:id/chart_documents`, `chart_documents/:id` (show, destroy) |
+| Reference | `payers`, `policy_templates` |
+| Nora Auth | `prior_authorizations` (index, show, create, update) with `extract`, `approve`, `transition`, `packet`, `events`; `authorization_requirements/:id` (update, `evidence`); `authorization_evidence/:id` |
 
-## Key Technology Choices
+## Frontend (`base/`)
 
-### Backend
+- **Routes:** `/`, `/login`, `/signup`, and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
+- **API client (`lib/api/`):** `client` (cookie session, CSRF, 401 handling, `readJson`), `auth`, `workspace`, `prior-authorizations`, `hooks` (SWR), `schemas` (Zod contracts, validated in development).
+- **Workflow display rules (`lib/prior-auth.ts`):** labels, tones, and the reasons an action is unavailable, mirrored from the server so the reason shows before a request is made.
+- **Components:** `ui/` (shadcn), `navigation/`, `dashboard/` (shell), `workspace/` (status pills, requirement panel, document viewer, task list).
 
-- **Rails 8**: Modern Ruby framework with API mode
-- **RSpec**: Testing framework (not Minitest)
-- **Sidekiq**: Background job processing
-- **PostgreSQL**: Production database (SQLite for development)
-- **OpenAI GPT**: AI-powered symptom analysis
+## Auth
 
-### Frontend
+The browser uses an httpOnly session cookie plus a CSRF token from
+`GET /auth/csrf`. Non-browser clients opt in with `X-Client-Type: api` and get a
+30-minute JWT and a rotating 30-day refresh token with reuse detection. Accounts
+lock for 15 minutes after 5 failed logins; Rack::Attack throttles auth, AI, and
+general API traffic per IP.
 
-- **Next.js 16**: React framework with App Router
-- **TypeScript**: Type safety
-- **Tailwind CSS**: Utility-first styling
-- **shadcn/ui**: Component library
-- **JWT**: Authentication tokens stored in localStorage
+## Known gaps
 
-## Why We Chose This Approach
-
-- **Monorepo**: Keeps API and frontend in sync, simplifies cross-cutting changes (e.g. new endpoints + types + UI), and avoids version drift between client and server. One clone, one place for docs and tooling.
-- **Rails API + Next.js**: Rails gives a fast path for API, background jobs, and DB modeling; Next.js gives a modern React stack with SSR/SSG and a clear App Router structure. Separating backend and frontend allows independent scaling and deployment.
-- **Domain-oriented services**: Putting business logic in `app/services/` by domain (triage, appointments, calendar, etc.) keeps controllers thin, makes behavior testable without HTTP, and makes it obvious where to add or change features.
-- **Versioned API (`/api/v1/`)**: Allows future breaking changes without breaking existing clients; we can add v2 when needed.
-- **JWT in localStorage**: Simple to implement and sufficient for current scope; we accept the tradeoff that we’ll need a different strategy (e.g. httpOnly cookies, refresh tokens) for stronger security if we add sensitive or long-lived sessions.
-
-## Key Design Decisions
-
-| Decision | Rationale |
-|----------|-----------|
-| All API under `/api/v1/` | Single version prefix; easy to route, document, and evolve. |
-| Services by domain (e.g. `Triage::`, `Appointments::`) | Clear ownership, easier testing, and alignment with product areas. |
-| Deterministic red-flag rules in front of the LLM | `Triage::RedFlagScreenerService` matches a fixed list of emergency presentations (cardiac, stroke, airway, anaphylaxis, hemorrhage, self-harm, altered consciousness, poisoning) before any model call. When a rule fires the model is not consulted at all. A probabilistic component must not be the only thing between a patient and an emergency room, and rules keep working when OpenAI is down. |
-| Triage fails **safe**, never open | Every degraded path — API error, unparseable JSON, urgency outside the contract — escalates to `urgent` and sets `assessment_failed: true`. It previously defaulted to `routine`, so one timeout silently turned a possible emergency into "schedule within 1-2 weeks". Degraded results are also never cached, so a single outage cannot serve a stale non-answer for 7 days. |
-| No bookable slots for an emergency | Both the chat and quick-booking flows return an empty provider list when urgency is `emergency`. Offering an appointment next to "call 911" invites the wrong choice. |
-| RSpec over Minitest | Personal preference and richer DSL for request/service specs. |
-| shadcn/ui for frontend | Accessible, customizable components without a heavy framework lock-in. |
-| API client split by domain in `lib/api/` | Mirrors backend; each module stays focused and easier to maintain. |
-| Types in dedicated `types/` dir | Central place for API contracts and shared DTOs. |
-| Render for API deployment | Managed platform; no container/infra to maintain; simple Git-based deploys and built-in PostgreSQL. |
-
-## What We’d Change If Rebuilding / Production Readiness
-
-- **Auth**: Move away from JWT in localStorage toward httpOnly cookies (or short-lived access + refresh tokens) and CSRF protection; add rate limiting and lockout for auth endpoints.
-- **Observability**: Sentry error tracking (backend + frontend) and lograge structured JSON logging are in place. Next step: metrics (latency, errors, queue depth) and distributed tracing.
-- **API**: Centralized `rescue_from` error handling gives consistent error payloads. Zod schemas in `base/lib/api/schemas.ts` provide runtime contract validation. Remaining gap: OpenAPI/Swagger docs.
-- **Frontend**: Global 401 interceptor centralizes auth expiry handling, scoped so login/signup and the on-mount session probe opt out — a 401 there means "wrong password" or "stale token", not "your session just died". Next.js error boundaries (`error.tsx`) are in place at root and dashboard levels. SWR hooks standardize data fetching.
-- **Infra**: Use PostgreSQL in all environments (no SQLite in dev) to avoid environment drift; define backup, restore, and migration rollback; consider feature flags and phased rollouts for risky changes.
-- **Testing**: Broaden coverage on critical paths (auth, booking, payments if added); add a small set of smoke or contract tests for the API used by the frontend.
-
-## Planned Features (Tables Exist, Not Yet Wired Up)
-
-| Table | Purpose | Status |
-|-------|---------|--------|
-| `calendar_connections` | OAuth tokens for syncing provider availability from Google Calendar. The `blocked_slots` table is populated manually today; calendar sync will auto-create blocked slots from external events. | Schema only — no model, service, or OAuth flow yet. |
-| `risk_assessments` | Persisted triage risk assessments linked to conversations and users. Enables longitudinal risk tracking and escalation workflows. | **Live.** `RiskAssessment` + `Triage::RiskAssessmentService`, written on every completed chat analysis for a signed-in patient and surfaced under `/dashboard/symptoms/history`. `confidence`, `self_care_options`, and `escalation_triggers` stay empty until the analyzer prompt produces them. |
-| `follow_up_recommendations` | Post-appointment follow-up reminders (e.g. "schedule a check-up in 2 weeks"). Generated by providers or automated rules, delivered via email/notification. | Schema only — no model or delivery logic yet. |
-
-## Known Technical Debt
-
-- **Auth storage**: JWT in localStorage is a known security tradeoff; no refresh flow or token rotation yet. Moving to httpOnly cookies is a tracked future improvement, and the decision is coupled to deployment: the API (Render) and frontend (Vercel) are on different origins, so a cookie-only session needs `SameSite=None; Secure` or a shared custom domain. Server-side expiry *is* enforced — `JsonWebToken.encode` sets a 24h `exp` and `decode` rejects expired tokens. Per-account lockout (5 failed logins, 15 minutes) complements the per-IP Rack::Attack throttle.
-- **SQLite in development**: Differs from production PostgreSQL; can cause subtle bugs (e.g. SQL or locking behavior). Consider PostgreSQL in dev for full environment parity.
-- **No formal API contract**: No OpenAPI/Swagger; Zod schemas in `base/lib/api/schemas.ts` provide runtime validation but no generated docs.
-- **Tests**: Gaps on edge cases and some integration paths; coverage is not yet at a consistent baseline for critical flows.
-
-*Items resolved since initial draft: centralized `rescue_from` error handling, global 401 interceptor, Sentry error tracking (backend + frontend), structured JSON request logging (lograge), Next.js error boundaries, ApplicationJob retry/discard policies, per-account login lockout, and `risk_assessments` wired end to end.*
-
-## Environment Variables
-
-Copy `api/.env.example` → `api/.env` and `base/.env.local.example` → `base/.env.local` to get started. See `README.md` for the full table with descriptions.
-
-### Backend (`api/.env`)
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `SECRET_KEY_BASE` | **Yes** | Signs/verifies JWTs and the Rails session cookie. |
-| `OPENAI_API_KEY` | **Yes** | OpenAI API key for symptom analysis (gpt-4o-mini). |
-| `RESEND_API_KEY` | Yes (prod) | Resend API key for transactional email. |
-| `RESEND_FROM_EMAIL` | No | Sender address; defaults to Resend onboarding address. |
-| `REDIS_URL` | No (dev) | Defaults to `redis://localhost:6379/0`; required in production. |
-| `SENTRY_DSN` | No | Sentry DSN for backend error tracking. |
-| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for source map uploads in CI. |
-
-### Frontend (`base/.env.local`)
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | **Yes** | Backend API base URL (e.g. `http://localhost:3001` for local). |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | Only needed for the /locations map feature. |
-| `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for frontend error tracking. |
-| `SENTRY_AUTH_TOKEN` | No | Sentry auth token for source map uploads in CI. |
-| `NEXT_PUBLIC_SHOW_PREVIEW_SECTIONS` | No | `true` reveals the unbuilt sample-data sections listed above. Off by default. |
-
-## Deployment
-
-- **Backend**: Deployed on Render (managed Ruby/Rails hosting)
-- **Frontend**: Deployed via Vercel or similar platform
-- **Database**: PostgreSQL in production (Render Postgres or external)
-
-## Getting Started
-
-See `README.md` for setup instructions and `Makefile` for common development commands.
-
-## Questions?
-
-For questions about architecture decisions or conventions, refer to this document or ask me!
+- **Production database is unresolved.** `config/database.yml` defines
+  production as SQLite (solid_cache/queue/cable); deployment docs have said
+  PostgreSQL. Decide before the first real deploy.
+- **Deployment is not configured.** `config/deploy.yml` is the Kamal template.
+- **No OpenAPI document.** Zod schemas are the contract today.
+- **Scanned PDFs** have no text layer and are refused; OCR is not built.
+- **Policy library is illustrative.** Seeded criteria are a common baseline, not
+  any payer's published policy.
+- **No payer submission.** Staff submit through the payer's portal or ePA
+  network and record it in Nora.

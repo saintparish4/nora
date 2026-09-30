@@ -1,22 +1,42 @@
 class User < ApplicationRecord
+    ROLES = %w[staff clinician admin].freeze
+    # Roles allowed to approve a packet on the practice's behalf.
+    APPROVER_ROLES = %w[clinician admin].freeze
+
     has_secure_password
-    has_many :appointments, foreign_key: "patient_id", dependent: :destroy
-    has_one :user_preference, dependent: :destroy
-    has_many :conversations, dependent: :nullify
-    has_many :risk_assessments, dependent: :destroy
+    belongs_to :organization
+    has_many :refresh_tokens, dependent: :delete_all
 
     validates :email, presence: true, uniqueness: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, length: { minimum: 6 }, if: -> { new_record? || password.present? }
+    validates :role, inclusion: { in: ROLES }
     validates :phone, format: { with: /\A\d{10}\z/, message: "must be 10 digits" }, allow_blank: true
 
     before_save { self.email = email.downcase }
+
+    def full_name
+        [ first_name, last_name ].compact_blank.join(" ").presence || email
+    end
+
+    def approver?
+        APPROVER_ROLES.include?(role)
+    end
+
+    def admin?
+        role == "admin"
+    end
+
+    # Compact form for embedding in other payloads (assignees, actors).
+    def as_member_json
+        { id: id, name: full_name, email: email, role: role }
+    end
 
     # --- Login lockout -------------------------------------------------------
     # Rack::Attack throttles auth requests per IP. This throttles failed
     # attempts per *account*, which is the axis a distributed guessing attack
     # moves along. Deliberately short: long lockouts turn into a denial of
-    # service against the real patient.
+    # service against the real account holder.
     MAX_FAILED_LOGIN_ATTEMPTS = 5
     LOCKOUT_DURATION = 15.minutes
 

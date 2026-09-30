@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-/** Homepage nora.ai logo: stacked-bars icon + "nora.ai" text. Use in nav for consistency. */
+/** Nora logo: stacked-bars icon and wordmark. Use in nav for consistency. */
 export function NoraLogo({
   href = '/',
   className = 'font-serif text-[1.5rem] italic flex items-center gap-2 sm:gap-3 text-[var(--ink-color)] no-underline',
@@ -11,7 +11,7 @@ export function NoraLogo({
   className?: string;
 }) {
   return (
-    <Link href={href} className={className} aria-label="nora.ai home">
+    <Link href={href} className={className} aria-label="Nora home">
       <svg
         width="20"
         height="28"
@@ -26,7 +26,7 @@ export function NoraLogo({
         <rect x="4" y="12" width="12" height="5" rx="2.5" fill="currentColor" opacity="0.65" />
         <rect x="2" y="18" width="16" height="6" rx="3" fill="currentColor" />
       </svg>
-      nora.ai
+      Nora
     </Link>
   );
 }

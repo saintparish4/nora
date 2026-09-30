@@ -4,8 +4,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'associations' do
-    it { should have_many(:appointments).with_foreign_key('patient_id').dependent(:destroy) }
-    it { should have_one(:user_preference).dependent(:destroy) }
+    it { should have_many(:refresh_tokens).dependent(:delete_all) }
   end
 
   describe 'validations' do

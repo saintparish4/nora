@@ -1,9 +1,8 @@
 /**
  * Shared formatting utilities used across the frontend.
  *
- * Centralised here so date/time presentation and urgency badge colors stay
- * consistent across every page that renders appointments, slots, or triage
- * results.
+ * Centralised here so date and time presentation stays consistent across
+ * every page.
  */
 
 export function formatDate(
@@ -48,42 +47,13 @@ export function formatDateTime(dateString: string): string {
 }
 
 /**
- * Compact relative timestamp for message lists: time-of-day for today,
- * weekday for the past week, short date for anything older.
+ * Formats a calendar date ("1984-03-14") without a timezone shift. Parsing it
+ * with new Date() would treat it as UTC midnight and show the previous day in
+ * any timezone west of Greenwich.
  */
-export function formatMessageDate(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffDays = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-  );
-
-  if (diffDays === 0) {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  }
-  if (diffDays < 7) {
-    return date.toLocaleDateString('en-US', { weekday: 'short' });
-  }
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-const URGENCY_COLORS: Record<string, string> = {
-  low: 'bg-green-100 text-green-800 border-green-300',
-  routine: 'bg-green-100 text-green-800 border-green-300',
-  moderate: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  urgent: 'bg-orange-100 text-orange-800 border-orange-300',
-  high: 'bg-red-100 text-red-800 border-red-300',
-  emergency: 'bg-red-100 text-red-800 border-red-300',
-};
-
-// An unrecognised urgency means the value fell outside the contract, so it
-// must not inherit the calm green of "routine" — that is the display-layer
-// version of the fail-open bug the analyzer had. Render it neutral instead.
-const UNKNOWN_URGENCY_COLOR = 'bg-slate-100 text-slate-800 border-slate-300';
-
-export function getUrgencyColor(urgency: string): string {
-  return URGENCY_COLORS[urgency] || UNKNOWN_URGENCY_COLOR;
+export function formatCalendarDate(value: string | null | undefined): string {
+  if (!value) return '';
+  const [y, m, d] = value.slice(0, 10).split('-').map(Number);
+  if (!y || !m || !d) return value;
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }

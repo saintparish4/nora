@@ -1,139 +1,173 @@
 'use client';
 
+import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
-import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/context';
-import { updateEmailPreferences } from '@/lib/api';
+import {
+  addMember,
+  updateMemberRole,
+  updateOrganization,
+  useMembers,
+  useOrganization,
+  type Role,
+} from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { PageHeader, Panel, ErrorNote } from '@/components/workspace/page-header';
 
-type Prefs = {
-  booking_confirmations: boolean;
-  reminders_24h: boolean;
-  cancellation_notices: boolean;
-};
-
-const SETTINGS_SECTIONS = [
-  {
-    href: '/dashboard/settings/profile',
-    title: 'Profile',
-    description: 'Your name, state, and phone number',
-  },
-  {
-    href: '/dashboard/settings/preferences',
-    title: 'Care preferences',
-    description: 'Preferred location, times, provider gender, and languages',
-  },
+const ROLES: Array<{ value: Role; label: string; hint: string }> = [
+  { value: 'staff', label: 'Staff', hint: 'Prepares requests and reviews evidence' },
+  { value: 'clinician', label: 'Clinician', hint: 'Also approves packets' },
+  { value: 'admin', label: 'Admin', hint: 'Also manages the practice and its members' },
 ];
+
+const selectClass = 'h-9 rounded-md border border-input bg-transparent px-3 text-sm';
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
-  const serverPrefs: Prefs = useMemo(
-    () => ({
-      booking_confirmations: user?.booking_confirmations ?? true,
-      reminders_24h: user?.reminders_24h ?? true,
-      cancellation_notices: user?.cancellation_notices ?? false,
-    }),
-    [user]
+  return (
+    <div className="max-w-3xl pb-16 space-y-6">
+      <PageHeader title="Settings" />
+      <Panel title="Your profile" action={<Link href="/dashboard/settings/profile" className="text-sm underline underline-offset-4">Edit</Link>}>
+        <p className="text-sm text-muted-foreground">
+          {user?.email} · {ROLES.find((r) => r.value === user?.role)?.label ?? user?.role}
+        </p>
+      </Panel>
+      <PracticePanel isAdmin={isAdmin} />
+      <MembersPanel isAdmin={isAdmin} currentUserId={user?.id} />
+    </div>
   );
+}
 
-  // Locally toggled values win over the server copy, so a background
-  // revalidation can't clobber an in-flight change. Derived rather than synced
-  // in an effect, which would cascade a render on every user refresh.
-  const [overrides, setOverrides] = useState<Partial<Prefs>>({});
-  const prefs: Prefs = { ...serverPrefs, ...overrides };
+function PracticePanel({ isAdmin }: { isAdmin: boolean }) {
+  const { data: org, mutate } = useOrganization();
+  const [edits, setEdits] = useState<{ name?: string; npi?: string }>({});
+  const [error, setError] = useState<unknown>(null);
+  if (!org) return <Panel title="Practice"><p className="text-sm text-muted-foreground">Loading…</p></Panel>;
 
-  const handleToggle = async (key: keyof Prefs, newValue: boolean) => {
-    const previous = prefs[key];
+  const name = edits.name ?? org.name;
+  const npi = edits.npi ?? org.npi ?? '';
 
-    // Optimistic update — show the new state immediately.
-    setOverrides((o) => ({ ...o, [key]: newValue }));
-    toast.success('Preferences saved');
-
+  const save = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
     try {
-      await updateEmailPreferences({ ...prefs, [key]: newValue });
-    } catch (error) {
-      // Roll back on failure.
-      setOverrides((o) => ({ ...o, [key]: previous }));
-      Sentry.captureException(error);
-      console.error('Failed to save preferences:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to save preferences');
+      await mutate(await updateOrganization({ name, npi }), { revalidate: false });
+      setEdits({});
+      toast.success('Practice saved');
+    } catch (err) {
+      setError(err);
     }
   };
 
-  const TOGGLES: { key: keyof Prefs; label: string; description: string }[] = [
-    {
-      key: 'booking_confirmations',
-      label: 'Booking Confirmations',
-      description: 'Receive an email when you book a new appointment',
-    },
-    {
-      key: 'reminders_24h',
-      label: '24-Hour Reminders',
-      description: 'Get reminded about your appointments 24 hours in advance',
-    },
-    {
-      key: 'cancellation_notices',
-      label: 'Cancellation Notices',
-      description: 'Be notified when appointments are cancelled',
-    },
-  ];
+  return (
+    <Panel title="Practice">
+      <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="org-name">Name</Label>
+          <Input id="org-name" disabled={!isAdmin} value={name} onChange={(e) => setEdits((x) => ({ ...x, name: e.target.value }))} />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="org-npi">Group NPI</Label>
+          <Input id="org-npi" disabled={!isAdmin} inputMode="numeric" maxLength={10} value={npi} onChange={(e) => setEdits((x) => ({ ...x, npi: e.target.value }))} />
+        </div>
+        {isAdmin && (
+          <div className="sm:col-span-2 space-y-3">
+            <ErrorNote error={error} />
+            <Button type="submit" size="sm">Save practice</Button>
+          </div>
+        )}
+      </form>
+    </Panel>
+  );
+}
+
+function MembersPanel({ isAdmin, currentUserId }: { isAdmin: boolean; currentUserId?: number }) {
+  const { data: members, mutate } = useMembers();
+  const [form, setForm] = useState({ email: '', first_name: '', last_name: '', role: 'staff' as Role, password: '' });
+  const [error, setError] = useState<unknown>(null);
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      await addMember(form);
+      setForm({ email: '', first_name: '', last_name: '', role: 'staff', password: '' });
+      toast.success('Member added. Share the temporary password with them directly.');
+      mutate();
+    } catch (err) {
+      setError(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const changeRole = async (id: number, role: Role) => {
+    try {
+      await updateMemberRole(id, role);
+      mutate();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not change the role');
+    }
+  };
 
   return (
-    <div className="flex flex-1 flex-col gap-6 pb-16">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p className="text-gray-600">Manage your account preferences</p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        {SETTINGS_SECTIONS.map(({ href, title, description }) => (
-          <Link
-            key={href}
-            href={href}
-            className="p-5 bg-surface-elevated border border-border rounded-2xl shadow-sm hover:border-foreground transition-colors"
-          >
-            <h2 className="font-semibold text-gray-900 mb-1">{title}</h2>
-            <p className="text-sm text-gray-600">{description}</p>
-          </Link>
+    <Panel title="Members">
+      <ul className="divide-y divide-border mb-6">
+        {members?.map((m) => (
+          <li key={m.id} className="py-3 flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium">{m.name}</p>
+              <p className="text-sm text-muted-foreground break-all">{m.email}</p>
+            </div>
+            {isAdmin && m.id !== currentUserId ? (
+              <select aria-label={`Role for ${m.name}`} value={m.role} onChange={(e) => changeRole(m.id, e.target.value as Role)} className={selectClass}>
+                {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+              </select>
+            ) : (
+              <span className="text-sm text-muted-foreground">{ROLES.find((r) => r.value === m.role)?.label}</span>
+            )}
+          </li>
         ))}
-      </div>
+      </ul>
 
-      <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            Email Notifications
-          </h2>
-
-          <fieldset className="space-y-6 border-0 p-0 m-0">
-            <legend className="sr-only">Email notification preferences</legend>
-
-            {TOGGLES.map(({ key, label, description }) => {
-              const inputId = key.replace(/_/g, '-');
-              return (
-                <div key={key} className="flex items-start">
-                  <div className="flex items-center h-5 mt-1">
-                    <input
-                      id={inputId}
-                      type="checkbox"
-                      checked={prefs[key]}
-                      onChange={(e) => handleToggle(key, e.target.checked)}
-                      className="w-5 h-5 accent-[var(--brand)] border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3">
-                    <label htmlFor={inputId} className="font-medium text-gray-900 cursor-pointer">
-                      {label}
-                    </label>
-                    <p className="text-sm text-gray-500">{description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </fieldset>
-        </div>
-      </div>
-    </div>
+      {isAdmin && (
+        <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 rounded-xl border border-border p-4">
+          <p className="sm:col-span-2 font-medium">Add a member</p>
+          <div className="space-y-1">
+            <Label htmlFor="m-first">First name</Label>
+            <Input id="m-first" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="m-last">Last name</Label>
+            <Input id="m-last" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="m-email">Email</Label>
+            <Input id="m-email" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="m-role">Role</Label>
+            <select id="m-role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })} className={`${selectClass} w-full`}>
+              {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}: {r.hint}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1 sm:col-span-2">
+            <Label htmlFor="m-password">Temporary password</Label>
+            <Input id="m-password" type="text" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          </div>
+          <div className="sm:col-span-2 space-y-3">
+            <ErrorNote error={error} />
+            <Button type="submit" size="sm" disabled={saving}>{saving ? 'Adding…' : 'Add member'}</Button>
+          </div>
+        </form>
+      )}
+    </Panel>
   );
 }

@@ -2,127 +2,93 @@
 
 import useSWR from 'swr';
 import * as Sentry from '@sentry/nextjs';
-import { getAppointments } from './appointments';
-import { getProviders, getProvider, getAvailableSlots } from './providers';
-import { getConversations, getConversation } from './conversations';
-import { getCarePreferences } from './preferences';
-import type {
-  AppointmentsResponse,
-  ProvidersResponse,
-  Provider,
-  AvailableSlotsResponse,
-  ConversationSummary,
-  ConversationDetail,
-  CarePreferences,
-} from '@/types';
+import {
+  getMetrics,
+  getMembers,
+  getOrganization,
+  getPatient,
+  getPatients,
+  getPayers,
+  getPolicyTemplates,
+  getTasks,
+  getToday,
+} from './workspace';
+import {
+  getEvents,
+  getPriorAuthorization,
+  getPriorAuthorizations,
+  type PriorAuthorizationFilters,
+} from './prior-authorizations';
 
-// Shared SWR config: no refetch on window focus (medical data doesn't change
-// every time a user tabs back in), and dedupe rapid repeated calls.
-const SWR_OPTIONS = {
+// Shared SWR config: no refetch on window focus (records don't change every
+// time a user tabs back in), and dedupe rapid repeated calls.
+export const SWR_OPTIONS = {
   revalidateOnFocus: false,
-  dedupingInterval: 10_000,
+  dedupingInterval: 5_000,
   onError: (error: Error) => {
     console.error('[SWR error]', error);
     Sentry.captureException(error);
   },
 } as const;
 
-export interface UseProvidersParams {
-  specialty?: string;
-  sort?: string;
-  page?: number;
-  per_page?: number;
+export function useToday() {
+  return useSWR('today', getToday, SWR_OPTIONS);
 }
 
-/**
- * Fetches the current user's upcoming and past appointments.
- * Returns the SWR result including `mutate` so callers can trigger a revalidation
- * after mutations (e.g. cancelling or booking an appointment).
- */
-export function useAppointments() {
-  return useSWR<AppointmentsResponse>(
-    'appointments',
-    () => getAppointments(),
-    SWR_OPTIONS
-  );
+export function useMetrics() {
+  return useSWR('metrics', getMetrics, SWR_OPTIONS);
 }
 
-/**
- * Fetches the paginated provider list with optional filters.
- * The key includes all filter params so SWR automatically refetches when they change.
- */
-export function useProviders(params?: UseProvidersParams) {
-  const key = [
-    'providers',
-    params?.specialty ?? '',
-    params?.sort ?? '',
-    params?.page ?? 1,
-    params?.per_page ?? 20,
-  ];
-
-  return useSWR<ProvidersResponse>(
-    key,
-    () => getProviders(params),
-    SWR_OPTIONS
-  );
+export function useOrganization() {
+  return useSWR('organization', getOrganization, SWR_OPTIONS);
 }
 
-/**
- * Fetches a single provider by ID.
- * Passing `null` or `0` disables the request (useful for unresolved route params).
- */
-export function useProvider(id: number | null) {
-  return useSWR<Provider>(
-    id ? ['provider', id] : null,
-    () => getProvider(id as number),
-    SWR_OPTIONS
-  );
+export function useMembers() {
+  return useSWR('members', getMembers, SWR_OPTIONS);
 }
 
-/**
- * Fetches available booking slots for a provider.
- * Kept separate from useProvider so slots can be revalidated after booking
- * without re-fetching provider profile data.
- */
-export function useProviderSlots(id: number | null) {
-  return useSWR<AvailableSlotsResponse>(
-    id ? ['provider-slots', id] : null,
-    () => getAvailableSlots(id as number),
-    SWR_OPTIONS
-  );
+export function usePatients(params: { q?: string; page?: number }) {
+  return useSWR(['patients', params.q ?? '', params.page ?? 1], () => getPatients(params), {
+    ...SWR_OPTIONS,
+    keepPreviousData: true,
+  });
 }
 
-/**
- * Fetches the patient's symptom-chat history (newest first).
- */
-export function useConversations() {
-  return useSWR<ConversationSummary[]>(
-    'conversations',
-    () => getConversations(),
-    SWR_OPTIONS
-  );
+export function usePatient(id: number | null) {
+  return useSWR(id ? ['patient', id] : null, () => getPatient(id as number), SWR_OPTIONS);
 }
 
-/**
- * Fetches one past conversation with its transcript and risk assessments.
- * Passing `null` disables the request (useful before a selection is made).
- */
-export function useConversation(id: number | null) {
-  return useSWR<ConversationDetail>(
-    id ? ['conversation', id] : null,
-    () => getConversation(id as number),
-    SWR_OPTIONS
-  );
+export function usePayers() {
+  return useSWR('payers', getPayers, { ...SWR_OPTIONS, dedupingInterval: 60_000 });
 }
 
-/**
- * Fetches the patient's care preferences. Returns empty defaults for a patient
- * who has never saved any, so the form can render without a special case.
- */
-export function useCarePreferences() {
-  return useSWR<CarePreferences>(
-    'care-preferences',
-    () => getCarePreferences(),
+export function usePolicyTemplates() {
+  return useSWR('policy-templates', getPolicyTemplates, { ...SWR_OPTIONS, dedupingInterval: 60_000 });
+}
+
+export function usePriorAuthorizations(filters: PriorAuthorizationFilters) {
+  return useSWR(['prior-authorizations', JSON.stringify(filters)], () => getPriorAuthorizations(filters), {
+    ...SWR_OPTIONS,
+    keepPreviousData: true,
+  });
+}
+
+/** Polls every 2 seconds while evidence extraction is running. */
+export function usePriorAuthorization(id: number | null) {
+  return useSWR(id ? ['prior-authorization', id] : null, () => getPriorAuthorization(id as number), {
+    ...SWR_OPTIONS,
+    refreshInterval: (data) => (data?.extraction_status === 'running' ? 2_000 : 0),
+  });
+}
+
+export function usePriorAuthorizationEvents(id: number | null, version?: string) {
+  return useSWR(id ? ['prior-authorization-events', id, version ?? ''] : null, () => getEvents(id as number), SWR_OPTIONS);
+}
+
+export function useTasks(params: { status?: string; mine?: boolean; prior_authorization_id?: number }, version?: string) {
+  return useSWR(
+    ['tasks', params.status ?? '', params.mine ?? false, params.prior_authorization_id ?? 0, version ?? ''],
+    () => getTasks(params),
     SWR_OPTIONS
   );
 }

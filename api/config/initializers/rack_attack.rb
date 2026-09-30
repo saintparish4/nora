@@ -7,19 +7,14 @@ class Rack::Attack
   # Throttles
   # ---------------------------------------------------------------------------
 
-  # AI-powered endpoints are expensive — tight per-IP limits.
-  AI_PATHS = %w[
-    /api/v1/analyze-symptoms
-    /api/v1/quick-booking/analyze
+  # AI-powered endpoints are expensive — tight per-IP limits. Add a pattern
+  # here for every route that calls Ai::Client.
+  AI_PATHS = [
+    %r{\A/api/v1/prior_authorizations/\d+/extract\z}
   ].freeze
 
   throttle("ai/ip", limit: 10, period: 1.minute) do |req|
-    req.ip if AI_PATHS.include?(req.path) && req.post?
-  end
-
-  # Conversational chat can be called more frequently but still needs a cap.
-  throttle("symptom-chat/ip", limit: 30, period: 1.minute) do |req|
-    req.ip if req.path == "/api/v1/symptom-chat/send" && req.post?
+    req.ip if req.post? && AI_PATHS.any? { |pattern| pattern.match?(req.path) }
   end
 
   # Auth endpoints — prevent credential stuffing / brute-force.

@@ -1,201 +1,285 @@
 import { z } from 'zod';
 
-// ---------------------------------------------------------------------------
-// Primitive / nested schemas (referenced by multiple top-level schemas)
-// ---------------------------------------------------------------------------
+// Contracts for every API response the app reads. validateResponse() parses
+// against these in development so a backend change fails loudly.
 
-export const AvailabilitySchema = z.object({
-  id: z.number(),
-  provider_id: z.number(),
-  day_of_week: z.number(),
-  start_time: z.string(),
-  end_time: z.string(),
-  is_available: z.boolean(),
-});
+export const RoleSchema = z.enum(['staff', 'clinician', 'admin']);
 
-export const ProviderSchema = z.object({
+export const OrganizationSchema = z.object({
   id: z.number(),
   name: z.string(),
-  specialty: z.string(),
-  bio: z.string(),
-  location: z.string(),
-  hourly_rate: z.number(),
-  experience_years: z.number(),
-  rating: z.number(),
-  avatar_url: z.string(),
-  availabilities: z.array(AvailabilitySchema).optional(),
-  has_availability: z.boolean().optional(),
-});
-
-export const TimeSlotSchema = z.object({
-  start_time: z.string(),
-  end_time: z.string(),
-  date: z.string(),
-  time: z.string(),
-});
-
-// Alias used in the plan's naming convention
-export const SlotSchema = TimeSlotSchema;
-
-export const AvailableSlotsResponseSchema = z.object({
-  provider_id: z.number(),
-  slots: z.record(z.string(), z.array(TimeSlotSchema)),
-  total_slots: z.number(),
-});
-
-export const AppointmentSchema = z.object({
-  id: z.number(),
-  patient_id: z.number(),
-  provider_id: z.number(),
-  start_time: z.string(),
-  end_time: z.string(),
-  status: z.string(),
-  notes: z.string().optional(),
-  provider: ProviderSchema.optional(),
-});
-
-export const AppointmentsResponseSchema = z.object({
-  upcoming: z.array(AppointmentSchema),
-  past: z.array(AppointmentSchema),
-});
-
-export const ProvidersResponseSchema = z.object({
-  providers: z.array(ProviderSchema),
-  total: z.number(),
-  page: z.number(),
-  per_page: z.number(),
-  total_pages: z.number(),
+  npi: z.string().nullish(),
+  timezone: z.string(),
 });
 
 export const UserSchema = z.object({
   id: z.number(),
   email: z.string(),
-  first_name: z.string().optional(),
-  last_name: z.string().optional(),
-  state: z.string().optional(),
-  phone: z.string().optional(),
-  is_provider: z.boolean().optional(),
-  booking_confirmations: z.boolean().optional(),
-  reminders_24h: z.boolean().optional(),
-  cancellation_notices: z.boolean().optional(),
+  first_name: z.string().nullish(),
+  last_name: z.string().nullish(),
+  state: z.string().nullish(),
+  phone: z.string().nullish(),
+  role: RoleSchema.optional(),
+  organization: OrganizationSchema.optional(),
 });
 
-// ---------------------------------------------------------------------------
-// Symptom chat history
-// ---------------------------------------------------------------------------
-
-export const RiskAssessmentSchema = z.object({
+export const MemberSchema = z.object({
   id: z.number(),
-  care_level: z.string(),
-  confidence: z.number().nullable(),
-  reasoning: z.string().nullable(),
-  created_at: z.string(),
-  red_flags: z.array(z.string()),
-  recommended_specialties: z.array(z.string()),
-  self_care_options: z.array(z.string()),
-  escalation_triggers: z.array(z.string()),
+  name: z.string(),
+  email: z.string(),
+  role: RoleSchema,
 });
 
-export const ConversationMessageSchema = z.object({
+export const PageMetaSchema = z.object({
+  page: z.number(),
+  per_page: z.number(),
+  total: z.number(),
+  total_pages: z.number(),
+});
+
+export const PatientSchema = z.object({
   id: z.number(),
-  role: z.string(),
-  content: z.string(),
-  created_at: z.string(),
+  mrn: z.string().nullish(),
+  first_name: z.string(),
+  last_name: z.string(),
+  full_name: z.string(),
+  date_of_birth: z.string(),
+  sex: z.string().nullish(),
 });
 
-export const ConversationSummarySchema = z.object({
+export const CoverageSchema = z.object({
   id: z.number(),
-  session_id: z.string(),
-  status: z.string(),
-  preview: z.string().nullable(),
-  message_count: z.number(),
+  patient_id: z.number(),
+  member_id: z.string(),
+  group_number: z.string().nullish(),
+  effective_on: z.string().nullish(),
+  primary: z.boolean(),
+  plan: z.object({ id: z.number(), name: z.string(), plan_type: z.string().nullish() }),
+  payer: z.object({ id: z.number(), name: z.string() }),
+});
+
+export const DOCUMENT_KINDS = [
+  'office_note',
+  'problem_list',
+  'medication_history',
+  'lab',
+  'imaging',
+  'letter',
+  'other',
+] as const;
+
+export const ChartDocumentSchema = z.object({
+  id: z.number(),
+  patient_id: z.number(),
+  kind: z.enum(DOCUMENT_KINDS),
+  title: z.string(),
+  occurred_on: z.string().nullish(),
+  source: z.enum(['paste', 'upload']),
+  original_filename: z.string().nullish(),
+  length: z.number(),
+  uploaded_by: MemberSchema,
   created_at: z.string(),
-  completed_at: z.string().nullable(),
-  latest_risk_assessment: RiskAssessmentSchema.nullable(),
+  body: z.string().optional(),
 });
 
-export const ConversationsResponseSchema = z.object({
-  conversations: z.array(ConversationSummarySchema),
+export const PlanSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  plan_type: z.string().nullish(),
+  payer_id: z.number(),
 });
 
-export const ConversationDetailSchema = ConversationSummarySchema.extend({
-  messages: z.array(ConversationMessageSchema),
-  risk_assessments: z.array(RiskAssessmentSchema),
+export const PayerSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  payer_code: z.string().nullish(),
+  plans: z.array(PlanSchema),
 });
 
-export const ConversationResponseSchema = z.object({
-  conversation: ConversationDetailSchema,
+export const CriterionSchema = z.object({
+  id: z.number(),
+  position: z.number(),
+  kind: z.string(),
+  text: z.string(),
+  optional: z.boolean(),
 });
 
-// ---------------------------------------------------------------------------
-// Care preferences
-// ---------------------------------------------------------------------------
-
-export const CarePreferencesSchema = z.object({
-  preferred_location: z.string().nullable(),
-  preferred_times: z.array(z.string()),
-  insurance_info: z.string().nullable(),
-  provider_gender_preference: z.string().nullable(),
-  language_preferences: z.array(z.string()),
+export const PolicyTemplateSchema = z.object({
+  id: z.number(),
+  item_kind: z.string(),
+  item_name: z.string(),
+  item_code: z.string().nullish(),
+  title: z.string(),
+  payer: z.object({ id: z.number(), name: z.string() }).nullish(),
+  generic: z.boolean(),
+  effective_on: z.string().nullish(),
+  source_url: z.string().nullish(),
+  notes: z.string().nullish(),
+  version: z.number(),
+  criteria: z.array(CriterionSchema).optional(),
 });
 
-export const CarePreferencesResponseSchema = z.object({
-  care_preferences: CarePreferencesSchema,
+export const PA_STATUSES = [
+  'draft',
+  'gathering',
+  'needs_clarification',
+  'ready_for_review',
+  'approved',
+  'submitted',
+  'payer_pending',
+  'approved_by_payer',
+  'denied',
+  'appealed',
+  'cancelled',
+  'closed',
+] as const;
+export const PaStatusSchema = z.enum(PA_STATUSES);
+
+export const REQUIREMENT_STATUSES = ['pending', 'met', 'missing', 'unclear', 'not_applicable'] as const;
+export const RequirementStatusSchema = z.enum(REQUIREMENT_STATUSES);
+
+export const EvidenceSchema = z.object({
+  id: z.number(),
+  requirement_id: z.number(),
+  document: z.object({
+    id: z.number(),
+    title: z.string(),
+    kind: z.string(),
+    occurred_on: z.string().nullish(),
+  }),
+  excerpt: z.string(),
+  start_offset: z.number(),
+  end_offset: z.number(),
+  confidence: z.number().nullish(),
+  extracted_by: z.enum(['rule', 'ai', 'human']),
+  rationale: z.string().nullish(),
+  verified: z.boolean(),
+  verified_by: MemberSchema.nullish(),
+  verified_at: z.string().nullish(),
+  rejected: z.boolean(),
+  rejected_at: z.string().nullish(),
 });
 
-const UrgencyDetailsSchema = z.object({
-  priority: z.number(),
-  color: z.string(),
-  message: z.string(),
+export const RequirementSchema = z.object({
+  id: z.number(),
+  status: RequirementStatusSchema,
+  note: z.string().nullish(),
+  ai_summary: z.string().nullish(),
+  criterion: CriterionSchema,
+  reviewed_by: MemberSchema.nullish(),
+  reviewed_at: z.string().nullish(),
+  evidence: z.array(EvidenceSchema),
 });
 
-export const SymptomAnalysisSchema = z.object({
-  specialty: z.string(),
-  urgency: z.string(),
-  reasoning: z.string(),
-  keywords: z.array(z.string()),
-  red_flags: z.array(z.string()),
-  specialty_name: z.string(),
-  urgency_details: UrgencyDetailsSchema,
-  // 0-100, or null when the model gave no usable number. Nullable rather than
-  // defaulted: an invented confidence would corrupt the calibration curve the
-  // backend reports on.
-  confidence: z.number().int().min(0).max(100).nullable().optional(),
-  // How the API arrived at this result:
-  //   'red_flag_rules' — deterministic emergency screening, model not consulted
-  //   'model'          — normal OpenAI analysis
-  //   'fallback'       — the analysis did not run (see assessment_failed)
-  // Optional so a cached or older response still parses; zod strips unknown
-  // keys, so these have to be declared here to reach the UI at all.
-  triage_source: z.enum(['red_flag_rules', 'model', 'fallback']).optional(),
-  // True when the backend could not assess the symptoms and escalated as a
-  // precaution. The UI must not present this as a recommendation.
-  assessment_failed: z.boolean().optional(),
+export const PriorAuthorizationSchema = z.object({
+  id: z.number(),
+  status: PaStatusSchema,
+  item_name: z.string(),
+  item_code: z.string().nullish(),
+  patient: PatientSchema,
+  coverage: CoverageSchema,
+  policy: PolicyTemplateSchema,
+  requested_by: MemberSchema,
+  assigned_to: MemberSchema.nullish(),
+  extraction_status: z.enum(['idle', 'running', 'succeeded', 'failed']),
+  extraction_error: z.string().nullish(),
+  extracted_at: z.string().nullish(),
+  submitted_at: z.string().nullish(),
+  decided_at: z.string().nullish(),
+  payer_reference: z.string().nullish(),
+  prep_minutes_reported: z.number().nullish(),
+  requirement_counts: z.record(RequirementStatusSchema, z.number()),
+  created_at: z.string(),
+  updated_at: z.string(),
 });
 
-export const SymptomAnalysisResponseSchema = z.object({
-  analysis: SymptomAnalysisSchema,
-  timestamp: z.string(),
+export const PriorAuthorizationDetailSchema = PriorAuthorizationSchema.extend({
+  requirements: z.array(RequirementSchema),
+  approval: z
+    .object({
+      approved_by: MemberSchema,
+      approved_at: z.string(),
+      current: z.boolean(),
+    })
+    .nullish(),
+  allowed_transitions: z.array(PaStatusSchema),
 });
 
-// ---------------------------------------------------------------------------
-// Derived TypeScript types — use these instead of hand-written interfaces
-// ---------------------------------------------------------------------------
+export const WorkflowEventSchema = z.object({
+  id: z.number(),
+  event_type: z.string(),
+  from_status: z.string().nullish(),
+  to_status: z.string().nullish(),
+  payload: z.record(z.string(), z.unknown()),
+  actor: MemberSchema.nullish(),
+  created_at: z.string(),
+});
 
+export const TaskSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  status: z.enum(['open', 'done', 'dismissed']),
+  due_on: z.string().nullish(),
+  overdue: z.boolean(),
+  completed_at: z.string().nullish(),
+  assignee: MemberSchema.nullish(),
+  subject: z.object({
+    type: z.string(),
+    id: z.number(),
+    item_name: z.string().optional(),
+    patient_name: z.string().optional(),
+  }),
+  created_at: z.string(),
+});
+
+export const TodaySchema = z.object({
+  counts: z.object({
+    by_status: z.record(z.string(), z.number()),
+    open_tasks: z.number(),
+    my_open_tasks: z.number(),
+    overdue_tasks: z.number(),
+  }),
+  needs_attention: z.array(
+    z.object({
+      kind: z.string(),
+      reason: z.string(),
+      action: z.string(),
+      prior_authorization: PriorAuthorizationSchema,
+    })
+  ),
+  my_tasks: z.array(TaskSchema),
+});
+
+export const MetricsSchema = z.object({
+  window_days: z.number(),
+  requests_created: z.number(),
+  requests_approved: z.number(),
+  median_minutes_to_approval: z.number().nullable(),
+  median_reported_prep_minutes: z.number().nullable(),
+  reported_prep_count: z.number(),
+  submitted: z.number(),
+  payer_approved: z.number(),
+  payer_denied: z.number(),
+});
+
+export type Role = z.infer<typeof RoleSchema>;
+export type Metrics = z.infer<typeof MetricsSchema>;
+export type Organization = z.infer<typeof OrganizationSchema>;
 export type User = z.infer<typeof UserSchema>;
-export type Availability = z.infer<typeof AvailabilitySchema>;
-export type Provider = z.infer<typeof ProviderSchema>;
-export type TimeSlot = z.infer<typeof TimeSlotSchema>;
-export type Slot = z.infer<typeof SlotSchema>;
-export type AvailableSlotsResponse = z.infer<typeof AvailableSlotsResponseSchema>;
-export type Appointment = z.infer<typeof AppointmentSchema>;
-export type AppointmentsResponse = z.infer<typeof AppointmentsResponseSchema>;
-export type ProvidersResponse = z.infer<typeof ProvidersResponseSchema>;
-export type SymptomAnalysis = z.infer<typeof SymptomAnalysisSchema>;
-export type SymptomAnalysisResponse = z.infer<typeof SymptomAnalysisResponseSchema>;
-export type RiskAssessment = z.infer<typeof RiskAssessmentSchema>;
-export type ConversationMessage = z.infer<typeof ConversationMessageSchema>;
-export type ConversationSummary = z.infer<typeof ConversationSummarySchema>;
-export type ConversationDetail = z.infer<typeof ConversationDetailSchema>;
-export type ConversationsResponse = z.infer<typeof ConversationsResponseSchema>;
-export type CarePreferences = z.infer<typeof CarePreferencesSchema>;
+export type Member = z.infer<typeof MemberSchema>;
+export type PageMeta = z.infer<typeof PageMetaSchema>;
+export type Patient = z.infer<typeof PatientSchema>;
+export type Coverage = z.infer<typeof CoverageSchema>;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+export type ChartDocument = z.infer<typeof ChartDocumentSchema>;
+export type Payer = z.infer<typeof PayerSchema>;
+export type PolicyTemplate = z.infer<typeof PolicyTemplateSchema>;
+export type PaStatus = z.infer<typeof PaStatusSchema>;
+export type RequirementStatus = z.infer<typeof RequirementStatusSchema>;
+export type Evidence = z.infer<typeof EvidenceSchema>;
+export type Requirement = z.infer<typeof RequirementSchema>;
+export type PriorAuthorization = z.infer<typeof PriorAuthorizationSchema>;
+export type PriorAuthorizationDetail = z.infer<typeof PriorAuthorizationDetailSchema>;
+export type WorkflowEvent = z.infer<typeof WorkflowEventSchema>;
+export type Task = z.infer<typeof TaskSchema>;
+export type Today = z.infer<typeof TodaySchema>;

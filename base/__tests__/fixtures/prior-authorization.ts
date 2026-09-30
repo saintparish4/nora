@@ -1,0 +1,97 @@
+// A prior authorization detail payload shaped exactly like the API's
+// PriorAuthorization#as_api_json(detail: true). Synthetic data.
+import type { PriorAuthorizationDetail } from '@/types'
+
+const member = (id: number, role: 'staff' | 'clinician' | 'admin', name: string) => ({
+  id,
+  name,
+  email: `${name.split(' ')[0].toLowerCase()}@example.com`,
+  role,
+})
+
+export function priorAuthorizationFixture(overrides: Partial<PriorAuthorizationDetail> = {}): PriorAuthorizationDetail {
+  return {
+    id: 7,
+    status: 'gathering',
+    item_name: 'Wegovy',
+    item_code: null,
+    patient: { id: 3, mrn: 'DEMO-1001', first_name: 'Jane', last_name: 'Rivera', full_name: 'Jane Rivera', date_of_birth: '1984-03-14', sex: 'female' },
+    coverage: {
+      id: 4,
+      patient_id: 3,
+      member_id: 'UHC900114572',
+      group_number: null,
+      effective_on: null,
+      primary: true,
+      plan: { id: 1, name: 'Choice Plus', plan_type: 'PPO' },
+      payer: { id: 1, name: 'UnitedHealthcare' },
+    },
+    policy: {
+      id: 2,
+      item_kind: 'medication',
+      item_name: 'Wegovy',
+      item_code: null,
+      title: 'Wegovy for chronic weight management',
+      payer: null,
+      generic: true,
+      effective_on: null,
+      source_url: null,
+      notes: null,
+      version: 1,
+    },
+    requested_by: member(2, 'clinician', 'Avery Chen'),
+    assigned_to: member(1, 'staff', 'Jordan Blake'),
+    extraction_status: 'succeeded',
+    extraction_error: null,
+    extracted_at: '2026-09-30T12:00:00Z',
+    submitted_at: null,
+    decided_at: null,
+    payer_reference: null,
+    prep_minutes_reported: null,
+    requirement_counts: { pending: 1, met: 1, missing: 0, unclear: 0, not_applicable: 0 },
+    created_at: '2026-09-30T11:00:00Z',
+    updated_at: '2026-09-30T12:00:00Z',
+    requirements: [
+      {
+        id: 11,
+        status: 'met',
+        note: null,
+        ai_summary: null,
+        criterion: { id: 21, position: 1, kind: 'documented_value', text: 'BMI of 30 or greater documented.', optional: false },
+        reviewed_by: member(1, 'staff', 'Jordan Blake'),
+        reviewed_at: '2026-09-30T12:05:00Z',
+        evidence: [
+          {
+            id: 31,
+            requirement_id: 11,
+            document: { id: 41, title: 'Office visit', kind: 'office_note', occurred_on: '2026-08-12' },
+            excerpt: 'BMI 34.2.',
+            start_offset: 10,
+            end_offset: 19,
+            confidence: 0.9,
+            extracted_by: 'rule',
+            rationale: 'Documented BMI 34.2 meets the 30 threshold.',
+            verified: true,
+            verified_by: member(1, 'staff', 'Jordan Blake'),
+            verified_at: '2026-09-30T12:04:00Z',
+            rejected: false,
+            rejected_at: null,
+          },
+        ],
+      },
+      {
+        id: 12,
+        status: 'pending',
+        note: null,
+        ai_summary: 'Diet documented since January.',
+        criterion: { id: 22, position: 2, kind: 'lifestyle', text: 'Six months of diet and activity.', optional: false },
+        reviewed_by: null,
+        reviewed_at: null,
+        evidence: [],
+      },
+    ],
+    approval: null,
+    allowed_transitions: ['cancelled'],
+    ...overrides,
+  }
+}

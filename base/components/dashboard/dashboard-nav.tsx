@@ -12,15 +12,15 @@ export function DashboardNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinkClass = (href: string) => {
-    const isActive = pathname === href || pathname.startsWith(`${href}/`);
+    const isActive = href === '/dashboard' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
     return `transition-transform duration-200 inline-block hover:scale-105 origin-left ${isActive ? 'font-bold opacity-100' : 'font-normal opacity-50 hover:opacity-100 hover:font-semibold'}`;
   };
 
   const NAV_LINKS = [
-    { href: '/dashboard/get-care', label: 'Get Care' },
-    { href: '/dashboard/symptoms', label: 'Symptom Checker' },
-    { href: '/dashboard/providers', label: 'Providers' },
-    { href: '/dashboard/appointments', label: 'Appointments' },
+    { href: '/dashboard', label: 'Today' },
+    { href: '/dashboard/prior-authorizations', label: 'Prior auths' },
+    { href: '/dashboard/patients', label: 'Patients' },
+    { href: '/dashboard/tasks', label: 'Tasks' },
     { href: '/dashboard/settings', label: 'Settings' },
   ];
 

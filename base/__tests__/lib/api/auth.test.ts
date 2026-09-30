@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
-import { signup, login, logout, getCurrentUser, updateEmailPreferences, updateProfile } from '@/lib/api/auth'
+import { signup, login, logout, getCurrentUser, updateProfile } from '@/lib/api/auth'
 import { clearCsrfToken } from '@/lib/api/client'
 
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>
@@ -37,7 +37,7 @@ describe('Auth API functions', () => {
         )
       )
 
-      const result = await signup({ email: 'new@example.com', password: 'password123' })
+      const result = await signup({ organization_name: 'Riverside Clinic', email: 'new@example.com', password: 'password123' })
 
       expect(result.user.email).toBe('new@example.com')
       // The session is an httpOnly cookie. There is deliberately nothing in
@@ -49,7 +49,7 @@ describe('Auth API functions', () => {
       mockCsrf()
       mockFetch.mockResolvedValueOnce(mockResponse({ errors: ['Email has already been taken'] }, 422))
 
-      await expect(signup({ email: 'taken@example.com', password: 'password123' })).rejects.toThrow('Email has already been taken')
+      await expect(signup({ organization_name: 'Riverside Clinic', email: 'taken@example.com', password: 'password123' })).rejects.toThrow('Email has already been taken')
     })
   })
 
@@ -143,21 +143,4 @@ describe('Auth API functions', () => {
     })
   })
 
-  describe('updateEmailPreferences', () => {
-    it('returns success message on valid update', async () => {
-      mockCsrf()
-      mockFetch.mockResolvedValueOnce(mockResponse({ message: 'Preferences updated successfully' }))
-
-      const result = await updateEmailPreferences({ booking_confirmations: false })
-
-      expect(result.message).toBe('Preferences updated successfully')
-    })
-
-    it('throws on failure', async () => {
-      mockCsrf()
-      mockFetch.mockResolvedValueOnce(mockResponse({ error: 'Failed to update preferences' }, 422))
-
-      await expect(updateEmailPreferences({ booking_confirmations: false })).rejects.toThrow('Failed to update preferences')
-    })
-  })
 })

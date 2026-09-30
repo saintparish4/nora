@@ -4,5 +4,8 @@
 # Use this to limit dissemination of sensitive information.
 # See the ActiveSupport::ParameterFilter documentation for supported notations and behaviors.
 Rails.application.config.filter_parameters += [
-  :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :cvv, :cvc
+  :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :cvv, :cvc,
+  # Patient data. Chart text and quotes are PHI and must never reach a log.
+  :body, :quote, :excerpt, :note, :first_name, :last_name, :date_of_birth, :mrn,
+  :member_id, :group_number, :phone, :file
 ]

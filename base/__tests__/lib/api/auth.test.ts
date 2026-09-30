@@ -37,7 +37,7 @@ describe('Auth API functions', () => {
         )
       )
 
-      const result = await signup({ email: 'new@example.com', password: 'password123' })
+      const result = await signup({ organization_name: 'Riverside Clinic', email: 'new@example.com', password: 'password123' })
 
       expect(result.user.email).toBe('new@example.com')
       // The session is an httpOnly cookie. There is deliberately nothing in
@@ -49,7 +49,7 @@ describe('Auth API functions', () => {
       mockCsrf()
       mockFetch.mockResolvedValueOnce(mockResponse({ errors: ['Email has already been taken'] }, 422))
 
-      await expect(signup({ email: 'taken@example.com', password: 'password123' })).rejects.toThrow('Email has already been taken')
+      await expect(signup({ organization_name: 'Riverside Clinic', email: 'taken@example.com', password: 'password123' })).rejects.toThrow('Email has already been taken')
     })
   })
 

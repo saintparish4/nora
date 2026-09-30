@@ -1,13 +1,36 @@
 class User < ApplicationRecord
+    ROLES = %w[staff clinician admin].freeze
+    # Roles allowed to approve a packet on the practice's behalf.
+    APPROVER_ROLES = %w[clinician admin].freeze
+
     has_secure_password
+    belongs_to :organization
     has_many :refresh_tokens, dependent: :delete_all
 
     validates :email, presence: true, uniqueness: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, length: { minimum: 6 }, if: -> { new_record? || password.present? }
+    validates :role, inclusion: { in: ROLES }
     validates :phone, format: { with: /\A\d{10}\z/, message: "must be 10 digits" }, allow_blank: true
 
     before_save { self.email = email.downcase }
+
+    def full_name
+        [ first_name, last_name ].compact_blank.join(" ").presence || email
+    end
+
+    def approver?
+        APPROVER_ROLES.include?(role)
+    end
+
+    def admin?
+        role == "admin"
+    end
+
+    # Compact form for embedding in other payloads (assignees, actors).
+    def as_member_json
+        { id: id, name: full_name, email: email, role: role }
+    end
 
     # --- Login lockout -------------------------------------------------------
     # Rack::Attack throttles auth requests per IP. This throttles failed

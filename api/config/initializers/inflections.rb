@@ -14,3 +14,11 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+# "Evidence" is a mass noun: AuthorizationEvidence lives in
+# authorization_evidence, and the routes read the same way. "Criterion" is
+# irregular; without this Rails looks for a policy_criterions table.
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.uncountable "evidence"
+  inflect.irregular "criterion", "criteria"
+end

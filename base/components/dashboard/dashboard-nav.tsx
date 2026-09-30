@@ -18,6 +18,9 @@ export function DashboardNav() {
 
   const NAV_LINKS = [
     { href: '/dashboard', label: 'Today' },
+    { href: '/dashboard/prior-authorizations', label: 'Prior auths' },
+    { href: '/dashboard/patients', label: 'Patients' },
+    { href: '/dashboard/tasks', label: 'Tasks' },
     { href: '/dashboard/settings', label: 'Settings' },
   ];
 

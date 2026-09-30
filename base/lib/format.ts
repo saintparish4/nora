@@ -45,3 +45,15 @@ export function formatDateTime(dateString: string): string {
     minute: '2-digit',
   });
 }
+
+/**
+ * Formats a calendar date ("1984-03-14") without a timezone shift. Parsing it
+ * with new Date() would treat it as UTC midnight and show the previous day in
+ * any timezone west of Greenwich.
+ */
+export function formatCalendarDate(value: string | null | undefined): string {
+  if (!value) return '';
+  const [y, m, d] = value.slice(0, 10).split('-').map(Number);
+  if (!y || !m || !d) return value;
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}

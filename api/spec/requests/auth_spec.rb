@@ -43,15 +43,20 @@ RSpec.describe 'Auth API', type: :request do
   # -----------------------------------------------------------------
   describe 'POST /api/v1/auth/signup' do
     context 'with valid params' do
-      it 'returns 201 and creates a user' do
-        post '/api/v1/auth/signup', params: {
-          email: 'newuser@example.com',
-          password: 'password123',
-          password_confirmation: 'password123'
-        }
+      it 'returns 201 and creates a practice with the user as its admin' do
+        expect {
+          post '/api/v1/auth/signup', params: {
+            organization_name: 'Riverside Family Medicine',
+            email: 'newuser@example.com',
+            password: 'password123',
+            password_confirmation: 'password123'
+          }
+        }.to change(Organization, :count).by(1).and change(User, :count).by(1)
 
         expect(response).to have_http_status(:created)
         expect(parsed_body['user']['email']).to eq('newuser@example.com')
+        expect(parsed_body['user']['role']).to eq('admin')
+        expect(parsed_body['user']['organization']['name']).to eq('Riverside Family Medicine')
         expect(parsed_body['message']).to eq('Account created successfully')
         # A browser gets the httpOnly session cookie and nothing readable.
         expect(parsed_body).not_to have_key('token')
@@ -59,9 +64,20 @@ RSpec.describe 'Auth API', type: :request do
       end
     end
 
+    context 'without a practice name' do
+      it 'returns 422 and creates nothing' do
+        expect {
+          post '/api/v1/auth/signup', params: { email: 'x@example.com', password: 'password123', password_confirmation: 'password123' }
+        }.not_to change(Organization, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(parsed_body['errors']).to include(a_string_matching(/Practice name/))
+      end
+    end
+
     context 'with missing email' do
       it 'returns 422 with validation errors' do
-        post '/api/v1/auth/signup', params: { password: 'password123', password_confirmation: 'password123' }
+        post '/api/v1/auth/signup', params: { organization_name: 'Clinic', password: 'password123', password_confirmation: 'password123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(parsed_body['errors']).to be_present
@@ -70,7 +86,7 @@ RSpec.describe 'Auth API', type: :request do
 
     context 'with a password that is too short' do
       it 'returns 422 with validation errors' do
-        post '/api/v1/auth/signup', params: { email: 'test@example.com', password: 'short', password_confirmation: 'short' }
+        post '/api/v1/auth/signup', params: { organization_name: 'Clinic', email: 'test@example.com', password: 'short', password_confirmation: 'short' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(parsed_body['errors']).to be_present
@@ -81,7 +97,7 @@ RSpec.describe 'Auth API', type: :request do
       let!(:existing_user) { create(:user, email: 'taken@example.com') }
 
       it 'returns 422 with validation errors' do
-        post '/api/v1/auth/signup', params: { email: 'taken@example.com', password: 'password123', password_confirmation: 'password123' }
+        post '/api/v1/auth/signup', params: { organization_name: 'Clinic', email: 'taken@example.com', password: 'password123', password_confirmation: 'password123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(parsed_body['errors']).to include(a_string_matching(/email/i))
@@ -272,7 +288,7 @@ RSpec.describe 'Auth API', type: :request do
       get '/api/v1/auth/me', headers: auth_headers(user)
 
       expect(parsed_body['user'].keys).to match_array(
-        %w[id email first_name last_name state phone]
+        %w[id email first_name last_name state phone role organization]
       )
       expect(parsed_body['user']['first_name']).to eq('Ada')
     end
@@ -281,7 +297,7 @@ RSpec.describe 'Auth API', type: :request do
       post '/api/v1/auth/login', params: { email: user.email, password: 'password123' }
 
       expect(parsed_body['user'].keys).to match_array(
-        %w[id email first_name last_name state phone]
+        %w[id email first_name last_name state phone role organization]
       )
     end
 

@@ -10,21 +10,36 @@ module Api
 
       # Everything the frontend needs about the signed-in user, in one place so
       # signup, login, me, refresh, and profile updates can't drift apart.
-      USER_FIELDS = [ :id, :email, :first_name, :last_name, :state, :phone ].freeze
+      USER_FIELDS = [ :id, :email, :first_name, :last_name, :state, :phone, :role ].freeze
+
+      def self.user_json(user)
+        user.as_json(only: USER_FIELDS).merge("organization" => user.organization.as_api_json.stringify_keys)
+      end
 
       # POST /api/v1/auth/signup
+      #
+      # Signing up creates a practice and makes the new user its first admin.
+      # Everyone else joins through an admin (POST /organization/members).
       def signup
-        user = User.new(user_params)
+        organization = Organization.new(name: params[:organization_name].to_s.strip)
+        user = User.new(user_params.merge(role: "admin", organization: organization))
 
-        if user.save
+        # Validate both up front so one response lists every problem.
+        if [ organization.valid?, user.valid? ].all?
+          ActiveRecord::Base.transaction do
+            organization.save!
+            user.save!
+          end
           session[:user_id] = user.id
 
           render json: {
-            user: user.as_json(only: USER_FIELDS),
+            user: self.class.user_json(user),
             message: "Account created successfully"
           }.merge(api_client_credentials(user)), status: :created
         else
-          render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+          errors = organization.errors.full_messages.map { |m| "Practice #{m.sub(/\AName/, 'name')}" }
+          errors += user.errors.full_messages.reject { |m| m.start_with?("Organization") }
+          render json: { errors: errors }, status: :unprocessable_entity
         end
       end
 
@@ -54,7 +69,7 @@ module Api
         session[:user_id] = user.id
 
         render json: {
-          user: user.as_json(only: USER_FIELDS),
+          user: self.class.user_json(user),
           message: "Logged in successfully"
         }.merge(api_client_credentials(user))
       end
@@ -105,7 +120,7 @@ module Api
           token: JsonWebToken.encode(user_id: record.user_id),
           refresh_token: raw,
           expires_in: JsonWebToken::ACCESS_TOKEN_TTL.to_i,
-          user: record.user.as_json(only: USER_FIELDS)
+          user: self.class.user_json(record.user)
         }
       end
 
@@ -122,7 +137,7 @@ module Api
       # GET /api/v1/auth/me
       def me
         log_phi_access("User", current_user.id, :view)
-        render json: { user: current_user.as_json(only: USER_FIELDS) }
+        render json: { user: self.class.user_json(current_user) }
       end
 
       # PATCH /api/v1/auth/profile
@@ -131,7 +146,7 @@ module Api
           log_phi_access("User", current_user.id, :update)
           render json: {
             message: "Profile updated successfully",
-            user: current_user.as_json(only: USER_FIELDS)
+            user: self.class.user_json(current_user)
           }
         else
           render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity

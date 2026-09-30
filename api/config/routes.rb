@@ -14,6 +14,40 @@ Rails.application.routes.draw do
       post "auth/refresh", to: "auth#refresh"
       get "auth/me", to: "auth#me"
       patch "auth/profile", to: "auth#update_profile"
+
+      # The practice and its staff
+      resource :organization, only: [ :show, :update ] do
+        resources :members, only: [ :index, :create, :update ]
+      end
+
+      # The console
+      get "today", to: "today#show"
+
+      resources :patients, only: [ :index, :show, :create, :update ] do
+        resources :coverages, only: [ :create ]
+        resources :chart_documents, only: [ :create ]
+      end
+      resources :chart_documents, only: [ :show, :destroy ]
+
+      # Reference data
+      resources :payers, only: [ :index ]
+      resources :policy_templates, only: [ :index, :show ]
+
+      # Nora Auth
+      resources :prior_authorizations, only: [ :index, :show, :create, :update ] do
+        member do
+          post :extract
+          post :approve
+          post :transition
+          get :packet
+          get :events
+        end
+      end
+      resources :authorization_requirements, only: [ :update ] do
+        member { post :evidence, action: :add_evidence }
+      end
+      resources :authorization_evidence, only: [ :update ]
+      resources :tasks, only: [ :index, :update ]
     end
   end
 end

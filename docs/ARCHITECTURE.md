@@ -74,7 +74,7 @@ task closes when the requirement is resolved.
 | `Chart::` | `Redactor`, `TextExtractor` |
 | `Authorizations::` | `CreateService`, `StartExtractionService`, `EvidenceExtractionService`, `QuoteLocator`, `RequirementReviewService`, `EvidenceReviewService`, `AddEvidenceService`, `StatusSyncService`, `TransitionService`, `ApproveService`, `ManualTransitionService`, `PacketService` |
 | `Tasks::` | `SyncService` |
-| `Workspace::` | `TodayService` |
+| `Workspace::` | `TodayService`, `MetricsService` |
 
 `ExtractEvidenceJob` runs extraction off the request cycle.
 
@@ -84,7 +84,7 @@ task closes when the requirement is resolved.
 |---|---|
 | Auth | `auth/signup` (creates a practice), `login`, `logout`, `csrf`, `refresh`, `me`, `profile` |
 | Practice | `GET/PATCH organization`, `organization/members` (index, create, update) |
-| Console | `GET today`, `tasks` (index, update) |
+| Console | `GET today`, `GET metrics`, `tasks` (index, update) |
 | Patients | `patients` (index, show, create, update), `patients/:id/coverages`, `patients/:id/chart_documents`, `chart_documents/:id` (show, destroy) |
 | Reference | `payers`, `policy_templates` |
 | Nora Auth | `prior_authorizations` (index, show, create, update) with `extract`, `approve`, `transition`, `packet`, `events`; `authorization_requirements/:id` (update, `evidence`); `authorization_evidence/:id` |

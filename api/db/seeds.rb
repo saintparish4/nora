@@ -1,17 +1,13 @@
-# Development seeds. Synthetic data only: nothing here may ever be real PHI.
+# Seeds. Synthetic data only: nothing here may ever be real PHI.
 #
-# CI runs this file against PostgreSQL, so it must stay idempotent and
+# CI runs this file against PostgreSQL, so everything must stay idempotent and
 # adapter-neutral.
+#
+#   db/seeds/policy_library.rb   payers, plans, and policy criteria (every env)
+#   db/seeds/synthetic_charts.rb demo practice, staff, patients (not production)
 puts "Seeding database..."
 
-demo = User.find_or_initialize_by(email: "demo@nora.com")
-demo.assign_attributes(
-  password: "password123",
-  password_confirmation: "password123",
-  first_name: "Demo",
-  last_name: "User"
-)
-demo.save!
+load Rails.root.join("db/seeds/policy_library.rb")
+load Rails.root.join("db/seeds/synthetic_charts.rb") unless Rails.env.production?
 
-puts "Demo login: demo@nora.com / password123"
 puts "Seeding complete."

@@ -19,7 +19,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Nora",
-  description: "The clarity of data, the warmth of care. AI-powered precision medicine and diagnostics.",
+  description: "Prior authorization evidence and packet preparation for outpatient practices.",
 };
 
 export default function RootLayout({

@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
       # The console
       get "today", to: "today#show"
+      get "metrics", to: "metrics#show"
 
       resources :patients, only: [ :index, :show, :create, :update ] do
         resources :coverages, only: [ :create ]

@@ -3,6 +3,7 @@
 import useSWR from 'swr';
 import * as Sentry from '@sentry/nextjs';
 import {
+  getMetrics,
   getMembers,
   getOrganization,
   getPatient,
@@ -32,6 +33,10 @@ export const SWR_OPTIONS = {
 
 export function useToday() {
   return useSWR('today', getToday, SWR_OPTIONS);
+}
+
+export function useMetrics() {
+  return useSWR('metrics', getMetrics, SWR_OPTIONS);
 }
 
 export function useOrganization() {

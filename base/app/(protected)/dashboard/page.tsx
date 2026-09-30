@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/context';
-import { useToday } from '@/lib/api';
+import { useMetrics, useToday } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { PageHeader, Panel, EmptyState, ErrorNote } from '@/components/workspace/page-header';
 import { PaStatusPill } from '@/components/workspace/status-pill';
@@ -97,6 +97,40 @@ export default function TodayPage() {
           )}
         </Panel>
       </div>
+
+      <PilotMeasurements />
     </div>
+  );
+}
+
+function PilotMeasurements() {
+  const { data } = useMetrics();
+  if (!data || data.requests_created === 0) return null;
+
+  const minutes = (value: number | null) => (value === null ? '–' : `${value} min`);
+  const rows = [
+    { label: 'Requests created', value: data.requests_created },
+    { label: 'Approved by a clinician', value: data.requests_approved },
+    { label: 'Median staff-reported prep time', value: `${minutes(data.median_reported_prep_minutes)} (${data.reported_prep_count} reported)` },
+    { label: 'Median time from creation to approval', value: minutes(data.median_minutes_to_approval) },
+    { label: 'Submitted to payer', value: data.submitted },
+    { label: 'Payer decisions', value: `${data.payer_approved} approved, ${data.payer_denied} denied` },
+  ];
+
+  return (
+    <Panel title={`Measurements, last ${data.window_days} days`} className="mt-6">
+      <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+        {rows.map((row) => (
+          <div key={row.label}>
+            <dt className="text-muted-foreground">{row.label}</dt>
+            <dd className="font-medium">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-4 text-xs text-muted-foreground">
+        Time to approval is wall-clock time and includes waiting. Staff-reported minutes, entered when a request is
+        submitted, are the measure of effort.
+      </p>
+    </Panel>
   );
 }

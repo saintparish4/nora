@@ -250,7 +250,20 @@ export const TodaySchema = z.object({
   my_tasks: z.array(TaskSchema),
 });
 
+export const MetricsSchema = z.object({
+  window_days: z.number(),
+  requests_created: z.number(),
+  requests_approved: z.number(),
+  median_minutes_to_approval: z.number().nullable(),
+  median_reported_prep_minutes: z.number().nullable(),
+  reported_prep_count: z.number(),
+  submitted: z.number(),
+  payer_approved: z.number(),
+  payer_denied: z.number(),
+});
+
 export type Role = z.infer<typeof RoleSchema>;
+export type Metrics = z.infer<typeof MetricsSchema>;
 export type Organization = z.infer<typeof OrganizationSchema>;
 export type User = z.infer<typeof UserSchema>;
 export type Member = z.infer<typeof MemberSchema>;

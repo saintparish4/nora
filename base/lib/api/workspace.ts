@@ -10,6 +10,7 @@ import {
   PayerSchema,
   PolicyTemplateSchema,
   PriorAuthorizationSchema,
+  MetricsSchema,
   TaskSchema,
   TodaySchema,
 } from './schemas';
@@ -25,6 +26,7 @@ import type {
   PolicyTemplate,
   PriorAuthorization,
   Role,
+  Metrics,
   Task,
   Today,
 } from '@/types';
@@ -47,6 +49,11 @@ function json(method: string, body: unknown): RequestInit {
 export async function getToday(): Promise<Today> {
   const data = await readJson(await authFetch('/api/v1/today'));
   return validateResponse(TodaySchema, data);
+}
+
+export async function getMetrics(): Promise<Metrics> {
+  const data = await readJson<{ metrics: unknown }>(await authFetch('/api/v1/metrics'));
+  return validateResponse(MetricsSchema, data.metrics);
 }
 
 // --- Organization and members ----------------------------------------------

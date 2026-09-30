@@ -20,4 +20,5 @@ export type {
   WorkflowEvent,
   Task,
   Today,
+  Metrics,
 } from '@/lib/api/schemas';

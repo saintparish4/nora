@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
-import { signup, login, logout, getCurrentUser, updateEmailPreferences, updateProfile } from '@/lib/api/auth'
+import { signup, login, logout, getCurrentUser, updateProfile } from '@/lib/api/auth'
 import { clearCsrfToken } from '@/lib/api/client'
 
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>
@@ -143,21 +143,4 @@ describe('Auth API functions', () => {
     })
   })
 
-  describe('updateEmailPreferences', () => {
-    it('returns success message on valid update', async () => {
-      mockCsrf()
-      mockFetch.mockResolvedValueOnce(mockResponse({ message: 'Preferences updated successfully' }))
-
-      const result = await updateEmailPreferences({ booking_confirmations: false })
-
-      expect(result.message).toBe('Preferences updated successfully')
-    })
-
-    it('throws on failure', async () => {
-      mockCsrf()
-      mockFetch.mockResolvedValueOnce(mockResponse({ error: 'Failed to update preferences' }, 422))
-
-      await expect(updateEmailPreferences({ booking_confirmations: false })).rejects.toThrow('Failed to update preferences')
-    })
-  })
 })

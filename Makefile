@@ -4,7 +4,7 @@
 help:
 	@echo "Available commands:"
 	@echo "  make install      - Install all dependencies (frontend + backend)"
-	@echo "                      (needs Node >= 22.13 and Ruby 3.4.x)"
+	@echo "                      (needs Node >= 22.13 and Ruby 4.0.x)"
 	@echo "  make setup        - Full project setup (install + database setup)"
 	@echo "  make test         - Run all tests (frontend + backend)"
 	@echo "  make dev          - Start development servers"

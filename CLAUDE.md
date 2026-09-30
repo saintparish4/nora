@@ -10,7 +10,7 @@
   /spec/            - RSpec tests (requests, models, services)
 /base/              - Next.js App Router frontend (TypeScript, React)
   /app/             - Pages, layouts, (auth), (protected) routes
-  /components/      - UI, navigation, dashboard, chat
+  /components/      - UI, navigation, dashboard shell, workspace
   /lib/             - API client, auth context
   /types/           - TypeScript types and API contracts
 /docs/              - Architecture and project documentation
@@ -19,7 +19,7 @@
 
 ## Technology Stack
 
-- **Backend:** Ruby 4.0.x, Rails 8 (API mode), SQLite (dev) / PostgreSQL (prod), RSpec, RuboCop, Sidekiq, JWT, Resend, OpenAI
+- **Backend:** Ruby 4.0.x, Rails 8.1 (API mode), SQLite (dev) / PostgreSQL via `DATABASE_URL`, RSpec, RuboCop, Active Job (solid_queue in production), prawn, pdf-reader, Resend, OpenAI via `Ai::Client`
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, pnpm, Jest, ESLint
 - **Build / run:** Make (optional), Bundler, pnpm
 - **CI:** GitHub Actions — a single workflow, `.github/workflows/test.yml`, with a `Rails Tests` job (RuboCop, Brakeman, RSpec) and a `Next.js Tests` job (ESLint, build, Jest)
@@ -118,7 +118,7 @@ make docker-down   # docker-compose down
 - **Ruby/Rails:** snake_case (methods, variables), PascalCase (classes, modules). Follow RuboCop; document public APIs with yard/rdoc where helpful.
 - **TypeScript/Next.js:** TypeScript throughout; App Router conventions; `'use client'` only where needed. Use ESLint and project conventions.
 - **Line endings:** LF (Unix).
-- **API:** All routes under `/api/v1/`; add controllers in `api/app/controllers/api/v1/`, services in `api/app/services/` by domain (e.g. `Triage::`, `Appointments::`).
+- **API:** All routes under `/api/v1/`; add controllers in `api/app/controllers/api/v1/`, services in `api/app/services/` by domain (e.g. `Authorizations::`, `Chart::`, `Ai::`).
 - **Frontend:** Types in `base/types/`, API client in `base/lib/api/`; keep components under `base/components/` and pages under `base/app/`.
 
 ## Commit Messages
@@ -131,12 +131,12 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 **Types:** feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert  
 
-**Scopes (examples):** api, base, auth, booking, providers, appointments, docs, deps  
+**Scopes (examples):** api, base, auth, authorizations, docs, deps  
 
 **Examples:**
 
-- `feat(booking): add quick-booking analyze step`
-- `fix(api): correct slot generation for DST`
+- `feat(api): add evidence extraction and review workflow`
+- `fix(api): print packet approval time in the practice's timezone`
 - `docs(readme): document OPENAI_API_KEY requirement`
 - `chore(deps): bump Next.js to 16.1.6`
 
@@ -146,7 +146,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 - **New API feature:** Add controller under `api/app/controllers/api/v1/`, domain logic in `api/app/services/`, routes in `config/routes.rb`, and RSpec in `api/spec/`.
 - **New frontend feature:** Add types in `base/types/`, API functions in `base/lib/api/`, components and pages under `base/app/`; add tests where appropriate.
-- **PHI / security:** Use existing patterns (e.g. `PhiAccessLog`, `PhiAccessLoggable`); log access to sensitive data and avoid logging PHI in plain text.
+- **PHI / security:** Use existing patterns (e.g. `PhiAccessLog`, `PhiAccessLoggable`); log access to sensitive data and avoid logging PHI in plain text. Scope every query through `current_organization`.
 - **Environment:** Copy `api/.env.example` → `api/.env` and `base/.env.local.example` → `base/.env.local`. Both templates are committed (the `.gitignore` files negate them explicitly); keep them in step with the README tables when adding a variable.
 
 ## Common Gotchas
@@ -158,12 +158,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Database:** `config/database.yml` picks its adapter from `DATABASE_URL` — unset means SQLite
   (zero-setup local dev), a `postgres://` URL means PostgreSQL. CI runs the suite both ways; the
   `Rails Tests (PostgreSQL)` job is the one that speaks to locking, transaction semantics, and
-  concurrent booking. Locally: `docker compose up -d postgres && make test-backend-postgres`.
+  concurrent status transitions. Locally: `docker compose up -d postgres && make test-backend-postgres`.
 - **Production database is unresolved.** `README.md` and `docs/ARCHITECTURE.md` say production is
   PostgreSQL; `config/database.yml` defines production as a four-database SQLite
   solid_cache/solid_queue/solid_cable layout. One of them is wrong. Check the running deploy before
   trusting either, and do not "fix" the config to match the docs without looking.
-- **Auth:** JWT in localStorage is a known tradeoff; no refresh flow or httpOnly cookies yet. See `docs/ARCHITECTURE.md` for future auth improvements.
+- **Auth:** The browser uses an httpOnly session cookie plus CSRF token; API clients opt in to a JWT and rotating refresh token with `X-Client-Type: api`. See `docs/ARCHITECTURE.md`.
+- **Workflow status:** Never write `PriorAuthorization#status` directly. Go through `Authorizations::TransitionService` (the model rejects anything else) so every change has an event and an actor.
+- **AI:** Call models only through `Ai::Client`. Never log prompts or chart text. Use synthetic data only; production refuses model calls until `AI_PHI_BAA_CONFIRMED=true`.
+- **Inflections:** `criterion`/`criteria` is irregular and `evidence` is uncountable (`config/initializers/inflections.rb`). `AuthorizationEvidence` still sets `table_name` explicitly because Rails pluralizes compound names.
 - **Brakeman exits non-zero on *warnings*, not just errors.** `bundle exec brakeman` exits 3 when it
   reports anything, and CI runs it unpiped, so the `Rails Tests` job fails. Two traps: piping it
   (`brakeman | tail`) throws the exit code away and looks clean, and `make lint` does **not** run

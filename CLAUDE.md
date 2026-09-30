@@ -19,7 +19,7 @@
 
 ## Technology Stack
 
-- **Backend:** Ruby 3.4.x, Rails 8 (API mode), SQLite (dev) / PostgreSQL (prod), RSpec, RuboCop, Sidekiq, JWT, Resend, OpenAI
+- **Backend:** Ruby 4.0.x, Rails 8 (API mode), SQLite (dev) / PostgreSQL (prod), RSpec, RuboCop, Sidekiq, JWT, Resend, OpenAI
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, pnpm, Jest, ESLint
 - **Build / run:** Make (optional), Bundler, pnpm
 - **CI:** GitHub Actions — a single workflow, `.github/workflows/test.yml`, with a `Rails Tests` job (RuboCop, Brakeman, RSpec) and a `Next.js Tests` job (ESLint, build, Jest)
@@ -152,7 +152,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ## Common Gotchas
 
 - **Package manager:** Frontend uses **pnpm**, not npm. CI and local commands use `pnpm install`, `pnpm run dev`, `pnpm test`, etc.
-- **Ruby version:** Pinned to 3.4.8 in `api/.ruby-version`, `api/Gemfile`, and `api/Dockerfile` — change all three together. CI reads `.ruby-version` via `bundler-cache`.
+- **Ruby version:** Pinned to 4.0.7 in `api/.ruby-version`, `api/Gemfile`, and `api/Dockerfile` — change all three together. CI reads `.ruby-version` via `bundler-cache`.
 - **Node version:** Frontend needs Node >= 22.13; pnpm 12 hard-errors on anything older. `base/pnpm-workspace.yaml` lists the packages allowed to run install scripts — a new native dependency will fail `pnpm install` until it is added there.
 - **`pnpm run <script> -- --flag`:** pnpm 10+ forwards the `--` to the script, so `pnpm test -- --ci` reaches Jest as a path pattern and matches zero tests. Pass flags directly: `pnpm test --ci`.
 - **Database:** `config/database.yml` picks its adapter from `DATABASE_URL` — unset means SQLite

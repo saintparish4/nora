@@ -46,7 +46,7 @@ make dev
 
 | Layer    | Technology          | Version   |
 | -------- | ------------------- | --------- |
-| Backend  | Ruby                | 3.4.8     |
+| Backend  | Ruby                | 4.0.7     |
 | Backend  | Rails (API)         | 8.0.3     |
 | Frontend | Next.js             | 16.1.6    |
 | Frontend | React               | 19.2.1    |
@@ -62,7 +62,7 @@ SQLite in development; PostgreSQL-ready for production.
 
 ### Prerequisites
 
-- Ruby 3.4.x (backend)
+- Ruby 4.0.x (backend)
 - Node.js 22.13+ and pnpm 12 (frontend — pnpm 12 refuses to run on older Node)
 - PostgreSQL optional for local dev; required for production
 

@@ -26,9 +26,6 @@ gem "ruby-openai", "~> 8.3"
 # Lift this once Rails supports json 3.
 gem "json", "~> 2.21"
 gem "redis", "~> 6.0"
-gem "sidekiq", "~> 8.1"
-gem "sidekiq-scheduler", "~> 6.0"
-gem "google-apis-calendar_v3", "~> 0.57.0"
 gem "sentry-ruby", "~> 6.7"
 gem "sentry-rails", "~> 6.4", ">= 6.4.1"
 gem "lograge", "~> 0.15.0"
@@ -76,7 +73,6 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-sidekiq"
   gem "vcr"
   gem "webmock"
   gem "simplecov", require: false

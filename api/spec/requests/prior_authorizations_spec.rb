@@ -142,6 +142,11 @@ RSpec.describe 'Prior authorizations API', type: :request do
       task = parsed_body['tasks'].first
       expect(task['subject']['item_name']).to eq('Wegovy')
 
+      get '/api/v1/tasks', params: { prior_authorization_id: id }, headers: auth_headers(staff)
+      expect(parsed_body['tasks'].size).to eq(3)
+      get '/api/v1/tasks', params: { prior_authorization_id: id + 1000 }, headers: auth_headers(staff)
+      expect(parsed_body['tasks']).to be_empty
+
       patch "/api/v1/tasks/#{task['id']}", headers: auth_headers(clinician), as: :json, params: { status: 'done' }
       expect(parsed_body['task']['status']).to eq('done')
     end

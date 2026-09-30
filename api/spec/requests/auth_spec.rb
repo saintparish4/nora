@@ -140,35 +140,6 @@ RSpec.describe 'Auth API', type: :request do
   end
 
   # -----------------------------------------------------------------
-  # PATCH /api/v1/auth/update_preferences
-  # -----------------------------------------------------------------
-  describe 'PATCH /api/v1/auth/update_preferences' do
-    let(:user) { create(:user, booking_confirmations: true, reminders_24h: true, cancellation_notices: true) }
-
-    context 'with valid params' do
-      it 'updates preferences and returns the updated user' do
-        patch '/api/v1/auth/update_preferences',
-              params: { booking_confirmations: false, reminders_24h: false },
-              headers: auth_headers(user)
-
-        expect(response).to have_http_status(:ok)
-        expect(parsed_body['message']).to eq('Preferences updated successfully')
-        expect(parsed_body['user']['booking_confirmations']).to be false
-        expect(parsed_body['user']['reminders_24h']).to be false
-        expect(parsed_body['user']['cancellation_notices']).to be true
-      end
-    end
-
-    context 'without auth' do
-      it 'returns 401 Unauthorized' do
-        patch '/api/v1/auth/update_preferences', params: { booking_confirmations: false }
-
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
-  end
-
-  # -----------------------------------------------------------------
   # PATCH /api/v1/auth/profile
   # -----------------------------------------------------------------
   describe 'PATCH /api/v1/auth/profile' do
@@ -292,30 +263,25 @@ RSpec.describe 'Auth API', type: :request do
   end
 
   # -----------------------------------------------------------------
-  # User payload contract — the settings page reads these off /me
+  # User payload contract — the frontend reads these off /me
   # -----------------------------------------------------------------
   describe 'user payload' do
-    let(:user) do
-      create(:user, first_name: 'Ada', booking_confirmations: false,
-                    reminders_24h: true, cancellation_notices: false)
-    end
+    let(:user) { create(:user, first_name: 'Ada') }
 
-    it 'includes the email preference booleans on GET /me' do
+    it 'returns the profile fields on GET /me' do
       get '/api/v1/auth/me', headers: auth_headers(user)
 
-      body = parsed_body['user']
-      expect(body['booking_confirmations']).to be false
-      expect(body['reminders_24h']).to be true
-      expect(body['cancellation_notices']).to be false
+      expect(parsed_body['user'].keys).to match_array(
+        %w[id email first_name last_name state phone]
+      )
+      expect(parsed_body['user']['first_name']).to eq('Ada')
     end
 
-    it 'includes them on login too' do
+    it 'returns the same fields on login' do
       post '/api/v1/auth/login', params: { email: user.email, password: 'password123' }
 
-      expect(parsed_body['user']).to include(
-        'booking_confirmations' => false,
-        'reminders_24h' => true,
-        'cancellation_notices' => false
+      expect(parsed_body['user'].keys).to match_array(
+        %w[id email first_name last_name state phone]
       )
     end
 

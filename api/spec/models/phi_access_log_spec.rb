@@ -6,7 +6,7 @@ RSpec.describe PhiAccessLog, type: :model do
   subject(:log) do
     described_class.create!(
       user_id: 1,
-      resource_type: 'Appointment',
+      resource_type: 'Patient',
       resource_id: '42',
       action: 'view',
       session_id: 'sess_abc',
@@ -22,7 +22,7 @@ RSpec.describe PhiAccessLog, type: :model do
     it 'is valid with all required fields' do
       record = described_class.new(
         user_id: 1,
-        resource_type: 'Appointment',
+        resource_type: 'Patient',
         resource_id: '42',
         action: 'view',
         session_id: 'sess_abc',
@@ -39,20 +39,20 @@ RSpec.describe PhiAccessLog, type: :model do
     end
 
     it 'requires resource_id' do
-      record = described_class.new(resource_type: 'Appointment', action: 'view')
+      record = described_class.new(resource_type: 'Patient', action: 'view')
       expect(record).not_to be_valid
       expect(record.errors[:resource_id]).to include("can't be blank")
     end
 
     it 'requires action' do
-      record = described_class.new(resource_type: 'Appointment', resource_id: '1')
+      record = described_class.new(resource_type: 'Patient', resource_id: '1')
       expect(record).not_to be_valid
       expect(record.errors[:action]).to include("can't be blank")
     end
 
     it 'rejects invalid actions' do
       record = described_class.new(
-        resource_type: 'Appointment',
+        resource_type: 'Patient',
         resource_id: '1',
         action: 'hack'
       )
@@ -63,7 +63,7 @@ RSpec.describe PhiAccessLog, type: :model do
     it 'allows nil user_id (unauthenticated flows)' do
       record = described_class.create!(
         user_id: nil,
-        resource_type: 'SymptomAnalysis',
+        resource_type: 'PriorAuthorization',
         resource_id: 'req_123',
         action: 'create'
       )
@@ -87,10 +87,10 @@ RSpec.describe PhiAccessLog, type: :model do
   # -----------------------------------------------------------------
   describe 'scopes' do
     before do
-      described_class.create!(user_id: 1, resource_type: 'Appointment', resource_id: '10', action: 'view')
-      described_class.create!(user_id: 1, resource_type: 'Conversation', resource_id: '20', action: 'create')
-      described_class.create!(user_id: 2, resource_type: 'Appointment', resource_id: '10', action: 'update')
-      described_class.create!(user_id: nil, resource_type: 'SymptomAnalysis', resource_id: '30', action: 'create')
+      described_class.create!(user_id: 1, resource_type: 'Patient', resource_id: '10', action: 'view')
+      described_class.create!(user_id: 1, resource_type: 'ChartDocument', resource_id: '20', action: 'create')
+      described_class.create!(user_id: 2, resource_type: 'Patient', resource_id: '10', action: 'update')
+      described_class.create!(user_id: nil, resource_type: 'PriorAuthorization', resource_id: '30', action: 'create')
     end
 
     it '.for_user filters by user_id' do
@@ -98,7 +98,7 @@ RSpec.describe PhiAccessLog, type: :model do
     end
 
     it '.for_resource filters by type and id' do
-      expect(described_class.for_resource('Appointment', '10').count).to eq(2)
+      expect(described_class.for_resource('Patient', '10').count).to eq(2)
     end
 
     it '.by_action filters by action' do
@@ -109,7 +109,7 @@ RSpec.describe PhiAccessLog, type: :model do
       travel_to(1.hour.from_now) do
         described_class.create!(
           user_id: 1,
-          resource_type: 'Appointment',
+          resource_type: 'Patient',
           resource_id: '99',
           action: 'view'
         )

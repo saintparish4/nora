@@ -9,14 +9,8 @@ module Api
       skip_forgery_protection only: [ :login, :signup, :refresh, :csrf ]
 
       # Everything the frontend needs about the signed-in user, in one place so
-      # signup, login, me, and the two update actions can't drift apart. The
-      # email preference booleans belong here: the settings page reads them off
-      # this payload, and without them it silently displayed its own defaults
-      # instead of what the patient had saved.
-      USER_FIELDS = [
-        :id, :email, :first_name, :last_name, :state, :phone,
-        :booking_confirmations, :reminders_24h, :cancellation_notices
-      ].freeze
+      # signup, login, me, refresh, and profile updates can't drift apart.
+      USER_FIELDS = [ :id, :email, :first_name, :last_name, :state, :phone ].freeze
 
       # POST /api/v1/auth/signup
       def signup
@@ -131,19 +125,6 @@ module Api
         render json: { user: current_user.as_json(only: USER_FIELDS) }
       end
 
-      # PATCH /api/v1/auth/preferences
-      def update_preferences
-        if current_user.update(preference_params)
-          log_phi_access("User", current_user.id, :update)
-          render json: {
-            message: "Preferences updated successfully",
-            user: current_user.as_json(only: USER_FIELDS)
-          }
-        else
-          render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
-        end
-      end
-
       # PATCH /api/v1/auth/profile
       def update_profile
         if current_user.update(profile_params)
@@ -187,10 +168,6 @@ module Api
 
       def user_params
         params.permit(:email, :password, :password_confirmation, :first_name, :last_name, :state, :phone)
-      end
-
-      def preference_params
-        params.permit(:booking_confirmations, :reminders_24h, :cancellation_notices)
       end
 
       # Email is deliberately absent: changing it is an identity change that

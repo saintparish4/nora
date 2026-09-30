@@ -1,9 +1,6 @@
 class User < ApplicationRecord
     has_secure_password
-    has_many :appointments, foreign_key: "patient_id", dependent: :destroy
-    has_one :user_preference, dependent: :destroy
-    has_many :conversations, dependent: :nullify
-    has_many :risk_assessments, dependent: :destroy
+    has_many :refresh_tokens, dependent: :delete_all
 
     validates :email, presence: true, uniqueness: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -16,7 +13,7 @@ class User < ApplicationRecord
     # Rack::Attack throttles auth requests per IP. This throttles failed
     # attempts per *account*, which is the axis a distributed guessing attack
     # moves along. Deliberately short: long lockouts turn into a denial of
-    # service against the real patient.
+    # service against the real account holder.
     MAX_FAILED_LOGIN_ATTEMPTS = 5
     LOCKOUT_DURATION = 15.minutes
 

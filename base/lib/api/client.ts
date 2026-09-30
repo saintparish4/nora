@@ -80,8 +80,12 @@ export async function authFetch(
   const fullUrl = url.startsWith("http") ? url : `${API_URL}${url}`;
 
   const send = async (csrf: string | null): Promise<Response> => {
+    // A FormData body needs the browser to set a multipart boundary, so it
+    // must not be given a JSON Content-Type.
+    const isFormData =
+      typeof FormData !== "undefined" && fetchOptions.body instanceof FormData;
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...toHeaderRecord(fetchOptions.headers),
     };
     if (csrf) headers["X-CSRF-Token"] = csrf;
@@ -151,6 +155,22 @@ export function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
     return data as T;
   }
   return result.data;
+}
+
+/**
+ * Reads a JSON response, throwing an Error with the API's own message when the
+ * request failed. The API answers failures with `{ error }` or `{ errors: [] }`.
+ */
+export async function readJson<T = unknown>(res: Response, fallback = "Request failed"): Promise<T> {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const message =
+      (data as { error?: string }).error ||
+      (data as { errors?: string[] }).errors?.join(", ") ||
+      fallback;
+    throw new Error(message);
+  }
+  return data as T;
 }
 
 export { API_URL };

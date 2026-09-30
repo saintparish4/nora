@@ -3,6 +3,7 @@ import { UserSchema } from "./schemas";
 import type { AuthResponse, User } from "@/types";
 
 export interface SignupFields {
+  organization_name: string;
   email: string;
   password: string;
   first_name?: string;
@@ -12,11 +13,12 @@ export interface SignupFields {
 }
 
 export async function signup(fields: SignupFields): Promise<AuthResponse> {
-  const { email, password, first_name, last_name, state, phone } = fields;
+  const { organization_name, email, password, first_name, last_name, state, phone } = fields;
   const res = await authFetch("/api/v1/auth/signup", {
     method: "POST",
     skipSessionExpiredRedirect: true,
     body: JSON.stringify({
+      organization_name,
       email,
       password,
       password_confirmation: password,

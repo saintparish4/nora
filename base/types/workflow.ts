@@ -18,6 +18,8 @@ export type {
   PriorAuthorization,
   PriorAuthorizationDetail,
   WorkflowEvent,
+  QuestionAnswer,
+  QuestionHelp,
   Task,
   Today,
   Metrics,

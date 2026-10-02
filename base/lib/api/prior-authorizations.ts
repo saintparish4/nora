@@ -4,6 +4,7 @@ import {
   PageMetaSchema,
   PriorAuthorizationDetailSchema,
   PriorAuthorizationSchema,
+  QuestionHelpSchema,
   WorkflowEventSchema,
 } from './schemas';
 import type {
@@ -11,6 +12,7 @@ import type {
   PaStatus,
   PriorAuthorization,
   PriorAuthorizationDetail,
+  QuestionHelp,
   RequirementStatus,
   WorkflowEvent,
 } from '@/types';
@@ -143,4 +145,16 @@ export async function downloadPacket(id: number): Promise<void> {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Explains one question from the payer's form against this patient's chart.
+ * The answer is not saved; staff cite what they want to keep on a requirement.
+ */
+export async function askPayerQuestion(id: number, question: string): Promise<QuestionHelp> {
+  const data = await readJson<{ question_help: unknown }>(
+    await authFetch(`${BASE}/${id}/question_help`, post({ question })),
+    'Could not get help with that question'
+  );
+  return validateResponse(QuestionHelpSchema, data.question_help);
 }

@@ -162,6 +162,30 @@ export const EvidenceSchema = z.object({
   rejected_at: z.string().nullish(),
 });
 
+export const QuestionAnswerSchema = z.enum(['supported', 'mentioned_only', 'conflicting', 'not_documented']);
+
+/** One payer question explained against the chart. Never stored. */
+export const QuestionHelpSchema = z.object({
+  question: z.string(),
+  plain_language: z.string(),
+  what_counts: z.array(z.string()),
+  answer: QuestionAnswerSchema,
+  findings: z.array(
+    z.object({
+      document: z.object({ id: z.number(), title: z.string(), kind: z.string(), occurred_on: z.string().nullish() }),
+      excerpt: z.string(),
+      start_offset: z.number(),
+      end_offset: z.number(),
+      supports: z.boolean(),
+      note: z.string().nullish(),
+    })
+  ),
+  suggested_answer: z.string().nullish(),
+  ask_clinician: z.string().nullish(),
+  discarded_quotes: z.number(),
+  chart_truncated: z.boolean(),
+});
+
 export const RequirementSchema = z.object({
   id: z.number(),
   status: RequirementStatusSchema,
@@ -285,3 +309,5 @@ export type PriorAuthorizationDetail = z.infer<typeof PriorAuthorizationDetailSc
 export type WorkflowEvent = z.infer<typeof WorkflowEventSchema>;
 export type Task = z.infer<typeof TaskSchema>;
 export type Today = z.infer<typeof TodaySchema>;
+export type QuestionAnswer = z.infer<typeof QuestionAnswerSchema>;
+export type QuestionHelp = z.infer<typeof QuestionHelpSchema>;

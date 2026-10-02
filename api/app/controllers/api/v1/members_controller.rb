@@ -4,6 +4,7 @@ module Api
     # password and set roles; there is no self-service join.
     class MembersController < ApplicationController
       before_action :require_admin!, only: [ :create, :update ]
+      before_action :refuse_in_demo_practice!, only: [ :create, :update ]
       before_action :reject_unknown_role, only: [ :create, :update ]
 
       # GET /api/v1/organization/members

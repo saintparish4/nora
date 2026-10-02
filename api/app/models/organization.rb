@@ -13,6 +13,6 @@ class Organization < ApplicationRecord
   validates :timezone, presence: true
 
   def as_api_json
-    { id: id, name: name, npi: npi, timezone: timezone }
+    { id: id, name: name, npi: npi, timezone: timezone, demo: demo }
   end
 end

@@ -1,12 +1,13 @@
 module Api
   module V1
     class AuthController < ApplicationController
-      skip_before_action :authenticate_request, only: [ :login, :signup, :refresh, :csrf ]
+      skip_before_action :authenticate_request, only: [ :login, :signup, :refresh, :csrf, :demo ]
+      before_action :refuse_in_demo_practice!, only: [ :update_profile ]
 
-      # These three carry their own proof. refresh presents a secret an
-      # attacker cannot know; csrf is a safe read that hands the token out;
-      # login and signup have no session to protect yet.
-      skip_forgery_protection only: [ :login, :signup, :refresh, :csrf ]
+      # These carry their own proof. refresh presents a secret an attacker
+      # cannot know; csrf is a safe read that hands the token out; login,
+      # signup, and demo have no session to protect yet.
+      skip_forgery_protection only: [ :login, :signup, :refresh, :csrf, :demo ]
 
       # Everything the frontend needs about the signed-in user, in one place so
       # signup, login, me, refresh, and profile updates can't drift apart.
@@ -72,6 +73,27 @@ module Api
           user: self.class.user_json(user),
           message: "Logged in successfully"
         }.merge(api_client_credentials(user))
+      end
+
+      # POST /api/v1/auth/demo
+      #
+      # One-click sign-in to the shared demo practice, as its medical assistant
+      # or its clinician. No password: the practice holds synthetic data only,
+      # and Demo::Practice decides whether this server offers it at all. Browser
+      # sessions only; it never hands out API tokens.
+      def demo
+        user = Demo::Practice.user_for(params[:role].to_s)
+        if user.nil?
+          return render json: { error: "The demo practice is not available on this server." }, status: :not_found
+        end
+
+        reset_session
+        session[:user_id] = user.id
+
+        render json: {
+          user: self.class.user_json(user),
+          featured_prior_authorization_id: Demo::Practice.featured_request&.id
+        }
       end
 
       # GET /api/v1/auth/csrf

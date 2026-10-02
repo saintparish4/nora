@@ -94,6 +94,14 @@ class ApplicationController < ActionController::API
         render json: { error: "Only an admin can do that." }, status: :forbidden unless current_user&.admin?
     end
 
+    # The demo practice is shared by every visitor, so its accounts and
+    # settings stay as seeded for the next one.
+    def refuse_in_demo_practice!
+        return unless current_organization&.demo?
+
+        render json: { error: "The demo practice's staff and settings can't be changed." }, status: :forbidden
+    end
+
     # 1-based page number and a bounded page size from the query string.
     def pagination(default_per: 25, max_per: 100)
         page = [ params[:page].to_i, 1 ].max

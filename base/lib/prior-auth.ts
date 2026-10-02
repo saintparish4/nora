@@ -12,7 +12,7 @@ import type {
   Role,
 } from '@/types';
 
-export type Tone = 'neutral' | 'info' | 'warning' | 'success' | 'danger';
+export type Tone = 'neutral' | 'info' | 'accent' | 'warning' | 'success' | 'danger';
 
 export const PA_STATUS_LABELS: Record<PaStatus, string> = {
   draft: 'Draft',
@@ -33,7 +33,7 @@ export const PA_STATUS_TONES: Record<PaStatus, Tone> = {
   draft: 'neutral',
   gathering: 'info',
   needs_clarification: 'warning',
-  ready_for_review: 'info',
+  ready_for_review: 'accent',
   approved: 'success',
   submitted: 'info',
   payer_pending: 'info',
@@ -61,11 +61,22 @@ export const REQUIREMENT_TONES: Record<RequirementStatus, Tone> = {
 };
 
 export const TONE_CLASSES: Record<Tone, string> = {
-  neutral: 'bg-slate-100 text-slate-700 border-slate-200',
-  info: 'bg-sky-50 text-sky-800 border-sky-200',
-  warning: 'bg-amber-50 text-amber-800 border-amber-200',
-  success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  danger: 'bg-red-50 text-red-800 border-red-200',
+  neutral: 'bg-[#ece9e3] text-body',
+  info: 'bg-blue-tint text-blue-deep',
+  accent: 'bg-purple-tint text-purple-deep',
+  warning: 'bg-yellow-tint text-yellow-deep',
+  success: 'bg-green-tint text-green-deep',
+  danger: 'bg-orange-tint text-orange-deep',
+};
+
+/** The saturated colour for a tone, for dots and other small marks. */
+export const TONE_DOTS: Record<Tone, string> = {
+  neutral: 'bg-[#b9b4ac]',
+  info: 'bg-blue',
+  accent: 'bg-purple',
+  warning: 'bg-yellow',
+  success: 'bg-green',
+  danger: 'bg-orange',
 };
 
 export const EXTRACTED_BY_LABELS: Record<Evidence['extracted_by'], string> = {

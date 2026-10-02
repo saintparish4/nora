@@ -17,9 +17,8 @@ import { formatCalendarDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PageHeader, Panel, ErrorNote } from '@/components/workspace/page-header';
-
-const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm';
+import { NativeSelect } from '@/components/ui/native-select';
+import { PageHeader, Panel, Card, ErrorNote } from '@/components/workspace/page-header';
 
 function NewPriorAuthorization() {
   const router = useRouter();
@@ -72,7 +71,7 @@ function NewPriorAuthorization() {
   };
 
   return (
-    <div className="pb-16 max-w-3xl">
+    <div className="max-w-3xl">
       <PageHeader back={{ href: '/dashboard/prior-authorizations', label: 'Prior authorizations' }} title="New prior authorization" />
 
       <form onSubmit={submit} className="space-y-6">
@@ -80,10 +79,10 @@ function NewPriorAuthorization() {
           {patient ? (
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p>
-                <span className="font-medium">{patient.patient.full_name}</span>{' '}
+                <span className="font-medium text-ink">{patient.patient.full_name}</span>{' '}
                 <span className="text-sm text-muted-foreground">DOB {formatCalendarDate(patient.patient.date_of_birth)}</span>
               </p>
-              <Button type="button" size="sm" variant="ghost" onClick={() => { setPatientId(null); setCoverageId(''); }}>
+              <Button type="button" size="sm" variant="secondary" onClick={() => { setPatientId(null); setCoverageId(''); }}>
                 Change
               </Button>
             </div>
@@ -91,17 +90,22 @@ function NewPriorAuthorization() {
             <div className="space-y-3">
               <Label htmlFor="patient-search">Find a patient</Label>
               <Input id="patient-search" placeholder="Name or MRN" value={search} onChange={(e) => setSearch(e.target.value)} />
-              <ul className="max-h-60 overflow-y-auto divide-y divide-border">
+              <ul className="max-h-72 space-y-1.5 overflow-y-auto">
                 {patients?.patients.map((p) => (
                   <li key={p.id}>
-                    <button type="button" className="w-full text-left py-2 px-2 rounded hover:bg-muted" onClick={() => setPatientId(p.id)}>
-                      {p.full_name} <span className="text-sm text-muted-foreground">DOB {formatCalendarDate(p.date_of_birth)}</span>
+                    <button
+                      type="button"
+                      className="flex w-full flex-wrap items-baseline justify-between gap-x-3 rounded-2xl border border-border bg-white px-4 py-3 text-left transition-colors hover:border-input hover:bg-tile-strong/50"
+                      onClick={() => setPatientId(p.id)}
+                    >
+                      <span className="font-medium text-ink">{p.full_name}</span>
+                      <span className="text-sm text-muted-foreground">DOB {formatCalendarDate(p.date_of_birth)}</span>
                     </button>
                   </li>
                 ))}
               </ul>
               <p className="text-sm text-muted-foreground">
-                Not listed? <Link href="/dashboard/patients" className="underline underline-offset-4">Add the patient</Link> first.
+                Not listed? <Link href="/dashboard/patients" className="font-medium text-blue-deep hover:underline">Add the patient</Link> first.
               </p>
             </div>
           )}
@@ -112,15 +116,15 @@ function NewPriorAuthorization() {
             {coverages.length === 0 ? (
               <p className="text-sm">
                 This patient has no coverage on file.{' '}
-                <Link href={`/dashboard/patients/${patient.patient.id}`} className="underline underline-offset-4">Add it on the patient page.</Link>
+                <Link href={`/dashboard/patients/${patient.patient.id}`} className="font-medium text-blue-deep hover:underline">Add it on the patient page.</Link>
               </p>
             ) : (
-              <select aria-label="Coverage" required value={chosenCoverage ? String(chosenCoverage.id) : ''} onChange={(e) => setCoverageId(e.target.value)} className={selectClass}>
+              <NativeSelect aria-label="Coverage" required value={chosenCoverage ? String(chosenCoverage.id) : ''} onChange={(e) => setCoverageId(e.target.value)}>
                 <option value="">Choose coverage</option>
                 {coverages.map((c) => (
                   <option key={c.id} value={c.id}>{c.payer.name} · {c.plan.name} · Member {c.member_id}</option>
                 ))}
-              </select>
+              </NativeSelect>
             )}
           </Panel>
         )}
@@ -128,42 +132,44 @@ function NewPriorAuthorization() {
         {chosenCoverage && (
           <Panel title="3. Request">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="item">Medication</Label>
-                <select id="item" required value={item} onChange={(e) => setItem(e.target.value)} className={selectClass}>
+                <NativeSelect id="item" required value={item} onChange={(e) => setItem(e.target.value)}>
                   <option value="">Choose</option>
                   {library?.items.map((name) => <option key={name} value={name}>{name}</option>)}
-                </select>
+                </NativeSelect>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="requested_by">Ordering clinician</Label>
-                <select id="requested_by" value={requestedBy} onChange={(e) => setRequestedBy(e.target.value)} className={selectClass}>
+                <NativeSelect id="requested_by" value={requestedBy} onChange={(e) => setRequestedBy(e.target.value)}>
                   <option value="">Me</option>
                   {clinicians.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
             {template && (
-              <div className="mt-4 rounded-xl border border-border bg-muted/40 p-4 text-sm">
-                <p className="font-medium">{template.title}</p>
-                <p className="text-muted-foreground mt-1">
+              <Card className="mt-5 p-4 text-sm leading-relaxed">
+                <p className="font-medium text-ink">{template.title}</p>
+                <p className="mt-1 text-muted-foreground">
                   {template.generic ? `No ${chosenCoverage.payer.name}-specific criteria on file; using the common baseline.` : `${chosenCoverage.payer.name} criteria.`}
                 </p>
-                {template.notes && <p className="mt-2 text-amber-800">{template.notes}</p>}
-              </div>
+                {template.notes && <p className="mt-2 text-yellow-deep">{template.notes}</p>}
+              </Card>
             )}
 
-            <label className="mt-4 flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={extractNow} onChange={(e) => setExtractNow(e.target.checked)} />
+            <label className="mt-5 flex items-start gap-3 text-sm text-body">
+              <input type="checkbox" className="mt-0.5 size-4 accent-[#171717]" checked={extractNow} onChange={(e) => setExtractNow(e.target.checked)} />
+              <span>
               Find evidence in the chart right away ({patient?.chart_documents.length ?? 0} document
               {(patient?.chart_documents.length ?? 0) === 1 ? '' : 's'} on file)
+              </span>
             </label>
           </Panel>
         )}
 
         <ErrorNote error={error} />
-        <Button type="submit" disabled={saving || !chosenCoverage || !item}>
+        <Button type="submit" size="lg" disabled={saving || !chosenCoverage || !item}>
           {saving ? 'Creating…' : 'Create prior authorization'}
         </Button>
       </form>

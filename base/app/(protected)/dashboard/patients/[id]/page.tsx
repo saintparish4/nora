@@ -19,11 +19,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PageHeader, Panel, EmptyState, ErrorNote } from '@/components/workspace/page-header';
+import { NativeSelect } from '@/components/ui/native-select';
+import { PageHeader, Panel, Card, EmptyState, ErrorNote } from '@/components/workspace/page-header';
 import { PaStatusPill } from '@/components/workspace/status-pill';
 import { DocumentViewer } from '@/components/workspace/document-viewer';
-
-const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm';
 
 export default function PatientPage() {
   const params = useParams<{ id: string }>();
@@ -48,7 +47,7 @@ export default function PatientPage() {
   };
 
   return (
-    <div className="pb-16">
+    <div>
       <PageHeader
         back={{ href: '/dashboard/patients', label: 'Patients' }}
         title={patient.full_name}
@@ -63,15 +62,17 @@ export default function PatientPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title="Prior authorizations">
           {pas.length > 0 ? (
-            <ul className="divide-y divide-border">
+            <ul className="space-y-2">
               {pas.map((pa) => (
                 <li key={pa.id}>
-                  <Link href={`/dashboard/prior-authorizations/${pa.id}`} className="flex flex-wrap items-center justify-between gap-2 py-3 hover:bg-muted rounded-lg px-2 -mx-2">
-                    <span className="font-medium">{pa.item_name}</span>
-                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                      {pa.coverage.payer.name}
-                      <PaStatusPill status={pa.status} />
-                    </span>
+                  <Link href={`/dashboard/prior-authorizations/${pa.id}`} className="group block rounded-2xl">
+                    <Card className="flex flex-wrap items-center justify-between gap-2 p-4 transition-colors group-hover:border-input group-hover:bg-tile-strong/50">
+                      <span className="font-medium text-ink">{pa.item_name}</span>
+                      <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                        {pa.coverage.payer.name}
+                        <PaStatusPill status={pa.status} />
+                      </span>
+                    </Card>
                   </Link>
                 </li>
               ))}
@@ -83,11 +84,13 @@ export default function PatientPage() {
 
         <Panel title="Coverage">
           {coverages.length > 0 ? (
-            <ul className="divide-y divide-border mb-4">
+            <ul className="mb-5 space-y-2">
               {coverages.map((c) => (
-                <li key={c.id} className="py-2 text-sm">
-                  <p className="font-medium">{c.payer.name} · {c.plan.name}</p>
-                  <p className="text-muted-foreground">Member {c.member_id}{c.group_number ? ` · Group ${c.group_number}` : ''}</p>
+                <li key={c.id}>
+                  <Card className="p-4 text-sm">
+                    <p className="font-medium text-ink">{c.payer.name} · {c.plan.name}</p>
+                    <p className="mt-0.5 text-muted-foreground">Member {c.member_id}{c.group_number ? ` · Group ${c.group_number}` : ''}</p>
+                  </Card>
                 </li>
               ))}
             </ul>
@@ -98,26 +101,28 @@ export default function PatientPage() {
         </Panel>
 
         <Panel title="Chart documents" className="lg:col-span-2">
-          <p className="mb-4 text-sm text-muted-foreground">
+          <p className="mb-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Paste or upload the notes, problem list, and medication history the request relies on. Evidence quotes these
             documents word for word, so a saved document cannot be edited.
           </p>
           {documents.length > 0 && (
-            <ul className="divide-y divide-border mb-6">
+            <ul className="mb-6 space-y-2">
               {documents.map((doc) => (
-                <li key={doc.id} className="py-3 flex flex-col sm:flex-row sm:items-center gap-2">
+                <li key={doc.id}>
+                  <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">{doc.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-ink">{doc.title}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                       {doc.kind.replaceAll('_', ' ')}
                       {doc.occurred_on ? ` · ${formatCalendarDate(doc.occurred_on)}` : ''} · {doc.source === 'upload' ? 'uploaded' : 'pasted'} by{' '}
                       {doc.uploaded_by.name} · {doc.length.toLocaleString()} characters
                     </p>
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button size="sm" variant="outline" onClick={() => setViewing(doc.id)}>View</Button>
+                  <div className="flex shrink-0 gap-2">
+                    <Button size="sm" variant="secondary" onClick={() => setViewing(doc.id)}>View</Button>
                     <Button size="sm" variant="ghost" onClick={() => remove(doc.id)}>Delete</Button>
                   </div>
+                  </Card>
                 </li>
               ))}
             </ul>
@@ -158,10 +163,10 @@ function CoverageForm({ patientId, onAdded }: { patientId: number; onAdded: () =
   };
 
   return (
-    <form onSubmit={submit} className="grid gap-3 sm:grid-cols-3">
-      <div className="space-y-1 sm:col-span-3">
+    <form onSubmit={submit} className="grid gap-4 sm:grid-cols-3">
+      <div className="space-y-2 sm:col-span-3">
         <Label htmlFor="plan">Plan</Label>
-        <select id="plan" required value={planId} onChange={(e) => setPlanId(e.target.value)} className={selectClass}>
+        <NativeSelect id="plan" required value={planId} onChange={(e) => setPlanId(e.target.value)}>
           <option value="">Choose a plan</option>
           {payers?.map((payer) => (
             <optgroup key={payer.id} label={payer.name}>
@@ -172,13 +177,13 @@ function CoverageForm({ patientId, onAdded }: { patientId: number; onAdded: () =
               ))}
             </optgroup>
           ))}
-        </select>
+        </NativeSelect>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor="member_id">Member ID</Label>
         <Input id="member_id" required value={memberId} onChange={(e) => setMemberId(e.target.value)} />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor="group">Group (optional)</Label>
         <Input id="group" value={group} onChange={(e) => setGroup(e.target.value)} />
       </div>
@@ -226,39 +231,39 @@ function DocumentForm({ patientId, onAdded }: { patientId: number; onAdded: () =
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-xl border border-border p-4">
-      <div className="flex gap-2" role="tablist" aria-label="How to add the document">
+    <form onSubmit={submit} className="space-y-5 rounded-2xl border border-border bg-white p-5">
+      <div className="flex flex-wrap gap-2" role="tablist" aria-label="How to add the document">
         {(['paste', 'upload'] as const).map((m) => (
-          <Button key={m} type="button" size="sm" role="tab" aria-selected={mode === m} variant={mode === m ? 'default' : 'outline'} onClick={() => setMode(m)}>
+          <Button key={m} type="button" size="sm" role="tab" aria-selected={mode === m} variant={mode === m ? 'default' : 'secondary'} onClick={() => setMode(m)}>
             {m === 'paste' ? 'Paste text' : 'Upload PDF or text file'}
           </Button>
         ))}
       </div>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="space-y-1">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="space-y-2">
           <Label htmlFor="doc-kind">Type</Label>
-          <select id="doc-kind" value={kind} onChange={(e) => setKind(e.target.value as DocumentKind)} className={selectClass}>
+          <NativeSelect id="doc-kind" value={kind} onChange={(e) => setKind(e.target.value as DocumentKind)}>
             {DOCUMENT_KINDS.map((k) => (
               <option key={k} value={k}>{k.replaceAll('_', ' ')}</option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="doc-title">Title{mode === 'upload' ? ' (defaults to file name)' : ''}</Label>
           <Input id="doc-title" required={mode === 'paste'} value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="doc-date">Date of service</Label>
           <Input id="doc-date" type="date" value={occurredOn} onChange={(e) => setOccurredOn(e.target.value)} />
         </div>
       </div>
       {mode === 'paste' ? (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="doc-body">Text</Label>
           <Textarea id="doc-body" required rows={8} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Paste the note exactly as it appears in the chart." />
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="doc-file">File</Label>
           <Input id="doc-file" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           <p className="text-xs text-muted-foreground">Scanned PDFs without a text layer are not supported yet. Paste the text instead.</p>

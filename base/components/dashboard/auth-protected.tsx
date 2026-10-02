@@ -22,8 +22,13 @@ export function AuthProtected({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
-        <div className="text-lg">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center" role="status" suppressHydrationWarning>
+        <span className="sr-only">Loading...</span>
+        <span className="flex items-center gap-2" aria-hidden>
+          <span className="size-3 animate-pulse rounded-full bg-blue" />
+          <span className="size-3 animate-pulse rounded-full bg-yellow [animation-delay:150ms]" />
+          <span className="size-3 animate-pulse rounded-full bg-green [animation-delay:300ms]" />
+        </span>
       </div>
     );
   }

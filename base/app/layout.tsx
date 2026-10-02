@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Space_Grotesk } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth/context";
 import { Toaster } from "@/components/ui/sonner";
 
-const cormorantGaramond = Cormorant_Garamond({
-  variable: "--font-serif",
+// Headings: a geometric grotesk set tight. Body: Inter.
+const heading = DM_Sans({
+  variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
-  style: ["normal", "italic"],
+  weight: ["500", "600"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-sans",
+const body = Inter({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -30,11 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorantGaramond.variable} ${spaceGrotesk.variable} antialiased font-sans`}
+        className={`${heading.variable} ${body.variable} antialiased font-sans`}
       >
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-gray-900 focus:rounded-lg focus:shadow-lg focus:font-medium"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-full focus:font-medium"
         >
           Skip to main content
         </a>

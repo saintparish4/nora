@@ -9,7 +9,8 @@ import { formatCalendarDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PageHeader, Panel, EmptyState, ErrorNote } from '@/components/workspace/page-header';
+import { NativeSelect } from '@/components/ui/native-select';
+import { PageHeader, Panel, Card, EmptyState, ErrorNote } from '@/components/workspace/page-header';
 
 export default function PatientsPage() {
   const [q, setQ] = useState('');
@@ -18,10 +19,10 @@ export default function PatientsPage() {
   const { data, error, isLoading } = usePatients({ q, page });
 
   return (
-    <div className="pb-16">
+    <div>
       <PageHeader
         title="Patients"
-        actions={<Button onClick={() => setAdding((v) => !v)}>{adding ? 'Close' : 'Add patient'}</Button>}
+        actions={<Button variant={adding ? 'secondary' : 'default'} onClick={() => setAdding((v) => !v)}>{adding ? 'Close' : 'Add patient'}</Button>}
       />
 
       {adding && <NewPatientForm />}
@@ -44,23 +45,25 @@ export default function PatientsPage() {
           <p className="text-sm text-muted-foreground">Loading…</p>
         ) : data && data.patients.length > 0 ? (
           <>
-            <ul className="divide-y divide-border">
+            <ul className="space-y-2">
               {data.patients.map((p) => (
                 <li key={p.id}>
-                  <Link href={`/dashboard/patients/${p.id}`} className="flex flex-wrap justify-between gap-2 py-3 hover:bg-muted rounded-lg px-2 -mx-2">
-                    <span className="font-medium">{p.last_name}, {p.first_name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {p.mrn ? `MRN ${p.mrn} · ` : ''}DOB {formatCalendarDate(p.date_of_birth)}
-                    </span>
+                  <Link href={`/dashboard/patients/${p.id}`} className="group block rounded-2xl">
+                    <Card className="flex flex-wrap items-center justify-between gap-2 p-4 transition-colors group-hover:border-input group-hover:bg-tile-strong/50">
+                      <span className="font-medium text-ink">{p.last_name}, {p.first_name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {p.mrn ? `MRN ${p.mrn} · ` : ''}DOB {formatCalendarDate(p.date_of_birth)}
+                      </span>
+                    </Card>
                   </Link>
                 </li>
               ))}
             </ul>
             {data.meta.total_pages > 1 && (
               <div className="mt-4 flex items-center justify-between text-sm">
-                <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</Button>
+                <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</Button>
                 <span className="text-muted-foreground">Page {data.meta.page} of {data.meta.total_pages}</span>
-                <Button size="sm" variant="outline" disabled={page >= data.meta.total_pages} onClick={() => setPage(page + 1)}>Next</Button>
+                <Button size="sm" variant="secondary" disabled={page >= data.meta.total_pages} onClick={() => setPage(page + 1)}>Next</Button>
               </div>
             )}
           </>
@@ -117,13 +120,13 @@ function NewPatientForm() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="sex">Sex (optional)</Label>
-          <select id="sex" value={fields.sex} onChange={set('sex')} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm">
+          <NativeSelect id="sex" value={fields.sex} onChange={set('sex')}>
             <option value="">Not recorded</option>
             <option value="female">Female</option>
             <option value="male">Male</option>
             <option value="other">Other</option>
             <option value="unknown">Unknown</option>
-          </select>
+          </NativeSelect>
         </div>
         <div className="sm:col-span-2 space-y-3">
           <ErrorNote error={error} />

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/context';
 import { AuthShell, FormError } from '@/components/navigation/auth-shell';
+import { Notice } from '@/components/workspace/notice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,11 +37,11 @@ function LoginContent() {
   return (
     <AuthShell title="Sign in" subtitle="Pick up where your practice left off.">
       {sessionExpired && (
-        <p role="status" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <Notice tone="warning" role="status" className="mb-5">
           Your session has expired. Please sign in again to continue.
-        </p>
+        </Notice>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -50,14 +51,14 @@ function LoginContent() {
           <Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <FormError message={error} />
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>
 
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-6 rounded-xl border border-border bg-muted p-4 text-sm">
-          <p className="font-medium mb-1">Demo accounts (synthetic data)</p>
+        <div className="mt-6 rounded-2xl border border-border bg-white p-4 text-sm leading-relaxed">
+          <p className="mb-1 font-medium text-ink">Demo accounts (synthetic data)</p>
           <p className="text-muted-foreground">
             <code>demo@nora.com</code> (admin), <code>clinician@nora.com</code>, or <code>ma@nora.com</code>, password{' '}
             <code>password123</code>.
@@ -67,7 +68,7 @@ function LoginContent() {
 
       <p className="mt-8 text-sm text-muted-foreground">
         Just looking?{' '}
-        <Link href="/demo" className="font-medium text-foreground underline underline-offset-4">
+        <Link href="/demo" className="font-medium text-blue-deep hover:underline">
           Open the demo practice
         </Link>
       </p>
@@ -76,7 +77,7 @@ function LoginContent() {
         New practice?{' '}
         <Link
           href={returnUrl ? `/signup?returnUrl=${encodeURIComponent(returnUrl)}` : '/signup'}
-          className="font-medium text-foreground underline underline-offset-4"
+          className="font-medium text-blue-deep hover:underline"
         >
           Set up Nora
         </Link>

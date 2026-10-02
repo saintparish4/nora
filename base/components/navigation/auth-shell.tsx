@@ -1,6 +1,7 @@
 import { NoraLogo } from '@/components/navigation/nora-logo';
+import { Notice } from '@/components/workspace/notice';
 
-/** Centered card layout shared by the sign-in and sign-up pages. */
+/** Header and centred tile shared by the sign-in, sign-up, and demo pages. */
 export function AuthShell({ title, subtitle, children }: {
   title: string;
   subtitle: string;
@@ -8,14 +9,20 @@ export function AuthShell({ title, subtitle, children }: {
 }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        <NoraLogo href="/" className="font-serif text-2xl italic flex items-center gap-3 text-foreground no-underline" />
+      <header className="mx-auto flex h-[72px] max-w-[1024px] items-center px-5 sm:px-8">
+        <NoraLogo />
       </header>
-      <main id="main-content" className="px-4 sm:px-6 pb-16 flex justify-center">
-        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 sm:p-10">
-          <h1 className="font-serif text-3xl mb-1">{title}</h1>
-          <p className="text-muted-foreground mb-8">{subtitle}</p>
-          {children}
+      <main id="main-content" className="flex justify-center px-5 pt-6 pb-20 sm:px-8 sm:pt-12">
+        <div className="w-full max-w-[440px]">
+          {/* Three small shapes: the same vocabulary as the landing page. */}
+          <div className="mb-6 flex items-center gap-2" aria-hidden>
+            <span className="size-7 rounded-full bg-blue" />
+            <span className="size-7 rounded-[9px] bg-yellow rotate-12" />
+            <span className="h-7 w-11 rounded-full bg-green" />
+          </div>
+          <h1 className="text-[2.25rem] leading-[1.05] tracking-[-0.035em] sm:text-[2.75rem]">{title}</h1>
+          <p className="mt-3 mb-8 text-[1.0625rem] text-body">{subtitle}</p>
+          <div className="rounded-tile bg-tile p-6 sm:p-8">{children}</div>
         </div>
       </main>
     </div>
@@ -25,8 +32,8 @@ export function AuthShell({ title, subtitle, children }: {
 export function FormError({ message }: { message: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+    <Notice tone="danger" role="alert" className="mb-4">
       {message}
-    </p>
+    </Notice>
   );
 }

@@ -60,12 +60,12 @@ function DemoContent() {
   if (ownPractice && !opening && !error) {
     return (
       <AuthShell title="Open the demo?" subtitle="A practice with synthetic patients, ready to explore.">
-        <p className="mb-6 text-sm text-muted-foreground">
+        <p className="mb-6 text-[0.9375rem] leading-relaxed text-body">
           You are signed in to {ownPractice}. Opening the demo signs you out of it.
         </p>
         <div className="flex flex-wrap gap-3">
           <Button onClick={open}>Open the demo</Button>
-          <Button asChild variant="outline"><Link href="/dashboard">Back to {ownPractice}</Link></Button>
+          <Button asChild variant="secondary"><Link href="/dashboard">Back to {ownPractice}</Link></Button>
         </div>
       </AuthShell>
     );
@@ -78,12 +78,15 @@ function DemoContent() {
           <FormError message={error} />
           <div className="flex flex-wrap gap-3">
             <Button onClick={open}>Try again</Button>
-            <Button asChild variant="outline"><Link href="/login">Sign in instead</Link></Button>
+            <Button asChild variant="secondary"><Link href="/login">Sign in instead</Link></Button>
           </div>
         </>
       ) : (
-        <div role="status" className="space-y-3 text-sm text-muted-foreground">
-          <p>Signing you in as the practice&apos;s {ROLE_LABELS[role]}…</p>
+        <div role="status" className="space-y-3 text-[0.9375rem] leading-relaxed text-body">
+          <p className="flex items-center gap-3">
+            <span className="size-2.5 shrink-0 animate-pulse rounded-full bg-blue" aria-hidden />
+            Signing you in as the practice&apos;s {ROLE_LABELS[role]}…
+          </p>
           {slow && (
             <p>
               Still waking the demo server. It sleeps when nobody is using it, so the first visit can take up to a minute.

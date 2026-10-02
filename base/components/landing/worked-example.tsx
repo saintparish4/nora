@@ -1,13 +1,17 @@
-import Link from 'next/link';
+import { Check, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Pill } from '@/components/workspace/status-pill';
 import type { Tone } from '@/lib/prior-auth';
 
 /**
- * Three criteria from the request the demo opens on. The text is copied from
- * the demo seeds (api/db/seeds), so what a visitor reads here is what they
- * find when they open it. Keep the two in step.
+ * Three criteria from the request the demo opens on. The quotes and sources
+ * are copied word for word from the demo seeds (api/db/seeds), so what a
+ * visitor reads here is what they find when they open it; the criteria are
+ * shortened to fit. Keep the two in step.
  */
-const ROWS: Array<{
+const EXAMPLES: Array<{
+  label: string;
+  labelClass: string;
   criterion: string;
   quote: string;
   source: string;
@@ -16,87 +20,85 @@ const ROWS: Array<{
   outcome: string;
 }> = [
   {
-    criterion:
-      'BMI of 30 kg/m2 or greater, or 27 kg/m2 or greater with at least one weight-related comorbidity, documented within the last 6 months.',
+    label: 'Quoted from the chart',
+    labelClass: 'text-blue-deep',
+    criterion: 'BMI of 30 kg/m2 or greater, documented within the last 6 months.',
     quote: 'Assessment: Obesity, class I (E66.01), BMI 34.0-34.9 (Z68.34).',
-    source: 'Office visit, Aug 12, 2026',
+    source: 'Office visit · Aug 12, 2026',
     status: { label: 'Met', tone: 'success' },
     outcome: 'A rule found the sentence. The medical assistant read it in the note and verified it.',
   },
   {
-    criterion:
-      'A trial of at least one other weight-management medication is documented, with its outcome or the reason it was stopped.',
+    label: 'Verified by a person',
+    labelClass: 'text-green-deep',
+    criterion: 'A trial of one other weight-management medication, with its outcome or the reason it was stopped.',
     quote: 'Previously tried Saxenda (liraglutide) from 2025-06 to 2025-10; discontinued due to persistent nausea and vomiting.',
-    source: 'Office visit, Aug 12, 2026',
+    source: 'Office visit · Aug 12, 2026',
     status: { label: 'Met', tone: 'success' },
     outcome: 'The note names the drug, the dates, and why it was stopped. That is a documented trial.',
   },
   {
-    criterion:
-      'Trial of a second formulary weight-management alternative is documented, with outcome or reason for discontinuation.',
+    label: 'Gaps, flagged',
+    labelClass: 'text-orange-deep',
+    criterion: 'Trial of a second formulary alternative, with outcome or reason for discontinuation.',
     quote: 'Phentermine 37.5 mg tablets, quantity 30, filled 02/03/2025; no refills on record.',
-    source: 'Pharmacy fill history, Aug 12, 2026',
+    source: 'Pharmacy fill history · Aug 12, 2026',
     rejected: true,
     status: { label: 'Missing', tone: 'danger' },
-    outcome:
-      'A fill is not a trial. Nothing says how she responded or why it stopped, so staff rejected the excerpt and Nora opened a task for the ordering clinician.',
+    outcome: 'A fill is not a trial. Nothing says how she responded, so staff rejected the excerpt and Nora opened a task for the clinician.',
   },
 ];
 
 export function WorkedExample() {
   return (
-    <section aria-labelledby="example-heading" className="pb-16">
-      <div className="mb-6 max-w-2xl">
-        <h2 id="example-heading" className="font-serif text-3xl sm:text-4xl leading-tight mb-2">
-          One request, three criteria
-        </h2>
-        <p className="text-muted-foreground">
-          A synthetic patient, a request for Wegovy, and the criteria her plan applies. Nora quotes the chart for each
-          one. A person decides whether the quote is enough.
-        </p>
-      </div>
+    // Each example spans three shared rows (tile, label, outcome), so the labels
+    // line up across the row however long each quote runs.
+    <ol className="grid gap-x-5 gap-y-10 lg:grid-cols-3 lg:gap-y-0">
+      {EXAMPLES.map((example, i) => (
+        <li key={example.label} className="row-span-3 grid grid-rows-subgrid gap-y-0">
+          <div className="flex flex-col rounded-[2rem] bg-tile p-4 sm:p-5">
+            {/* The payer's question */}
+            <p className="px-2 pt-1 pb-4 text-[0.9375rem] leading-relaxed text-body">
+              <span className="mb-1 block text-xs font-semibold tracking-[0.04em] text-muted-foreground uppercase">
+                Criterion {[1, 5, 7][i]} · the payer asks
+              </span>
+              {example.criterion}
+            </p>
 
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="hidden md:grid grid-cols-[1fr_1.2fr_1fr] gap-6 border-b border-border px-6 py-3 text-xs uppercase tracking-[0.08em] text-muted-foreground">
-          <p>The payer asks</p>
-          <p>The chart says</p>
-          <p>What happens</p>
-        </div>
-        <ol className="divide-y divide-border">
-          {ROWS.map((row) => (
-            <li key={row.criterion} className="grid gap-4 px-6 py-6 md:grid-cols-[1fr_1.2fr_1fr] md:gap-6">
-              <p className="text-sm leading-relaxed">
-                <span className="md:hidden block text-xs uppercase tracking-[0.08em] text-muted-foreground mb-1">The payer asks</span>
-                {row.criterion}
-              </p>
-              <figure>
-                <blockquote
-                  className={`border-l-2 pl-3 text-sm leading-relaxed ${row.rejected ? 'border-red-300 text-muted-foreground line-through' : 'border-emerald-400'}`}
+            {/* The chart's answer, as Nora shows it */}
+            <figure className="flex flex-1 flex-col rounded-2xl border border-border bg-white p-4">
+              <blockquote
+                className={cn(
+                  'border-l-[3px] pl-3.5 text-[0.9375rem] leading-relaxed',
+                  example.rejected ? 'border-input text-muted-foreground line-through' : 'border-green text-ink'
+                )}
+              >
+                {example.quote}
+              </blockquote>
+              <figcaption className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
+                <span>{example.source}</span>
+                <Pill tone="neutral">Found by rule</Pill>
+                {example.rejected ? <Pill tone="danger">Rejected</Pill> : <Pill tone="success">Verified</Pill>}
+              </figcaption>
+              <div className="mt-auto flex items-center gap-2 pt-4">
+                <span
+                  className={cn(
+                    'flex size-6 items-center justify-center rounded-full text-white',
+                    example.rejected ? 'bg-orange' : 'bg-green'
+                  )}
+                  aria-hidden
                 >
-                  {row.quote}
-                </blockquote>
-                <figcaption className="mt-2 pl-3 text-xs text-muted-foreground">
-                  {row.source}
-                  {row.rejected && ' · rejected by staff'}
-                </figcaption>
-              </figure>
-              <div>
-                <Pill tone={row.status.tone}>{row.status.label}</Pill>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{row.outcome}</p>
+                  {example.rejected ? <X className="size-3.5" strokeWidth={3.5} /> : <Check className="size-3.5" strokeWidth={3.5} />}
+                </span>
+                <span className="text-sm font-medium text-ink">Requirement {example.status.label.toLowerCase()}</span>
               </div>
-            </li>
-          ))}
-        </ol>
-      </div>
+            </figure>
+          </div>
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        This is a request in the demo practice, not a mock-up of one.{' '}
-        <Link href="/demo" className="font-medium text-foreground underline underline-offset-4">
-          Open it
-        </Link>{' '}
-        to see the other four criteria, the note it came from, and the timeline. The criteria are illustrative, not any
-        payer&apos;s published policy.
-      </p>
-    </section>
+          <p className={cn('mt-4 px-2 text-[0.9375rem] font-semibold', example.labelClass)}>{example.label}</p>
+          <p className="mt-1 px-2 text-[0.9375rem] leading-relaxed text-body">{example.outcome}</p>
+        </li>
+      ))}
+    </ol>
   );
 }

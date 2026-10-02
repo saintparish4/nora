@@ -11,7 +11,7 @@ export default function Page() {
   }, [logout])
 
   return (
-    <div className="p-6">
+    <div className="flex min-h-screen items-center justify-center text-[0.9375rem] text-body">
       <p>Signing you out…</p>
     </div>
   )

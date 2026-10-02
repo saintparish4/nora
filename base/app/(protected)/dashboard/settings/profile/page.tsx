@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
@@ -9,6 +8,7 @@ import { updateProfile } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PageHeader, Panel } from '@/components/workspace/page-header';
 
 type ProfileForm = {
   first_name: string;
@@ -77,23 +77,15 @@ export default function ProfileSettingsPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-6 pb-16">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile</h1>
-          <p className="text-gray-600">
-            How we address you and reach you about appointments
-          </p>
-        </div>
-        <Button variant="outline" asChild>
-          <Link href="/dashboard/settings">Back to settings</Link>
-        </Button>
-      </div>
+    <div className="max-w-2xl">
+      <PageHeader
+        back={{ href: '/dashboard/settings', label: 'Settings' }}
+        title="Profile"
+        subtitle="Your name as it appears on requests, approvals, and the timeline."
+      />
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-surface-elevated rounded-2xl shadow-sm border border-border p-6 max-w-2xl"
-      >
+      <Panel>
+      <form onSubmit={handleSubmit}>
         <div className="grid gap-5 sm:grid-cols-2">
           {FIELDS.map(({ key, label, hint, inputMode, maxLength }) => {
             const id = key.replace(/_/g, '-');
@@ -111,7 +103,7 @@ export default function ProfileSettingsPage() {
                   aria-describedby={hint ? `${id}-hint` : undefined}
                 />
                 {hint && (
-                  <p id={`${id}-hint`} className="text-xs text-gray-500">
+                  <p id={`${id}-hint`} className="text-xs text-muted-foreground">
                     {hint}
                   </p>
                 )}
@@ -122,7 +114,7 @@ export default function ProfileSettingsPage() {
           <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" value={user?.email ?? ''} readOnly disabled />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Contact support to change the email on your account.
             </p>
           </div>
@@ -139,6 +131,7 @@ export default function ProfileSettingsPage() {
           )}
         </div>
       </form>
+      </Panel>
     </div>
   );
 }

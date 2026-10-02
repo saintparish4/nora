@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { updateTask } from '@/lib/api';
 import { formatCalendarDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/workspace/page-header';
 import { Pill } from '@/components/workspace/status-pill';
 import type { Task } from '@/types';
 
@@ -19,14 +20,14 @@ export function TaskList({ tasks, onChange }: { tasks: Task[]; onChange: () => v
   };
 
   return (
-    <ul className="divide-y divide-border">
+    <ul className="space-y-2">
       {tasks.map((task) => (
-        <li key={task.id} className="py-3 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm">{task.title}</p>
-            <p className="text-xs text-muted-foreground mt-1 flex flex-wrap items-center gap-2">
+        <li key={task.id}>
+          <Card className="p-4">
+            <p className="text-sm leading-relaxed text-ink">{task.title}</p>
+            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
               {task.subject.type === 'PriorAuthorization' && (
-                <Link href={`/dashboard/prior-authorizations/${task.subject.id}`} className="underline underline-offset-2">
+                <Link href={`/dashboard/prior-authorizations/${task.subject.id}`} className="font-medium text-blue-deep hover:underline">
                   {task.subject.patient_name} · {task.subject.item_name}
                 </Link>
               )}
@@ -35,13 +36,13 @@ export function TaskList({ tasks, onChange }: { tasks: Task[]; onChange: () => v
               {task.overdue && <Pill tone="danger">Overdue</Pill>}
               {task.status !== 'open' && <Pill tone="neutral">{task.status === 'done' ? 'Done' : 'Dismissed'}</Pill>}
             </p>
-          </div>
-          {task.status === 'open' && (
-            <div className="flex gap-2 shrink-0">
-              <Button size="sm" variant="outline" onClick={() => close(task, 'done')}>Done</Button>
-              <Button size="sm" variant="ghost" onClick={() => close(task, 'dismissed')}>Dismiss</Button>
-            </div>
-          )}
+            {task.status === 'open' && (
+              <div className="mt-3 flex gap-2">
+                <Button size="sm" variant="secondary" onClick={() => close(task, 'done')}>Done</Button>
+                <Button size="sm" variant="ghost" onClick={() => close(task, 'dismissed')}>Dismiss</Button>
+              </div>
+            )}
+          </Card>
         </li>
       ))}
     </ul>

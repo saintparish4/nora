@@ -1,24 +1,16 @@
 export default function DashboardLoading() {
   return (
-    <div className="py-8 animate-pulse" aria-label="Loading…" role="status">
-      {/* Page title skeleton */}
-      <div className="h-8 w-48 rounded-lg bg-[var(--ink-color)] opacity-[0.07] mb-2" />
-      <div className="h-4 w-72 rounded-lg bg-[var(--ink-color)] opacity-[0.05] mb-10" />
-
-      {/* Stat cards row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-[var(--radius-card)] border border-[var(--glass-border)] bg-white/20 h-28"
-          />
+    <div className="animate-pulse pt-2" aria-label="Loading" role="status">
+      <div className="mb-3 h-10 w-56 rounded-full bg-tile-strong" />
+      <div className="mb-10 h-4 w-72 rounded-full bg-tile-strong" />
+      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="h-28 rounded-tile bg-tile" />
         ))}
       </div>
-
-      {/* Content rows */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-[var(--radius-card)] border border-[var(--glass-border)] bg-white/20 h-64" />
-        <div className="rounded-[var(--radius-card)] border border-[var(--glass-border)] bg-white/20 h-64" />
+      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+        <div className="h-64 rounded-tile bg-tile" />
+        <div className="h-64 rounded-tile bg-tile" />
       </div>
     </div>
   );

@@ -18,11 +18,11 @@ export default function TasksPage() {
   const { data, error, isLoading, mutate } = useTasks(params);
 
   return (
-    <div className="pb-16 max-w-4xl">
+    <div className="max-w-3xl">
       <PageHeader title="Tasks" subtitle="Follow-ups Nora opened when a requirement was missing or unclear." />
-      <div className="mb-4 flex gap-2">
+      <div className="mb-5 flex gap-2">
         {VIEWS.map((v) => (
-          <Button key={v.key} size="sm" variant={view === v.key ? 'default' : 'outline'} onClick={() => setView(v.key)}>
+          <Button key={v.key} size="sm" variant={view === v.key ? 'default' : 'secondary'} aria-pressed={view === v.key} onClick={() => setView(v.key)}>
             {v.label}
           </Button>
         ))}

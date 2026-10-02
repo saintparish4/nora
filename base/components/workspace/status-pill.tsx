@@ -13,7 +13,7 @@ export function Pill({ tone, children, className }: { tone: Tone; children: Reac
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
+        'inline-flex items-center rounded-full px-2.5 py-[3px] text-xs font-medium leading-4 whitespace-nowrap',
         TONE_CLASSES[tone],
         className
       )}

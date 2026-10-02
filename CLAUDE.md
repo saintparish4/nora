@@ -166,6 +166,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Auth:** The browser uses an httpOnly session cookie plus CSRF token; API clients opt in to a JWT and rotating refresh token with `X-Client-Type: api`. See `docs/ARCHITECTURE.md`.
 - **Workflow status:** Never write `PriorAuthorization#status` directly. Go through `Authorizations::TransitionService` (the model rejects anything else) so every change has an event and an actor.
 - **AI:** Call models only through `Ai::Client`. Never log prompts or chart text. Use synthetic data only; production refuses model calls until `AI_PHI_BAA_CONFIRMED=true`.
+- **Demo practice:** The seeds build a shared synthetic practice with four requests in progress, played through the real services by `Demo::Story` (`db/seeds/demo_requests.rb`). `/demo` signs in to it with no password. It is off in production unless `DEMO_PRACTICE=true`. `bin/rails demo:reset` rebuilds it. The landing page's worked example (`base/components/landing/worked-example.tsx`) quotes the seeded chart text, so change the two together.
 - **Inflections:** `criterion`/`criteria` is irregular and `evidence` is uncountable (`config/initializers/inflections.rb`). `AuthorizationEvidence` still sets `table_name` explicitly because Rails pluralizes compound names.
 - **Brakeman exits non-zero on *warnings*, not just errors.** `bundle exec brakeman` exits 3 when it
   reports anything, and CI runs it unpiped, so the `Rails Tests` job fails. Two traps: piping it

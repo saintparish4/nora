@@ -47,6 +47,8 @@ task closes when the requirement is resolved.
 | Prompts are never logged; production refuses to call the model until `AI_PHI_BAA_CONFIRMED=true` | `Ai::Client` |
 | Events, approvals, and PHI access logs are append-only | `readonly!` guards on `WorkflowEvent`, `Approval`, `PhiAccessLog` |
 | Every query is scoped to the signed-in user's practice | `ApplicationController#current_organization` |
+| One-click demo sign-in reaches only the practice flagged `demo`, never as admin, and only where the demo is enabled | `Demo::Practice`, `AuthController#demo` |
+| The demo practice's members, settings, and profiles cannot be changed | `ApplicationController#refuse_in_demo_practice!` |
 
 ## Backend (`api/`)
 
@@ -54,7 +56,7 @@ task closes when the requirement is resolved.
 
 | Model | Purpose |
 |---|---|
-| `Organization` | A practice. Owns users, patients, documents, requests, tasks. |
+| `Organization` | A practice. Owns users, patients, documents, requests, tasks. `demo` marks the shared synthetic practice. |
 | `User` | Staff account with a role: `staff`, `clinician`, or `admin`. |
 | `Patient`, `PatientCoverage` | The subject of a workflow and their insurance. Patients never sign in. |
 | `Payer`, `InsurancePlan` | Reference data. |
@@ -75,14 +77,21 @@ task closes when the requirement is resolved.
 | `Authorizations::` | `CreateService`, `StartExtractionService`, `EvidenceExtractionService`, `QuoteLocator`, `RequirementReviewService`, `EvidenceReviewService`, `AddEvidenceService`, `StatusSyncService`, `TransitionService`, `ApproveService`, `ManualTransitionService`, `PacketService` |
 | `Tasks::` | `SyncService` |
 | `Workspace::` | `TodayService`, `MetricsService` |
+| `Demo::` | `Practice` (is the demo on, who signs in, which request opens first), `Story` (plays a seeded request through the real services at simulated times), `ResetService` |
 
 `ExtractEvidenceJob` runs extraction off the request cycle.
+
+**The demo practice.** `db/seeds/demo_requests.rb` plays four requests through
+the workflow services with `Demo::Story`, so seeded history obeys the same rules
+as live history; only the rule pass of extraction runs, so seeding never calls a
+model. `rails demo:reset` clears the practice and seeds it again. It is seeded
+everywhere but production, and in production only with `DEMO_PRACTICE=true`.
 
 **Routes** (all under `/api/v1/`)
 
 | Area | Routes |
 |---|---|
-| Auth | `auth/signup` (creates a practice), `login`, `logout`, `csrf`, `refresh`, `me`, `profile` |
+| Auth | `auth/signup` (creates a practice), `login`, `demo` (one-click sign-in to the demo practice), `logout`, `csrf`, `refresh`, `me`, `profile` |
 | Practice | `GET/PATCH organization`, `organization/members` (index, create, update) |
 | Console | `GET today`, `GET metrics`, `tasks` (index, update) |
 | Patients | `patients` (index, show, create, update), `patients/:id/coverages`, `patients/:id/chart_documents`, `chart_documents/:id` (show, destroy) |
@@ -91,10 +100,10 @@ task closes when the requirement is resolved.
 
 ## Frontend (`base/`)
 
-- **Routes:** `/`, `/login`, `/signup`, and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
+- **Routes:** `/`, `/login`, `/signup`, `/demo` (enters the demo practice), and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
 - **API client (`lib/api/`):** `client` (cookie session, CSRF, 401 handling, `readJson`), `auth`, `workspace`, `prior-authorizations`, `hooks` (SWR), `schemas` (Zod contracts, validated in development).
 - **Workflow display rules (`lib/prior-auth.ts`):** labels, tones, and the reasons an action is unavailable, mirrored from the server so the reason shows before a request is made.
-- **Components:** `ui/` (shadcn), `navigation/`, `dashboard/` (shell), `workspace/` (status pills, requirement panel, document viewer, task list).
+- **Components:** `ui/` (shadcn), `navigation/`, `landing/` (the worked example on `/`), `dashboard/` (shell, demo banner, per-account SWR cache), `workspace/` (status pills, requirement panel, document viewer, task list).
 
 ## Auth
 

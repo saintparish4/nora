@@ -4,7 +4,9 @@ module Ai
   #
   # Chart text is PHI. In production the client refuses to run until
   # AI_PHI_BAA_CONFIRMED=true records that a BAA with zero data retention is in
-  # place for the configured key. Prompts are never logged; token counts are.
+  # place for the configured key. The one exception is the demo practice,
+  # whose charts are synthetic and, in production, cannot be added to.
+  # Prompts are never logged; token counts are.
   class Client
     class Error < StandardError; end
     class NotConfigured < Error; end
@@ -16,9 +18,27 @@ module Ai
       ENV["OPENAI_API_KEY"].present?
     end
 
-    def initialize(model: ENV.fetch("OPENAI_MODEL", DEFAULT_MODEL), sdk: nil)
+    # Whether a model call for this practice would be allowed to run.
+    def self.available_for?(organization)
+      unavailable_reason(organization).nil?
+    end
+
+    # @return [String, nil] why a model call would be refused, in words a
+    #   person can act on, or nil when it would run
+    def self.unavailable_reason(organization)
+      return "OPENAI_API_KEY is not set." unless configured?
+      return nil unless Rails.env.production?
+      return nil if ENV["AI_PHI_BAA_CONFIRMED"] == "true" || organization&.demo?
+
+      "This server has no business associate agreement on record for the model provider."
+    end
+
+    # @param synthetic_data [Boolean] the caller vouches that everything it
+    #   will send is synthetic (the demo practice). Lifts the BAA requirement.
+    def initialize(model: ENV.fetch("OPENAI_MODEL", DEFAULT_MODEL), sdk: nil, synthetic_data: false)
       @model = model
       @sdk = sdk
+      @synthetic_data = synthetic_data
     end
 
     # @param system [String] instructions
@@ -63,7 +83,7 @@ module Ai
     def assert_allowed!
       raise NotConfigured, "OPENAI_API_KEY is not set" if @sdk.nil? && !self.class.configured?
       return unless Rails.env.production?
-      return if ENV["AI_PHI_BAA_CONFIRMED"] == "true"
+      return if ENV["AI_PHI_BAA_CONFIRMED"] == "true" || @synthetic_data
 
       raise NotConfigured, "AI_PHI_BAA_CONFIRMED must be true before chart text is sent to a model"
     end

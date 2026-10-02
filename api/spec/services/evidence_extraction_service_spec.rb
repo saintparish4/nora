@@ -37,6 +37,7 @@ RSpec.describe Authorizations::EvidenceExtractionService do
     allow(ai).to receive(:complete_json) { |args| prompt = args[:user]; { 'criteria' => [] } }
     run
     expect(prompt).to include('[PATIENT]', '[DOB]', '[MRN]')
+    expect(prompt).to include("Request date: #{pa.created_at.to_date.iso8601}")
     expect(prompt).not_to include('Rivera', '03/14/1984', pa.patient.mrn)
   end
 

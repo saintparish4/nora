@@ -16,8 +16,6 @@ module Authorizations
   # reviewed are left alone. Nothing is cached, so a failed run never sticks.
   class EvidenceExtractionService
     MAX_CHARS_PER_CALL = 60_000
-    MAX_RULE_HITS_PER_CRITERION = 5
-    BMI_PATTERN = /\bBMI\b[^0-9\n]{0,24}(\d{2}(?:\.\d{1,2})?)/i
 
     SYSTEM_PROMPT = <<~PROMPT.freeze
       You help medical office staff prepare a prior authorization request.
@@ -30,13 +28,13 @@ module Authorizations
       - Only quote text that is actually in the documents. If nothing documents the criterion, return no findings.
       - Do not judge medical necessity or whether the request should be approved. Only locate documentation.
       - Placeholders such as [PATIENT], [MRN], [DOB] and [MEMBER_ID] stand for redacted identifiers; quote them as they appear.
+      - Each document is headed with its date, and the request date is given. When a criterion sets a time limit ("within the last 6 months", "for at least 6 months before this request"), count from the request date and do not quote a passage that falls outside it.
+      - A medication that is only listed, filled, prescribed, or discussed is not a documented trial. Quote it for a trial criterion only when the passage also says how it went or why it was stopped.
 
       Respond with a JSON object:
       {"criteria": [{"criterion_id": "C1", "findings": [{"document_id": "D1", "quote": "...", "confidence": 0.0, "rationale": "..."}], "summary": "one sentence on what was found or what is missing"}]}
       confidence is 0 to 1: how directly the quote documents the criterion.
     PROMPT
-
-    Piece = Struct.new(:ref, :document, :redactor, :offset, :text)
 
     def self.call(...) = new(...).call
 
@@ -67,11 +65,12 @@ module Authorizations
         return @pa
       end
 
-      if @ai_client.nil? && !Ai::Client.configured?
-        # Development without a key: say so rather than failing. Requirements
-        # with no rule hits are unclear, not missing, because nobody looked.
-        finish!(requirements, ai_failed: true, succeeded: true,
-                              error: "Model pass skipped because OPENAI_API_KEY is not set. Only rule-based evidence was found.")
+      if @ai_client.nil? && !Ai::Client.available_for?(@pa.organization)
+        # No key, or a production server with no BAA on record: say so rather
+        # than failing. Requirements with no rule hits are unclear, not
+        # missing, because nobody looked.
+        finish!(requirements, ai_failed: true, succeeded: true, error: "Model pass skipped: #{Ai::Client.unavailable_reason(@pa.organization)} " \
+                                                                       "Only rule-based evidence was found.")
         return @pa
       end
 
@@ -91,120 +90,34 @@ module Authorizations
     # --- Pass 1: rules ------------------------------------------------------
 
     def rule_pass(requirements, documents)
+      rules = RulePass.new(documents: documents, request_date: @pa.created_at.to_date)
       requirements.each do |requirement|
-        criterion = requirement.policy_criterion
-        hits = []
-
-        if (min = criterion.bmi_min)
-          documents.each do |doc|
-            doc.body.to_enum(:scan, BMI_PATTERN).each do
-              m = Regexp.last_match
-              next unless m[1].to_f >= min
-
-              hits << [ doc, *sentence_range(doc.body, m.begin(0)), 0.9, "Documented BMI #{m[1]} meets the #{min} threshold." ]
-            end
-          end
-        end
-
-        criterion.terms.each do |term|
-          pattern = /(?<![\w.])#{Regexp.escape(term)}(?![\w])/i
-          documents.each do |doc|
-            doc.body.to_enum(:scan, pattern).each do
-              m = Regexp.last_match
-              hits << [ doc, *sentence_range(doc.body, m.begin(0)), 0.6, "Mentions \"#{term}\"." ]
-            end
-          end
-        end
-
-        hits.uniq { |h| [ h[0].id, h[1], h[2] ] }.first(MAX_RULE_HITS_PER_CRITERION).each do |doc, start, finish, confidence, rationale|
-          add_evidence(requirement, doc, start, finish, source: "rule", confidence: confidence, rationale: rationale)
+        rules.hits_for(requirement.policy_criterion).each do |hit|
+          add_evidence(requirement, hit.document, hit.start, hit.finish, source: "rule", confidence: hit.confidence, rationale: hit.rationale)
         end
       end
-    end
-
-    # The sentence around `index`: back to the previous sentence end or line
-    # break, forward to the next one. Offsets are into the original body.
-    def sentence_range(body, index)
-      start = body.rindex(/[.!?]\s|\n/, index)
-      start = start ? start + 1 : 0
-      start += 1 while start < body.length && body[start].match?(/\s/)
-
-      finish = body.index(/[.!?](\s|\z)|\n/, index)
-      finish = finish ? finish + (body[finish] == "\n" ? 0 : 1) : body.length
-      finish -= 1 while finish > start && body[finish - 1].match?(/\s/)
-      [ start, finish ]
     end
 
     # --- Pass 2: model ------------------------------------------------------
 
     def ai_pass(requirements, documents)
       criteria = requirements.map.with_index(1) { |req, i| [ "C#{i}", req ] }.to_h
-      pieces = build_pieces(documents)
+      chart = RedactedChart.new(documents, patient: @pa.patient, coverage: @pa.patient_coverage, max_chars: MAX_CHARS_PER_CALL)
 
-      chunk_pieces(pieces).each do |chunk|
+      chart.chunks.each do |chunk|
         response = ai_client.complete_json(system: SYSTEM_PROMPT, user: user_prompt(criteria, chunk), max_tokens: 4_000)
         apply_response(response, criteria, chunk)
       end
     end
 
     def ai_client
-      @ai_client ||= Ai::Client.new
-    end
-
-    def build_pieces(documents)
-      coverage = @pa.patient_coverage
-      counter = 0
-      documents.flat_map do |doc|
-        redactor = Chart::Redactor.new(doc.body, patient: @pa.patient, coverage: coverage)
-        split_text(redactor.text).map do |offset, text|
-          counter += 1
-          Piece.new("D#{counter}", doc, redactor, offset, text)
-        end
-      end
-    end
-
-    # Split an over-long document on paragraph breaks so no piece exceeds the
-    # per-call budget. Returns [offset, text] pairs.
-    def split_text(text)
-      return [ [ 0, text ] ] if text.length <= MAX_CHARS_PER_CALL
-
-      parts = []
-      start = 0
-      while start < text.length
-        finish = [ start + MAX_CHARS_PER_CALL, text.length ].min
-        if finish < text.length
-          brk = text.rindex("\n\n", finish) || text.rindex("\n", finish)
-          finish = brk + 1 if brk && brk > start
-        end
-        parts << [ start, text[start...finish] ]
-        start = finish
-      end
-      parts
-    end
-
-    def chunk_pieces(pieces)
-      chunks = [ [] ]
-      size = 0
-      pieces.each do |piece|
-        if size + piece.text.length > MAX_CHARS_PER_CALL && chunks.last.any?
-          chunks << []
-          size = 0
-        end
-        chunks.last << piece
-        size += piece.text.length
-      end
-      chunks
+      @ai_client ||= Ai::Client.new(synthetic_data: @pa.organization.demo?)
     end
 
     def user_prompt(criteria, chunk)
-      lines = [ "Item requested: #{@pa.item_name}", "", "CRITERIA" ]
+      lines = [ "Item requested: #{@pa.item_name}", "Request date: #{@pa.created_at.to_date.iso8601}", "", "CRITERIA" ]
       criteria.each { |ref, req| lines << "#{ref}: #{req.policy_criterion.text}" }
-      lines << "" << "DOCUMENTS"
-      chunk.each do |piece|
-        doc = piece.document
-        lines << "=== #{piece.ref} | #{doc.kind} | #{doc.occurred_on || 'undated'} | #{doc.title} ==="
-        lines << piece.text << ""
-      end
+      lines << "" << "DOCUMENTS" << RedactedChart.render(chunk)
       lines.join("\n")
     end
 
@@ -221,17 +134,15 @@ module Authorizations
         Array(entry["findings"]).each do |finding|
           next unless finding.is_a?(Hash)
 
-          piece = chunk.find { |p| p.ref == finding["document_id"].to_s }
-          range = piece && QuoteLocator.locate(piece.text, finding["quote"])
-          original = range && piece.redactor.original_range(piece.offset + range[0], piece.offset + range[1])
-          if original.nil?
+          document, start, finish = RedactedChart.locate(chunk, finding["document_id"], finding["quote"])
+          if document.nil?
             @stats[:unverifiable_quotes] += 1
             next
           end
 
           confidence = finding["confidence"].to_f.clamp(0.0, 1.0)
-          add_evidence(requirement, piece.document, *original, source: "ai", confidence: confidence,
-                                                               rationale: finding["rationale"].to_s.strip.truncate(500).presence)
+          add_evidence(requirement, document, start, finish, source: "ai", confidence: confidence,
+                                                             rationale: finding["rationale"].to_s.strip.truncate(500).presence)
         end
       end
     end

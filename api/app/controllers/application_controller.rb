@@ -102,6 +102,15 @@ class ApplicationController < ActionController::API
         render json: { error: "The demo practice's staff and settings can't be changed." }, status: :forbidden
     end
 
+    # In production the demo practice may send chart text to a model with no
+    # BAA, on the grounds that its charts are synthetic. That only holds while
+    # nobody can add to them, so patients and chart text are fixed there.
+    def keep_demo_chart_synthetic!
+        return unless Rails.env.production? && current_organization&.demo?
+
+        render json: { error: "The demo practice's patients and charts are fixed. Set up your own practice to add more." }, status: :forbidden
+    end
+
     # 1-based page number and a bounded page size from the query string.
     def pagination(default_per: 25, max_per: 100)
         page = [ params[:page].to_i, 1 ].max

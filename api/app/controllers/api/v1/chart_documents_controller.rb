@@ -3,6 +3,8 @@ module Api
     # Chart text for a patient. Pasted text arrives as JSON; files arrive as
     # multipart and are reduced to text before anything is stored.
     class ChartDocumentsController < ApplicationController
+      before_action :keep_demo_chart_synthetic!, only: [ :create ]
+
       # POST /api/v1/patients/:patient_id/chart_documents
       def create
         patient = current_organization.patients.find(params[:patient_id])

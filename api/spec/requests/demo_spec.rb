@@ -90,4 +90,26 @@ RSpec.describe 'Demo practice API', type: :request do
       expect(parsed_body['organization']['demo']).to be(true)
     end
   end
+
+  describe 'the fixed chart in production' do
+    let(:organization) { create(:organization, demo: true) }
+    let(:staff) { create(:user, organization: organization) }
+    let(:patient) { create(:patient, organization: organization) }
+
+    it 'refuses new chart text and new patients, so the demo stays synthetic' do
+      allow(Rails.env).to receive(:production?).and_return(true)
+
+      post "/api/v1/patients/#{patient.id}/chart_documents", headers: auth_headers(staff), params: { kind: 'office_note', title: 'x', body: 'real text' }
+      expect(response).to have_http_status(:forbidden)
+
+      post '/api/v1/patients', headers: auth_headers(staff), params: { first_name: 'A', last_name: 'B', date_of_birth: '1990-01-01' }
+      expect(response).to have_http_status(:forbidden)
+      expect(ChartDocument.count).to eq(0)
+    end
+
+    it 'allows both outside production' do
+      post "/api/v1/patients/#{patient.id}/chart_documents", headers: auth_headers(staff), params: { kind: 'office_note', title: 'x', body: 'synthetic text' }
+      expect(response).to have_http_status(:created)
+    end
+  end
 end

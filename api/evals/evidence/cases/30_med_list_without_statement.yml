@@ -1,0 +1,32 @@
+id: med_list_without_statement
+tags: [concurrent_glp1, multi_document]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700623750}
+patient: {first_name: Wendell, last_name: Achebe, date_of_birth: 1971-03-17, sex: male, mrn: EV-1030}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-08-29
+    body: |
+      Wendell Achebe.
+
+      BMI 34.0.
+
+      Assessment: obesity (E66.9), hypertension.
+
+      Reduced-calorie diet and daily walking program since January 2026.
+
+      Orlistat 02/2025 to 05/2025, stopped for abdominal cramping.
+  - title: Medication list
+    kind: medication_history
+    occurred_on: 2026-08-29
+    body: |
+      Current medications: hydrochlorothiazide 25 mg daily, sertraline 100 mg daily, vitamin D 2000 IU daily.
+expected:
+  1: {label: supported, support: ["BMI 34.0."]}
+  2: {label: supported, support: ["Assessment: obesity (E66.9), hypertension."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Reduced-calorie diet and daily walking program since January 2026."]}
+  5: {label: supported, support: ["Orlistat 02/2025 to 05/2025, stopped for abdominal cramping."]}
+  6: {label: ambiguous, why: "Open question for the owner: a complete current medication list with no GLP-1 on it, but no statement. Excluded from scoring until decided."}

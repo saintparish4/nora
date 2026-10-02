@@ -1,0 +1,31 @@
+id: weight_without_bmi
+tags: [stale_bmi]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61006693}
+patient: {first_name: Graciela, last_name: Montoya, date_of_birth: 1981-12-28, sex: female, mrn: EV-1013}
+documents:
+  - title: Follow-up
+    kind: office_note
+    occurred_on: 2026-08-02
+    body: |
+      Graciela Montoya, follow-up.
+
+      Height 5 ft 2 in. Weight 198 lb, up 6 lb since spring.
+
+      Assessment: obesity, class II (E66.01).
+
+      She has kept a 1,500-calorie eating plan and attends a twice-weekly exercise class through the community center, both since December 2025.
+
+      Saxenda was used 03/2025 to 07/2025 and stopped because of persistent nausea.
+
+      No other GLP-1 agonist is being taken.
+
+      Plan: Wegovy.
+expected:
+  1: {label: unsupported, traps: ["Height 5 ft 2 in.", "Weight 198 lb, up 6 lb since spring."], why: "Height and weight are recorded but no BMI is stated. The criterion asks for a documented BMI."}
+  2: {label: supported, support: ["Assessment: obesity, class II (E66.01)."]}
+  3: {label: not_applicable, why: "No BMI is documented."}
+  4: {label: supported, support: ["She has kept a 1,500-calorie eating plan and attends a twice-weekly exercise class through the community center, both since December 2025."]}
+  5: {label: supported, support: ["Saxenda was used 03/2025 to 07/2025 and stopped because of persistent nausea"], why: "Saxenda is a different drug from the Wegovy being requested."}
+  6: {label: supported, support: ["No other GLP-1 agonist is being taken."]}

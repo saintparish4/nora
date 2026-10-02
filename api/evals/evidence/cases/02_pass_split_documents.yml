@@ -1,0 +1,37 @@
+id: pass_split_documents
+tags: [clean_pass, multi_document]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700559013}
+patient: {first_name: Kenji, last_name: Alvarado, date_of_birth: 1983-10-04, sex: male, mrn: EV-1002}
+documents:
+  - title: Medication visit
+    kind: office_note
+    occurred_on: 2026-09-05
+    body: |
+      Kenji Alvarado returns to discuss medication for weight.
+
+      BMI today is 41.2 (weight 287 lb).
+
+      For the past ten months he has kept a 1,800-calorie meal plan set by our dietitian and walks on a treadmill 40 minutes, five days a week.
+
+      Assessment and plan: Start Saxenda once authorized. No other GLP-1 agonist will be used while on Saxenda.
+  - title: Problem list
+    kind: problem_list
+    occurred_on: 2026-09-05
+    body: |
+      1. Morbid obesity (E66.01)
+      2. Gastroesophageal reflux disease (K21.9)
+  - title: Medication history
+    kind: medication_history
+    occurred_on: 2026-09-05
+    body: |
+      Active: omeprazole 20 mg daily.
+      Past: Qsymia 7.5/46 mg, 11/2024 to 03/2025, discontinued for paresthesias and insomnia.
+expected:
+  1: {label: supported, support: ["BMI today is 41.2"]}
+  2: {label: supported, support: ["Morbid obesity (E66.01)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["For the past ten months he has kept a 1,800-calorie meal plan set by our dietitian and walks on a treadmill"]}
+  5: {label: supported, support: ["Qsymia 7.5/46 mg, 11/2024 to 03/2025, discontinued for paresthesias and insomnia"]}
+  6: {label: supported, support: ["No other GLP-1 agonist will be used while on Saxenda."]}

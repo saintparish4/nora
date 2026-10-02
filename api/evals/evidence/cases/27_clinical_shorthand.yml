@@ -1,0 +1,31 @@
+id: clinical_shorthand
+tags: [wording_variant]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700612649}
+patient: {first_name: Lorenzo, last_name: Baptiste, date_of_birth: 1968-10-10, sex: male, mrn: EV-1027}
+documents:
+  - title: Wt mgmt f/u
+    kind: office_note
+    occurred_on: 2026-08-11
+    body: |
+      Pt: Lorenzo Baptiste. Wt mgmt f/u.
+
+      Ht 70 in, wt 251 lb, BMI 36.
+
+      Dx: obesity class II; HTN; HLD.
+
+      Pt on 1,600 kcal/day plan w/ RD since 12/2025 + PT-guided exercise 3x/wk since 12/2025.
+
+      Prior tx: phentermine x 12 wk (2024), d/c'd d/t palpitations.
+
+      Denies use of GLP-1 RA.
+
+      Plan: PA for Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 36."]}
+  2: {label: supported, support: ["Dx: obesity class II"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Pt on 1,600 kcal/day plan w/ RD since 12/2025 + PT-guided exercise 3x/wk since 12/2025."]}
+  5: {label: supported, support: ["Prior tx: phentermine x 12 wk (2024), d/c'd d/t palpitations."]}
+  6: {label: supported, support: ["Denies use of GLP-1 RA."]}

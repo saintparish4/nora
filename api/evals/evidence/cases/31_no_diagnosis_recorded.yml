@@ -1,0 +1,31 @@
+id: no_diagnosis_recorded
+tags: [missing_diagnosis]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230140815}
+patient: {first_name: Odalys, last_name: Brennan-Wu, date_of_birth: 1984-08-01, sex: female, mrn: EV-1031}
+documents:
+  - title: Weight gain visit
+    kind: office_note
+    occurred_on: 2026-09-08
+    body: |
+      Odalys Brennan-Wu.
+
+      Reason for visit: weight gain over two years.
+
+      Vitals: BMI 31.8, BP 122/78.
+
+      Assessment: weight gain, fatigue; thyroid panel ordered.
+
+      She has followed a reduced-calorie diet and a home exercise video program since January 2026.
+
+      Contrave 06/2025 to 10/2025: stopped for constipation, lost 2 lb.
+
+      Plan: Wegovy request.
+expected:
+  1: {label: supported, support: ["Vitals: BMI 31.8, BP 122/78."]}
+  2: {label: unsupported, traps: ["Reason for visit: weight gain over two years.", "Assessment: weight gain, fatigue; thyroid panel ordered."], why: "The BMI is in the obesity range, but no diagnosis of obesity or overweight is written."}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["She has followed a reduced-calorie diet and a home exercise video program since January 2026."]}
+  5: {label: supported, support: ["Contrave 06/2025 to 10/2025: stopped for constipation, lost 2 lb."]}
+  6: {label: unsupported, why: "Nothing about GLP-1 medications, and no medication list."}

@@ -1,0 +1,33 @@
+id: weight_goal_no_workup
+tags: [nothing_relevant]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230125593}
+patient: {first_name: Yolanda, last_name: Prescott, date_of_birth: 1976-11-08, sex: female, mrn: EV-1022}
+documents:
+  - title: Annual physical
+    kind: office_note
+    occurred_on: 2026-07-30
+    body: |
+      Yolanda Prescott, annual physical.
+
+      She would like to lose weight before her daughter's wedding.
+
+      Weight 171 lb; BMI not calculated today.
+
+      Blood pressure 118/74.
+
+      She exercises occasionally and is trying to eat better. No diet program.
+
+      Medications: levothyroxine 75 mcg daily.
+
+      She saw an advertisement for Zepbound and asks whether insurance covers it.
+
+      Plan: return for a weight management visit with vitals and labs.
+expected:
+  1: {label: unsupported, traps: ["Weight 171 lb; BMI not calculated today."], why: "The note says the BMI was not calculated."}
+  2: {label: unsupported, traps: ["She would like to lose weight before her daughter's wedding."], why: "Wanting to lose weight is not a diagnosis."}
+  3: {label: not_applicable, why: "No BMI is documented."}
+  4: {label: unsupported, traps: ["She exercises occasionally and is trying to eat better.", "No diet program."], why: "No program, no duration."}
+  5: {label: unsupported, traps: ["She saw an advertisement for Zepbound and asks whether insurance covers it."], why: "The only drug named is the one requested."}
+  6: {label: ambiguous, why: "Open question for the owner: the medication list shows no GLP-1, but nothing states it. Excluded from scoring until decided."}

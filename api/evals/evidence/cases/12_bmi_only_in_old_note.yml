@@ -1,0 +1,40 @@
+id: bmi_only_in_old_note
+tags: [stale_bmi, multi_document]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230095178}
+patient: {first_name: Vincent, last_name: Adeyemi-Clarke, date_of_birth: 1972-06-18, sex: male, mrn: EV-1012}
+documents:
+  - title: Annual visit
+    kind: office_note
+    occurred_on: 2025-06-10
+    body: |
+      Annual visit.
+
+      Weight 221 lb, BMI 34.8.
+
+      Assessment: obesity.
+  - title: Medication visit (telehealth)
+    kind: office_note
+    occurred_on: 2026-09-09
+    body: |
+      Vincent Adeyemi-Clarke, medication visit.
+
+      No vitals taken today (telehealth).
+
+      He continues the reduced-calorie diet and home exercise routine he began in January 2026.
+
+      Problem: obesity (E66.9).
+
+      Contrave 10/2025 to 02/2026, stopped for headaches without meaningful weight loss.
+
+      He is not taking a GLP-1 receptor agonist.
+
+      Plan: request Zepbound.
+expected:
+  1: {label: unsupported, traps: ["Weight 221 lb, BMI 34.8."], why: "The only BMI on file is from June 2025, more than six months before the request."}
+  2: {label: supported, support: ["Assessment: obesity.", "Problem: obesity (E66.9)."], why: "The diagnosis criterion has no time limit, so the older note counts too."}
+  3: {label: not_applicable, why: "There is no BMI within the last six months to place him in the 27 to 29.9 range."}
+  4: {label: supported, support: ["He continues the reduced-calorie diet and home exercise routine he began in January 2026."]}
+  5: {label: supported, support: ["Contrave 10/2025 to 02/2026, stopped for headaches without meaningful weight loss"]}
+  6: {label: supported, support: ["He is not taking a GLP-1 receptor agonist."]}

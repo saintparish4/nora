@@ -1,0 +1,34 @@
+id: uhc_one_trial_only
+tags: [second_trial]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: UnitedHealthcare, plan: Navigate, member_id: UHC900562319}
+patient: {first_name: Sunniva, last_name: Aldaine, date_of_birth: 1987-02-16, sex: female, mrn: EV-1024}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-09-04
+    body: |
+      Sunniva Aldaine.
+
+      BMI 36.0.
+
+      Obesity, class II (E66.01).
+
+      Contrave was taken 04/2025 to 08/2025 and stopped for nausea and dizziness.
+
+      No other weight-loss medication has been tried.
+
+      Low-calorie meal plan and physical activity (yoga and walking) since November 2025, reviewed monthly.
+
+      She is not taking a GLP-1 receptor agonist.
+
+      Plan: Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 36.0."]}
+  2: {label: supported, support: ["Obesity, class II (E66.01)."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Low-calorie meal plan and physical activity (yoga and walking) since November 2025, reviewed monthly."]}
+  5: {label: supported, support: ["Contrave was taken 04/2025 to 08/2025 and stopped for nausea and dizziness."]}
+  6: {label: supported, support: ["She is not taking a GLP-1 receptor agonist."]}
+  7: {label: unsupported, traps: ["Contrave was taken 04/2025 to 08/2025 and stopped for nausea and dizziness.", "No other weight-loss medication has been tried."], why: "Only one trial is documented, and the note says there was no other."}

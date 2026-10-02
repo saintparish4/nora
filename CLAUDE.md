@@ -64,6 +64,8 @@ make test-frontend
 # or: cd base && pnpm test
 ```
 
+**Evidence eval:** `cd api && bin/rails eval:evidence:selfcheck && bin/rails eval:evidence` scores what the extraction service proposes against 31 hand-labelled synthetic charts (`api/evals/evidence/`, start with its `README.md`). It is a measurement, not a test: run it before and after changing the rule hints, the prompt, or the model, and read failures only from the train slice.
+
 **Backend:** RSpec in `api/spec/` (requests, models, services, controllers).  
 **Frontend:** Jest in `base/` (e.g. `__tests__/`). Use `pnpm test:watch` for watch mode, `pnpm test:coverage` for coverage.
 
@@ -168,6 +170,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Workflow status:** Never write `PriorAuthorization#status` directly. Go through `Authorizations::TransitionService` (the model rejects anything else) so every change has an event and an actor.
 - **AI:** Call models only through `Ai::Client`. Never log prompts or chart text. Use synthetic data only; production refuses model calls until `AI_PHI_BAA_CONFIRMED=true`.
 - **Demo practice:** The seeds build a shared synthetic practice with four requests in progress, played through the real services by `Demo::Story` (`db/seeds/demo_requests.rb`). `/demo` signs in to it with no password. It is off in production unless `DEMO_PRACTICE=true`. `bin/rails demo:reset` rebuilds it. The landing page's worked example (`base/components/landing/worked-example.tsx`) quotes the seeded chart text, so change the two together.
+- **Changing the policy library invalidates the eval's labels.** `api/evals/evidence/state.json` pins a digest of the criteria and rule hints. Edit `db/seeds/policy_library.rb` and both `eval:evidence` and `spec/evals` stop until the labels in `api/evals/evidence/cases/` are re-read and the digest is updated. That is deliberate.
 - **Inflections:** `criterion`/`criteria` is irregular and `evidence` is uncountable (`config/initializers/inflections.rb`). `AuthorizationEvidence` still sets `table_name` explicitly because Rails pluralizes compound names.
 - **Brakeman exits non-zero on *warnings*, not just errors.** `bundle exec brakeman` exits 3 when it
   reports anything, and CI runs it unpiped, so the `Rails Tests` job fails. Two traps: piping it

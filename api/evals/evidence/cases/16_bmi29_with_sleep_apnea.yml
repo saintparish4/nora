@@ -1,0 +1,31 @@
+id: bmi29_with_sleep_apnea
+tags: [bmi_27_to_30]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700590224}
+patient: {first_name: Farid, last_name: Lindqvist, date_of_birth: 1970-07-07, sex: male, mrn: EV-1016}
+documents:
+  - title: Sleep clinic follow-up and weight
+    kind: office_note
+    occurred_on: 2026-07-11
+    body: |
+      Farid Lindqvist, sleep clinic referral follow-up and weight.
+
+      BMI 29.1. Overweight.
+
+      Polysomnography in May 2026 confirmed moderate obstructive sleep apnea (G47.33); CPAP started.
+
+      He has been in the hospital's weight program since August 2025: reduced-calorie diet plus supervised physical activity twice weekly.
+
+      Orlistat 60 mg, 09/2025 to 12/2025, stopped for lack of effect.
+
+      He is not on a GLP-1 receptor agonist.
+
+      Plan: Saxenda.
+expected:
+  1: {label: supported, support: ["BMI 29.1."], why: "BMI 27 to 29.9 with documented obstructive sleep apnea."}
+  2: {label: supported, support: ["Overweight."]}
+  3: {label: supported, support: ["Polysomnography in May 2026 confirmed moderate obstructive sleep apnea (G47.33)"]}
+  4: {label: supported, support: ["He has been in the hospital's weight program since August 2025: reduced-calorie diet plus supervised physical activity twice weekly."]}
+  5: {label: supported, support: ["Orlistat 60 mg, 09/2025 to 12/2025, stopped for lack of effect"]}
+  6: {label: supported, support: ["He is not on a GLP-1 receptor agonist."]}

@@ -1,0 +1,33 @@
+id: lifestyle_advised_only
+tags: [short_lifestyle]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700583316}
+patient: {first_name: Imani, last_name: Fairweather, date_of_birth: 1986-09-12, sex: female, mrn: EV-1011}
+documents:
+  - title: Initial weight consult
+    kind: office_note
+    occurred_on: 2026-09-20
+    body: |
+      Imani Fairweather, initial weight consult.
+
+      BMI = 33.2.
+
+      Assessment: obesity (E66.9); prediabetes.
+
+      Advised a reduced-calorie diet and at least 150 minutes of physical activity per week.
+
+      Referred to the dietitian; first appointment is next month.
+
+      Prior treatment: phentermine 37.5 mg, 08/2024 to 11/2024, discontinued for anxiety and poor sleep.
+
+      She is not on any GLP-1 therapy.
+
+      Plan: revisit Wegovy after she has started the program.
+expected:
+  1: {label: supported, support: ["BMI = 33.2"]}
+  2: {label: supported, support: ["Assessment: obesity (E66.9)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: unsupported, traps: ["Advised a reduced-calorie diet and at least 150 minutes of physical activity per week.", "Referred to the dietitian; first appointment is next month.", "revisit Wegovy after she has started the program"], why: "Diet and activity were advised, not done. The program has not started."}
+  5: {label: supported, support: ["phentermine 37.5 mg, 08/2024 to 11/2024, discontinued for anxiety and poor sleep"]}
+  6: {label: supported, support: ["She is not on any GLP-1 therapy."]}

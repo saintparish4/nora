@@ -1,0 +1,31 @@
+id: rx_never_picked_up
+tags: [fill_no_outcome]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230081902}
+patient: {first_name: Priscilla, last_name: Oyelaran, date_of_birth: 1991-01-30, sex: female, mrn: EV-1006}
+documents:
+  - title: Follow-up visit
+    kind: office_note
+    occurred_on: 2026-06-25
+    body: |
+      Priscilla Oyelaran, follow-up visit.
+
+      BMI: 31.4; weight 189 lb.
+
+      Impression: obesity, BMI 31.0-31.9 (Z68.31).
+
+      Contrave was prescribed in March 2026 but the pharmacy reported it was never picked up.
+
+      Diet: reduced-calorie plan (1,500 kcal/day) since December 2025, with brisk walking 30 minutes daily over the same period.
+
+      No GLP-1 receptor agonist is on her medication list and none will be added alongside Saxenda.
+
+      Plan: Saxenda prior authorization.
+expected:
+  1: {label: supported, support: ["BMI: 31.4", "BMI 31.0-31.9 (Z68.31)"]}
+  2: {label: supported, support: ["Impression: obesity"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Diet: reduced-calorie plan (1,500 kcal/day) since December 2025, with brisk walking 30 minutes daily over the same period."]}
+  5: {label: unsupported, traps: ["Contrave was prescribed in March 2026 but the pharmacy reported it was never picked up."], why: "The medication was prescribed but never taken."}
+  6: {label: supported, support: ["No GLP-1 receptor agonist is on her medication list and none will be added alongside Saxenda."]}

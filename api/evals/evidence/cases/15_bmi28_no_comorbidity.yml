@@ -1,0 +1,35 @@
+id: bmi28_no_comorbidity
+tags: [low_bmi, bmi_27_to_30, negation]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61007701}
+patient: {first_name: Desmond, last_name: Achterberg, date_of_birth: 1985-02-03, sex: male, mrn: EV-1015}
+documents:
+  - title: Weight visit
+    kind: office_note
+    occurred_on: 2026-08-14
+    body: |
+      Desmond Achterberg, 41.
+
+      BMI 28.3.
+
+      Assessment: overweight (E66.3).
+
+      No hypertension, diabetes, or sleep apnea; lipid panel normal in June 2026.
+
+      Mother has type 2 diabetes.
+
+      He has followed a calorie-controlled diet and a running plan with our coach for nine months.
+
+      Phentermine 03/2025 to 05/2025: lost 4 lb, stopped when the 12-week course ended.
+
+      Does not use any GLP-1 medication.
+
+      Plan: Zepbound request.
+expected:
+  1: {label: unsupported, traps: ["BMI 28.3."], why: "BMI 27 to 29.9 needs a weight-related comorbidity, and the note rules them out."}
+  2: {label: supported, support: ["Assessment: overweight (E66.3)."]}
+  3: {label: unsupported, traps: ["No hypertension, diabetes, or sleep apnea; lipid panel normal in June 2026.", "Mother has type 2 diabetes."], why: "The comorbidities are negated, and the diabetes is his mother's."}
+  4: {label: supported, support: ["He has followed a calorie-controlled diet and a running plan with our coach for nine months."]}
+  5: {label: supported, support: ["Phentermine 03/2025 to 05/2025: lost 4 lb, stopped when the 12-week course ended."]}
+  6: {label: supported, support: ["Does not use any GLP-1 medication."]}

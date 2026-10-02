@@ -1,0 +1,33 @@
+id: negated_and_family_history
+tags: [negation, bmi_27_to_30, no_prior_trial]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230110832}
+patient: {first_name: Bettina, last_name: Kowalczyk, date_of_birth: 1997-04-25, sex: female, mrn: EV-1017}
+documents:
+  - title: Weight-loss medication question
+    kind: office_note
+    occurred_on: 2026-09-18
+    body: |
+      Bettina Kowalczyk, 29, asks about weight-loss injections.
+
+      BMI 27.8.
+
+      Assessment: overweight (E66.3). She is not obese.
+
+      Family history: father with obesity and hypertension, sister with type 2 diabetes.
+
+      Her own blood pressure is normal and she has no sleep apnea or dyslipidemia.
+
+      She began a reduced-calorie diet eight months ago and added a physical activity plan (swimming twice weekly) at the same time.
+
+      Her sister takes Ozempic; Bettina has never used a GLP-1 medication or any weight-loss drug.
+
+      Plan: discussed criteria.
+expected:
+  1: {label: unsupported, traps: ["BMI 27.8."], why: "BMI 27 to 29.9 with no comorbidity of her own."}
+  2: {label: supported, support: ["Assessment: overweight (E66.3)."]}
+  3: {label: unsupported, traps: ["Family history: father with obesity and hypertension, sister with type 2 diabetes.", "Her own blood pressure is normal and she has no sleep apnea or dyslipidemia."], why: "Every comorbidity named belongs to a relative or is negated."}
+  4: {label: supported, support: ["She began a reduced-calorie diet eight months ago and added a physical activity plan (swimming twice weekly) at the same time."]}
+  5: {label: unsupported, traps: ["Her sister takes Ozempic; Bettina has never used a GLP-1 medication or any weight-loss drug."], why: "The Ozempic is her sister's; she has taken no weight-loss drug."}
+  6: {label: supported, support: ["Bettina has never used a GLP-1 medication"]}

@@ -106,6 +106,16 @@ everywhere but production, and in production only with `DEMO_PRACTICE=true`.
 - **Components:** `ui/` (shadcn primitives, restyled, plus `native-select`), `navigation/` (logo, auth shell, footer), `landing/` (hero shapes and the worked example on `/`), `dashboard/` (shell, demo banner, per-account SWR cache), `workspace/` (page header, `Panel` and `Card`, `Notice`, status pills, requirement panel, document viewer, task list).
 - **Design tokens (`app/globals.css`):** a white page, warm off-white tiles (`bg-tile`), near-black ink, and five accents that carry meaning: blue (in progress), purple (waiting on approval), yellow (needs clarification), green (met, approved), orange (missing, failed). Each accent has a tint for backgrounds and a `-deep` shade that passes AA as text. Headings use DM Sans (`font-display`), body text Inter. Buttons and pills are fully rounded. Screens are built from `Panel` (a tile) holding `Card`s (white, hairline border).
 
+## Evidence eval (`api/evals/evidence/`)
+
+A labelled case set and a runner for one question: does evidence extraction
+propose the right chart text for each criterion, and stay quiet when the chart
+does not support one? Cases are synthetic charts labelled by a person;
+`Authorizations::EvidenceExtractionService` is called through the real entry
+point on a scratch database. `bin/rails eval:evidence:selfcheck` proves the
+grader against known answers and rehearses model failures before any score is
+trusted. The eval's own `README.md` covers the metrics and their limits.
+
 ## Auth
 
 The browser uses an httpOnly session cookie plus a CSRF token from

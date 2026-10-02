@@ -1,0 +1,29 @@
+id: active_med_no_outcome
+tags: [fill_no_outcome]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700561247}
+patient: {first_name: Owen, last_name: Castellano, date_of_birth: 1974-12-02, sex: male, mrn: EV-1005}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-09-12
+    body: |
+      Owen Castellano presents for weight management.
+
+      Vitals: body mass index 35.1, BP 132/84.
+
+      Assessment: Class II obesity.
+
+      Current medications: phentermine 37.5 mg every morning (started 06/2026), lisinopril 10 mg daily.
+
+      He joined a medically supervised weight program in November 2025 with a calorie-restricted diet and strength training twice weekly.
+
+      Plan: add Zepbound; he is not on a GLP-1 agonist.
+expected:
+  1: {label: supported, support: ["body mass index 35.1"]}
+  2: {label: supported, support: ["Class II obesity"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["He joined a medically supervised weight program in November 2025 with a calorie-restricted diet and strength training twice weekly"]}
+  5: {label: unsupported, traps: ["phentermine 37.5 mg every morning (started 06/2026)"], why: "He is taking phentermine now, but no outcome or reason for stopping is recorded."}
+  6: {label: supported, support: ["he is not on a GLP-1 agonist"]}

@@ -1,0 +1,75 @@
+{
+  "flow": "Evidence proposal for one prior authorization request (Authorizations::EvidenceExtractionService)",
+  "metrics": [
+    {
+      "id": "clean",
+      "better": "higher",
+      "meaning": "share of unsupported requirements where nothing was proposed"
+    },
+    {
+      "id": "found",
+      "better": "higher",
+      "meaning": "share of supported requirements where a supporting excerpt was proposed"
+    },
+    {
+      "id": "precision",
+      "better": "higher",
+      "meaning": "share of proposed excerpts that support their criterion"
+    },
+    {
+      "id": "verbatim",
+      "better": "higher",
+      "meaning": "1 when every stored excerpt equals the chart text at its offsets"
+    }
+  ],
+  "reps": 1,
+  "split": {
+    "method": "random, stratified by first tag",
+    "seed": 20261001
+  },
+  "train_ids": [
+    "active_med_no_outcome",
+    "bmi28_no_comorbidity",
+    "bmi29_with_sleep_apnea",
+    "bmi_only_in_old_note",
+    "clinical_shorthand",
+    "currently_on_ozempic",
+    "drugs_discussed_not_taken",
+    "lifestyle_advised_only",
+    "med_list_without_statement",
+    "narrative_note",
+    "no_diagnosis_recorded",
+    "pass_bmi28_with_comorbidity",
+    "ruled_out_conditions",
+    "uhc_one_trial_only",
+    "uhc_second_drug_no_outcome",
+    "weight_goal_no_workup"
+  ],
+  "test_ids": [
+    "bmi_below_threshold",
+    "bmi_changed_between_notes",
+    "diet_without_activity",
+    "fill_only_pharmacy_record",
+    "lifestyle_two_months",
+    "negated_and_family_history",
+    "only_requested_drug",
+    "pass_basic",
+    "pass_split_documents",
+    "rx_never_picked_up",
+    "switching_from_glp1",
+    "uhc_two_trials",
+    "unrelated_visit",
+    "unusual_wording",
+    "weight_without_bmi"
+  ],
+  "criteria_digest": "178ad7965f974b56",
+  "harness_paths": [
+    "evals/evidence/harness.rb",
+    "evals/evidence/report.rb",
+    "lib/tasks/eval.rake"
+  ],
+  "sign_offs": {
+    "cases": null,
+    "grading": null
+  }
+}

@@ -1,0 +1,33 @@
+id: bmi_below_threshold
+tags: [low_bmi]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230101264}
+patient: {first_name: Colette, last_name: Ibarra, date_of_birth: 1990-10-17, sex: female, mrn: EV-1014}
+documents:
+  - title: Weight concern
+    kind: office_note
+    occurred_on: 2026-09-01
+    body: |
+      Colette Ibarra, weight concern.
+
+      BMI 26.4, weight 150 lb.
+
+      Assessment: overweight (E66.3).
+
+      Hypertension, controlled on amlodipine.
+
+      Reduced-calorie diet and jogging three times weekly since February 2026.
+
+      No prior weight-loss medications.
+
+      Not on a GLP-1 agonist.
+
+      Plan: discussed that her BMI does not meet most plan criteria; she asks that the request be submitted anyway.
+expected:
+  1: {label: unsupported, traps: ["BMI 26.4, weight 150 lb.", "her BMI does not meet most plan criteria"], why: "BMI 26.4 is below 27, with or without a comorbidity."}
+  2: {label: supported, support: ["Assessment: overweight (E66.3)."]}
+  3: {label: not_applicable, why: "BMI is below 27, so the 27 to 29.9 condition does not apply."}
+  4: {label: supported, support: ["Reduced-calorie diet and jogging three times weekly since February 2026."]}
+  5: {label: unsupported, traps: ["No prior weight-loss medications."], why: "The note says there has been no prior medication."}
+  6: {label: supported, support: ["Not on a GLP-1 agonist."]}

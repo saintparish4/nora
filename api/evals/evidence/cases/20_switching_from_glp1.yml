@@ -1,0 +1,29 @@
+id: switching_from_glp1
+tags: [concurrent_glp1]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230118470}
+patient: {first_name: Thaddeus, last_name: Rourke, date_of_birth: 1978-03-31, sex: male, mrn: EV-1020}
+documents:
+  - title: Medication change visit
+    kind: office_note
+    occurred_on: 2026-08-05
+    body: |
+      Thaddeus Rourke.
+
+      BMI 35.7; obesity (E66.9).
+
+      He has taken Saxenda since 11/2025 with a 3 lb loss and ongoing nausea.
+
+      Saxenda will be stopped before the first Wegovy dose; the two will not be taken together.
+
+      Portion-controlled 1,700 kcal diet and resistance training three days a week since October 2025, logged with our dietitian.
+
+      Plan: switch to Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 35.7"]}
+  2: {label: supported, support: ["obesity (E66.9)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Portion-controlled 1,700 kcal diet and resistance training three days a week since October 2025"]}
+  5: {label: supported, support: ["He has taken Saxenda since 11/2025 with a 3 lb loss and ongoing nausea."], why: "A different drug from the one requested, with its outcome recorded."}
+  6: {label: supported, support: ["Saxenda will be stopped before the first Wegovy dose; the two will not be taken together."]}

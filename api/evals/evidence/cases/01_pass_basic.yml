@@ -1,0 +1,33 @@
+id: pass_basic
+tags: [clean_pass]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61002211}
+patient: {first_name: Dana, last_name: Whitlock, date_of_birth: 1979-02-11, sex: female, mrn: EV-1001}
+documents:
+  - title: Weight management follow-up
+    kind: office_note
+    occurred_on: 2026-08-18
+    body: |
+      Patient: Dana Whitlock, DOB 02/11/1979.
+
+      Dana Whitlock is seen for weight management follow-up.
+
+      Vitals: Weight 232 lb, height 5 ft 7 in, BMI 36.3. BP 126/80.
+
+      Assessment: Obesity, class II (E66.01).
+
+      She has followed a reduced-calorie diet with the clinic dietitian and a supervised exercise program (water aerobics three times weekly) since January 2026.
+
+      Medication history: Contrave was taken from 05/2025 to 09/2025 and stopped because of nausea and no weight loss.
+
+      She is not taking any GLP-1 receptor agonist.
+
+      Plan: Request Zepbound. Continue lifestyle program.
+expected:
+  1: {label: supported, support: ["BMI 36.3"]}
+  2: {label: supported, support: ["Obesity, class II (E66.01)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more, so the comorbidity condition does not apply."}
+  4: {label: supported, support: ["She has followed a reduced-calorie diet with the clinic dietitian and a supervised exercise program"]}
+  5: {label: supported, support: ["Contrave was taken from 05/2025 to 09/2025 and stopped because of nausea"]}
+  6: {label: supported, support: ["She is not taking any GLP-1 receptor agonist."]}

@@ -1,0 +1,37 @@
+id: uhc_second_drug_no_outcome
+tags: [second_trial, fill_no_outcome, multi_document]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: UnitedHealthcare, plan: Choice Plus, member_id: UHC900573420}
+patient: {first_name: Callum, last_name: Ferreira-Stone, date_of_birth: 1982-09-05, sex: male, mrn: EV-1025}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-08-26
+    body: |
+      Callum Ferreira-Stone.
+
+      BMI 33.5.
+
+      Assessment: obesity (E66.9).
+
+      Orlistat 120 mg was taken 10/2024 to 02/2025; stopped for GI side effects with 1 lb lost.
+
+      Reduced-calorie diet and exercise (cycling) program since January 2026.
+
+      Not on any GLP-1 agonist.
+  - title: Medication list
+    kind: medication_history
+    occurred_on: 2026-08-26
+    body: |
+      Active: atorvastatin 20 mg nightly.
+      Inactive: orlistat 120 mg three times daily.
+      Inactive: phentermine 37.5 mg daily (dates not recorded).
+expected:
+  1: {label: supported, support: ["BMI 33.5."]}
+  2: {label: supported, support: ["Assessment: obesity (E66.9)."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Reduced-calorie diet and exercise (cycling) program since January 2026."]}
+  5: {label: supported, support: ["Orlistat 120 mg was taken 10/2024 to 02/2025; stopped for GI side effects with 1 lb lost."]}
+  6: {label: supported, support: ["Not on any GLP-1 agonist."]}
+  7: {label: unsupported, traps: ["Inactive: phentermine 37.5 mg daily (dates not recorded).", "Orlistat 120 mg was taken 10/2024 to 02/2025; stopped for GI side effects with 1 lb lost.", "Inactive: orlistat 120 mg three times daily."], why: "The second drug, phentermine, is only a line on the medication list with no dates, outcome, or reason for stopping."}

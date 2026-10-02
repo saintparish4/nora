@@ -1,0 +1,27 @@
+id: unrelated_visit
+tags: [nothing_relevant]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61009926}
+patient: {first_name: Miles, last_name: Oduya, date_of_birth: 1999-06-14, sex: male, mrn: EV-1021}
+documents:
+  - title: Urgent visit
+    kind: office_note
+    occurred_on: 2026-09-22
+    body: |
+      Miles Oduya, urgent visit.
+
+      Twisted left ankle playing soccer yesterday.
+
+      Exam: lateral swelling, no bony tenderness, able to bear weight.
+
+      X-ray negative for fracture.
+
+      Plan: rest, ice, compression, elevation; ibuprofen 400 mg as needed; return if not improving in one week.
+expected:
+  1: {label: unsupported, why: "No BMI anywhere."}
+  2: {label: unsupported, why: "No diagnosis of obesity or overweight."}
+  3: {label: not_applicable, why: "No BMI is documented."}
+  4: {label: unsupported, traps: ["Twisted left ankle playing soccer yesterday."], why: "Playing soccer once is not a diet and activity program."}
+  5: {label: unsupported, traps: ["ibuprofen 400 mg as needed"], why: "Ibuprofen is not a weight-management medication."}
+  6: {label: unsupported, why: "Nothing about GLP-1 medications."}

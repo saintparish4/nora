@@ -1,0 +1,33 @@
+id: diet_without_activity
+tags: [short_lifestyle]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61005520}
+patient: {first_name: Reggie, last_name: Blanchard, date_of_birth: 1977-11-21, sex: male, mrn: EV-1010}
+documents:
+  - title: Return visit
+    kind: office_note
+    occurred_on: 2026-08-21
+    body: |
+      Reggie Blanchard returns.
+
+      BMI of 39.4, BP 138/88.
+
+      Diagnosis: severe obesity (E66.01).
+
+      He has followed a reduced-calorie diet with our dietitian since November 2025.
+
+      He is unable to exercise at present because of a knee injury and has not started an activity program.
+
+      Orlistat was tried 06/2025 to 09/2025 and stopped for oily stools with no weight change.
+
+      Not on a GLP-1 agonist.
+
+      Plan: Saxenda.
+expected:
+  1: {label: supported, support: ["BMI of 39.4"]}
+  2: {label: supported, support: ["severe obesity (E66.01)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: unsupported, traps: ["He has followed a reduced-calorie diet with our dietitian since November 2025.", "He is unable to exercise at present because of a knee injury and has not started an activity program."], why: "The diet is documented for long enough, but the criterion also asks for physical activity, and the note says there is none."}
+  5: {label: supported, support: ["Orlistat was tried 06/2025 to 09/2025 and stopped for oily stools with no weight change"]}
+  6: {label: supported, support: ["Not on a GLP-1 agonist."]}

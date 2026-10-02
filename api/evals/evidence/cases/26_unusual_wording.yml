@@ -1,0 +1,31 @@
+id: unusual_wording
+tags: [wording_variant]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61011037}
+patient: {first_name: Ingrid, last_name: Solheim, date_of_birth: 1973-12-19, sex: female, mrn: EV-1026}
+documents:
+  - title: Weight management
+    kind: office_note
+    occurred_on: 2026-09-02
+    body: |
+      Ingrid Solheim, weight management.
+
+      Body mass index is 33.1 (weight 205 lb, height 5 ft 6 in).
+
+      Assessment: E66.9, Z68.33.
+
+      For the last eleven months she has eaten a hypocaloric Mediterranean-style diet planned by our nutrition service and has done pool-based aerobic training three times a week.
+
+      Adipex-P was used from 02/2025 to 05/2025 and discontinued for insomnia.
+
+      She is not on semaglutide, liraglutide, or any similar injectable, and none will be combined with Zepbound.
+
+      Plan: Zepbound.
+expected:
+  1: {label: supported, support: ["Body mass index is 33.1", "Z68.33"], why: "The BMI is spelled out, and Z68.33 is the code for BMI 33.0 to 33.9."}
+  2: {label: supported, support: ["Assessment: E66.9"], why: "E66.9 is the code for obesity, unspecified."}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["For the last eleven months she has eaten a hypocaloric Mediterranean-style diet planned by our nutrition service and has done pool-based aerobic training three times a week."]}
+  5: {label: supported, support: ["Adipex-P was used from 02/2025 to 05/2025 and discontinued for insomnia."], why: "Adipex-P is a brand of phentermine."}
+  6: {label: supported, support: ["She is not on semaglutide, liraglutide, or any similar injectable, and none will be combined with Zepbound."]}

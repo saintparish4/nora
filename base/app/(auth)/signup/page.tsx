@@ -45,7 +45,7 @@ function SignupContent() {
 
   return (
     <AuthShell title="Set up your practice" subtitle="You will be its first admin. Add staff and clinicians from Settings.">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="organization_name">Practice name</Label>
           <Input id="organization_name" required value={organizationName} onChange={(e) => setOrganizationName(e.target.value)} />
@@ -72,13 +72,13 @@ function SignupContent() {
           Use synthetic data until your practice has a signed business associate agreement with Nora.
         </p>
         <FormError message={error} />
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? 'Creating…' : 'Create practice'}
         </Button>
       </form>
       <p className="mt-8 text-sm text-muted-foreground">
         Already using Nora?{' '}
-        <Link href="/login" className="font-medium text-foreground underline underline-offset-4">Sign in</Link>
+        <Link href="/login" className="font-medium text-blue-deep hover:underline">Sign in</Link>
       </p>
     </AuthShell>
   );

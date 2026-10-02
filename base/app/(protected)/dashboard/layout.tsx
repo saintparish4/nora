@@ -13,27 +13,12 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthProtected>
-      <div className="min-h-screen bg-background text-foreground overflow-x-hidden relative">
-        {/* Noise overlay */}
-        <div className="noise-overlay" />
-
-        {/* Beam background gradient */}
-        <div
-          className="absolute -top-[100px] -right-[100px] w-[400px] h-[400px] -z-10"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(224,242,194,0.4) 0%, rgba(239,238,236,0) 70%)',
-            filter: 'blur(40px)',
-          }}
-        />
-
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-10 relative z-10">
-          <DemoBanner />
-          <DashboardNav />
-          <main id="main-content">
-            <AccountCache>{children}</AccountCache>
-          </main>
-        </div>
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
+        <DemoBanner />
+        <DashboardNav />
+        <main id="main-content" className="mx-auto w-full max-w-[1200px] flex-1 px-5 pt-8 sm:px-8 sm:pt-10">
+          <AccountCache>{children}</AccountCache>
+        </main>
         <SiteFooter />
       </div>
     </AuthProtected>

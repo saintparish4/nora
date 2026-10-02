@@ -16,10 +16,10 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 p-8">
-      <h2 className="text-xl font-semibold text-gray-900">Something went wrong</h2>
-      <p className="text-center text-gray-600">
-        We’ve been notified and are looking into it. You can try again.
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
+      <h2 className="text-[1.75rem] leading-tight">Something went wrong</h2>
+      <p className="max-w-sm text-[0.9375rem] leading-relaxed text-body">
+        We&apos;ve been notified and are looking into it. You can try again.
       </p>
       <Button onClick={reset}>Try again</Button>
     </div>

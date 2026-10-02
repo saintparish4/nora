@@ -1,8 +1,10 @@
+import { NoraMark } from '@/components/navigation/nora-logo';
+
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border py-8 mt-16">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted-foreground">
-        <p className="font-serif italic">Nora</p>
+    <footer className="mt-20 border-t border-border">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <NoraMark className="text-[#b9b4ac]" />
         <p>Nora prepares administrative work for people to review. It does not make clinical or coverage decisions.</p>
       </div>
     </footer>

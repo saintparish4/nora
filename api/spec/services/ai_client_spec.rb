@@ -50,4 +50,23 @@ RSpec.describe Ai::Client do
     stub_const('ENV', ENV.to_h.merge('OPENAI_API_KEY' => 'k', 'AI_PHI_BAA_CONFIRMED' => nil))
     expect { described_class.new.complete_json(system: 's', user: 'u') }.to raise_error(Ai::Client::NotConfigured, /BAA/)
   end
+
+  describe 'the demo practice exception' do
+    before do
+      allow(Rails.env).to receive(:production?).and_return(true)
+      stub_const('ENV', ENV.to_h.merge('OPENAI_API_KEY' => 'k', 'AI_PHI_BAA_CONFIRMED' => nil))
+    end
+
+    it 'still refuses real practices in production without a BAA' do
+      expect(described_class).not_to be_available_for(build(:organization))
+      expect { described_class.new(sdk: sdk).complete_json(system: 's', user: 'u') }.to raise_error(Ai::Client::NotConfigured, /BAA/)
+    end
+
+    it 'runs for the synthetic demo practice' do
+      allow(sdk).to receive(:chat).and_return(reply('{}'))
+
+      expect(described_class).to be_available_for(build(:organization, demo: true))
+      expect(described_class.new(sdk: sdk, synthetic_data: true).complete_json(system: 's', user: 'u')).to eq({})
+    end
+  end
 end

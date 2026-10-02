@@ -32,7 +32,7 @@ describe('DemoPage', () => {
   it('opens the demo as the medical assistant without being asked', async () => {
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff'))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined))
     expect(mockEnterDemo).toHaveBeenCalledTimes(1)
     expect(screen.getByRole('status').textContent).toContain('medical assistant')
   })
@@ -42,7 +42,18 @@ describe('DemoPage', () => {
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician'))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined))
+  })
+
+  it('starts the walkthrough and lands on Today for /demo?tour=1', async () => {
+    mockSearch = 'tour=1'
+    window.sessionStorage.clear()
+
+    render(<DemoPage />)
+
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard'))
+    expect(JSON.parse(window.sessionStorage.getItem('nora-demo-tour') ?? 'null')).toEqual({ step: 0, playing: true })
+    window.sessionStorage.clear()
   })
 
   it('waits for the session check before opening', () => {
@@ -67,7 +78,7 @@ describe('DemoPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Open the demo' }))
 
-    expect(mockEnterDemo).toHaveBeenCalledWith('staff')
+    expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined)
   })
 
   it('switches persona without asking when already in the demo practice', async () => {
@@ -80,7 +91,7 @@ describe('DemoPage', () => {
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician'))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined))
   })
 
   it("shows the API's reason when the demo is not offered, and retries on request", async () => {

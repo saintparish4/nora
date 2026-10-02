@@ -1,0 +1,15 @@
+{
+  "commit": "de7c8c5",
+  "dirty": false,
+  "system": "real",
+  "model_pass": "off",
+  "ablate": null,
+  "criteria_digest": "178ad7965f974b56",
+  "prompt_digest": "5f99181297180b9b",
+  "harness_digest": "38c155bb482d224e",
+  "served_models": [],
+  "ruby": "4.0.7",
+  "rails": "8.1.3.1",
+  "cases": 31,
+  "reps": 1
+}

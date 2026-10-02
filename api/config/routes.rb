@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       resources :prior_authorizations, only: [ :index, :show, :create, :update ] do
         member do
           post :extract
+          post :question_help
           post :approve
           post :transition
           get :packet

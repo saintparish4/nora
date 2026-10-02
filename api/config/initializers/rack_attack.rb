@@ -10,7 +10,8 @@ class Rack::Attack
   # AI-powered endpoints are expensive — tight per-IP limits. Add a pattern
   # here for every route that calls Ai::Client.
   AI_PATHS = [
-    %r{\A/api/v1/prior_authorizations/\d+/extract\z}
+    %r{\A/api/v1/prior_authorizations/\d+/extract\z},
+    %r{\A/api/v1/prior_authorizations/\d+/question_help\z}
   ].freeze
 
   throttle("ai/ip", limit: 10, period: 1.minute) do |req|

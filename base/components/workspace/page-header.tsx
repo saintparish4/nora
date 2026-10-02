@@ -37,14 +37,16 @@ export function PageHeader({
 }
 
 /** A soft off-white tile: the unit every workspace screen is built from. */
-export function Panel({ title, action, children, className }: {
+export function Panel({ title, action, children, className, tour }: {
   title?: React.ReactNode;
   action?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  /** Names this panel for the guided walkthrough (lib/demo-tour.ts). */
+  tour?: string;
 }) {
   return (
-    <section className={cn('rounded-tile bg-tile p-5 sm:p-6', className)}>
+    <section data-tour={tour} className={cn('rounded-tile bg-tile p-5 sm:p-6', className)}>
       {(title || action) && (
         <div className="mb-4 flex items-center justify-between gap-3">
           {title && <h2 className="font-sans text-[1.0625rem] font-semibold tracking-[-0.015em]">{title}</h2>}

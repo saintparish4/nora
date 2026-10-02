@@ -39,6 +39,7 @@ import { Notice } from '@/components/workspace/notice';
 import { NativeSelect } from '@/components/ui/native-select';
 import { PaStatusPill, RequirementStatusPill } from '@/components/workspace/status-pill';
 import { RequirementPanel } from '@/components/workspace/requirement-panel';
+import { QuestionHelp } from '@/components/workspace/question-help';
 import { DocumentViewer } from '@/components/workspace/document-viewer';
 import { TaskList } from '@/components/workspace/task-list';
 
@@ -87,7 +88,7 @@ export default function PriorAuthorizationPage() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="grid gap-6 md:grid-cols-[272px_minmax(0,1fr)]">
-          <Panel title="Requirements" className="self-start">
+          <Panel title="Requirements" className="self-start" tour="requirements">
             <ol className="-mx-2 space-y-1">
               {pa.requirements.map((req) => (
                 <li key={req.id}>
@@ -110,7 +111,8 @@ export default function PriorAuthorizationPage() {
             </ol>
           </Panel>
 
-          <Panel>
+          <div className="space-y-6">
+          <Panel tour="requirement">
             {selected ? (
               <RequirementPanel
                 key={selected.id}
@@ -124,13 +126,15 @@ export default function PriorAuthorizationPage() {
               <p className="text-sm text-muted-foreground">No requirements.</p>
             )}
           </Panel>
+          <QuestionHelp priorAuthorizationId={pa.id} suggestion={selected?.criterion.text} />
+          </div>
         </div>
 
         <div className="space-y-6">
           <ApprovalPanel pa={pa} role={user?.role} onUpdate={update} />
           <StatusPanel pa={pa} onUpdate={update} />
           <AssignmentPanel pa={pa} onUpdate={update} />
-          <Panel title="Follow-up tasks">
+          <Panel title="Follow-up tasks" tour="tasks">
             {tasks && tasks.tasks.length > 0 ? (
               <TaskList tasks={tasks.tasks} onChange={() => mutateTasks()} />
             ) : (
@@ -158,7 +162,7 @@ function Timeline({ events }: { events: WorkflowEvent[] }) {
   const shown = expanded ? newestFirst : newestFirst.slice(0, TIMELINE_PREVIEW);
 
   return (
-    <Panel title="Timeline">
+    <Panel title="Timeline" tour="timeline">
       <ol className="relative space-y-4 text-sm before:absolute before:top-2 before:bottom-2 before:left-[3px] before:w-px before:bg-input">
         {shown.map((ev) => (
           <li key={ev.id} className="relative pl-5">
@@ -266,7 +270,7 @@ function ApprovalPanel({ pa, role, onUpdate }: {
   };
 
   return (
-    <Panel title="Approval">
+    <Panel title="Approval" tour="approval">
       {pa.approval && (
         <p className={`mb-3 text-sm leading-relaxed ${pa.approval.current ? 'text-body' : 'text-yellow-deep'}`}>
           {pa.approval.current ? 'Approved' : 'Earlier approval voided after an edit'} by {pa.approval.approved_by.name},{' '}

@@ -1,0 +1,32 @@
+id: uhc_two_trials
+tags: [second_trial, clean_pass]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: UnitedHealthcare, plan: Choice Plus, member_id: UHC900551208}
+patient: {first_name: Naveen, last_name: Brightwater, date_of_birth: 1975-05-23, sex: male, mrn: EV-1023}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-08-19
+    body: |
+      Naveen Brightwater, DOB 05/23/1975, member ID UHC900551208.
+
+      BMI 40.2.
+
+      Diagnosis: morbid obesity (E66.01).
+
+      Prior medications for weight: phentermine 01/2024 to 04/2024, stopped for elevated blood pressure; Qsymia 08/2024 to 01/2025, stopped after 5 months with less than 3% weight loss.
+
+      He has been enrolled in our nutrition and exercise program (reduced-calorie diet, cardio three times weekly) since September 2025.
+
+      He is not using any GLP-1 receptor agonist.
+
+      Plan: Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 40.2."]}
+  2: {label: supported, support: ["Diagnosis: morbid obesity (E66.01)."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["He has been enrolled in our nutrition and exercise program (reduced-calorie diet, cardio three times weekly) since September 2025."]}
+  5: {label: supported, support: ["phentermine 01/2024 to 04/2024, stopped for elevated blood pressure; Qsymia 08/2024 to 01/2025, stopped after 5 months"]}
+  6: {label: supported, support: ["He is not using any GLP-1 receptor agonist."]}
+  7: {label: supported, support: ["phentermine 01/2024 to 04/2024, stopped for elevated blood pressure; Qsymia 08/2024 to 01/2025, stopped after 5 months"], why: "Two different drugs, each with a reason for stopping."}

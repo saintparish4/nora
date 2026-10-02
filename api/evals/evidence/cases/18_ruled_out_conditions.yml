@@ -1,0 +1,37 @@
+id: ruled_out_conditions
+tags: [negation, bmi_27_to_30]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61008815}
+patient: {first_name: Ansel, last_name: Drummond, date_of_birth: 1974-01-13, sex: male, mrn: EV-1018}
+documents:
+  - title: Weight and diabetes visit
+    kind: office_note
+    occurred_on: 2026-08-27
+    body: |
+      Ansel Drummond, 52.
+
+      BMI 29.4.
+
+      Assessment: overweight.
+
+      Sleep study in 2024 ruled out obstructive sleep apnea.
+
+      Hypertension was suspected last year but home readings were normal and the diagnosis was removed.
+
+      Type 2 diabetes: A1c 7.1% in July 2026, started metformin.
+
+      Reduced-calorie diet and gym program since February 2026.
+
+      Contrave 01/2026 to 05/2026, stopped: no weight loss at 16 weeks.
+
+      He is not on a GLP-1 agonist.
+
+      Plan: Saxenda.
+expected:
+  1: {label: supported, support: ["BMI 29.4."], why: "BMI 27 to 29.9 with documented type 2 diabetes."}
+  2: {label: supported, support: ["Assessment: overweight."]}
+  3: {label: supported, support: ["Type 2 diabetes: A1c 7.1% in July 2026, started metformin."], why: "Sleep apnea and hypertension were ruled out, but type 2 diabetes is his own current diagnosis."}
+  4: {label: supported, support: ["Reduced-calorie diet and gym program since February 2026."]}
+  5: {label: supported, support: ["Contrave 01/2026 to 05/2026, stopped: no weight loss at 16 weeks."]}
+  6: {label: supported, support: ["He is not on a GLP-1 agonist."]}

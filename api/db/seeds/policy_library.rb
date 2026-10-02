@@ -27,29 +27,38 @@ payers.each do |payer_name, plans|
   end
 end
 
-prior_therapy_terms = %w[phentermine orlistat Qsymia Contrave naltrexone Saxenda liraglutide Wegovy semaglutide Zepbound tirzepatide]
+# Weight-management drugs, one group per drug: brand and generic names together.
+weight_drugs = [
+  %w[phentermine Adipex-P Adipex Lomaira], %w[orlistat Xenical], %w[Qsymia], %w[Contrave naltrexone],
+  %w[Saxenda liraglutide], %w[Wegovy semaglutide], %w[Zepbound tirzepatide]
+]
+comorbidity_terms = [ "hypertension", "HTN", "type 2 diabetes", "T2DM", "dyslipidemia", "hyperlipidemia", "sleep apnea", "OSA", "I10", "E11", "E78" ]
+activity_terms = [ "physical activity", "exercise", "walking", "walks", "gym", "training", "aerobic", "aerobics", "swimming", "jogging",
+                   "running", "cycling", "fitness", "treadmill", "yoga", "cardio" ]
 
 glp1_criteria = lambda do |item_name, extra: []|
-  prior_terms = prior_therapy_terms.reject { |t| t.casecmp?(item_name) }
+  # The requested drug is not a prior trial of another drug, under either name.
+  other_drugs = weight_drugs.reject { |names| names.any? { |name| name.casecmp?(item_name) } }
   [
     { kind: "documented_value",
       text: "BMI of 30 kg/m2 or greater, or 27 kg/m2 or greater with at least one weight-related comorbidity, documented within the last 6 months.",
-      hint: { "bmi_min" => 27 } },
+      hint: { "bmi_min" => 30, "bmi_min_with_comorbidity" => 27, "comorbidity_terms" => comorbidity_terms, "within_months" => 6 } },
     { kind: "diagnosis",
       text: "A diagnosis of obesity or overweight is documented.",
       hint: { "terms" => %w[obesity obese overweight E66 Z68.3 Z68.4] } },
     { kind: "diagnosis", optional: true,
       text: "If BMI is 27 to 29.9: at least one weight-related comorbidity is documented (hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, or cardiovascular disease).",
-      hint: { "terms" => [ "hypertension", "HTN", "type 2 diabetes", "T2DM", "dyslipidemia", "hyperlipidemia", "sleep apnea", "OSA", "I10", "E11", "E78" ] } },
+      hint: { "terms" => comorbidity_terms } },
     { kind: "lifestyle",
       text: "The patient has taken part in a reduced-calorie diet and increased physical activity program for at least 6 months before this request.",
-      hint: { "terms" => [ "reduced-calorie", "calorie", "dietitian", "nutrition", "physical activity", "exercise", "lifestyle" ] } },
+      hint: { "terms" => [ "reduced-calorie", "calorie", "dietitian", "nutrition", "physical activity", "exercise", "lifestyle" ],
+              "min_months" => 6, "also_requires" => activity_terms } },
     { kind: "prior_trial",
       text: "A trial of at least one other weight-management medication is documented, with its outcome or the reason it was stopped.",
-      hint: { "terms" => prior_terms } },
+      hint: { "drugs" => other_drugs, "requires_outcome" => true } },
     { kind: "other",
       text: "The medication will not be used together with another GLP-1 receptor agonist.",
-      hint: {} }
+      hint: { "terms" => %w[GLP-1 GLP1], "requires_denial" => true } }
   ] + extra
 end
 
@@ -82,7 +91,7 @@ upsert_template.call(
   criteria: glp1_criteria.call("Wegovy", extra: [
     { kind: "prior_trial",
       text: "Trial of a second formulary weight-management alternative is documented, with outcome or reason for discontinuation.",
-      hint: { "terms" => prior_therapy_terms.reject { |t| t.casecmp?("Wegovy") } } }
+      hint: { "drugs" => weight_drugs.reject { |names| names.include?("Wegovy") }, "requires_outcome" => true, "min_distinct" => 2 } }
   ])
 )
 

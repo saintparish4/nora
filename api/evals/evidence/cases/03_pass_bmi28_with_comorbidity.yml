@@ -1,0 +1,31 @@
+id: pass_bmi28_with_comorbidity
+tags: [clean_pass, bmi_27_to_30]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230077415}
+patient: {first_name: Ruth, last_name: Mbeki, date_of_birth: 1968-04-27, sex: female, mrn: EV-1003}
+documents:
+  - title: Follow-up visit
+    kind: office_note
+    occurred_on: 2026-07-22
+    body: |
+      Ruth Mbeki, 58, follow-up.
+
+      Height 5 ft 4 in, weight 167 lb, BMI 28.6.
+
+      Diagnoses: Overweight (E66.3). Essential hypertension (I10), on losartan. Mixed hyperlipidemia (E78.2), on rosuvastatin.
+
+      Since October 2025 she has attended our lifestyle program: a reduced-calorie diet with weekly dietitian check-ins and a walking group that meets four mornings a week.
+
+      Phentermine 15 mg was taken 01/2025 to 04/2025; she lost 2 lb and it was stopped for elevated heart rate.
+
+      Ruth is not on any GLP-1 medication and will not combine Wegovy with one.
+
+      Plan: prior authorization for Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 28.6"], why: "BMI 27 to 29.9 with documented hypertension and hyperlipidemia."}
+  2: {label: supported, support: ["Overweight (E66.3)"]}
+  3: {label: supported, support: ["Essential hypertension (I10)", "Mixed hyperlipidemia (E78.2)"]}
+  4: {label: supported, support: ["Since October 2025 she has attended our lifestyle program"]}
+  5: {label: supported, support: ["Phentermine 15 mg was taken 01/2025 to 04/2025"]}
+  6: {label: supported, support: ["Ruth is not on any GLP-1 medication and will not combine Wegovy with one."]}

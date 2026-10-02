@@ -1,0 +1,33 @@
+id: drugs_discussed_not_taken
+tags: [no_prior_trial]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700570090}
+patient: {first_name: Leona, last_name: Vasquez-Hart, date_of_birth: 1980-05-06, sex: female, mrn: EV-1008}
+documents:
+  - title: Options review
+    kind: office_note
+    occurred_on: 2026-08-08
+    body: |
+      Leona Vasquez-Hart is here to review options.
+
+      Weight 204 lb, BMI 32.9.
+
+      Assessment: obesity.
+
+      We discussed phentermine and Qsymia; she declined both because of her history of palpitations.
+
+      We also reviewed orlistat, which she does not want because of GI side effects she read about.
+
+      Lifestyle: reduced-calorie diet and regular exercise (spin class twice a week, walking daily) for the past eight months, tracked in our program log.
+
+      She does not take a GLP-1 agonist.
+
+      Plan: Zepbound.
+expected:
+  1: {label: supported, support: ["BMI 32.9"]}
+  2: {label: supported, support: ["Assessment: obesity."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Lifestyle: reduced-calorie diet and regular exercise (spin class twice a week, walking daily) for the past eight months"]}
+  5: {label: unsupported, traps: ["We discussed phentermine and Qsymia; she declined both", "We also reviewed orlistat, which she does not want"], why: "Three drugs are named, but she took none of them."}
+  6: {label: supported, support: ["She does not take a GLP-1 agonist."]}

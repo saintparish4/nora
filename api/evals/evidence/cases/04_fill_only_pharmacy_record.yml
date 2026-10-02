@@ -1,0 +1,35 @@
+id: fill_only_pharmacy_record
+tags: [fill_no_outcome, multi_document]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61003388}
+patient: {first_name: Marisol, last_name: Trent, date_of_birth: 1988-07-19, sex: female, mrn: EV-2041}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-08-30
+    body: |
+      Marisol Trent, DOB 07/19/1988, MRN EV-2041.
+
+      Seen for weight management. BMI 33.8.
+
+      Assessment: Obesity (E66.9).
+
+      She has done a dietitian-led reduced-calorie diet and gym sessions three times a week since February 2026.
+
+      Plan: request Wegovy.
+  - title: Outside pharmacy fill history
+    kind: medication_history
+    occurred_on: 2026-08-30
+    body: |
+      Fill history from outside pharmacy.
+
+      Orlistat 120 mg capsules, quantity 90, filled 03/14/2025; one fill only.
+      Sertraline 50 mg tablets, filled monthly.
+expected:
+  1: {label: supported, support: ["BMI 33.8"]}
+  2: {label: supported, support: ["Obesity (E66.9)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["She has done a dietitian-led reduced-calorie diet and gym sessions three times a week since February 2026"]}
+  5: {label: unsupported, traps: ["Orlistat 120 mg capsules, quantity 90, filled 03/14/2025; one fill only."], why: "A single fill with no outcome or reason for stopping is not a documented trial."}
+  6: {label: unsupported, why: "Nothing in the chart says whether she takes another GLP-1. A fill history from one pharmacy is not a statement about it."}

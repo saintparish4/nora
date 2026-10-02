@@ -71,16 +71,17 @@ RSpec.describe 'Demo practice' do
       expect(featured).to eq(request_for(organization, 'DEMO-1001'))
       expect(second_trial.status).to eq('missing')
       expect(second_trial.note).to include('A fill alone does not document a second trial')
-      expect(second_trial.evidence).to all(be_rejected)
-      expect(second_trial.evidence.map(&:excerpt)).to include(a_string_starting_with('Phentermine 37.5 mg tablets'))
+      # The fill has no outcome, so the rule pass never offers it as evidence.
+      expect(second_trial.evidence).to be_empty
+      expect(requirement(featured, 6).status).to eq('missing')
     end
 
-    it 'opens a task for the ordering clinician on the missing requirement' do
+    it 'opens a task for the ordering clinician on each missing requirement' do
       featured = Demo::Practice.featured_request
-      task = Task.open.where(subject: featured).sole
+      tasks = Task.open.where(subject: featured)
 
-      expect(task.source).to eq(requirement(featured, 7))
-      expect(task.assignee.email).to eq('clinician@nora.com')
+      expect(tasks.map(&:source)).to contain_exactly(requirement(featured, 6), requirement(featured, 7))
+      expect(tasks.map { |task| task.assignee.email }.uniq).to eq([ 'clinician@nora.com' ])
     end
 
     it 'never marks a requirement met without evidence a person verified' do
@@ -93,7 +94,7 @@ RSpec.describe 'Demo practice' do
     it 'never passes anything off as found by the model' do
       evidence = AuthorizationEvidence.where(authorization_requirement: AuthorizationRequirement.where(prior_authorization: organization.prior_authorizations))
 
-      expect(evidence.distinct.pluck(:extracted_by)).to contain_exactly('rule', 'human')
+      expect(evidence.distinct.pluck(:extracted_by)).to eq([ 'rule' ])
     end
 
     it 'carries a current approval and a packet for the decided request' do

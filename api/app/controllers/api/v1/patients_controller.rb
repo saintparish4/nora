@@ -1,6 +1,8 @@
 module Api
   module V1
     class PatientsController < ApplicationController
+      before_action :keep_demo_chart_synthetic!, only: [ :create, :update ]
+
       # GET /api/v1/patients?q=
       def index
         scope = current_organization.patients.order(:last_name, :first_name)

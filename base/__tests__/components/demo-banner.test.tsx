@@ -43,6 +43,14 @@ describe('DemoBanner', () => {
     expect(screen.getByRole('link', { name: 'Switch to the clinician' }).getAttribute('href')).toBe('/demo?as=clinician')
   })
 
+  it('offers the walkthrough', () => {
+    mockUseAuth.mockReturnValue({ user: demoUser('staff', 'Jordan', 'Blake') })
+
+    render(<DemoBanner />)
+
+    expect(screen.getByRole('link', { name: 'Watch the walkthrough' }).getAttribute('href')).toBe('/demo?tour=1')
+  })
+
   it('offers the medical assistant to the clinician', () => {
     mockUseAuth.mockReturnValue({ user: demoUser('clinician', 'Avery', 'Chen') })
 

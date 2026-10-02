@@ -151,4 +151,27 @@ RSpec.describe 'Prior authorizations API', type: :request do
       expect(parsed_body['task']['status']).to eq('done')
     end
   end
+
+  describe 'POST /prior_authorizations/:id/question_help' do
+    it 'returns the service result for a request in the practice, and nothing for another practice' do
+      pa = create_prior_authorization
+      allow(Authorizations::QuestionHelpService).to receive(:call).and_return({ answer: 'not_documented', findings: [] })
+
+      post "/api/v1/prior_authorizations/#{pa.id}/question_help", headers: auth_headers(pa.created_by), params: { question: 'What is step therapy?' }
+      expect(response).to have_http_status(:ok)
+      expect(parsed_body['question_help']['answer']).to eq('not_documented')
+
+      post "/api/v1/prior_authorizations/#{pa.id}/question_help", headers: auth_headers(create(:user)), params: { question: 'x' }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'answers 422 with the reason when the model is not set up' do
+      pa = create_prior_authorization
+      stub_const('ENV', ENV.to_h.merge('OPENAI_API_KEY' => ''))
+
+      post "/api/v1/prior_authorizations/#{pa.id}/question_help", headers: auth_headers(pa.created_by), params: { question: 'What is step therapy?' }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(parsed_body['error']).to match(/OPENAI_API_KEY is not set/)
+    end
+  end
 end

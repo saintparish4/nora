@@ -1,0 +1,31 @@
+id: lifestyle_two_months
+tags: [short_lifestyle]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230090655}
+patient: {first_name: Tamsin, last_name: Okoro, date_of_birth: 1992-03-09, sex: female, mrn: EV-1009}
+documents:
+  - title: Weight management visit
+    kind: office_note
+    occurred_on: 2026-09-15
+    body: |
+      Tamsin Okoro, 34, weight management visit.
+
+      BMI 34.6.
+
+      Assessment: Obesity, class I (E66.9).
+
+      She started a reduced-calorie diet and a walking program in late July 2026.
+
+      Past medication: Qsymia from 02/2025 to 06/2025, stopped for tingling in her hands.
+
+      She takes no GLP-1 receptor agonist.
+
+      Plan: Wegovy; counseled that the plan asks for six months of lifestyle changes.
+expected:
+  1: {label: supported, support: ["BMI 34.6"]}
+  2: {label: supported, support: ["Obesity, class I (E66.9)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: unsupported, traps: ["She started a reduced-calorie diet and a walking program in late July 2026.", "counseled that the plan asks for six months of lifestyle changes"], why: "The program began about two months before the request; the criterion asks for six."}
+  5: {label: supported, support: ["Qsymia from 02/2025 to 06/2025, stopped for tingling in her hands"]}
+  6: {label: supported, support: ["She takes no GLP-1 receptor agonist."]}

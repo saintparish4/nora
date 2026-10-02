@@ -1,0 +1,31 @@
+id: narrative_note
+tags: [wording_variant]
+as_of: 2026-10-01
+item: Saxenda
+coverage: {payer: Aetna, plan: Open Access Managed Choice, member_id: W230133704}
+patient: {first_name: Marguerite, last_name: Dlamini, date_of_birth: 1961-07-22, sex: female, mrn: EV-1028}
+documents:
+  - title: Office visit
+    kind: office_note
+    occurred_on: 2026-07-08
+    body: |
+      Marguerite Dlamini comes in with her husband. She tells me she has struggled with her weight since her thirties.
+
+      Today she weighs 244 pounds and her BMI comes to 38.9.
+
+      I have her down as having class II obesity.
+
+      Starting last November she cut her intake to about 1,400 calories a day on a plan our dietitian wrote, and she has been going to a senior fitness class on Mondays, Wednesdays, and Fridays ever since.
+
+      Two years ago another doctor had her on naltrexone-bupropion for about four months; she stopped because it made her dizzy and she was not losing.
+
+      She has never been on a GLP-1 drug and would only be on this one.
+
+      We will ask her plan to cover liraglutide 3 mg.
+expected:
+  1: {label: supported, support: ["her BMI comes to 38.9"]}
+  2: {label: supported, support: ["I have her down as having class II obesity."]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["Starting last November she cut her intake to about 1,400 calories a day on a plan our dietitian wrote, and she has been going to a senior fitness class"]}
+  5: {label: supported, support: ["Two years ago another doctor had her on naltrexone-bupropion for about four months; she stopped because it made her dizzy and she was not losing."], why: "Naltrexone-bupropion is Contrave. The liraglutide in the last line is the drug being requested."}
+  6: {label: supported, support: ["She has never been on a GLP-1 drug and would only be on this one."]}

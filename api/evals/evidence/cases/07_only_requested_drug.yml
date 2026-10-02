@@ -1,0 +1,33 @@
+id: only_requested_drug
+tags: [no_prior_trial]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61004417}
+patient: {first_name: Harold, last_name: Nwosu, date_of_birth: 1969-08-15, sex: male, mrn: EV-1007}
+documents:
+  - title: New request
+    kind: office_note
+    occurred_on: 2026-09-03
+    body: |
+      Harold Nwosu, new request.
+
+      BMI of 37.9.
+
+      Dx: obesity, class II.
+
+      He has been on a reduced-calorie diet and exercise plan with our health coach since January 2026.
+
+      He asked about Wegovy after his brother lost weight on semaglutide.
+
+      He has never taken a prescription weight-loss medication.
+
+      Not currently on any GLP-1 receptor agonist.
+
+      Plan: request Wegovy (semaglutide 2.4 mg).
+expected:
+  1: {label: supported, support: ["BMI of 37.9"]}
+  2: {label: supported, support: ["Dx: obesity, class II"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["He has been on a reduced-calorie diet and exercise plan with our health coach since January 2026"]}
+  5: {label: unsupported, traps: ["his brother lost weight on semaglutide", "He has never taken a prescription weight-loss medication.", "request Wegovy (semaglutide 2.4 mg)"], why: "The only drug named is the one requested, and the note says he has never taken a weight-loss medication."}
+  6: {label: supported, support: ["Not currently on any GLP-1 receptor agonist."]}

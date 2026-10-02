@@ -1,0 +1,40 @@
+id: bmi_changed_between_notes
+tags: [multi_document, stale_bmi]
+as_of: 2026-10-01
+item: Wegovy
+coverage: {payer: Cigna, plan: Open Access Plus, member_id: U61012148}
+patient: {first_name: Phoebe, last_name: Adeyinka, date_of_birth: 1989-05-02, sex: female, mrn: EV-1029}
+documents:
+  - title: Weight check
+    kind: office_note
+    occurred_on: 2026-05-12
+    body: |
+      Weight check.
+
+      BMI 29.2. Overweight.
+
+      No comorbid conditions on file.
+  - title: Follow-up
+    kind: office_note
+    occurred_on: 2026-09-16
+    body: |
+      Phoebe Adeyinka, follow-up.
+
+      BMI 31.5 today after holiday weight gain.
+
+      Assessment: obesity, class I (E66.9).
+
+      Weight Watchers plan (about 1,500 calories daily) and gym membership (three visits a week) since February 2026 per program log.
+
+      Qsymia 09/2025 to 12/2025, stopped for dry mouth and mood changes.
+
+      No GLP-1 agonist in use.
+
+      Plan: Wegovy.
+expected:
+  1: {label: supported, support: ["BMI 31.5 today after holiday weight gain."], why: "The September BMI is 31.5. The May BMI of 29.2, with no comorbidity, would not have been enough on its own."}
+  2: {label: supported, support: ["Assessment: obesity, class I (E66.9).", "Overweight."]}
+  3: {label: not_applicable, why: "The most recent BMI is 30 or more."}
+  4: {label: supported, support: ["Weight Watchers plan (about 1,500 calories daily) and gym membership (three visits a week) since February 2026 per program log."]}
+  5: {label: supported, support: ["Qsymia 09/2025 to 12/2025, stopped for dry mouth and mood changes."]}
+  6: {label: supported, support: ["No GLP-1 agonist in use."]}

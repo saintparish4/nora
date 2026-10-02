@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth/context';
 import { AuthShell, FormError } from '@/components/navigation/auth-shell';
 import { Button } from '@/components/ui/button';
+import { readTour, startTour } from '@/lib/demo-tour';
 import type { DemoRole } from '@/types';
 
 /** How long before we explain that the API may be waking from idle. */
@@ -22,7 +23,11 @@ const ROLE_LABELS: Record<DemoRole, string> = {
  * replacing their session needs a click.
  */
 function DemoContent() {
-  const role: DemoRole = useSearchParams().get('as') === 'clinician' ? 'clinician' : 'staff';
+  const params = useSearchParams();
+  const role: DemoRole = params.get('as') === 'clinician' ? 'clinician' : 'staff';
+  // /demo?tour=1 starts the guided walkthrough; a walkthrough already under
+  // way passes through here when it changes account.
+  const wantsTour = params.get('tour') === '1';
   const { user, loading, enterDemo } = useAuth();
   const [opening, setOpening] = useState(false);
   const [slow, setSlow] = useState(false);
@@ -37,7 +42,9 @@ function DemoContent() {
     setOpening(true);
     const timer = window.setTimeout(() => setSlow(true), SLOW_AFTER_MS);
     try {
-      await enterDemo(role);
+      if (wantsTour) startTour();
+      // The walkthrough decides where to go next, so land it on Today.
+      await enterDemo(role, readTour() ? '/dashboard' : undefined);
     } catch (err: unknown) {
       // fetch rejects with a TypeError when the server cannot be reached.
       setError(
@@ -49,7 +56,7 @@ function DemoContent() {
     } finally {
       window.clearTimeout(timer);
     }
-  }, [enterDemo, role]);
+  }, [enterDemo, role, wantsTour]);
 
   useEffect(() => {
     if (loading || ownPractice || started.current) return;

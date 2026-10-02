@@ -129,7 +129,7 @@ function EvidenceCard({ evidence, editable, onUpdate, onView }: {
   };
 
   return (
-    <li className={cn('rounded-2xl border bg-white p-4', evidence.verified ? 'border-green/50' : 'border-border')}>
+    <li data-tour="evidence" className={cn('rounded-2xl border bg-white p-4', evidence.verified ? 'border-green/50' : 'border-border')}>
       <blockquote
         className={cn(
           'border-l-[3px] pl-3.5 text-[0.9375rem] leading-relaxed whitespace-pre-wrap',
@@ -150,7 +150,7 @@ function EvidenceCard({ evidence, editable, onUpdate, onView }: {
       </div>
       {evidence.rationale && <p className="mt-2 text-xs text-muted-foreground">{evidence.rationale}</p>}
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant="secondary" onClick={onView}>View in document</Button>
+        <Button size="sm" variant="secondary" data-tour="view-document" onClick={onView}>View in document</Button>
         {editable && !evidence.verified && (
           <Button size="sm" variant={evidence.rejected ? 'outline' : 'default'} disabled={busy} onClick={() => review('verify')}>
             {evidence.rejected ? 'Restore and verify' : 'Verify'}

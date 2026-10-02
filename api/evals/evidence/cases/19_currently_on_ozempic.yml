@@ -1,0 +1,31 @@
+id: currently_on_ozempic
+tags: [concurrent_glp1]
+as_of: 2026-10-01
+item: Zepbound
+coverage: {payer: Blue Cross Blue Shield, plan: Blue Choice PPO, member_id: XJB700601538}
+patient: {first_name: Rosalind, last_name: Echeverria, date_of_birth: 1965-08-29, sex: female, mrn: EV-1019}
+documents:
+  - title: Diabetes and weight visit
+    kind: office_note
+    occurred_on: 2026-09-10
+    body: |
+      Rosalind Echeverria, type 2 diabetes and weight.
+
+      BMI 38.6.
+
+      Assessment: obesity, class II (E66.01); type 2 diabetes.
+
+      Current medications: Ozempic 1 mg weekly (since 2024), metformin 1000 mg twice daily.
+
+      She has followed a diabetic reduced-calorie diet and a walking program since 2024.
+
+      Phentermine in 2023 for three months, stopped for jitteriness.
+
+      Plan: request Zepbound for additional weight loss.
+expected:
+  1: {label: supported, support: ["BMI 38.6."]}
+  2: {label: supported, support: ["Assessment: obesity, class II (E66.01)"]}
+  3: {label: not_applicable, why: "BMI is 30 or more."}
+  4: {label: supported, support: ["She has followed a diabetic reduced-calorie diet and a walking program since 2024."]}
+  5: {label: supported, support: ["Phentermine in 2023 for three months, stopped for jitteriness."]}
+  6: {label: unsupported, traps: ["Current medications: Ozempic 1 mg weekly (since 2024), metformin 1000 mg twice daily."], why: "She is on Ozempic, a GLP-1 receptor agonist, and nothing says it will be stopped."}

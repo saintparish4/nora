@@ -63,6 +63,17 @@ module Api
         render json: { prior_authorization: pa.as_api_json(detail: true) }, status: :accepted
       end
 
+      # POST /api/v1/prior_authorizations/:id/question_help
+      #
+      # Explains one question from the payer's form against this patient's
+      # chart. Nothing is stored.
+      def question_help
+        pa = find_pa
+        result = Authorizations::QuestionHelpService.call(pa, question: params[:question])
+        log_phi_access("PriorAuthorization", pa.id, :view)
+        render json: { question_help: result }
+      end
+
       # POST /api/v1/prior_authorizations/:id/approve
       def approve
         pa = Authorizations::ApproveService.call(find_pa, actor: current_user)

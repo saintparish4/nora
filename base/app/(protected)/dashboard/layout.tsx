@@ -4,6 +4,7 @@ import { AuthProtected } from '@/components/dashboard/auth-protected';
 import { AccountCache } from '@/components/dashboard/account-cache';
 import { DashboardNav } from '@/components/dashboard/dashboard-nav';
 import { DemoBanner } from '@/components/dashboard/demo-banner';
+import { DemoTour } from '@/components/demo/demo-tour';
 import { SiteFooter } from '@/components/navigation/site-footer';
 
 export default function DashboardLayout({
@@ -20,6 +21,7 @@ export default function DashboardLayout({
           <AccountCache>{children}</AccountCache>
         </main>
         <SiteFooter />
+        <DemoTour />
       </div>
     </AuthProtected>
   );

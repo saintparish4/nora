@@ -37,7 +37,7 @@ export default function TodayPage() {
 
       <ErrorNote error={error} />
 
-      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div data-tour="counts" className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
         {COUNT_TILES.map((tile) => {
           const keys = tile.include ?? [tile.key];
           const count = keys.reduce((sum, k) => sum + (byStatus[k] ?? 0), 0);
@@ -61,7 +61,7 @@ export default function TodayPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-        <Panel title="Needs attention">
+        <Panel title="Needs attention" tour="attention">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
           ) : data && data.needs_attention.length > 0 ? (

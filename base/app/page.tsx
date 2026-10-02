@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Play } from 'lucide-react';
 import { NoraLogo, NoraMark } from '@/components/navigation/nora-logo';
 import { HeroArtLeft, HeroArtRight, HeroArtRow, CheckShape, NoteShape, QuoteShape, CapsuleShape, SparkShape } from '@/components/landing/hero-art';
 import { WorkedExample } from '@/components/landing/worked-example';
@@ -53,7 +53,7 @@ export default function Home() {
           </nav>
           <div className="ml-auto flex items-center gap-2.5 text-[0.9375rem]">
             <Link href="/login" className={`${secondaryPill} h-9 px-4`}>Sign in</Link>
-            <Link href="/demo" className={`${primaryPill} h-9 px-4`}>See the demo</Link>
+            <Link href="/demo?tour=1" className={`${primaryPill} h-9 px-4`}>See the demo</Link>
           </div>
         </div>
       </header>
@@ -73,14 +73,16 @@ export default function Home() {
               prepares the prior authorization packet for a person to approve.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/demo" className={`${primaryPill} h-12 px-6 text-[1.0625rem]`}>
+              <Link href="/demo?tour=1" className={`${primaryPill} h-12 px-6 text-[1.0625rem]`}>
+                <Play aria-hidden className="size-[18px] fill-current" />
                 See the demo
-                <ArrowRight aria-hidden className="size-[18px]" />
               </Link>
-              <a href={SOURCE_URL} className={`${secondaryPill} h-12 px-6 text-[1.0625rem]`}>Read the source</a>
+              <Link href="/demo" className={`${secondaryPill} h-12 px-6 text-[1.0625rem]`}>Explore it yourself</Link>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              No sign-up. It opens a practice with synthetic patients and requests already in progress.
+              No sign-up. A two-minute walkthrough plays in a practice with synthetic patients, first as the medical
+              assistant, then as the clinician. Or{' '}
+              <a href={SOURCE_URL} className="font-medium text-blue-deep hover:underline">read the source</a>.
             </p>
           </div>
         </section>

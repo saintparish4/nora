@@ -31,13 +31,13 @@ export function DemoBanner() {
             </span>
           </span>
         </p>
-        <Link
-          href={`/demo?as=${other}`}
-          className="inline-flex shrink-0 items-center gap-1 pl-[18px] font-medium text-blue-deep hover:underline sm:pl-0"
-        >
-          Switch to the {ROLE_LABELS[other]}
-          <ArrowRight aria-hidden className="size-4" />
-        </Link>
+        <span className="flex shrink-0 flex-wrap gap-x-5 gap-y-1 pl-[18px] font-medium text-blue-deep sm:pl-0">
+          <Link href="/demo?tour=1" className="hover:underline">Watch the walkthrough</Link>
+          <Link href={`/demo?as=${other}`} className="inline-flex items-center gap-1 hover:underline">
+            Switch to the {ROLE_LABELS[other]}
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
+        </span>
       </div>
     </aside>
   );

@@ -13,9 +13,9 @@ const EXAMPLES: Array<{
   label: string;
   labelClass: string;
   criterion: string;
-  quote: string;
+  /** The chart text Nora proposed, or null when it proposed nothing. */
+  quote: string | null;
   source: string;
-  rejected?: boolean;
   status: { label: string; tone: Tone };
   outcome: string;
 }> = [
@@ -41,11 +41,10 @@ const EXAMPLES: Array<{
     label: 'Gaps, flagged',
     labelClass: 'text-orange-deep',
     criterion: 'Trial of a second formulary alternative, with outcome or reason for discontinuation.',
-    quote: 'Phentermine 37.5 mg tablets, quantity 30, filled 02/03/2025; no refills on record.',
-    source: 'Pharmacy fill history · Aug 12, 2026',
-    rejected: true,
+    quote: null,
+    source: 'The chart has one phentermine fill, with no outcome. That is not a trial, so Nora offers nothing.',
     status: { label: 'Missing', tone: 'danger' },
-    outcome: 'A fill is not a trial. Nothing says how she responded, so staff rejected the excerpt and Nora opened a task for the clinician.',
+    outcome: 'A prescription is not a documented trial. Staff marked the requirement missing and Nora opened a task for the clinician.',
   },
 ];
 
@@ -67,28 +66,30 @@ export function WorkedExample() {
 
             {/* The chart's answer, as Nora shows it */}
             <figure className="flex flex-1 flex-col rounded-2xl border border-border bg-white p-4">
-              <blockquote
-                className={cn(
-                  'border-l-[3px] pl-3.5 text-[0.9375rem] leading-relaxed',
-                  example.rejected ? 'border-input text-muted-foreground line-through' : 'border-green text-ink'
-                )}
-              >
-                {example.quote}
-              </blockquote>
-              <figcaption className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
-                <span>{example.source}</span>
-                <Pill tone="neutral">Found by rule</Pill>
-                {example.rejected ? <Pill tone="danger">Rejected</Pill> : <Pill tone="success">Verified</Pill>}
-              </figcaption>
+              {example.quote ? (
+                <>
+                  <blockquote className="border-l-[3px] border-green pl-3.5 text-[0.9375rem] leading-relaxed text-ink">{example.quote}</blockquote>
+                  <figcaption className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
+                    <span>{example.source}</span>
+                    <Pill tone="neutral">Found by rule</Pill>
+                    <Pill tone="success">Verified</Pill>
+                  </figcaption>
+                </>
+              ) : (
+                <figcaption className="rounded-xl border border-dashed border-input p-3.5 text-sm leading-relaxed text-muted-foreground">
+                  <span className="mb-1 block font-medium text-ink">Nothing proposed</span>
+                  {example.source}
+                </figcaption>
+              )}
               <div className="mt-auto flex items-center gap-2 pt-4">
                 <span
                   className={cn(
                     'flex size-6 items-center justify-center rounded-full text-white',
-                    example.rejected ? 'bg-orange' : 'bg-green'
+                    example.quote ? 'bg-green' : 'bg-orange'
                   )}
                   aria-hidden
                 >
-                  {example.rejected ? <X className="size-3.5" strokeWidth={3.5} /> : <Check className="size-3.5" strokeWidth={3.5} />}
+                  {!example.quote ? <X className="size-3.5" strokeWidth={3.5} /> : <Check className="size-3.5" strokeWidth={3.5} />}
                 </span>
                 <span className="text-sm font-medium text-ink">Requirement {example.status.label.toLowerCase()}</span>
               </div>

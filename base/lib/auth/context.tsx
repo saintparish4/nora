@@ -14,7 +14,7 @@ interface AuthContextType {
    * see: the featured request for staff, Today (with its approval queue) for
    * the clinician.
    */
-  enterDemo: (role?: DemoRole) => Promise<void>;
+  enterDemo: (role?: DemoRole, destination?: string) => Promise<void>;
   logout: () => Promise<void>;
   /**
    * Replace the cached user after a successful profile update, so pages reading
@@ -58,11 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push(safeReturnUrl(returnUrl));
   };
 
-  const enterDemo = async (role: DemoRole = 'staff') => {
+  const enterDemo = async (role: DemoRole = 'staff', destination?: string) => {
     const data = await apiDemoLogin(role);
     setUser(data.user);
     const featured = data.featured_prior_authorization_id;
-    router.push(role === 'staff' && featured ? `/dashboard/prior-authorizations/${featured}` : '/dashboard');
+    router.push(destination ?? (role === 'staff' && featured ? `/dashboard/prior-authorizations/${featured}` : '/dashboard'));
   };
 
   const updateUser = (updated: User) => {

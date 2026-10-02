@@ -10,8 +10,9 @@ medication and payer, and Nora:
 1. checks the chart against the payer's criteria,
 2. quotes the exact chart text that documents each criterion, or says what is missing,
 3. opens follow-up tasks for the ordering clinician when documentation is missing,
-4. requires staff to verify every quote and a clinician to approve the packet,
-5. renders the approved packet as a PDF and tracks the request to a payer decision.
+4. explains a question from the payer's form in plain words and shows what the chart says about it,
+5. requires staff to verify every quote and a clinician to approve the packet,
+6. renders the approved packet as a PDF and tracks the request to a payer decision.
 
 Nora never decides medical necessity and never marks a requirement met on its
 own. People verify evidence and approve; Nora prepares and keeps the record.
@@ -44,6 +45,8 @@ name and note is invented.
 
 http://localhost:3000/demo signs you in to that practice without a password, as
 the medical assistant (`/demo?as=clinician` for the clinician, who can approve).
+`/demo?tour=1` plays a guided walkthrough that looks at each stage, first as the
+medical assistant and then as the clinician, without changing anything.
 `cd api && bin/rails demo:reset` puts the practice back the way the seeds left it.
 
 The demo practice is off in production. Set `DEMO_PRACTICE=true` on the API to
@@ -51,7 +54,8 @@ seed it there and enable `/demo`; the container then rebuilds it on every boot,
 because the practice is shared by everyone who opens it.
 
 Without `OPENAI_API_KEY`, evidence extraction runs the rule pass only and says
-so on screen. That is enough to try the whole flow.
+so on screen. That is enough to try the whole flow, except "Help with a payer
+question", which needs the model.
 
 ## Tech stack
 
@@ -80,7 +84,7 @@ so on screen. That is enough to try the whole flow.
 | `OPENAI_API_KEY` | No | Enables the model pass of evidence extraction. Without it, only rules run. |
 | `OPENAI_MODEL` | No | Defaults to `gpt-4o-mini`. |
 | `DEMO_PRACTICE` | No | `true` seeds the synthetic demo practice in production and enables one-click sign-in at `/demo`. Always on outside production. |
-| `AI_PHI_BAA_CONFIRMED` | Production | Must be `true` before production sends chart text to the model. Set it only once a BAA with zero data retention covers the key. |
+| `AI_PHI_BAA_CONFIRMED` | Production | Must be `true` before production sends a real practice's chart text to the model. Set it only once a BAA with zero data retention covers the key. The demo practice is exempt: its charts are synthetic and cannot be added to in production. |
 | `RESEND_API_KEY` | Production | Transactional email. |
 | `RESEND_FROM_EMAIL` | No | Sender address. |
 | `FRONTEND_URL` | No | Base URL for links in email. |

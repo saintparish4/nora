@@ -44,7 +44,10 @@ task closes when the requirement is resolved.
 | Model failures fail closed: rule evidence stays, other requirements become unclear, nothing is cached | `Authorizations::EvidenceExtractionService` |
 | Model quotes not found in the chart are discarded and counted | `EvidenceExtractionService#apply_response`, `QuoteLocator` |
 | Patient name, MRN, DOB, and member ID are replaced before text reaches the model | `Chart::Redactor` |
-| Prompts are never logged; production refuses to call the model until `AI_PHI_BAA_CONFIRMED=true` | `Ai::Client` |
+| Prompts are never logged; production refuses to call the model until `AI_PHI_BAA_CONFIRMED=true`, except for the demo practice | `Ai::Client` |
+| The demo practice's patients and chart text cannot be added to in production, so that exception only ever covers synthetic text | `ApplicationController#keep_demo_chart_synthetic!` |
+| A keyword is not evidence: a rule hit is dropped when its sentence denies it, belongs to a relative, or lacks what the criterion asks for (a recent date, an outcome, a second drug) | `Authorizations::RulePass` |
+| A payer question is only answered "supported" when a quote that is really in the chart supports it | `Authorizations::QuestionHelpService` |
 | Events, approvals, and PHI access logs are append-only | `readonly!` guards on `WorkflowEvent`, `Approval`, `PhiAccessLog` |
 | Every query is scoped to the signed-in user's practice | `ApplicationController#current_organization` |
 | One-click demo sign-in reaches only the practice flagged `demo`, never as admin, and only where the demo is enabled | `Demo::Practice`, `AuthController#demo` |
@@ -74,7 +77,7 @@ task closes when the requirement is resolved.
 |---|---|
 | `Ai::` | `Client` |
 | `Chart::` | `Redactor`, `TextExtractor` |
-| `Authorizations::` | `CreateService`, `StartExtractionService`, `EvidenceExtractionService`, `QuoteLocator`, `RequirementReviewService`, `EvidenceReviewService`, `AddEvidenceService`, `StatusSyncService`, `TransitionService`, `ApproveService`, `ManualTransitionService`, `PacketService` |
+| `Authorizations::` | `CreateService`, `StartExtractionService`, `EvidenceExtractionService`, `QuoteLocator`, `RulePass`, `RedactedChart`, `QuestionHelpService`, `RequirementReviewService`, `EvidenceReviewService`, `AddEvidenceService`, `StatusSyncService`, `TransitionService`, `ApproveService`, `ManualTransitionService`, `PacketService` |
 | `Tasks::` | `SyncService` |
 | `Workspace::` | `TodayService`, `MetricsService` |
 | `Demo::` | `Practice` (is the demo on, who signs in, which request opens first), `Story` (plays a seeded request through the real services at simulated times), `ResetService` |
@@ -96,14 +99,14 @@ everywhere but production, and in production only with `DEMO_PRACTICE=true`.
 | Console | `GET today`, `GET metrics`, `tasks` (index, update) |
 | Patients | `patients` (index, show, create, update), `patients/:id/coverages`, `patients/:id/chart_documents`, `chart_documents/:id` (show, destroy) |
 | Reference | `payers`, `policy_templates` |
-| Nora Auth | `prior_authorizations` (index, show, create, update) with `extract`, `approve`, `transition`, `packet`, `events`; `authorization_requirements/:id` (update, `evidence`); `authorization_evidence/:id` |
+| Nora Auth | `prior_authorizations` (index, show, create, update) with `extract`, `question_help`, `approve`, `transition`, `packet`, `events`; `authorization_requirements/:id` (update, `evidence`); `authorization_evidence/:id` |
 
 ## Frontend (`base/`)
 
 - **Routes:** `/`, `/login`, `/signup`, `/demo` (enters the demo practice), and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
 - **API client (`lib/api/`):** `client` (cookie session, CSRF, 401 handling, `readJson`), `auth`, `workspace`, `prior-authorizations`, `hooks` (SWR), `schemas` (Zod contracts, validated in development).
 - **Workflow display rules (`lib/prior-auth.ts`):** labels, tones, and the reasons an action is unavailable, mirrored from the server so the reason shows before a request is made.
-- **Components:** `ui/` (shadcn primitives, restyled, plus `native-select`), `navigation/` (logo, auth shell, footer), `landing/` (hero shapes and the worked example on `/`), `dashboard/` (shell, demo banner, per-account SWR cache), `workspace/` (page header, `Panel` and `Card`, `Notice`, status pills, requirement panel, document viewer, task list).
+- **Components:** `ui/` (shadcn primitives, restyled, plus `native-select`), `navigation/` (logo, auth shell, footer), `landing/` (hero shapes and the worked example on `/`), `dashboard/` (shell, demo banner, per-account SWR cache), `demo/` (the guided walkthrough; its steps are in `lib/demo-tour.ts`), `workspace/` (page header, `Panel` and `Card`, `Notice`, status pills, requirement panel, document viewer, task list).
 - **Design tokens (`app/globals.css`):** a white page, warm off-white tiles (`bg-tile`), near-black ink, and five accents that carry meaning: blue (in progress), purple (waiting on approval), yellow (needs clarification), green (met, approved), orange (missing, failed). Each accent has a tint for backgrounds and a `-deep` shade that passes AA as text. Headings use DM Sans (`font-display`), body text Inter. Buttons and pills are fully rounded. Screens are built from `Panel` (a tile) holding `Card`s (white, hairline border).
 
 ## Evidence eval (`api/evals/evidence/`)

@@ -40,13 +40,13 @@ export function DocumentViewer({
             {data ? `${data.kind.replaceAll('_', ' ')}${data.occurred_on ? ` · ${formatCalendarDate(data.occurred_on)}` : ''}` : 'Loading…'}
           </DialogDescription>
         </DialogHeader>
-        {error && <p className="text-sm text-red-700">Could not load the document.</p>}
-        <div className="max-h-[65vh] overflow-y-auto rounded-lg border border-border bg-muted/40 p-4">
-          <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed">
+        {error && <p className="px-6 text-sm text-orange-deep">Could not load the document.</p>}
+        <div className="m-6 mt-4 max-h-[62vh] overflow-y-auto rounded-2xl bg-tile p-5">
+          <pre className="whitespace-pre-wrap break-words font-sans text-[0.9375rem] leading-relaxed text-foreground">
             {segments.map((seg, i) => {
               if (!seg.highlighted) return <span key={i}>{seg.text}</span>;
               return (
-                <mark key={i} ref={i === firstMarkIndex ? markRef : undefined} className="rounded bg-amber-200 px-0.5">
+                <mark key={i} ref={i === firstMarkIndex ? markRef : undefined} className="rounded-[5px] bg-yellow/55 px-0.5 text-ink">
                   {seg.text}
                 </mark>
               );

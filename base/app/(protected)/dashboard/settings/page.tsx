@@ -15,7 +15,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PageHeader, Panel, ErrorNote } from '@/components/workspace/page-header';
+import { NativeSelect } from '@/components/ui/native-select';
+import { PageHeader, Panel, Card, ErrorNote } from '@/components/workspace/page-header';
+import { Notice } from '@/components/workspace/notice';
 
 const ROLES: Array<{ value: Role; label: string; hint: string }> = [
   { value: 'staff', label: 'Staff', hint: 'Prepares requests and reviews evidence' },
@@ -23,17 +25,18 @@ const ROLES: Array<{ value: Role; label: string; hint: string }> = [
   { value: 'admin', label: 'Admin', hint: 'Also manages the practice and its members' },
 ];
 
-const selectClass = 'h-9 rounded-md border border-input bg-transparent px-3 text-sm';
-
 export default function SettingsPage() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
   return (
-    <div className="max-w-3xl pb-16 space-y-6">
+    <div className="max-w-3xl space-y-6">
       <PageHeader title="Settings" />
-      <Panel title="Your profile" action={<Link href="/dashboard/settings/profile" className="text-sm underline underline-offset-4">Edit</Link>}>
-        <p className="text-sm text-muted-foreground">
+      {user?.organization?.demo && (
+        <Notice>The demo practice&apos;s staff and settings are locked, so every visitor finds it the same way.</Notice>
+      )}
+      <Panel title="Your profile" action={<Link href="/dashboard/settings/profile" className="text-sm font-medium text-blue-deep hover:underline">Edit</Link>}>
+        <p className="text-sm text-body">
           {user?.email} · {ROLES.find((r) => r.value === user?.role)?.label ?? user?.role}
         </p>
       </Panel>
@@ -67,11 +70,11 @@ function PracticePanel({ isAdmin }: { isAdmin: boolean }) {
   return (
     <Panel title="Practice">
       <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="org-name">Name</Label>
           <Input id="org-name" disabled={!isAdmin} value={name} onChange={(e) => setEdits((x) => ({ ...x, name: e.target.value }))} />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="org-npi">Group NPI</Label>
           <Input id="org-npi" disabled={!isAdmin} inputMode="numeric" maxLength={10} value={npi} onChange={(e) => setEdits((x) => ({ ...x, npi: e.target.value }))} />
         </div>
@@ -119,46 +122,48 @@ function MembersPanel({ isAdmin, currentUserId }: { isAdmin: boolean; currentUse
 
   return (
     <Panel title="Members">
-      <ul className="divide-y divide-border mb-6">
+      <ul className="mb-6 space-y-2">
         {members?.map((m) => (
-          <li key={m.id} className="py-3 flex flex-col sm:flex-row sm:items-center gap-2">
-            <div className="flex-1 min-w-0">
-              <p className="font-medium">{m.name}</p>
-              <p className="text-sm text-muted-foreground break-all">{m.email}</p>
-            </div>
-            {isAdmin && m.id !== currentUserId ? (
-              <select aria-label={`Role for ${m.name}`} value={m.role} onChange={(e) => changeRole(m.id, e.target.value as Role)} className={selectClass}>
-                {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-              </select>
-            ) : (
-              <span className="text-sm text-muted-foreground">{ROLES.find((r) => r.value === m.role)?.label}</span>
-            )}
+          <li key={m.id}>
+            <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-ink">{m.name}</p>
+                <p className="text-sm break-all text-muted-foreground">{m.email}</p>
+              </div>
+              {isAdmin && m.id !== currentUserId ? (
+                <NativeSelect className="sm:w-40" aria-label={`Role for ${m.name}`} value={m.role} onChange={(e) => changeRole(m.id, e.target.value as Role)}>
+                  {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                </NativeSelect>
+              ) : (
+                <span className="text-sm text-muted-foreground">{ROLES.find((r) => r.value === m.role)?.label}</span>
+              )}
+            </Card>
           </li>
         ))}
       </ul>
 
       {isAdmin && (
-        <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 rounded-xl border border-border p-4">
-          <p className="sm:col-span-2 font-medium">Add a member</p>
-          <div className="space-y-1">
+        <form onSubmit={add} className="grid gap-4 rounded-2xl border border-border bg-white p-5 sm:grid-cols-2">
+          <p className="font-medium text-ink sm:col-span-2">Add a member</p>
+          <div className="space-y-2">
             <Label htmlFor="m-first">First name</Label>
             <Input id="m-first" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label htmlFor="m-last">Last name</Label>
             <Input id="m-last" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label htmlFor="m-email">Email</Label>
             <Input id="m-email" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label htmlFor="m-role">Role</Label>
-            <select id="m-role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })} className={`${selectClass} w-full`}>
+            <NativeSelect id="m-role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}>
               {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}: {r.hint}</option>)}
-            </select>
+            </NativeSelect>
           </div>
-          <div className="space-y-1 sm:col-span-2">
+          <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="m-password">Temporary password</Label>
             <Input id="m-password" type="text" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
           </div>

@@ -35,6 +35,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PageHeader, Panel, ErrorNote } from '@/components/workspace/page-header';
+import { Notice } from '@/components/workspace/notice';
+import { NativeSelect } from '@/components/ui/native-select';
 import { PaStatusPill, RequirementStatusPill } from '@/components/workspace/status-pill';
 import { RequirementPanel } from '@/components/workspace/requirement-panel';
 import { DocumentViewer } from '@/components/workspace/document-viewer';
@@ -60,32 +62,33 @@ export default function PriorAuthorizationPage() {
   const documents = patient?.chart_documents ?? [];
 
   return (
-    <div className="pb-16">
+    <div>
       <PageHeader
         back={{ href: '/dashboard/prior-authorizations', label: 'Prior authorizations' }}
         title={<>{pa.patient.full_name} · {pa.item_name}</>}
         subtitle={
-          <span className="flex flex-wrap items-center gap-2">
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <PaStatusPill status={pa.status} />
             <span>{pa.coverage.payer.name} · {pa.coverage.plan.name} · Member {pa.coverage.member_id}</span>
-            <span>· Ordered by {pa.requested_by.name}</span>
+            <span aria-hidden>·</span>
+            <span>Ordered by {pa.requested_by.name}</span>
           </span>
         }
-        actions={<Button asChild variant="outline"><Link href={`/dashboard/patients/${pa.patient.id}`}>Patient chart</Link></Button>}
+        actions={<Button asChild variant="secondary"><Link href={`/dashboard/patients/${pa.patient.id}`}>Patient chart</Link></Button>}
       />
 
       <ExtractionBanner pa={pa} documentCount={documents.length} onUpdate={update} />
 
       {pa.policy.notes && (
-        <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <Notice tone="warning" className="mb-6">
           <span className="font-medium">{pa.policy.title}.</span> {pa.policy.notes}
-        </p>
+        </Notice>
       )}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="grid gap-6 md:grid-cols-[260px_minmax(0,1fr)]">
+        <div className="grid gap-6 md:grid-cols-[272px_minmax(0,1fr)]">
           <Panel title="Requirements" className="self-start">
-            <ol className="space-y-1">
+            <ol className="-mx-2 space-y-1">
               {pa.requirements.map((req) => (
                 <li key={req.id}>
                   <button
@@ -93,12 +96,14 @@ export default function PriorAuthorizationPage() {
                     onClick={() => setSelectedId(req.id)}
                     aria-current={selected?.id === req.id}
                     className={cn(
-                      'w-full text-left rounded-lg px-3 py-2 text-sm hover:bg-muted',
-                      selected?.id === req.id && 'bg-muted'
+                      'w-full rounded-2xl border px-3 py-2.5 text-left text-sm transition-colors',
+                      selected?.id === req.id ? 'border-border bg-white' : 'border-transparent hover:bg-tile-strong'
                     )}
                   >
-                    <span className="line-clamp-2">{req.criterion.position}. {req.criterion.text}</span>
-                    <span className="mt-1 block"><RequirementStatusPill status={req.status} /></span>
+                    <span className="line-clamp-2 text-ink">
+                      <span className="text-muted-foreground tabular-nums">{req.criterion.position}.</span> {req.criterion.text}
+                    </span>
+                    <span className="mt-1.5 block"><RequirementStatusPill status={req.status} /></span>
                   </button>
                 </li>
               ))}
@@ -154,16 +159,17 @@ function Timeline({ events }: { events: WorkflowEvent[] }) {
 
   return (
     <Panel title="Timeline">
-      <ol className="space-y-3 text-sm">
+      <ol className="relative space-y-4 text-sm before:absolute before:top-2 before:bottom-2 before:left-[3px] before:w-px before:bg-input">
         {shown.map((ev) => (
-          <li key={ev.id}>
-            <p>{describeEvent(ev.event_type, ev.payload, ev.to_status)}</p>
-            <p className="text-xs text-muted-foreground">{formatDateTime(ev.created_at)}{ev.actor ? ` · ${ev.actor.name}` : ' · Nora'}</p>
+          <li key={ev.id} className="relative pl-5">
+            <span className="absolute top-[7px] left-0 size-[7px] rounded-full bg-[#b9b4ac] ring-4 ring-tile" aria-hidden />
+            <p className="text-ink">{describeEvent(ev.event_type, ev.payload, ev.to_status)}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{formatDateTime(ev.created_at)}{ev.actor ? ` · ${ev.actor.name}` : ' · Nora'}</p>
           </li>
         ))}
       </ol>
       {newestFirst.length > TIMELINE_PREVIEW && (
-        <Button size="sm" variant="ghost" className="mt-3" onClick={() => setExpanded((v) => !v)}>
+        <Button size="sm" variant="secondary" className="mt-4" onClick={() => setExpanded((v) => !v)}>
           {expanded ? 'Show recent only' : `Show all ${newestFirst.length} events`}
         </Button>
       )}
@@ -191,20 +197,20 @@ function ExtractionBanner({ pa, documentCount, onUpdate }: {
   };
 
   const button = canRun && pa.extraction_status !== 'running' && (
-    <Button size="sm" variant="outline" disabled={busy || documentCount === 0} onClick={run}>
+    <Button size="sm" variant="outline" className="shrink-0" disabled={busy || documentCount === 0} onClick={run}>
       {pa.extraction_status === 'idle' ? 'Find evidence in the chart' : 'Run again'}
     </Button>
   );
 
-  let tone = 'border-border bg-card';
+  let tone = 'bg-tile text-body';
   let message: React.ReactNode;
   switch (pa.extraction_status) {
     case 'running':
-      tone = 'border-sky-200 bg-sky-50 text-sky-900';
+      tone = 'bg-blue-tint text-blue-deep';
       message = 'Reading the chart against each criterion…';
       break;
     case 'failed':
-      tone = 'border-red-200 bg-red-50 text-red-900';
+      tone = 'bg-orange-tint text-orange-deep';
       message = pa.extraction_error ?? 'Extraction failed.';
       break;
     case 'succeeded':
@@ -212,7 +218,7 @@ function ExtractionBanner({ pa, documentCount, onUpdate }: {
         <>
           Evidence found {pa.extracted_at ? formatDateTime(pa.extracted_at) : ''}. Every excerpt is quoted from the chart; verify
           each one before marking a requirement met.
-          {pa.extraction_error && <span className="block mt-1 text-amber-800">{pa.extraction_error}</span>}
+          {pa.extraction_error && <span className="mt-1 block text-yellow-deep">{pa.extraction_error}</span>}
         </>
       );
       break;
@@ -223,7 +229,7 @@ function ExtractionBanner({ pa, documentCount, onUpdate }: {
   }
 
   return (
-    <div className={`mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border px-4 py-3 text-sm ${tone}`} role="status">
+    <div className={`mb-4 flex flex-col gap-3 rounded-tile px-5 py-4 text-sm leading-relaxed sm:flex-row sm:items-center ${tone}`} role="status">
       <div className="flex-1">{message}</div>
       {button}
     </div>
@@ -262,7 +268,7 @@ function ApprovalPanel({ pa, role, onUpdate }: {
   return (
     <Panel title="Approval">
       {pa.approval && (
-        <p className={`mb-3 text-sm ${pa.approval.current ? '' : 'text-amber-800'}`}>
+        <p className={`mb-3 text-sm leading-relaxed ${pa.approval.current ? 'text-body' : 'text-yellow-deep'}`}>
           {pa.approval.current ? 'Approved' : 'Earlier approval voided after an edit'} by {pa.approval.approved_by.name},{' '}
           {formatDateTime(pa.approval.approved_at)}.
         </p>
@@ -274,7 +280,7 @@ function ApprovalPanel({ pa, role, onUpdate }: {
         </>
       )}
       {packetReady && (
-        <Button className="w-full mt-3" variant="outline" onClick={download}>Download packet (PDF)</Button>
+        <Button className="mt-3 w-full" variant="outline" onClick={download}>Download packet (PDF)</Button>
       )}
     </Panel>
   );
@@ -325,18 +331,18 @@ function StatusPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate:
       <form onSubmit={submit} className="space-y-3">
         <div className="flex flex-wrap gap-2">
           {pa.allowed_transitions.map((s) => (
-            <Button key={s} type="button" size="sm" variant={target === s ? 'default' : 'outline'} onClick={() => setTarget(s)}>
+            <Button key={s} type="button" size="sm" variant={target === s ? 'default' : 'outline'} aria-pressed={target === s} onClick={() => setTarget(s)}>
               {TRANSITION_LABELS[s] ?? s}
             </Button>
           ))}
         </div>
         {target === 'submitted' && (
           <>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="payer_reference">Payer reference (optional)</Label>
               <Input id="payer_reference" value={reference} onChange={(e) => setReference(e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="prep_minutes">Minutes you spent preparing this (optional)</Label>
               <Input id="prep_minutes" type="number" min={0} max={600} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
               <p className="text-xs text-muted-foreground">Used to measure time saved. Your estimate is fine.</p>
@@ -363,15 +369,10 @@ function AssignmentPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpd
 
   return (
     <Panel title="Assigned to">
-      <select
-        aria-label="Assigned to"
-        value={pa.assigned_to?.id ?? ''}
-        onChange={(e) => assign(e.target.value)}
-        className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-      >
+      <NativeSelect aria-label="Assigned to" value={pa.assigned_to?.id ?? ''} onChange={(e) => assign(e.target.value)}>
         <option value="">Unassigned</option>
         {members?.map((m) => <option key={m.id} value={m.id}>{m.name} ({m.role})</option>)}
-      </select>
+      </NativeSelect>
     </Panel>
   );
 }

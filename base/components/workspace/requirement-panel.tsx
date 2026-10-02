@@ -8,6 +8,8 @@ import { formatCalendarDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { NativeSelect } from '@/components/ui/native-select';
+import { cn } from '@/lib/utils';
 import { Pill, RequirementStatusPill } from '@/components/workspace/status-pill';
 import type { ChartDocument, Evidence, PriorAuthorizationDetail, Requirement, RequirementStatus } from '@/types';
 
@@ -52,30 +54,30 @@ export function RequirementPanel({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <div className="flex flex-wrap items-center gap-2 mb-2">
+        <div className="mb-3 flex flex-wrap items-center gap-2">
           <RequirementStatusPill status={requirement.status} />
           {requirement.criterion.optional && <Pill tone="neutral">Conditional</Pill>}
           <span className="text-xs text-muted-foreground">Criterion {requirement.criterion.position}</span>
         </div>
-        <p className="text-lg leading-snug">{requirement.criterion.text}</p>
+        <p className="font-display text-[1.375rem] leading-[1.25] font-medium tracking-[-0.025em] text-ink">{requirement.criterion.text}</p>
         {requirement.ai_summary && (
-          <p className="mt-2 text-sm text-muted-foreground">
-            <span className="font-medium">Model&apos;s note:</span> {requirement.ai_summary}
+          <p className="mt-3 text-sm leading-relaxed text-body">
+            <span className="font-medium text-purple-deep">Model&apos;s note:</span> {requirement.ai_summary}
           </p>
         )}
         {requirement.reviewed_by && requirement.reviewed_at && (
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground">
             Last reviewed by {requirement.reviewed_by.name} on {formatCalendarDate(requirement.reviewed_at)}
           </p>
         )}
       </div>
 
       <div>
-        <h3 className="text-sm font-medium mb-2">Evidence ({evidence.filter((e) => !e.rejected).length})</h3>
+        <h3 className="mb-3 font-sans text-sm font-semibold tracking-normal text-ink">Evidence ({evidence.filter((e) => !e.rejected).length})</h3>
         {evidence.length === 0 ? (
-          <p className="text-sm text-muted-foreground rounded-xl border border-dashed border-border p-4">
+          <p className="rounded-2xl border border-dashed border-input bg-white/60 p-5 text-sm leading-relaxed text-muted-foreground">
             Nothing found in the chart for this criterion. Add a quote below, or mark it missing so the clinician is asked
             to document it.
           </p>
@@ -127,11 +129,16 @@ function EvidenceCard({ evidence, editable, onUpdate, onView }: {
   };
 
   return (
-    <li className={`rounded-xl border p-4 ${evidence.rejected ? 'border-border opacity-60' : evidence.verified ? 'border-emerald-300 bg-emerald-50/40' : 'border-border'}`}>
-      <blockquote className={`border-l-2 pl-3 text-sm whitespace-pre-wrap ${evidence.rejected ? 'line-through' : ''}`}>
+    <li className={cn('rounded-2xl border bg-white p-4', evidence.verified ? 'border-green/50' : 'border-border')}>
+      <blockquote
+        className={cn(
+          'border-l-[3px] pl-3.5 text-[0.9375rem] leading-relaxed whitespace-pre-wrap',
+          evidence.rejected ? 'border-input text-muted-foreground line-through' : evidence.verified ? 'border-green text-ink' : 'border-blue text-ink'
+        )}
+      >
         {evidence.excerpt}
       </blockquote>
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
         <span>
           {evidence.document.title}
           {evidence.document.occurred_on ? `, ${formatCalendarDate(evidence.document.occurred_on)}` : ''}
@@ -143,9 +150,9 @@ function EvidenceCard({ evidence, editable, onUpdate, onView }: {
       </div>
       {evidence.rationale && <p className="mt-2 text-xs text-muted-foreground">{evidence.rationale}</p>}
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant="ghost" onClick={onView}>View in document</Button>
+        <Button size="sm" variant="secondary" onClick={onView}>View in document</Button>
         {editable && !evidence.verified && (
-          <Button size="sm" variant="outline" disabled={busy} onClick={() => review('verify')}>
+          <Button size="sm" variant={evidence.rejected ? 'outline' : 'default'} disabled={busy} onClick={() => review('verify')}>
             {evidence.rejected ? 'Restore and verify' : 'Verify'}
           </Button>
         )}
@@ -169,7 +176,7 @@ function AddEvidenceForm({ requirementId, documents, onUpdate }: {
 
   if (!open) {
     return (
-      <Button size="sm" variant="ghost" onClick={() => setOpen(true)} disabled={documents.length === 0}>
+      <Button size="sm" variant="secondary" onClick={() => setOpen(true)} disabled={documents.length === 0}>
         + Cite chart text yourself
       </Button>
     );
@@ -187,15 +194,15 @@ function AddEvidenceForm({ requirementId, documents, onUpdate }: {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-xl border border-border p-4">
-      <div className="space-y-1">
+    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-white p-4">
+      <div className="space-y-2">
         <Label htmlFor={`doc-${requirementId}`}>Document</Label>
-        <select id={`doc-${requirementId}`} required value={documentId} onChange={(e) => setDocumentId(e.target.value)} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm">
+        <NativeSelect id={`doc-${requirementId}`} required value={documentId} onChange={(e) => setDocumentId(e.target.value)}>
           <option value="">Choose a document</option>
           {documents.map((d) => <option key={d.id} value={d.id}>{d.title}{d.occurred_on ? ` (${formatCalendarDate(d.occurred_on)})` : ''}</option>)}
-        </select>
+        </NativeSelect>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor={`quote-${requirementId}`}>Exact text from the document</Label>
         <Textarea id={`quote-${requirementId}`} required rows={3} value={quote} onChange={(e) => setQuote(e.target.value)} />
         <p className="text-xs text-muted-foreground">Nora checks the text appears in the document word for word.</p>

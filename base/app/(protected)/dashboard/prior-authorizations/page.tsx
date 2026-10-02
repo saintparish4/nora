@@ -7,7 +7,8 @@ import { usePriorAuthorizations, PA_STATUSES, type PaStatus } from '@/lib/api';
 import { PA_STATUS_LABELS } from '@/lib/prior-auth';
 import { formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
-import { PageHeader, Panel, EmptyState, ErrorNote } from '@/components/workspace/page-header';
+import { ChevronRight } from 'lucide-react';
+import { PageHeader, Panel, Card, EmptyState, ErrorNote } from '@/components/workspace/page-header';
 import { PaStatusPill, RequirementStatusPill } from '@/components/workspace/status-pill';
 
 const FILTERS: Array<{ label: string; statuses: PaStatus[] | null }> = [
@@ -44,17 +45,17 @@ function PriorAuthorizationList() {
   const activeKey = statuses?.join(',') ?? '';
 
   return (
-    <div className="pb-16">
+    <div>
       <PageHeader
         title="Prior authorizations"
         actions={<Button asChild><Link href="/dashboard/prior-authorizations/new">New prior authorization</Link></Button>}
       />
 
-      <div className="mb-4 flex flex-wrap gap-2" aria-label="Filter by status">
+      <div className="mb-5 flex flex-wrap gap-2" aria-label="Filter by status">
         {FILTERS.map((f) => {
           const key = f.statuses?.join(',') ?? '';
           return (
-            <Button key={f.label} size="sm" variant={key === activeKey ? 'default' : 'outline'} onClick={() => go(f.statuses)}>
+            <Button key={f.label} size="sm" variant={key === activeKey ? 'default' : 'secondary'} aria-pressed={key === activeKey} onClick={() => go(f.statuses)}>
               {f.label}
             </Button>
           );
@@ -72,18 +73,16 @@ function PriorAuthorizationList() {
           <p className="text-sm text-muted-foreground">Loading…</p>
         ) : data && data.prior_authorizations.length > 0 ? (
           <>
-            <ul className="divide-y divide-border">
+            <ul className="space-y-2">
               {data.prior_authorizations.map((pa) => {
                 const counts = pa.requirement_counts;
                 return (
                   <li key={pa.id}>
-                    <Link
-                      href={`/dashboard/prior-authorizations/${pa.id}`}
-                      className="flex flex-col md:flex-row md:items-center gap-2 py-3 px-2 -mx-2 rounded-lg hover:bg-muted"
-                    >
+                    <Link href={`/dashboard/prior-authorizations/${pa.id}`} className="group block rounded-2xl">
+                      <Card className="flex flex-col gap-3 p-4 transition-colors group-hover:border-input group-hover:bg-tile-strong/50 md:flex-row md:items-center">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium">{pa.patient.full_name} · {pa.item_name}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="font-medium text-ink">{pa.patient.full_name} · {pa.item_name}</p>
+                        <p className="mt-0.5 text-sm text-muted-foreground">
                           {pa.coverage.payer.name} · requested by {pa.requested_by.name}
                           {pa.assigned_to ? ` · assigned to ${pa.assigned_to.name}` : ''} · updated {formatDate(pa.updated_at)}
                         </p>
@@ -91,13 +90,15 @@ function PriorAuthorizationList() {
                       <div className="flex flex-wrap items-center gap-2">
                         {(['missing', 'unclear', 'pending'] as const).map((s) =>
                           counts[s] ? (
-                            <span key={s} className="flex items-center gap-1 text-xs">
+                            <span key={s} className="flex items-center gap-1 text-xs text-muted-foreground tabular-nums">
                               <RequirementStatusPill status={s} /> {counts[s]}
                             </span>
                           ) : null
                         )}
                         <PaStatusPill status={pa.status} />
+                        <ChevronRight aria-hidden className="hidden size-4 text-muted-foreground md:block" />
                       </div>
+                      </Card>
                     </Link>
                   </li>
                 );
@@ -105,9 +106,9 @@ function PriorAuthorizationList() {
             </ul>
             {data.meta.total_pages > 1 && (
               <div className="mt-4 flex items-center justify-between text-sm">
-                <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => go(statuses, page - 1)}>Previous</Button>
+                <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => go(statuses, page - 1)}>Previous</Button>
                 <span className="text-muted-foreground">Page {data.meta.page} of {data.meta.total_pages}</span>
-                <Button size="sm" variant="outline" disabled={page >= data.meta.total_pages} onClick={() => go(statuses, page + 1)}>Next</Button>
+                <Button size="sm" variant="secondary" disabled={page >= data.meta.total_pages} onClick={() => go(statuses, page + 1)}>Next</Button>
               </div>
             )}
           </>

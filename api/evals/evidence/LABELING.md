@@ -57,21 +57,16 @@ chart tempts one.
 
 A second reader labelled all 189 criteria from the charts and the rules above,
 without seeing these labels or the case names, and agreed on every one,
-including the two parked as ambiguous. That shows the rules can be applied
+including the two then parked as ambiguous. That shows the rules can be applied
 consistently. It does not show the rules are the right ones: that is the
 owner's call, below.
 
-## Open questions for the owner
+## Decisions the owner signed off (2026-10-02)
 
-- **A medication list with no GLP-1 on it, and no statement.** Is that enough
-  for criterion 6? Two cases wait on this (`weight_goal_no_workup`,
-  `med_list_without_statement`); they are labelled `ambiguous` and not scored.
-- **Height and weight without a BMI.** Rule 1 says it does not count. If a
-  payer would accept it, `weight_without_bmi` flips to supported.
-- **Qsymia after phentermine.** Qsymia contains phentermine. `uhc_two_trials`
-  counts them as two different medications. If a payer would not, it flips to
-  unsupported.
-- **One trial offered for the second-trial criterion.** Rule 7 treats it as a
-  false proposal, because a reviewer could mark the requirement met on it. If
-  showing the first trial there is helpful rather than risky, the two
-  second-trial cases need a different label.
+- A medication list with no GLP-1 on it, and no statement, is not enough for
+  criterion 6. `weight_goal_no_workup` and `med_list_without_statement` are
+  labelled unsupported.
+- Height and weight without a stated BMI do not count for criterion 1.
+- One trial offered for the second-trial criterion is a false proposal.
+- Qsymia after phentermine counts as two medications. Revisit if a payer says
+  otherwise.

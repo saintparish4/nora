@@ -29,4 +29,4 @@ expected:
   3: {label: not_applicable, why: "BMI is 30 or more."}
   4: {label: supported, support: ["Reduced-calorie diet and daily walking program since January 2026."]}
   5: {label: supported, support: ["Orlistat 02/2025 to 05/2025, stopped for abdominal cramping."]}
-  6: {label: ambiguous, why: "Open question for the owner: a complete current medication list with no GLP-1 on it, but no statement. Excluded from scoring until decided."}
+  6: {label: unsupported, why: "A complete current medication list with no GLP-1 on it, but no statement. A list is not a statement (owner's rule, 2026-10-02)."}

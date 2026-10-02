@@ -28,7 +28,7 @@ supports it. `support` is the text that does. `traps` is text that looks relevan
 | 19 | `currently_on_ozempic` | concurrent_glp1 | Zepbound, Blue Cross Blue Shield | 4 | 1 | 1 | train |
 | 20 | `switching_from_glp1` | concurrent_glp1 | Wegovy, Aetna | 5 | 0 | 1 | test |
 | 21 | `unrelated_visit` | nothing_relevant | Wegovy, Cigna | 0 | 5 | 1 | test |
-| 22 | `weight_goal_no_workup` | nothing_relevant | Zepbound, Aetna | 0 | 4 | 2 | train |
+| 22 | `weight_goal_no_workup` | nothing_relevant | Zepbound, Aetna | 0 | 5 | 1 | train |
 | 23 | `uhc_two_trials` | second_trial, clean_pass | Wegovy, UnitedHealthcare | 6 | 0 | 1 | test |
 | 24 | `uhc_one_trial_only` | second_trial | Wegovy, UnitedHealthcare | 5 | 1 | 1 | train |
 | 25 | `uhc_second_drug_no_outcome` | second_trial, fill_no_outcome, multi_document | Wegovy, UnitedHealthcare | 5 | 1 | 1 | train |
@@ -36,10 +36,10 @@ supports it. `support` is the text that does. `traps` is text that looks relevan
 | 27 | `clinical_shorthand` | wording_variant | Wegovy, Blue Cross Blue Shield | 5 | 0 | 1 | train |
 | 28 | `narrative_note` | wording_variant | Saxenda, Aetna | 5 | 0 | 1 | train |
 | 29 | `bmi_changed_between_notes` | multi_document, stale_bmi | Wegovy, Cigna | 5 | 0 | 1 | test |
-| 30 | `med_list_without_statement` | concurrent_glp1, multi_document | Zepbound, Blue Cross Blue Shield | 4 | 0 | 2 | train |
+| 30 | `med_list_without_statement` | concurrent_glp1, multi_document | Zepbound, Blue Cross Blue Shield | 4 | 1 | 1 | train |
 | 31 | `no_diagnosis_recorded` | missing_diagnosis | Wegovy, Aetna | 3 | 2 | 1 | train |
 
-Totals over 31 cases: 129 supported, 32 unsupported, 26 not applicable, 2 ambiguous.
+Totals over 31 cases: 129 supported, 34 unsupported, 26 not applicable, 0 ambiguous.
 
 ## 1. `pass_basic`
 
@@ -762,7 +762,7 @@ Plan: return for a weight management visit with vitals and labs.
 | 3. If BMI is 27 to 29.9: at least one weight-related comorbidity is documented (hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, or cardiovascular disease). | **not applicable** |  | No BMI is documented. |
 | 4. The patient has taken part in a reduced-calorie diet and increased physical activity program for at least 6 months before this request. | **unsupported** | trap: "She exercises occasionally and is trying to eat better."<br>trap: "No diet program." | No program, no duration. |
 | 5. A trial of at least one other weight-management medication is documented, with its outcome or the reason it was stopped. | **unsupported** | trap: "She saw an advertisement for Zepbound and asks whether insurance covers it." | The only drug named is the one requested. |
-| 6. The medication will not be used together with another GLP-1 receptor agonist. | **ambiguous** |  | Open question for the owner: the medication list shows no GLP-1, but nothing states it. Excluded from scoring until decided. |
+| 6. The medication will not be used together with another GLP-1 receptor agonist. | **unsupported** |  | The medication list shows no GLP-1, but nothing states it. A list is not a statement (owner's rule, 2026-10-02). |
 
 ## 23. `uhc_two_trials`
 
@@ -1033,7 +1033,7 @@ Current medications: hydrochlorothiazide 25 mg daily, sertraline 100 mg daily, v
 | 3. If BMI is 27 to 29.9: at least one weight-related comorbidity is documented (hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, or cardiovascular disease). | **not applicable** |  | BMI is 30 or more. |
 | 4. The patient has taken part in a reduced-calorie diet and increased physical activity program for at least 6 months before this request. | **supported** | support: "Reduced-calorie diet and daily walking program since January 2026." |  |
 | 5. A trial of at least one other weight-management medication is documented, with its outcome or the reason it was stopped. | **supported** | support: "Orlistat 02/2025 to 05/2025, stopped for abdominal cramping." |  |
-| 6. The medication will not be used together with another GLP-1 receptor agonist. | **ambiguous** |  | Open question for the owner: a complete current medication list with no GLP-1 on it, but no statement. Excluded from scoring until decided. |
+| 6. The medication will not be used together with another GLP-1 receptor agonist. | **unsupported** |  | A complete current medication list with no GLP-1 on it, but no statement. A list is not a statement (owner's rule, 2026-10-02). |
 
 ## 31. `no_diagnosis_recorded`
 

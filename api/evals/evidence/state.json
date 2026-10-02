@@ -62,14 +62,15 @@
     "unusual_wording",
     "weight_without_bmi"
   ],
-  "criteria_digest": "178ad7965f974b56",
   "harness_paths": [
     "evals/evidence/harness.rb",
     "evals/evidence/report.rb",
     "lib/tasks/eval.rake"
   ],
   "sign_offs": {
-    "cases": null,
-    "grading": null
-  }
+    "cases": "owner, 2026-10-02",
+    "grading": "owner, 2026-10-02"
+  },
+  "criteria_digest": "a993094ffefef115",
+  "current_round": 3
 }

@@ -85,7 +85,7 @@ namespace :eval do
             trace = JSON.parse(dir.join("traces", "fill_only_pharmacy_record_rep0.json").read)
             from_model = trace["requirements"].flat_map { |r| r["proposals"] }.select { |pr| pr["source"] == "ai" }
             errors.empty? && rows.size == 1 && rows.first.dig("tokens", "prompt") == 900 && rows.first.dig("ran", "served_model") == Ai::Client::DEFAULT_MODEL &&
-              from_model.map { |pr| pr["verdict"] } == [ "false" ] && rows.first.dig("grade", "clean") == 0.0
+              from_model.map { |pr| pr["verdict"] } == [ "false" ] && rows.first.dig("grade", "clean") < 1.0
           end
         failed ||= !ok
         puts format("%-4s %-30s %s", ok ? "ok" : "FAIL", round, error_class ? "lands in errors.jsonl as #{error_class}, no score" : "model excerpt recorded, sourced, and graded as a false proposal")

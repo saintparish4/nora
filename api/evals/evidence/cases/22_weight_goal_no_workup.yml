@@ -30,4 +30,4 @@ expected:
   3: {label: not_applicable, why: "No BMI is documented."}
   4: {label: unsupported, traps: ["She exercises occasionally and is trying to eat better.", "No diet program."], why: "No program, no duration."}
   5: {label: unsupported, traps: ["She saw an advertisement for Zepbound and asks whether insurance covers it."], why: "The only drug named is the one requested."}
-  6: {label: ambiguous, why: "Open question for the owner: the medication list shows no GLP-1, but nothing states it. Excluded from scoring until decided."}
+  6: {label: unsupported, why: "The medication list shows no GLP-1, but nothing states it. A list is not a statement (owner's rule, 2026-10-02)."}

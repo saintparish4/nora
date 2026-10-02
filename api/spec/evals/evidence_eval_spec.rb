@@ -71,13 +71,13 @@ RSpec.describe EvidenceEval do
       expect(graded[:grade]['clean']).to eq(0.5)
     end
 
-    it 'leaves not applicable and ambiguous requirements out of the score' do
-      eval_case = cases.find { |c| c.id == 'med_list_without_statement' }
-      proposals = [ 3, 6 ].map { |position| EvidenceEval::SelfCheck.proposal(eval_case, position, EvidenceEval::Span.new(0, 0, 10), 'test') }
+    it 'leaves not applicable requirements out of the score' do
+      eval_case = cases.find { |c| c.id == 'pass_basic' }
+      proposals = [ 3 ].map { |position| EvidenceEval::SelfCheck.proposal(eval_case, position, EvidenceEval::Span.new(0, 0, 10), 'test') }
 
       graded = described_class.call(eval_case, proposals)
 
-      expect(graded[:counts]).to include('excluded' => 2, 'proposals' => 0, 'false_proposals' => 0)
+      expect(graded[:counts]).to include('excluded' => 1, 'proposals' => 0, 'false_proposals' => 0)
       expect(graded[:grade]['clean']).to be_nil
     end
   end

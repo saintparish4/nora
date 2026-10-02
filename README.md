@@ -36,8 +36,19 @@ Sign in with a synthetic demo account (password `password123`):
 | `clinician@nora.com` | Clinician (can approve) |
 | `ma@nora.com` | Staff |
 
-The seeds create a demo practice with five synthetic patients and a GLP-1
-policy library. Every name and note is invented.
+The seeds create a demo practice with five synthetic patients, a GLP-1 policy
+library, and four requests at different stages: one decided by the payer, one
+waiting for the clinician, one blocked on missing documentation, and one just
+read. The fifth patient has no request, so there is one left to start. Every
+name and note is invented.
+
+http://localhost:3000/demo signs you in to that practice without a password, as
+the medical assistant (`/demo?as=clinician` for the clinician, who can approve).
+`cd api && bin/rails demo:reset` puts the practice back the way the seeds left it.
+
+The demo practice is off in production. Set `DEMO_PRACTICE=true` on the API to
+seed it there and enable `/demo`; the container then rebuilds it on every boot,
+because the practice is shared by everyone who opens it.
 
 Without `OPENAI_API_KEY`, evidence extraction runs the rule pass only and says
 so on screen. That is enough to try the whole flow.
@@ -68,6 +79,7 @@ so on screen. That is enough to try the whole flow.
 | `SECRET_KEY_BASE` | **Yes** | Signs the session cookie and JWTs. `openssl rand -hex 64`. |
 | `OPENAI_API_KEY` | No | Enables the model pass of evidence extraction. Without it, only rules run. |
 | `OPENAI_MODEL` | No | Defaults to `gpt-4o-mini`. |
+| `DEMO_PRACTICE` | No | `true` seeds the synthetic demo practice in production and enables one-click sign-in at `/demo`. Always on outside production. |
 | `AI_PHI_BAA_CONFIRMED` | Production | Must be `true` before production sends chart text to the model. Set it only once a BAA with zero data retention covers the key. |
 | `RESEND_API_KEY` | Production | Transactional email. |
 | `RESEND_FROM_EMAIL` | No | Sender address. |

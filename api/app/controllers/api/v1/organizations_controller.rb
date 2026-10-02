@@ -2,6 +2,7 @@ module Api
   module V1
     class OrganizationsController < ApplicationController
       before_action :require_admin!, only: [ :update ]
+      before_action :refuse_in_demo_practice!, only: [ :update ]
 
       # GET /api/v1/organization
       def show

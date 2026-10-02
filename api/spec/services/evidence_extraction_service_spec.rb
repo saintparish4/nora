@@ -95,6 +95,17 @@ RSpec.describe Authorizations::EvidenceExtractionService do
     expect(pa.extraction_error).to match(/OPENAI_API_KEY/)
   end
 
+  it 'skips the model when asked for the rule pass alone, even with a client to hand' do
+    allow(ai).to receive(:complete_json)
+    described_class.call(pa, actor: pa.created_by, ai_client: ai, model_pass: false)
+    pa.reload
+
+    expect(ai).not_to have_received(:complete_json)
+    expect(pa.extraction_status).to eq('succeeded')
+    expect(pa.extraction_error).to match(/rule pass/)
+    expect(requirements[1].evidence.map(&:extracted_by).uniq).to eq([ 'rule' ])
+  end
+
   it 'fails with a clear message when the patient has no chart documents' do
     pa = create_prior_authorization(with_document: false)
     described_class.call(pa, actor: pa.created_by, ai_client: ai)

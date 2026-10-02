@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { NoraLogo } from '@/components/navigation/nora-logo';
+import { WorkedExample } from '@/components/landing/worked-example';
+
+const SOURCE_URL = 'https://github.com/saintparish4/nora';
 
 const STEPS = [
   {
@@ -45,7 +48,23 @@ export default function Home() {
             needs for a prior authorization, shows you what is missing, and prepares the packet
             for a person to approve.
           </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link
+              href="/demo"
+              className="rounded-full bg-primary text-primary-foreground px-6 py-3 font-medium hover:opacity-90"
+            >
+              See the demo
+            </Link>
+            <a href={SOURCE_URL} className="text-sm font-medium underline underline-offset-4 opacity-70 hover:opacity-100">
+              Read the source
+            </a>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            No sign-up. It opens a practice with synthetic patients and requests already in progress.
+          </p>
         </section>
+
+        <WorkedExample />
 
         <section aria-labelledby="how-heading" className="pb-16">
           <h2 id="how-heading" className="sr-only">How it works</h2>

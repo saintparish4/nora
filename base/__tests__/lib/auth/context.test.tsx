@@ -24,17 +24,19 @@ jest.mock('next/navigation', () => ({
 const mockLogin = jest.fn()
 const mockSignup = jest.fn()
 const mockLogout = jest.fn()
+const mockDemoLogin = jest.fn()
 const mockGetCurrentUser = jest.fn()
 
 jest.mock('@/lib/api', () => ({
   login: (...args: unknown[]) => mockLogin(...args),
   signup: (...args: unknown[]) => mockSignup(...args),
   logout: (...args: unknown[]) => mockLogout(...args),
+  demoLogin: (...args: unknown[]) => mockDemoLogin(...args),
   getCurrentUser: (...args: unknown[]) => mockGetCurrentUser(...args),
 }))
 
 function TestConsumer() {
-  const { user, loading, login, signup, logout } = useAuth()
+  const { user, loading, login, signup, logout, enterDemo } = useAuth()
 
   if (loading) return <div>Loading...</div>
 
@@ -44,6 +46,8 @@ function TestConsumer() {
       <button onClick={() => login('test@example.com', 'pass')}>Login</button>
       <button onClick={() => signup({ organization_name: 'Riverside Clinic', email: 'new@example.com', password: 'pass' })}>Signup</button>
       <button onClick={() => logout()}>Logout</button>
+      <button onClick={() => enterDemo()}>Demo</button>
+      <button onClick={() => enterDemo('clinician')}>Demo as clinician</button>
     </div>
   )
 }
@@ -152,6 +156,47 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('user').textContent).toBe('none')
     })
     expect(mockPush).toHaveBeenCalledWith('/login')
+  })
+
+  describe('enterDemo', () => {
+    async function enter(button: string) {
+      render(
+        <AuthProvider>
+          <TestConsumer />
+        </AuthProvider>
+      )
+      await waitFor(() => expect(screen.getByTestId('user')).toBeTruthy())
+      await act(async () => {
+        await userEvent.click(screen.getByText(button))
+      })
+    }
+
+    it('opens the featured request for the medical assistant', async () => {
+      mockDemoLogin.mockResolvedValue({ user: { id: 3, email: 'ma@nora.com' }, featured_prior_authorization_id: 18 })
+
+      await enter('Demo')
+
+      expect(mockDemoLogin).toHaveBeenCalledWith('staff')
+      expect(screen.getByTestId('user').textContent).toBe('ma@nora.com')
+      expect(mockPush).toHaveBeenCalledWith('/dashboard/prior-authorizations/18')
+    })
+
+    it('opens Today for the clinician, where the approval queue is', async () => {
+      mockDemoLogin.mockResolvedValue({ user: { id: 2, email: 'clinician@nora.com' }, featured_prior_authorization_id: 18 })
+
+      await enter('Demo as clinician')
+
+      expect(mockDemoLogin).toHaveBeenCalledWith('clinician')
+      expect(mockPush).toHaveBeenCalledWith('/dashboard')
+    })
+
+    it('falls back to Today when the practice has no request to feature', async () => {
+      mockDemoLogin.mockResolvedValue({ user: { id: 3, email: 'ma@nora.com' }, featured_prior_authorization_id: null })
+
+      await enter('Demo')
+
+      expect(mockPush).toHaveBeenCalledWith('/dashboard')
+    })
   })
 
   it('throws when useAuth is used outside AuthProvider', () => {

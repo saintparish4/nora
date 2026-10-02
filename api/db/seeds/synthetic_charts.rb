@@ -1,23 +1,24 @@
 # Synthetic practice, staff, and patients for development and demos.
 # Every name, date, identifier, and note here is invented.
 
-org = Organization.find_or_create_by!(name: "Demo Family Medicine") { |o| o.npi = "1234567893" }
+org = Demo::Practice.organization || Organization.find_or_initialize_by(name: Demo::Practice::NAME)
+org.update!(name: Demo::Practice::NAME, npi: "1234567893", timezone: "America/New_York", demo: true)
 
-def seed_user(org, email, first, last, role)
-  user = User.find_or_initialize_by(email: email)
+seed_user = lambda do |role, first, last|
+  user = User.find_or_initialize_by(email: Demo::Practice::ACCOUNTS.fetch(role))
   user.assign_attributes(password: "password123", password_confirmation: "password123",
                          first_name: first, last_name: last, role: role, organization: org)
   user.save!
   user
 end
 
-admin = seed_user(org, "demo@nora.com", "Demo", "Admin", "admin")
-clinician = seed_user(org, "clinician@nora.com", "Avery", "Chen", "clinician")
-seed_user(org, "ma@nora.com", "Jordan", "Blake", "staff")
+admin = seed_user.call("admin", "Demo", "Admin")
+clinician = seed_user.call("clinician", "Avery", "Chen")
+staff = seed_user.call("staff", "Jordan", "Blake")
 
 plan = ->(payer, name) { InsurancePlan.joins(:payer).find_by!(payers: { name: payer }, name: name) }
 
-PATIENTS = [
+patients = [
   {
     mrn: "DEMO-1001", first_name: "Jane", last_name: "Rivera", date_of_birth: "1984-03-14", sex: "female",
     coverage: [ "UnitedHealthcare", "Choice Plus", "UHC900114572" ],
@@ -40,10 +41,19 @@ PATIENTS = [
         Current medications: metformin 500 mg daily (prediabetes), cetirizine 10 mg daily.
         Past medications: Saxenda (liraglutide 3 mg) 06/2025 to 10/2025, stopped for GI intolerance (nausea, vomiting).
       NOTE
-      { kind: "problem_list", title: "Problem list", occurred_on: "2026-08-12", body: <<~NOTE }
+      { kind: "problem_list", title: "Problem list", occurred_on: "2026-08-12", body: <<~NOTE },
         1. Obesity, class I (E66.01)
         2. Prediabetes (R73.03)
         3. Seasonal allergic rhinitis (J30.2)
+      NOTE
+      # A fill with no documented outcome: the demo's example of a
+      # prescription that is not, on its own, a documented trial.
+      { kind: "medication_history", title: "Pharmacy fill history", occurred_on: "2026-08-12", body: <<~NOTE }
+        Outside pharmacy fill history, received 08/12/2026.
+
+        Phentermine 37.5 mg tablets, quantity 30, filled 02/03/2025; no refills on record.
+        Saxenda (liraglutide) 3 mg pen, filled monthly 06/2025 through 10/2025.
+        Metformin 500 mg tablets, filled monthly, most recent fill 07/28/2026.
       NOTE
     ]
   },
@@ -129,9 +139,9 @@ PATIENTS = [
       NOTE
     ]
   }
-].freeze
+]
 
-PATIENTS.each do |attrs|
+patients.each do |attrs|
   patient = org.patients.find_or_initialize_by(mrn: attrs[:mrn])
   patient.update!(attrs.slice(:first_name, :last_name, :date_of_birth, :sex))
 
@@ -146,4 +156,4 @@ PATIENTS.each do |attrs|
 end
 
 puts "Synthetic practice: #{org.name}, #{org.users.count} staff, #{org.patients.count} patients."
-puts "Logins (password123): demo@nora.com (admin), #{clinician.email} (clinician), ma@nora.com (staff)"
+puts "Logins (password123): #{admin.email} (admin), #{clinician.email} (clinician), #{staff.email} (staff)"

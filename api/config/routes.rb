@@ -5,6 +5,8 @@ Rails.application.routes.draw do
       # Auth routes
       post "auth/signup", to: "auth#signup"
       post "auth/login", to: "auth#login"
+      # One-click sign-in to the synthetic demo practice, where one is enabled.
+      post "auth/demo", to: "auth#demo"
       delete "auth/logout", to: "auth#logout"
       # Browser clients read this to prove a mutating request came from our own
       # page; the session cookie itself is httpOnly and unreadable.

@@ -1,6 +1,6 @@
 import { authFetch, clearCsrfToken, validateResponse } from "./client";
 import { UserSchema } from "./schemas";
-import type { AuthResponse, User } from "@/types";
+import type { AuthResponse, DemoResponse, DemoRole, User } from "@/types";
 
 export interface SignupFields {
   organization_name: string;
@@ -57,6 +57,28 @@ export async function login(
 
   if (!res.ok) {
     throw new Error(data.error || "Login failed");
+  }
+
+  clearCsrfToken();
+
+  return data;
+}
+
+/**
+ * Signs in to the shared demo practice. There are no credentials: the practice
+ * holds synthetic data only, and the API answers 404 where it is not offered.
+ */
+export async function demoLogin(role: DemoRole = "staff"): Promise<DemoResponse> {
+  const res = await authFetch("/api/v1/auth/demo", {
+    method: "POST",
+    skipSessionExpiredRedirect: true,
+    body: JSON.stringify({ role }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data.error || "The demo could not be opened");
   }
 
   clearCsrfToken();

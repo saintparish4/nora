@@ -40,10 +40,13 @@ module Authorizations
 
     def self.call(...) = new(...).call
 
-    def initialize(prior_authorization, actor: nil, ai_client: nil)
+    # @param model_pass [Boolean] false runs the rule pass alone, whatever key
+    #   is configured. The demo seeds use it so they never call a model.
+    def initialize(prior_authorization, actor: nil, ai_client: nil, model_pass: true)
       @pa = prior_authorization
       @actor = actor
       @ai_client = ai_client
+      @model_pass = model_pass
       @stats = { rule: 0, ai: 0, unverifiable_quotes: 0, duplicates: 0 }
     end
 
@@ -57,6 +60,12 @@ module Authorizations
       end
 
       rule_pass(requirements, documents)
+
+      unless @model_pass
+        finish!(requirements, ai_failed: true, succeeded: true,
+                              error: "Only the rule pass has run on this request. Run extraction again to add the model pass.")
+        return @pa
+      end
 
       if @ai_client.nil? && !Ai::Client.configured?
         # Development without a key: say so rather than failing. Requirements

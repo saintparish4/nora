@@ -5,7 +5,8 @@
 #
 # Each request is played through the real workflow services (Demo::Story), so
 # nothing here writes a status, a quote, or an approval directly. Dates count
-# back from today in working days.
+# back from today in working days, and the two open requests are from this
+# morning so their follow-up tasks are not already overdue.
 #
 # Skipped when the practice already has requests. `bin/rails demo:reset`
 # clears the practice and plays these again.
@@ -60,7 +61,7 @@ end
 # second prior medication trial; the chart has a single phentermine fill with
 # no outcome, which staff reject as evidence. Waiting on the clinician.
 Demo::Story.play(patient: patient.call("DEMO-1001"), item_name: "Wegovy", staff: staff, clinician: clinician,
-                 starts_at: working_day.call(2, "10:20")) do |story|
+                 starts_at: [ working_day.call(0, "09:05"), 50.minutes.ago ].min) do |story|
   story.extract
   story.wait 7.minutes
   story.meet 1
@@ -93,6 +94,6 @@ end
 
 # 4. Just read. Excerpts are waiting for a person to verify them.
 Demo::Story.play(patient: patient.call("DEMO-1002"), item_name: "Zepbound", staff: staff, clinician: clinician,
-                 starts_at: [ working_day.call(0, "08:40"), 20.minutes.ago ].min, &:extract)
+                 starts_at: [ working_day.call(0, "09:40"), 15.minutes.ago ].min, &:extract)
 
 puts "Demo requests: #{org.prior_authorizations.group(:status).count.map { |status, n| "#{n} #{status}" }.join(', ')}."

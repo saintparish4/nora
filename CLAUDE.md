@@ -120,6 +120,7 @@ make docker-down   # docker-compose down
 - **Line endings:** LF (Unix).
 - **API:** All routes under `/api/v1/`; add controllers in `api/app/controllers/api/v1/`, services in `api/app/services/` by domain (e.g. `Authorizations::`, `Chart::`, `Ai::`).
 - **Frontend:** Types in `base/types/`, API client in `base/lib/api/`; keep components under `base/components/` and pages under `base/app/`.
+- **Frontend styling:** Use the tokens in `base/app/globals.css` (`bg-tile`, `text-ink`, `text-body`, `text-blue-deep`, `bg-green-tint`, ...) rather than raw Tailwind palette colours. Build screens from `PageHeader`, `Panel`, `Card`, `Notice`, `Pill`, `Button`, `Input`, and `NativeSelect`; status colours come from `lib/prior-auth.ts`, not from the page. `docs/ARCHITECTURE.md` describes what each accent means.
 
 ## Commit Messages
 

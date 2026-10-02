@@ -10,6 +10,8 @@ export const OrganizationSchema = z.object({
   name: z.string(),
   npi: z.string().nullish(),
   timezone: z.string(),
+  // The shared synthetic practice behind the public demo.
+  demo: z.boolean().optional(),
 });
 
 export const UserSchema = z.object({

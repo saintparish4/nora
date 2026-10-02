@@ -45,7 +45,7 @@ export default function TodayPage() {
               href={`/dashboard/prior-authorizations?status=${keys.join(',')}`}
               className="rounded-2xl border border-border bg-card p-4 hover:bg-muted transition-colors"
             >
-              <p className="text-3xl font-serif">{isLoading ? '–' : count}</p>
+              <p className="text-3xl font-serif lining-nums">{isLoading ? '–' : count}</p>
               <p className="text-sm text-muted-foreground">{tile.label}</p>
             </Link>
           );

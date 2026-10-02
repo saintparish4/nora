@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
-import { signup, login, logout, getCurrentUser, updateProfile } from '@/lib/api/auth'
+import { signup, login, demoLogin, logout, getCurrentUser, updateProfile } from '@/lib/api/auth'
 import { clearCsrfToken } from '@/lib/api/client'
 
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>
@@ -71,6 +71,40 @@ describe('Auth API functions', () => {
       mockFetch.mockResolvedValueOnce(mockResponse({ error: 'Invalid email or password' }, 401))
 
       await expect(login('user@example.com', 'wrong')).rejects.toThrow('Invalid email or password')
+    })
+  })
+
+  describe('demoLogin', () => {
+    it('asks for the role and returns the user with the request to open first', async () => {
+      mockCsrf()
+      mockFetch.mockResolvedValueOnce(
+        mockResponse({ user: { id: 3, email: 'ma@nora.com' }, featured_prior_authorization_id: 18 })
+      )
+
+      const result = await demoLogin('clinician')
+
+      const [url, init] = mockFetch.mock.calls[1]
+      expect(String(url)).toContain('/api/v1/auth/demo')
+      expect(init?.method).toBe('POST')
+      expect(JSON.parse(String(init?.body))).toEqual({ role: 'clinician' })
+      expect(result.featured_prior_authorization_id).toBe(18)
+      expect(localStorage.length).toBe(0)
+    })
+
+    it('enters as staff by default', async () => {
+      mockCsrf()
+      mockFetch.mockResolvedValueOnce(mockResponse({ user: { id: 3, email: 'ma@nora.com' }, featured_prior_authorization_id: null }))
+
+      await demoLogin()
+
+      expect(JSON.parse(String(mockFetch.mock.calls[1][1]?.body))).toEqual({ role: 'staff' })
+    })
+
+    it("throws the API's message where the demo is not offered", async () => {
+      mockCsrf()
+      mockFetch.mockResolvedValueOnce(mockResponse({ error: 'The demo practice is not available on this server.' }, 404))
+
+      await expect(demoLogin()).rejects.toThrow('The demo practice is not available on this server.')
     })
   })
 

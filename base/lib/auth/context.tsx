@@ -2,13 +2,19 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, signup as apiSignup, login as apiLogin, logout as apiLogout, getCurrentUser, SignupFields } from '../api';
+import { User, DemoRole, signup as apiSignup, login as apiLogin, demoLogin as apiDemoLogin, logout as apiLogout, getCurrentUser, SignupFields } from '../api';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string, returnUrl?: string) => Promise<void>;
   signup: (fields: SignupFields, returnUrl?: string) => Promise<void>;
+  /**
+   * Sign in to the shared demo practice and open it where there is most to
+   * see: the featured request for staff, Today (with its approval queue) for
+   * the clinician.
+   */
+  enterDemo: (role?: DemoRole) => Promise<void>;
   logout: () => Promise<void>;
   /**
    * Replace the cached user after a successful profile update, so pages reading
@@ -52,6 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push(safeReturnUrl(returnUrl));
   };
 
+  const enterDemo = async (role: DemoRole = 'staff') => {
+    const data = await apiDemoLogin(role);
+    setUser(data.user);
+    const featured = data.featured_prior_authorization_id;
+    router.push(role === 'staff' && featured ? `/dashboard/prior-authorizations/${featured}` : '/dashboard');
+  };
+
   const updateUser = (updated: User) => {
     setUser(updated);
   };
@@ -63,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, enterDemo, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

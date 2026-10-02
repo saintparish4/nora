@@ -1,7 +1,9 @@
 'use client';
 
 import { AuthProtected } from '@/components/dashboard/auth-protected';
+import { AccountCache } from '@/components/dashboard/account-cache';
 import { DashboardNav } from '@/components/dashboard/dashboard-nav';
+import { DemoBanner } from '@/components/dashboard/demo-banner';
 import { SiteFooter } from '@/components/navigation/site-footer';
 
 export default function DashboardLayout({
@@ -26,9 +28,10 @@ export default function DashboardLayout({
         />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-10 relative z-10">
+          <DemoBanner />
           <DashboardNav />
           <main id="main-content">
-            {children}
+            <AccountCache>{children}</AccountCache>
           </main>
         </div>
         <SiteFooter />

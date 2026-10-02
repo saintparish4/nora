@@ -66,6 +66,13 @@ function LoginContent() {
       )}
 
       <p className="mt-8 text-sm text-muted-foreground">
+        Just looking?{' '}
+        <Link href="/demo" className="font-medium text-foreground underline underline-offset-4">
+          Open the demo practice
+        </Link>
+      </p>
+
+      <p className="mt-3 text-sm text-muted-foreground">
         New practice?{' '}
         <Link
           href={returnUrl ? `/signup?returnUrl=${encodeURIComponent(returnUrl)}` : '/signup'}

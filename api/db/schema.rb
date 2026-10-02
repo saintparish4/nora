@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_000007) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
   create_table "approvals", force: :cascade do |t|
     t.integer "approvable_id", null: false
     t.string "approvable_type", null: false
@@ -88,6 +88,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000007) do
 
   create_table "organizations", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "demo", default: false, null: false
     t.string "name", null: false
     t.string "npi"
     t.string "timezone", default: "America/New_York", null: false

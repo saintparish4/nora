@@ -9,6 +9,13 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
+
+  # The demo practice is shared and public, so a visitor's changes would
+  # otherwise greet the next one. Rebuild it on every boot. A failure here
+  # must not keep the server down.
+  if [ "${DEMO_PRACTICE}" == "true" ]; then
+    ./bin/rails demo:reset || echo "demo:reset failed; starting with the demo practice as it was" >&2
+  fi
 fi
 
 exec "${@}"

@@ -43,7 +43,6 @@ Demo::Story.play(patient: patient.call("DEMO-1005"), item_name: "Wegovy", staff:
   story.not_applicable 3, note: bmi_alone.call("38.1")
   story.meet 4
   story.meet 5
-  story.cite 6, document: "Office visit", quote: "She is not taking any other GLP-1 receptor agonist."
   story.meet 6
   story.meet 7
 
@@ -57,9 +56,10 @@ Demo::Story.play(patient: patient.call("DEMO-1005"), item_name: "Wegovy", staff:
   story.move_to "approved_by_payer"
 end
 
-# 2. One requirement the chart does not support. The payer's policy asks for a
-# second prior medication trial; the chart has a single phentermine fill with
-# no outcome, which staff reject as evidence. Waiting on the clinician.
+# 2. Two requirements the chart does not support. The payer's policy asks for a
+# second prior medication trial, and the chart has only a phentermine fill with
+# no outcome, which Nora does not offer as evidence. Nothing states whether she
+# takes another GLP-1 either. Waiting on the clinician.
 Demo::Story.play(patient: patient.call("DEMO-1001"), item_name: "Wegovy", staff: staff, clinician: clinician,
                  starts_at: [ working_day.call(0, "09:05"), 50.minutes.ago ].min) do |story|
   story.extract
@@ -68,11 +68,10 @@ Demo::Story.play(patient: patient.call("DEMO-1001"), item_name: "Wegovy", staff:
   story.meet 2
   story.not_applicable 3, note: bmi_alone.call("34.2")
   story.meet 4
-  story.meet 5, rejecting: [ "Phentermine 37.5 mg tablets" ]
-  story.cite 6, document: "Medication history",
-                quote: "Current medications: metformin 500 mg daily (prediabetes), cetirizine 10 mg daily."
-  story.meet 6
-  story.missing 7, rejecting: [ "Phentermine 37.5 mg tablets", "Saxenda" ],
+  story.meet 5
+  story.missing 6, note: "The medication list shows no GLP-1, but the chart does not say she takes none. " \
+                         "A list is not a statement."
+  story.missing 7,
                    note: "Saxenda is the first trial (criterion 5). The pharmacy record shows one phentermine fill " \
                          "in 02/2025, with no documented response or reason for stopping. A fill alone does not " \
                          "document a second trial."
@@ -88,7 +87,6 @@ Demo::Story.play(patient: patient.call("DEMO-1004"), item_name: "Saxenda", staff
   story.not_applicable 3, note: bmi_alone.call("36.5")
   story.meet 4
   story.meet 5
-  story.cite 6, document: "Weight management follow-up", quote: "Not on any other GLP-1 receptor agonist."
   story.meet 6
 end
 

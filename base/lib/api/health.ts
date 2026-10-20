@@ -1,4 +1,4 @@
-import { API_URL } from "./client";
+import { API_URL, primeCsrfToken } from "./client";
 
 /**
  * The API's free Render instance sleeps when idle and takes up to a minute to
@@ -9,6 +9,14 @@ import { API_URL } from "./client";
 const ATTEMPT_TIMEOUT_MS = 8000;
 const RETRY_DELAY_MS = 1500;
 const GIVE_UP_AFTER_MS = 120_000;
+
+/** When the API last answered a probe in this tab (0: not yet). */
+let answeredAt = 0;
+
+/** Milliseconds since the API last answered, or null if it has not in this tab. */
+export function apiAnsweredAgo(): number | null {
+  return answeredAt ? Date.now() - answeredAt : null;
+}
 
 export type ProbeResult =
   | { ok: true; status: number }
@@ -28,7 +36,9 @@ export async function probeApi(timeoutMs = ATTEMPT_TIMEOUT_MS, signal?: AbortSig
     // A status we can read at all came from Rails: Render's own waking page
     // carries no CORS headers and surfaces as a TypeError below. So a 404 from
     // an API that predates the route still means it is up; a 5xx does not.
-    return res.status < 500 ? { ok: true, status: res.status } : { ok: false, status: res.status, timedOut: false };
+    if (res.status >= 500) return { ok: false, status: res.status, timedOut: false };
+    answeredAt = Date.now();
+    return { ok: true, status: res.status };
   } catch {
     // A TypeError (unreachable, or Render's own waking page without CORS
     // headers) and our own abort both mean the API is not answering yet.
@@ -79,7 +89,12 @@ export async function wakeApi({
   }
 }
 
-/** Fire-and-forget: start the API booting before anyone asks it for anything. */
+/**
+ * Fire-and-forget: start the API booting before anyone asks it for anything,
+ * and once it answers, fetch the CSRF token the demo's sign-in will need.
+ */
 export function warmApi(): void {
-  fetch(`${API_URL}/up`, { cache: "no-store" }).catch(() => {});
+  void probeApi(GIVE_UP_AFTER_MS).then(result => {
+    if (result.ok) primeCsrfToken();
+  });
 }

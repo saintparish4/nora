@@ -103,8 +103,9 @@ everywhere but production, and in production only with `DEMO_PRACTICE=true`.
 
 ## Frontend (`base/`)
 
-- **Routes:** `/`, `/login`, `/signup`, `/demo` (enters the demo practice once `lib/api/health.ts` has the API answering `GET /up`, writing each probe and the sign-in to a terminal-style log because the free Render instance can take a minute to wake; the landing page sends one probe on load so it is usually awake already), and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
-- **API client (`lib/api/`):** `client` (cookie session, CSRF, 401 handling, `readJson`), `auth`, `workspace`, `prior-authorizations`, `hooks` (SWR), `schemas` (Zod contracts, validated in development).
+- **Routes:** `/`, `/login`, `/signup`, `/demo` (enters the demo practice: it draws the workspace frame and a skeleton of the destination with a terminal-style log on top, waits for `lib/api/health.ts` to have the API answering `GET /up` because the free Render instance can take a minute to wake, signs in, starts the destination's reads with `lib/api/preload.ts`, and navigates at once so the skeleton underneath becomes the page; the landing page probes on load, fetches the CSRF token and the request page's code, so the API is often awake already), and under `/dashboard`: Today, `patients`, `patients/[id]`, `prior-authorizations`, `prior-authorizations/new`, `prior-authorizations/[id]`, `tasks`, `settings`, `settings/profile`.
+- **API client (`lib/api/`):** `client` (cookie session, CSRF, 401 handling, `readJson`), `auth`, `workspace`, `prior-authorizations`, `hooks` (SWR; exported key helpers so `preload` names requests the way the hooks do), `preload` (start a screen's reads before it mounts), `health` (wake the API), `schemas` (Zod contracts, validated in development).
+- **Loading states:** only the request route has a `loading.tsx`, shaped like the request page (`components/workspace/screen-skeletons.tsx`). There is deliberately no root or dashboard-wide one: a navigation without a boundary keeps the current screen until the next can draw, while the old root boundary put a blank full-screen loader between `/demo` and the workspace.
 - **Workflow display rules (`lib/prior-auth.ts`):** labels, tones, and the reasons an action is unavailable, mirrored from the server so the reason shows before a request is made.
 - **Components:** `ui/` (shadcn primitives, restyled, plus `native-select`), `navigation/` (logo, auth shell, footer), `landing/` (hero shapes and the worked example on `/`), `dashboard/` (shell, demo banner, per-account SWR cache), `demo/` (the guided walkthrough, whose steps are in `lib/demo-tour.ts`, and the wake log on `/demo`), `workspace/` (page header, `Panel` and `Card`, `Notice`, status pills, requirement panel, document viewer, task list).
 - **Design tokens (`app/globals.css`):** a white page, warm off-white tiles (`bg-tile`), near-black ink, and five accents that carry meaning: blue (in progress), purple (waiting on approval), yellow (needs clarification), green (met, approved), orange (missing, failed). Each accent has a tint for backgrounds and a `-deep` shade that passes AA as text. Headings use DM Sans (`font-display`), body text Inter. Buttons and pills are fully rounded. Screens are built from `Panel` (a tile) holding `Card`s (white, hairline border).
@@ -133,6 +134,14 @@ general API traffic per IP.
   production as SQLite (solid_cache/queue/cable); deployment docs have said
   PostgreSQL. Decide before the first real deploy.
 - **Deployment is not configured.** `config/deploy.yml` is the Kamal template.
+- **`api/Dockerfile` cannot start.** `bin/*` are mode 644 in git, so the image's
+  entrypoint fails with `exec: "/rails/bin/docker-entrypoint": permission
+  denied`. The live API on Render must therefore run from Render's own build
+  and start commands, not this image, so the entrypoint's `demo:reset` on boot
+  probably does not run there (check Render's settings to confirm). Under Render's
+  free limits (0.1 CPU) the server alone takes about 42 s to answer `/up`
+  (4.3 s at full CPU: about half gems and Rails, half the app's own load);
+  `db:prepare` on an empty disk adds 17 s and `demo:reset` 15 s.
 - **No OpenAPI document.** Zod schemas are the contract today.
 - **Scanned PDFs** have no text layer and are refused; OCR is not built.
 - **Policy library is illustrative.** Seeded criteria are a common baseline, not

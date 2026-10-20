@@ -3,9 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 let mockSearch = ''
+const mockPrefetch = jest.fn()
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), prefetch: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), prefetch: mockPrefetch }),
   usePathname: () => '/demo',
   useSearchParams: () => new URLSearchParams(mockSearch),
   useParams: () => ({}),
@@ -14,9 +15,17 @@ jest.mock('next/navigation', () => ({
 const mockUseAuth = jest.fn()
 const mockEnterDemo = jest.fn()
 const mockWakeApi = jest.fn()
+const mockAnsweredAgo = jest.fn()
+const mockPreloadRequest = jest.fn()
 
 jest.mock('@/lib/api/health', () => ({
   wakeApi: (options: unknown) => mockWakeApi(options),
+  apiAnsweredAgo: () => mockAnsweredAgo(),
+}))
+
+jest.mock('@/lib/api/preload', () => ({
+  preloadRequest: (id: number) => mockPreloadRequest(id),
+  preloadToday: () => {},
 }))
 
 jest.mock('@/lib/auth/context', () => ({
@@ -29,16 +38,18 @@ describe('DemoPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockSearch = ''
+    window.sessionStorage.clear()
     // Never settles by default, so the page stays in its opening state.
     mockEnterDemo.mockReturnValue(new Promise(() => {}))
     mockWakeApi.mockResolvedValue(200)
+    mockAnsweredAgo.mockReturnValue(null)
     mockUseAuth.mockReturnValue({ user: null, loading: false, enterDemo: mockEnterDemo })
   })
 
   it('opens the demo as the medical assistant without being asked', async () => {
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function)))
     expect(mockEnterDemo).toHaveBeenCalledTimes(1)
     expect(screen.getByRole('log').textContent).toContain('nora demo --as medical-assistant')
     expect(screen.getByRole('log').textContent).toContain('API already awake')
@@ -59,8 +70,43 @@ describe('DemoPage', () => {
 
     wake(41_300)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function)))
     expect(log.textContent).toContain('API awake after 41.3s')
+  })
+
+  it("skips the wake-up when the landing page's probe was just answered", async () => {
+    mockAnsweredAgo.mockReturnValue(2100)
+
+    render(<DemoPage />)
+
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalled())
+    expect(mockWakeApi).not.toHaveBeenCalled()
+    expect(screen.getByRole('log').textContent).toContain('API awake (answered 2.1s ago)')
+  })
+
+  it("fetches the request page's code while waking, and its data as it signs in", async () => {
+    mockEnterDemo.mockImplementation(async (_role, _dest, prepare) => {
+      await prepare('/dashboard/prior-authorizations/2', {})
+    })
+
+    render(<DemoPage />)
+
+    expect(mockPrefetch).toHaveBeenCalledWith('/dashboard/prior-authorizations/0', { kind: 'full' })
+    await waitFor(() => expect(mockPreloadRequest).toHaveBeenCalledWith(2))
+    const log = screen.getByRole('log')
+    expect(log.textContent).toContain("signed in as the practice's medical assistant")
+    expect(log.textContent).toContain('opening the request')
+  })
+
+  it('draws the Today skeleton under the log for the walkthrough', async () => {
+    mockSearch = 'tour=1'
+    window.sessionStorage.clear()
+
+    const { container } = render(<DemoPage />)
+
+    expect(container.querySelector('[data-screen="today"]')).toBeTruthy()
+    expect(mockPrefetch).toHaveBeenCalledWith('/dashboard', { kind: 'full' })
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard', expect.any(Function)))
   })
 
   it('stops waking the API when the visitor leaves', async () => {
@@ -80,7 +126,7 @@ describe('DemoPage', () => {
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined, expect.any(Function)))
   })
 
   it('starts the walkthrough and lands on Today for /demo?tour=1', async () => {
@@ -89,7 +135,7 @@ describe('DemoPage', () => {
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard'))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard', expect.any(Function)))
     expect(JSON.parse(window.sessionStorage.getItem('nora-demo-tour') ?? 'null')).toEqual({ step: 0, playing: true })
     window.sessionStorage.clear()
   })
@@ -116,7 +162,7 @@ describe('DemoPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Open the demo' }))
 
-    expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined)
+    expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function))
   })
 
   it('switches persona without asking when already in the demo practice', async () => {
@@ -129,7 +175,7 @@ describe('DemoPage', () => {
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined, expect.any(Function)))
   })
 
   it("shows the API's reason when the demo is not offered, and retries on request", async () => {

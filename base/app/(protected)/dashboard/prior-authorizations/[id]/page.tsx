@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -42,19 +42,37 @@ import { RequirementPanel } from '@/components/workspace/requirement-panel';
 import { QuestionHelp } from '@/components/workspace/question-help';
 import { DocumentViewer } from '@/components/workspace/document-viewer';
 import { TaskList } from '@/components/workspace/task-list';
+import { RequestSkeleton } from '@/components/workspace/screen-skeletons';
 
 export default function PriorAuthorizationPage() {
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
   const { user } = useAuth();
-  const { data: pa, error, isLoading, mutate } = usePriorAuthorization(Number.isFinite(id) ? id : null);
+  const known = Number.isFinite(id) ? id : null;
+  // Everything keyed by the id in the URL starts at once; only the patient
+  // has to wait for the request to say who it is.
+  const { data: pa, error, isLoading, mutate } = usePriorAuthorization(known);
   const { data: patient } = usePatient(pa?.patient.id ?? null);
-  const { data: events } = usePriorAuthorizationEvents(pa?.id ?? null, pa?.updated_at);
-  const { data: tasks, mutate: mutateTasks } = useTasks({ prior_authorization_id: pa?.id, status: 'open' }, pa?.updated_at);
+  const { data: events, mutate: mutateEvents } = usePriorAuthorizationEvents(known);
+  const { data: tasks, mutate: mutateTasks } = useTasks(known ? { prior_authorization_id: known, status: 'open' } : null);
+  useMembers(); // for the assignment panel, which would otherwise ask only once the request is drawn
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [viewing, setViewing] = useState<Evidence | null>(null);
 
-  if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
+  // A change to the request (a transition, an approval, extraction finishing)
+  // adds events and can open or close tasks.
+  const version = pa?.updated_at;
+  const seenVersion = useRef(version);
+  useEffect(() => {
+    if (!version) return;
+    if (seenVersion.current && seenVersion.current !== version) {
+      void mutateEvents();
+      void mutateTasks();
+    }
+    seenVersion.current = version;
+  }, [version, mutateEvents, mutateTasks]);
+
+  if (isLoading) return <RequestSkeleton />;
   if (error || !pa) return <ErrorNote error={error ?? new Error('Prior authorization not found')} />;
 
   const update = (next: PriorAuthorizationDetail) => mutate(next, { revalidate: false });

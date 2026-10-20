@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, DemoRole, signup as apiSignup, login as apiLogin, demoLogin as apiDemoLogin, logout as apiLogout, getCurrentUser, SignupFields } from '../api';
+import { User, DemoRole, DemoResponse, signup as apiSignup, login as apiLogin, demoLogin as apiDemoLogin, logout as apiLogout, getCurrentUser, SignupFields } from '../api';
 
 interface AuthContextType {
   user: User | null;
@@ -12,9 +12,10 @@ interface AuthContextType {
   /**
    * Sign in to the shared demo practice and open it where there is most to
    * see: the featured request for staff, Today (with its approval queue) for
-   * the clinician.
+   * the clinician, unless `destination` says otherwise. `prepare` runs after
+   * sign-in and before navigating, with the path about to be opened.
    */
-  enterDemo: (role?: DemoRole, destination?: string) => Promise<void>;
+  enterDemo: (role?: DemoRole, destination?: string, prepare?: (path: string, data: DemoResponse) => Promise<void>) => Promise<void>;
   logout: () => Promise<void>;
   /**
    * Replace the cached user after a successful profile update, so pages reading
@@ -58,11 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push(safeReturnUrl(returnUrl));
   };
 
-  const enterDemo = async (role: DemoRole = 'staff', destination?: string) => {
+  const enterDemo: AuthContextType['enterDemo'] = async (role = 'staff', destination, prepare) => {
     const data = await apiDemoLogin(role);
     setUser(data.user);
     const featured = data.featured_prior_authorization_id;
-    router.push(destination ?? (role === 'staff' && featured ? `/dashboard/prior-authorizations/${featured}` : '/dashboard'));
+    const path = destination ?? (role === 'staff' && featured ? `/dashboard/prior-authorizations/${featured}` : '/dashboard');
+    if (prepare) await prepare(path, data);
+    router.push(path);
   };
 
   const updateUser = (updated: User) => {

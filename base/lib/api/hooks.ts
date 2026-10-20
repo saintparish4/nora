@@ -54,8 +54,10 @@ export function usePatients(params: { q?: string; page?: number }) {
   });
 }
 
+export const patientKey = (id: number) => ['patient', id] as const;
+
 export function usePatient(id: number | null) {
-  return useSWR(id ? ['patient', id] : null, () => getPatient(id as number), SWR_OPTIONS);
+  return useSWR(id ? patientKey(id) : null, () => getPatient(id as number), SWR_OPTIONS);
 }
 
 export function usePayers() {
@@ -73,22 +75,27 @@ export function usePriorAuthorizations(filters: PriorAuthorizationFilters) {
   });
 }
 
+// Keys are exported so the demo can preload a screen's data under the same names.
+export const priorAuthorizationKey = (id: number) => ['prior-authorization', id] as const;
+export const eventsKey = (id: number) => ['prior-authorization-events', id] as const;
+
+type TaskParams = { status?: string; mine?: boolean; prior_authorization_id?: number };
+export const tasksKey = (params: TaskParams) =>
+  ['tasks', params.status ?? '', params.mine ?? false, params.prior_authorization_id ?? 0] as const;
+
 /** Polls every 2 seconds while evidence extraction is running. */
 export function usePriorAuthorization(id: number | null) {
-  return useSWR(id ? ['prior-authorization', id] : null, () => getPriorAuthorization(id as number), {
+  return useSWR(id ? priorAuthorizationKey(id) : null, () => getPriorAuthorization(id as number), {
     ...SWR_OPTIONS,
     refreshInterval: (data) => (data?.extraction_status === 'running' ? 2_000 : 0),
   });
 }
 
-export function usePriorAuthorizationEvents(id: number | null, version?: string) {
-  return useSWR(id ? ['prior-authorization-events', id, version ?? ''] : null, () => getEvents(id as number), SWR_OPTIONS);
+export function usePriorAuthorizationEvents(id: number | null) {
+  return useSWR(id ? eventsKey(id) : null, () => getEvents(id as number), SWR_OPTIONS);
 }
 
-export function useTasks(params: { status?: string; mine?: boolean; prior_authorization_id?: number }, version?: string) {
-  return useSWR(
-    ['tasks', params.status ?? '', params.mine ?? false, params.prior_authorization_id ?? 0, version ?? ''],
-    () => getTasks(params),
-    SWR_OPTIONS
-  );
+/** Pass `null` to wait, e.g. until the request a task list belongs to is known. */
+export function useTasks(params: TaskParams | null) {
+  return useSWR(params ? tasksKey(params) : null, () => getTasks(params as TaskParams), SWR_OPTIONS);
 }

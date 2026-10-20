@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Rails' health check: 200 once the app has booted, without touching the
+  # database. The demo page polls it while the free Render instance wakes up.
+  get "up", to: "rails/health#show", as: :rails_health_check
+
   # All API routes under /api/v1 namespace
   namespace :api do
     namespace :v1 do

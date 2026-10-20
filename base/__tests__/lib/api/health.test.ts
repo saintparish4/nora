@@ -31,6 +31,12 @@ describe('probeApi', () => {
     expect(await probeApi()).toEqual({ ok: false, status: 502, timedOut: false })
   })
 
+  it('counts any answer from Rails below 500 as awake', async () => {
+    mockFetch.mockResolvedValueOnce(answer(404))
+
+    expect(await probeApi()).toEqual({ ok: true, status: 404 })
+  })
+
   it('gives up on a probe that hangs', async () => {
     mockFetch.mockImplementationOnce(hang)
 

@@ -1,13 +1,16 @@
 'use client';
 
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { PrefetchKind } from 'next/dist/client/components/router-reducer/router-reducer-types';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/context';
 import { AuthShell, FormError } from '@/components/navigation/auth-shell';
 import { Button } from '@/components/ui/button';
+import { DemoStage, type DemoScreen } from '@/components/demo/demo-stage';
 import { WakeLog, formatSeconds, type WakeLine } from '@/components/demo/wake-log';
-import { wakeApi } from '@/lib/api/health';
+import { apiAnsweredAgo, wakeApi } from '@/lib/api/health';
+import { preloadRequest, preloadToday } from '@/lib/api/preload';
 import { readTour, startTour } from '@/lib/demo-tour';
 import type { DemoRole } from '@/types';
 
@@ -22,8 +25,18 @@ const ROLE_LABELS: Record<DemoRole, string> = {
 /** A first probe answered this fast means the API was already up. */
 const ALREADY_AWAKE_MS = 1500;
 
+/** The landing page's own probe counts if it was answered this recently. */
+const FRESH_ANSWER_MS = 20_000;
+
 function isAbort(err: unknown): boolean {
   return err instanceof DOMException && err.name === 'AbortError';
+}
+
+/** Start the destination's reads; its hooks pick them up when it mounts. */
+function preloadFor(path: string): void {
+  const request = path.match(/^\/dashboard\/prior-authorizations\/(\d+)$/);
+  if (request) preloadRequest(Number(request[1]));
+  else if (path === '/dashboard') preloadToday();
 }
 
 /**
@@ -33,10 +46,12 @@ function isAbort(err: unknown): boolean {
  */
 function DemoContent() {
   const params = useSearchParams();
+  const router = useRouter();
   const role: DemoRole = params.get('as') === 'clinician' ? 'clinician' : 'staff';
   // /demo?tour=1 starts the guided walkthrough; a walkthrough already under
   // way passes through here when it changes account.
   const wantsTour = params.get('tour') === '1';
+  const [screen] = useState<DemoScreen>(() => (role === 'staff' && !wantsTour && !readTour() ? 'request' : 'today'));
   const { user, loading, enterDemo } = useAuth();
   const [opening, setOpening] = useState(false);
   const [slow, setSlow] = useState(false);
@@ -70,30 +85,41 @@ function DemoContent() {
     const timer = window.setTimeout(() => live() && setSlow(true), SLOW_AFTER_MS);
     try {
       add({ tone: 'command', text: `nora demo --as ${role === 'staff' ? 'medical-assistant' : 'clinician'}${wantsTour ? ' --tour' : ''}` });
-      add({ tone: 'step', text: 'waking the API' });
 
-      let probeStarted = Date.now();
-      let probe = add({ tone: 'detail', text: 'GET /up', pendingSince: probeStarted });
-      const waited = await wakeApi({
-        signal: controller.signal,
-        onAttempt: ({ result }) => {
-          const took = formatSeconds(Date.now() - probeStarted);
-          const answer = result.ok ? `${result.status}${result.status === 200 ? ' OK' : ''}` : result.status ? `${result.status}, not ready` : 'no answer yet';
-          settle(probe, { tone: 'detail', text: `GET /up · ${answer} · ${took}` });
-          if (!result.ok) {
-            probeStarted = Date.now();
-            probe = add({ tone: 'detail', text: 'GET /up', pendingSince: probeStarted });
-          }
-        },
-      });
-      add({ tone: 'done', text: waited < ALREADY_AWAKE_MS ? 'API already awake' : `API awake after ${formatSeconds(waited)}` });
+      const ago = apiAnsweredAgo();
+      if (ago !== null && ago < FRESH_ANSWER_MS) {
+        // The landing page already woke it; asking again would only cost a round trip.
+        add({ tone: 'done', text: `API awake (answered ${formatSeconds(ago)} ago)` });
+      } else {
+        add({ tone: 'step', text: 'waking the API' });
+        let probeStarted = Date.now();
+        let probe = add({ tone: 'detail', text: 'GET /up', pendingSince: probeStarted });
+        const waited = await wakeApi({
+          signal: controller.signal,
+          onAttempt: ({ result }) => {
+            const took = formatSeconds(Date.now() - probeStarted);
+            const answer = result.ok ? `${result.status}${result.status === 200 ? ' OK' : ''}` : result.status ? `${result.status}, not ready` : 'no answer yet';
+            settle(probe, { tone: 'detail', text: `GET /up · ${answer} · ${took}` });
+            if (!result.ok) {
+              probeStarted = Date.now();
+              probe = add({ tone: 'detail', text: 'GET /up', pendingSince: probeStarted });
+            }
+          },
+        });
+        add({ tone: 'done', text: waited < ALREADY_AWAKE_MS ? 'API already awake' : `API awake after ${formatSeconds(waited)}` });
+      }
 
       const signIn = add({ tone: 'step', text: 'POST /api/v1/auth/demo', pendingSince: Date.now() });
       if (wantsTour) startTour();
       // The walkthrough decides where to go next, so land it on Today.
-      await enterDemo(role, readTour() ? '/dashboard' : undefined);
-      settle(signIn, { tone: 'done', text: `signed in as the practice's ${ROLE_LABELS[role]}` });
-      add({ tone: 'step', text: wantsTour ? 'starting the walkthrough' : 'opening the practice' });
+      await enterDemo(role, readTour() ? '/dashboard' : undefined, async path => {
+        settle(signIn, { tone: 'done', text: `signed in as the practice's ${ROLE_LABELS[role]}` });
+        add({ tone: 'step', text: path === '/dashboard' ? 'opening Today' : 'opening the request' });
+        // Go now rather than when the data is in: the screen's skeleton is the
+        // one already drawn under this log, and its hooks take over these
+        // requests in flight instead of starting their own.
+        preloadFor(path);
+      });
     } catch (err: unknown) {
       if (isAbort(err) || !live()) return;
       // fetch rejects with a TypeError when the server cannot be reached.
@@ -110,6 +136,14 @@ function DemoContent() {
       window.clearTimeout(timer);
     }
   }, [enterDemo, role, wantsTour]);
+
+  // Fetch the destination's code while the API wakes. Every request page runs
+  // the same code, so any id will do until sign-in names the featured one.
+  // FULL, because the default stops at the route's loading skeleton and leaves
+  // the page's own code to load after the visitor arrives.
+  useEffect(() => {
+    router.prefetch(screen === 'request' ? '/dashboard/prior-authorizations/0' : '/dashboard', { kind: PrefetchKind.FULL });
+  }, [router, screen]);
 
   useEffect(() => {
     if (loading || ownPractice || started.current) return;
@@ -139,32 +173,32 @@ function DemoContent() {
   }
 
   return (
-    <AuthShell title="Opening the demo" subtitle="A practice with synthetic patients, ready to explore.">
-      <div className="space-y-4">
-        {lines.length > 0 && <WakeLog lines={lines} />}
-        {error ? (
-          <>
-            <FormError message={error} />
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={open}>Try again</Button>
-              <Button asChild variant="secondary"><Link href="/login">Sign in instead</Link></Button>
-            </div>
-          </>
-        ) : (
-          slow && (
-            <p className="text-[0.9375rem] leading-relaxed text-body">
-              The demo server sleeps when nobody is using it, so the first visit can take up to a minute.
-            </p>
-          )
-        )}
-      </div>
-    </AuthShell>
+    <DemoStage screen={screen} role={role}>
+      <WakeLog lines={lines} />
+      {error ? (
+        <>
+          <FormError message={error} />
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={open}>Try again</Button>
+            <Button asChild variant="secondary"><Link href="/login">Sign in instead</Link></Button>
+          </div>
+        </>
+      ) : (
+        slow && (
+          <p className="text-[0.9375rem] leading-relaxed text-body">
+            The demo server sleeps when nobody is using it, so the first visit can take up to a minute.
+          </p>
+        )
+      )}
+    </DemoStage>
   );
 }
 
 export default function DemoPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+    // Search params are only known in the browser. Until then, draw the stage
+    // for the commonest entry (the featured request) instead of a blank page.
+    <Suspense fallback={<DemoStage screen="request" role={null}><WakeLog lines={[]} /></DemoStage>}>
       <DemoContent />
     </Suspense>
   );

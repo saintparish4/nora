@@ -45,6 +45,14 @@ async function ensureCsrfToken(): Promise<string | null> {
   return csrfToken ?? (await fetchCsrfToken());
 }
 
+/**
+ * Fetch the CSRF token ahead of the first mutating request, so that request
+ * does not wait a round trip for it. A stale token is refetched on 403 below.
+ */
+export function primeCsrfToken(): void {
+  void ensureCsrfToken();
+}
+
 // Normalize RequestInit.headers into a plain record so we can add Authorization.
 function toHeaderRecord(init: HeadersInit | undefined): Record<string, string> {
   if (!init) return {};

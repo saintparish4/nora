@@ -16,15 +16,26 @@ export function DemoBanner() {
   if (!user?.organization?.demo) return null;
 
   const name = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email;
-  const other = user.role === 'clinician' ? 'staff' : 'clinician';
+  return (
+    <DemoBannerFrame
+      who={<>You are {name}{user.role ? `, the ${ROLE_LABELS[user.role]}` : ''}.</>}
+      other={user.role === 'clinician' ? 'staff' : 'clinician'}
+    />
+  );
+}
 
+/**
+ * The banner's box on its own, so /demo can draw it before sign-in and the
+ * workspace below starts where it will stay once the real banner takes over.
+ */
+export function DemoBannerFrame({ who, other }: { who: React.ReactNode; other: 'staff' | 'clinician' }) {
   return (
     <aside aria-label="Demo practice" className="bg-tile-strong text-sm text-body">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-x-6 gap-y-1.5 px-5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <p className="flex items-start gap-2.5">
           <span className="mt-[7px] size-2 shrink-0 rounded-full bg-orange" aria-hidden />
           <span>
-            <span className="font-medium text-ink">Demo practice.</span> You are {name}{user.role ? `, the ${ROLE_LABELS[user.role]}` : ''}.{' '}
+            <span className="font-medium text-ink">Demo practice.</span> {who}{' '}
             <span className="sm:hidden">Synthetic, shared data: no real patient information.</span>
             <span className="hidden sm:inline">
               The data is synthetic and shared with other visitors, so don&apos;t enter real patient information.

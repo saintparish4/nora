@@ -13,6 +13,11 @@ jest.mock('next/navigation', () => ({
 
 const mockUseAuth = jest.fn()
 const mockEnterDemo = jest.fn()
+const mockWakeApi = jest.fn()
+
+jest.mock('@/lib/api/health', () => ({
+  wakeApi: (options: unknown) => mockWakeApi(options),
+}))
 
 jest.mock('@/lib/auth/context', () => ({
   useAuth: () => mockUseAuth(),
@@ -26,6 +31,7 @@ describe('DemoPage', () => {
     mockSearch = ''
     // Never settles by default, so the page stays in its opening state.
     mockEnterDemo.mockReturnValue(new Promise(() => {}))
+    mockWakeApi.mockResolvedValue(200)
     mockUseAuth.mockReturnValue({ user: null, loading: false, enterDemo: mockEnterDemo })
   })
 
@@ -34,7 +40,39 @@ describe('DemoPage', () => {
 
     await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined))
     expect(mockEnterDemo).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole('status').textContent).toContain('medical assistant')
+    expect(screen.getByRole('log').textContent).toContain('nora demo --as medical-assistant')
+    expect(screen.getByRole('log').textContent).toContain('API already awake')
+  })
+
+  it('waits for the API to wake before signing in, and shows each probe', async () => {
+    let wake: (ms: number) => void = () => {}
+    mockWakeApi.mockImplementation(({ onAttempt }) => {
+      onAttempt({ attempt: 1, result: { ok: false, timedOut: true }, elapsedMs: 8000 })
+      return new Promise(resolve => { wake = resolve })
+    })
+
+    render(<DemoPage />)
+
+    const log = await screen.findByRole('log')
+    await waitFor(() => expect(log.textContent).toContain('GET /up · no answer yet'))
+    expect(mockEnterDemo).not.toHaveBeenCalled()
+
+    wake(41_300)
+
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined))
+    expect(log.textContent).toContain('API awake after 41.3s')
+  })
+
+  it('stops waking the API when the visitor leaves', async () => {
+    mockWakeApi.mockReturnValue(new Promise(() => {}))
+
+    const { unmount } = render(<DemoPage />)
+    await waitFor(() => expect(mockWakeApi).toHaveBeenCalled())
+    const { signal } = mockWakeApi.mock.calls[0][0] as { signal: AbortSignal }
+
+    unmount()
+
+    expect(signal.aborted).toBe(true)
   })
 
   it('opens as the clinician for /demo?as=clinician', async () => {
@@ -108,10 +146,12 @@ describe('DemoPage', () => {
   })
 
   it('explains an unreachable API in plain words', async () => {
-    mockEnterDemo.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    mockWakeApi.mockRejectedValueOnce(new TypeError('The API did not answer'))
 
     render(<DemoPage />)
 
     expect(await screen.findByText(/Could not reach the Nora API/)).toBeTruthy()
+    expect(screen.getByRole('log').textContent).toContain('gave up waiting for the API')
+    expect(mockEnterDemo).not.toHaveBeenCalled()
   })
 })

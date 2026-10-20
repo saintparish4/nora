@@ -3,6 +3,7 @@ import { ArrowRight, Check, Play } from 'lucide-react';
 import { NoraLogo, NoraMark } from '@/components/navigation/nora-logo';
 import { HeroArtLeft, HeroArtRight, HeroArtRow, CheckShape, NoteShape, QuoteShape, CapsuleShape, SparkShape } from '@/components/landing/hero-art';
 import { WorkedExample } from '@/components/landing/worked-example';
+import { ApiWarmup } from '@/components/landing/api-warmup';
 import { Pill } from '@/components/workspace/status-pill';
 import { PA_STATUS_LABELS, PA_STATUS_TONES, TONE_DOTS } from '@/lib/prior-auth';
 import { cn } from '@/lib/utils';
@@ -43,6 +44,7 @@ const JOURNEY: PaStatus[] = ['gathering', 'ready_for_review', 'approved', 'submi
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ApiWarmup />
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex h-[72px] max-w-[1088px] items-center gap-8 px-5 sm:px-8">
           <NoraLogo />

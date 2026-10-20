@@ -25,7 +25,10 @@ export async function probeApi(timeoutMs = ATTEMPT_TIMEOUT_MS, signal?: AbortSig
   signal?.addEventListener("abort", forward);
   try {
     const res = await fetch(`${API_URL}/up`, { cache: "no-store", signal: controller.signal });
-    return res.ok ? { ok: true, status: res.status } : { ok: false, status: res.status, timedOut: false };
+    // A status we can read at all came from Rails: Render's own waking page
+    // carries no CORS headers and surfaces as a TypeError below. So a 404 from
+    // an API that predates the route still means it is up; a 5xx does not.
+    return res.status < 500 ? { ok: true, status: res.status } : { ok: false, status: res.status, timedOut: false };
   } catch {
     // A TypeError (unreachable, or Render's own waking page without CORS
     // headers) and our own abort both mean the API is not answering yet.

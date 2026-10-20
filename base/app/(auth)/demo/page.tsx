@@ -78,7 +78,7 @@ function DemoContent() {
         signal: controller.signal,
         onAttempt: ({ result }) => {
           const took = formatSeconds(Date.now() - probeStarted);
-          const answer = result.ok ? `${result.status} OK` : result.status ? `${result.status}, not ready` : 'no answer yet';
+          const answer = result.ok ? `${result.status}${result.status === 200 ? ' OK' : ''}` : result.status ? `${result.status}, not ready` : 'no answer yet';
           settle(probe, { tone: 'detail', text: `GET /up · ${answer} · ${took}` });
           if (!result.ok) {
             probeStarted = Date.now();

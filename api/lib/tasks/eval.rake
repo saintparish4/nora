@@ -110,6 +110,13 @@ namespace :eval do
       EvidenceEval::Report.graded(ENV.fetch("ROUND", "baseline"))
     end
 
+    desc "Scores per failure type (taxonomy.yml) for ROUNDS=a,b side by side; SPLIT=train|test|all"
+    task taxonomy: :environment do
+      require Rails.root.join("evals/evidence/harness")
+      require Rails.root.join("evals/evidence/report")
+      EvidenceEval::Report.taxonomy(ENV.fetch("ROUNDS", "v3").split(","), split: ENV.fetch("SPLIT", "all"))
+    end
+
     desc "Summarise ROUND from its per-case rows: totals by criterion and by source"
     task summary: :environment do
       require Rails.root.join("evals/evidence/harness")

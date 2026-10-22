@@ -1,0 +1,76 @@
+# Failure taxonomy for the evidence eval.
+#
+# Each labelled requirement (supported or unsupported) is tagged with the
+# language problem a reader has to get right to decide it. A requirement can
+# carry more than one type; it then counts once in each. Tags were assigned on
+# 2026-10-22 from the charts and labels, before any per-type score was computed,
+# by the same assistant that built the scoring; a second reader has not checked
+# them. `bin/rails eval:evidence:taxonomy` reports scores per type.
+#
+# Types 1 to 6 are the ones the owner asked for. 7 to 9 were added because some
+# requirements fit none of the six.
+types:
+  negation: The deciding statement is negated ("not obese", "no hypertension", "never taken"). For criterion 6 the support itself is a negation.
+  hypothetical: Advised, discussed, declined, planned, wished for, or prescribed but never taken. Not something that happened.
+  timing: The answer depends on a date or a duration (six-month window, six-month program, a later note superseding an earlier one, a future stop).
+  experiencer: The fact belongs to someone other than the patient (a relative).
+  threshold: A number or a count decides it (BMI under 27, BMI 27 to 29.9 needing a comorbidity, one trial where two are required).
+  wrong_document: The passage sits in a document that cannot establish the fact on its own (an outdated note, a medication list, a pharmacy fill history).
+  incomplete: Part of a two-part requirement is present (diet without activity, a trial without its outcome, weight without a BMI).
+  absent: The chart is silent on the requirement, or offers only an unrelated near-miss.
+  wording: The fact is present but phrased unusually (spelled out, coded only, shorthand, narrative, a brand name).
+  plain: None of the above; stated directly.
+
+# case id -> criterion position -> types. Positions labelled not_applicable or
+# ambiguous are not listed.
+requirements:
+  pass_basic:                 {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  pass_split_documents:       {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  pass_bmi28_with_comorbidity: {1: [threshold], 2: [plain], 3: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  fill_only_pharmacy_record:  {1: [plain], 2: [plain], 4: [timing], 5: [incomplete, wrong_document], 6: [absent]}
+  active_med_no_outcome:      {1: [wording], 2: [plain], 4: [timing], 5: [incomplete], 6: [negation]}
+  rx_never_picked_up:         {1: [plain], 2: [plain], 4: [timing], 5: [hypothetical], 6: [negation]}
+  only_requested_drug:        {1: [plain], 2: [plain], 4: [timing], 5: [negation, experiencer], 6: [negation]}
+  drugs_discussed_not_taken:  {1: [plain], 2: [plain], 4: [timing], 5: [hypothetical], 6: [negation]}
+  lifestyle_two_months:       {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  diet_without_activity:      {1: [plain], 2: [plain], 4: [incomplete, negation], 5: [plain], 6: [negation]}
+  lifestyle_advised_only:     {1: [plain], 2: [plain], 4: [hypothetical], 5: [plain], 6: [negation]}
+  bmi_only_in_old_note:       {1: [timing, wrong_document], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  weight_without_bmi:         {1: [incomplete], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  bmi_below_threshold:        {1: [threshold], 2: [plain], 4: [timing], 5: [negation], 6: [negation]}
+  bmi28_no_comorbidity:       {1: [threshold], 2: [plain], 3: [negation, experiencer], 4: [timing], 5: [plain], 6: [negation]}
+  bmi29_with_sleep_apnea:     {1: [threshold], 2: [plain], 3: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  negated_and_family_history: {1: [threshold], 2: [plain], 3: [negation, experiencer], 4: [timing], 5: [experiencer, negation], 6: [negation]}
+  ruled_out_conditions:       {1: [threshold], 2: [plain], 3: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  currently_on_ozempic:       {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [absent]}
+  switching_from_glp1:        {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [timing]}
+  unrelated_visit:            {1: [absent], 2: [absent], 4: [absent], 5: [absent], 6: [absent]}
+  weight_goal_no_workup:      {1: [incomplete], 2: [hypothetical], 4: [incomplete], 5: [hypothetical], 6: [absent, wrong_document]}
+  uhc_two_trials:             {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [threshold]}
+  uhc_one_trial_only:         {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [threshold]}
+  uhc_second_drug_no_outcome: {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [incomplete, wrong_document]}
+  unusual_wording:            {1: [wording], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
+  clinical_shorthand:         {1: [plain], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
+  narrative_note:             {1: [wording], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
+  bmi_changed_between_notes:  {1: [timing], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}
+  med_list_without_statement: {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [absent, wrong_document]}
+  no_diagnosis_recorded:      {1: [plain], 2: [absent], 4: [timing], 5: [plain], 6: [absent]}
+
+# Every distinct wrong excerpt the model (gpt-4o-mini, round model_baseline)
+# added, tagged by why it is wrong. reps = how many of 3 reps proposed it.
+model_errors:
+  - {case: active_med_no_outcome, criterion: 5, reps: 3, types: [incomplete], excerpt: "Current medications: phentermine 37.5 mg every morning (started 06/2026)"}
+  - {case: bmi28_no_comorbidity, criterion: 1, reps: 3, types: [threshold], excerpt: "BMI 28.3."}
+  - {case: bmi_below_threshold, criterion: 5, reps: 2, types: [negation], excerpt: "No prior weight-loss medications."}
+  - {case: bmi_only_in_old_note, criterion: 1, reps: 3, types: [timing, wrong_document], excerpt: "Weight 221 lb, BMI 34.8."}
+  - {case: diet_without_activity, criterion: 4, reps: 3, types: [incomplete], excerpt: "He has followed a reduced-calorie diet with our dietitian since November 2025."}
+  - {case: drugs_discussed_not_taken, criterion: 5, reps: 3, types: [hypothetical], excerpt: "We discussed phentermine and Qsymia; she declined both because of her history of palpitations."}
+  - {case: fill_only_pharmacy_record, criterion: 5, reps: 3, types: [incomplete, wrong_document], excerpt: "Orlistat 120 mg capsules, quantity 90, filled 03/14/2025; one fill only."}
+  - {case: lifestyle_advised_only, criterion: 4, reps: 3, types: [hypothetical], excerpt: "Advised a reduced-calorie diet and at least 150 minutes of physical activity per week."}
+  - {case: lifestyle_two_months, criterion: 4, reps: 3, types: [timing], excerpt: "She started a reduced-calorie diet and a walking program in late July 2026."}
+  - {case: negated_and_family_history, criterion: 1, reps: 3, types: [threshold], excerpt: "BMI 27.8."}
+  - {case: no_diagnosis_recorded, criterion: 2, reps: 3, types: [absent], excerpt: "Reason for visit: weight gain over two years."}
+  - {case: only_requested_drug, criterion: 5, reps: 3, types: [negation], excerpt: "He has never taken a prescription weight-loss medication."}
+  - {case: ruled_out_conditions, criterion: 3, reps: 1, types: [negation], excerpt: "Hypertension was suspected last year but home readings were normal and the diagnosis was removed."}
+  - {case: rx_never_picked_up, criterion: 5, reps: 3, types: [hypothetical], excerpt: "Contrave was prescribed in March 2026 but the pharmacy reported it was never picked up."}
+  - {case: weight_without_bmi, criterion: 1, reps: 3, types: [incomplete], excerpt: "Height 5 ft 2 in. Weight 198 lb, up 6 lb since spring."}

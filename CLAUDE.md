@@ -20,9 +20,9 @@
 ## Technology Stack
 
 - **Backend:** Ruby 4.0.x, Rails 8.1 (API mode), SQLite (dev) / PostgreSQL via `DATABASE_URL`, RSpec, RuboCop, Active Job (solid_queue in production), prawn, pdf-reader, Resend, OpenAI via `Ai::Client`
-- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, pnpm, Jest, ESLint
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, pnpm, Jest, Cypress, ESLint
 - **Build / run:** Make (optional), Bundler, pnpm
-- **CI:** GitHub Actions — a single workflow, `.github/workflows/test.yml`, with a `Rails Tests` job (RuboCop, Brakeman, RSpec) and a `Next.js Tests` job (ESLint, build, Jest)
+- **CI:** GitHub Actions — a single workflow, `.github/workflows/test.yml`, with a `Rails Tests` job (RuboCop, Brakeman, RSpec), a `Next.js Tests` job (ESLint, build, Jest), and a `Console E2E (Cypress)` job
 
 ## Local Development
 
@@ -67,7 +67,8 @@ make test-frontend
 **Evidence eval:** `cd api && bin/rails eval:evidence:selfcheck && bin/rails eval:evidence` scores what the extraction service proposes against 31 hand-labelled synthetic charts (`api/evals/evidence/`, start with its `README.md`). It is a measurement, not a test: run it before and after changing the rule hints, the prompt, or the model, and read failures only from the train slice.
 
 **Backend:** RSpec in `api/spec/` (requests, models, services, controllers).  
-**Frontend:** Jest in `base/` (e.g. `__tests__/`). Use `pnpm test:watch` for watch mode, `pnpm test:coverage` for coverage.
+**Frontend:** Jest in `base/` (e.g. `__tests__/`). Use `pnpm test:watch` for watch mode, `pnpm test:coverage` for coverage.  
+**Console end to end:** `make test-e2e` (or `cd base && pnpm e2e`, `pnpm e2e:open` for the runner) seeds a demo practice into `api/storage/e2e.sqlite3`, builds the console, boots both servers, and runs Cypress (`base/cypress/e2e/`). `E2E=true` is what moves the API onto that file and lifts its rate limits; neither applies in production. Specs that change a request call `cy.resetDemo()` first and find requests by patient name, because ids change on every reset. Logs and failure screenshots land in `base/cypress/logs` and `base/cypress/screenshots`.
 
 ## Code Quality
 

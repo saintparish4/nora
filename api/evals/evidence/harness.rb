@@ -342,7 +342,7 @@ module EvidenceEval
       ActiveRecord::Schema.verbose = false
       quietly do
         load Rails.root.join("db/schema.rb")
-        load Rails.root.join("db/seeds/policy_library.rb")
+        load ROOT.join("library_v1.rb")
       end
       ActiveModel::SecurePassword.min_cost = true
       @organization = Organization.create!(name: "Evidence eval")
@@ -518,7 +518,7 @@ module EvidenceEval
         commit: git("rev-parse", "--short", "HEAD"),
         # Uncommitted edits to the service or the policy library: the commit
         # alone would not say what ran.
-        dirty: git("status", "--porcelain", "--", "app", "db/seeds/policy_library.rb").present?,
+        dirty: git("status", "--porcelain", "--", "app", ROOT.join("library_v1.rb").to_s).present?,
         system: @system, model_pass: @model ? requested_model : "off", ablate: @ablate, criteria_digest: @library_digest
       }
     end

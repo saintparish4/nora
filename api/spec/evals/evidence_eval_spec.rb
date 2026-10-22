@@ -9,7 +9,7 @@ require Rails.root.join('evals/evidence/harness')
 RSpec.describe EvidenceEval do
   let(:cases) { EvidenceEval::Case.load_all }
 
-  before { silence_seed_output { load Rails.root.join('db/seeds/policy_library.rb') } }
+  before { silence_seed_output { load Rails.root.join('evals/evidence/library_v1.rb') } }
 
   it 'loads every case, with every labelled quote present in its chart' do
     expect(cases.size).to be >= 15

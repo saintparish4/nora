@@ -1,0 +1,136 @@
+# Initial-authorization criteria for chronic weight management in adults,
+# taken from each payer's published policy (see SOURCES.md for URLs, policy
+# numbers, dates and file hashes). Retrieved 2026-10-22.
+#
+# `text` is the criterion as Nora would show it; `quote` is the policy's own
+# words, verbatim, so every `text` can be checked against its source.
+# Reauthorization, pediatric, and other indications (CV risk, MASH, OSA) are
+# out of scope and left out.
+#
+# This file does not feed the app or the eval yet. Swapping it in for
+# db/seeds/policy_library.rb is a decision for the owner (DIFF.md, "If you
+# swap").
+
+policies:
+  uhc_weight_loss:
+    payer: UnitedHealthcare
+    drugs: [Wegovy, Zepbound, Saxenda]
+    coverage_condition: >-
+      "This is an optional program that is put in place for clients or businesses that have elected to cover
+      weight loss products with Prior Authorization/Notification." Plans without the benefit use separate
+      Nonformulary Wegovy / Zepbound criteria, not found.
+    criteria:
+      - kind: indication
+        text: The drug is requested for weight loss.
+        quote: "Treatment is being requested for appetite suppression or weight loss"
+      - kind: age
+        text: "Patient is 12 or older (Saxenda, Wegovy injection) or older than 16 (Zepbound)."
+        quote: "Patient is ≥ 12 years of age (for Qsymia, Saxenda, Wegovy injection and Xenical) ... Patient is > 16 years of age (for all other medications)"
+      - kind: lifestyle
+        text: The drug will be used as an adjunct to lifestyle modification. No minimum duration.
+        quote: "Used as an adjunct to lifestyle modification (e.g., dietary or caloric restriction, exercise, behavioral support, community-based program)"
+      - kind: documented_value
+        text: "BMI of 30 kg/m2 or more, or 27 kg/m2 or more with a weight-related comorbidity."
+        quote: "Body Mass Index (BMI) ≥ 30 kg/m2 ... -OR- ... (a) BMI ≥ 27 kg/m2 -AND- (b) Patient has a weight-related comorbidity (e.g., dyslipidemia, hypertension, type 2 diabetes, sleep apnea)"
+
+  aetna_wegovy:
+    payer: Aetna
+    drugs: [Wegovy]
+    criteria: &aetna_adult
+      - kind: age
+        text: Patient is 18 or older.
+        quote: "The patient is 18 years of age or older."
+      - kind: lifestyle
+        text: >-
+          The patient has taken part in a comprehensive weight management program (behavioral modification,
+          reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months
+          before drug therapy.
+        quote: "The patient has participated in a comprehensive weight management program that encourages behavioral modification, reduced-calorie diet, AND increased physical activity with continuing follow-up for at least 6 months prior to using drug therapy."
+      - kind: documented_value
+        text: >-
+          Baseline BMI of 30 kg/m2 or more, or 27 kg/m2 or more with at least one weight-related comorbidity
+          (for example hypertension, type 2 diabetes, dyslipidemia). Baseline means before any weight-loss drug.
+          Documentation required.
+        quote: "The patient has a baseline body mass index (BMI) greater than or equal to 30 kg/m2. [NOTE: If the patient is transitioning from another drug therapy for weight loss, please consider their baseline BMI at the start of any drug therapy.] [ACTION REQUIRED: Documentation is required for approval.]"
+  aetna_zepbound:
+    payer: Aetna
+    drugs: [Zepbound]
+    note: Age is stated as "in an adult" rather than as a separate criterion. A non-formulary exception (6981-A) names Wegovy as the formulary alternative for some formularies; whether it applies in October 2026 is unverified.
+    criteria: *aetna_adult
+  aetna_saxenda:
+    payer: Aetna
+    drugs: [Saxenda]
+    criteria: *aetna_adult
+
+  cigna_glp1:
+    payer: Cigna
+    drugs: [Wegovy, Zepbound, Saxenda]
+    note: Three policies with the same adult criteria (IP0813 liraglutide, IP0814 Wegovy injection, IP0816 Zepbound). Plans may instead use BMI 32 or BMI 35 variants (IP0621, IP0739).
+    criteria:
+      - kind: age
+        text: Patient is 18 or older.
+        quote: "Patient is ≥ 18 years of age"
+      - kind: lifestyle
+        text: The patient has tried behavioral modification and dietary restriction for at least 3 months.
+        quote: "Patient has engaged in a trial of behavioral modification and dietary restriction for at least 3 months"
+      - kind: documented_value
+        text: >-
+          Baseline BMI of 30 kg/m2 or more, or 27 kg/m2 or more with at least one of: hypertension, type 2
+          diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma,
+          COPD, MASLD/NAFLD, polycystic ovarian syndrome, coronary artery disease. Baseline means before any
+          GLP-1 or GLP-1/GIP drug.
+        quote: "At baseline, patient had a BMI ≥ 27 kg/m2; AND (2) At baseline, patient had, or patient currently has, at least ONE of the following weight-related comorbidities: hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, chronic obstructive pulmonary disease, metabolic dysfunction-associated steatotic liver disease/non-alcoholic fatty liver disease, polycystic ovarian syndrome, or coronary artery disease"
+      - kind: lifestyle
+        text: The drug will be used with behavioral modification and a reduced-calorie diet.
+        quote: "The medication will be used concomitantly with behavioral modification and a reduced-calorie diet"
+      - kind: other
+        text: Not to be used with another GLP-1 or GLP-1/GIP agonist.
+        quote: "Concomitant Use with Glucagon-Like Peptide-1 (GLP-1) Agonists or GLP-1/ Glucose-Dependent Insulinotropic Polypeptide (GIP) Agonists."
+        source_section: Conditions Not Covered
+      - kind: preferred_product
+        drugs: [Saxenda]
+        text: "Brand Saxenda only: the patient tried generic liraglutide and cannot take it because of an inactive ingredient (Employer Plans)."
+        quote: "The patient has tried the bioequivalent generic product, liraglutide subcutaneous injection (generic for Saxenda), AND cannot take due to a formulation difference in the inactive ingredient(s)"
+
+  fep_saxenda_wegovy:
+    payer: Blue Cross Blue Shield (Federal Employee Program)
+    drugs: [Wegovy, Saxenda]
+    criteria: &fep_common
+      - kind: documented_value
+        text: >-
+          Adults: BMI of 30 kg/m2 or more, or 27 kg/m2 or more with established cardiovascular disease or at least
+          one weight-related comorbidity (for example type 2 diabetes, dyslipidemia, hypertension).
+        quote: "Body mass index (BMI) ≥ 30 kg/m2; ii. Body mass index (BMI) ≥ 27 kg/m2 AND ONE of the following: 1. Patient has established cardiovascular disease ... 2. Patient has at least one weight related comorbid condition (e.g., type 2 diabetes mellitus, dyslipidemia, or hypertension)"
+      - kind: lifestyle
+        text: The patient has taken part in a comprehensive weight management program. No minimum duration.
+        quote: "Patient has participated in a comprehensive weight management program (e.g., Teladoc or another weight loss program)"
+      - kind: other
+        text: No dual therapy with another GLP-1 receptor agonist.
+        quote: "NO dual therapy with other glucagon-like peptide-1 (GLP-1) receptor agonists"
+      - kind: other
+        text: No dual therapy with another prior-authorization weight-loss medication.
+        quote: "NO dual therapy with another Prior Authorization (PA) medication for weight loss"
+  fep_zepbound:
+    payer: Blue Cross Blue Shield (Federal Employee Program)
+    drugs: [Zepbound]
+    criteria:
+      - kind: age
+        text: Patient is 18 or older.
+        quote: "Age 18 years of age or older."
+      - kind: documented_value
+        text: Same BMI rule as Saxenda/Wegovy, with documentation (medical records, laboratory reports).
+        quote: "ALL of the following with provided documentation (e.g., medical records, laboratory reports)"
+      - kind: prior_trial
+        text: >-
+          Inadequate response, intolerance, or contraindication to at least two oral weight-management medications
+          (for example benzphetamine, diethylpropion, phentermine, Qsymia).
+        quote: "Inadequate treatment response, intolerance, or contraindication to at least TWO oral medications for weight management (e.g., benzphetamine, diethylpropion, phentermine, Qsymia, etc.)"
+      - kind: lifestyle
+        text: The patient has taken part in a comprehensive weight management program. No minimum duration.
+        quote: "Patient has participated in a comprehensive weight management program (e.g., Teladoc or another weight loss program)"
+      - kind: other
+        text: No dual therapy with another GLP-1 receptor agonist, or with another prior-authorization weight-loss medication.
+        quote: "NO dual therapy with other glucagon-like peptide-1 (GLP-1) receptor agonists"
+      - kind: preferred_product
+        text: The patient tried the preferred product(s), unless there is a medical exception. The list (Appendix 3) is not in the policy; unverified.
+        quote: "Patient MUST have tried the preferred product(s) (see Appendix 3) unless the patient has a valid medical exception"

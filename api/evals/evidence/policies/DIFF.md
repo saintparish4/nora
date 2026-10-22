@@ -56,21 +56,29 @@ Some current labels would flip. `bmi_only_in_old_note` (Aetna) is labelled
 unsupported because its only BMI is 16 months old; under Aetna's baseline rule
 that old BMI may be exactly the one the payer wants.
 
-## If you swap
+## The swap (2026-10-22)
 
-Replacing the seeded library is the owner's decision, because:
+The owner chose to swap. What was done:
 
-- It changes production: the seeds run in every environment, so the demo's
-  requests, requirements and walkthrough change. The demo's
-  "needs clarification" request depends on the illustrative second-trial
-  criterion, which UnitedHealthcare does not have.
-- It stops the eval: `state.json` pins the criteria digest, and every case
-  must be relabelled against the new criteria (by the reviewers in
-  PROTOCOL.md part 5, not by the author of the rules).
-- It needs rule hints for the new criteria (age, the closed Cigna comorbidity
-  list, baseline BMI, behavioral modification, preferred product), and new
-  cases for each.
+- `db/seeds/policy_library.rb` now seeds **version 2**: these criteria, one
+  template per payer and drug, each with its source URL and effective date
+  (Aetna prints none). Version 1 rows are never deleted, so requests opened
+  under them keep their criteria; new requests resolve to version 2.
+- Criteria were split where a reviewer needs separate evidence: the BMI
+  criterion's comorbidity branch stays a conditional criterion of its own.
+  New kinds: `age`, `indication`, `plan_of_care`, `preferred_product`.
+- BCBS: the Federal Employee Program is its own payer ("Blue Cross Blue Shield
+  Federal Employee Program", plan "FEP Blue Standard"). "Blue Cross Blue
+  Shield / Blue Choice PPO" stays, and gets the common baseline, as does any
+  payer without a published policy on file.
+- The demo puts its four requests on four payers. The featured request (Jane
+  Rivera) moved to Cigna, where her chart has two real gaps: a baseline BMI
+  from before her 2025 Saxenda course, and a statement that she takes no other
+  GLP-1. Tom Okafor moved to FEP; his note now also says he takes no other
+  weight-loss medication, which FEP asks for.
+- The eval keeps running on version 1, frozen in `../library_v1.rb`, because
+  that is what its 31 cases were labelled against. New cases written against
+  version 2 (PROTOCOL.md part 5) are what will measure Nora on these criteria.
 
-Order that keeps both working: write the new cases against `criteria.yml`
-first; then swap the library, the hints and the demo story together in one
-change; then re-pin the digest.
+Production: the library and the demo change when the seeds run there
+(`bin/rails demo:reset`, which reloads every seed).

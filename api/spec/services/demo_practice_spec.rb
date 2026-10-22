@@ -64,24 +64,45 @@ RSpec.describe 'Demo practice' do
       expect(organization.patients.find_by!(mrn: 'DEMO-1003').prior_authorizations).to be_empty
     end
 
-    it 'features the request blocked on a prescription with no documented outcome' do
+    it 'features the request blocked on a baseline BMI the payer asks for and the chart lacks' do
       featured = Demo::Practice.featured_request
-      second_trial = requirement(featured, 7)
+      baseline_bmi = requirement(featured, 3)
 
       expect(featured).to eq(request_for(organization, 'DEMO-1001'))
-      expect(second_trial.status).to eq('missing')
-      expect(second_trial.note).to include('A fill alone does not document a second trial')
-      # The fill has no outcome, so the rule pass never offers it as evidence.
-      expect(second_trial.evidence).to be_empty
+      expect(featured.policy_template.payer.name).to eq('Cigna')
+      expect(baseline_bmi.status).to eq('missing')
+      expect(baseline_bmi.note).to include('before any GLP-1')
+      # The BMI the rules found is shown, but nobody verified it: it postdates the Saxenda.
+      expect(baseline_bmi.evidence).not_to be_empty
+      expect(baseline_bmi.evidence.select(&:verified?)).to be_empty
       expect(requirement(featured, 6).status).to eq('missing')
     end
 
-    it 'opens a task for the ordering clinician on each missing requirement' do
+    it 'shows a quote a person rejected' do
+      plan_of_care = requirement(Demo::Practice.featured_request, 5)
+
+      expect(plan_of_care.status).to eq('met')
+      expect(plan_of_care.evidence.select(&:rejected?).map(&:excerpt)).to all(start_with('She has followed a reduced-calorie diet'))
+      expect(plan_of_care.evidence.select(&:rejected?)).not_to be_empty
+    end
+
+    it 'opens a task for the ordering clinician on each requirement left open' do
       featured = Demo::Practice.featured_request
       tasks = Task.open.where(subject: featured)
 
-      expect(tasks.map(&:source)).to contain_exactly(requirement(featured, 6), requirement(featured, 7))
+      # 4 is the comorbidity criterion, which waits on the baseline BMI.
+      expect(tasks.map(&:source)).to contain_exactly(requirement(featured, 3), requirement(featured, 4), requirement(featured, 6))
       expect(tasks.map { |task| task.assignee.email }.uniq).to eq([ 'clinician@nora.com' ])
+    end
+
+    it 'puts each request on its payer\'s published criteria' do
+      templates = organization.prior_authorizations.map(&:policy_template)
+
+      expect(templates.map(&:version).uniq).to eq([ 2 ])
+      expect(templates.map(&:source_url)).to all(start_with('https://'))
+      expect(templates.map { |t| t.payer.name }).to contain_exactly(
+        'UnitedHealthcare', 'Cigna', 'Aetna', 'Blue Cross Blue Shield Federal Employee Program'
+      )
     end
 
     it 'never marks a requirement met without evidence a person verified' do

@@ -11,8 +11,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:pass": "jest --passWithNoTests",
-    "e2e": "cypress/run-e2e.sh",
-    "e2e:open": "cypress/run-e2e.sh --open"
+    "e2e": "bash cypress/run-e2e.sh",
+    "e2e:open": "bash cypress/run-e2e.sh --open"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.6",

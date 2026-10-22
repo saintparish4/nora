@@ -140,3 +140,48 @@ jobs:
       - name: Run Jest tests
         working-directory: ./base
         run: pnpm test --ci --coverage --maxWorkers=2
+
+  # Cypress drives a production build of the console against the real API and
+  # a freshly seeded demo practice (E2E=true keeps it on its own SQLite file).
+  test-e2e:
+    name: Console E2E (Cypress)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ./api
+          bundler-cache: true
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 12
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: ./base/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ./base
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Cypress
+        working-directory: ./base
+        run: pnpm e2e
+
+      - name: Upload screenshots and server logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-failure
+          path: |
+            base/cypress/screenshots
+            base/cypress/logs

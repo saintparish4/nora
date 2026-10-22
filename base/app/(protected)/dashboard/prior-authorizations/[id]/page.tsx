@@ -105,9 +105,17 @@ export default function PriorAuthorizationPage() {
 
       <ExtractionBanner pa={pa} documentCount={documents.length} onUpdate={update} />
 
-      {pa.policy.notes && (
+      {(pa.policy.notes || pa.policy.source_url) && (
         <Notice tone="warning" className="mb-6">
           <span className="font-medium">{pa.policy.title}.</span> {pa.policy.notes}
+          {pa.policy.source_url && (
+            <>
+              {' '}
+              <a href={pa.policy.source_url} target="_blank" rel="noopener noreferrer" className="font-medium underline">
+                Read the policy{pa.policy.effective_on ? `, effective ${formatCalendarDate(pa.policy.effective_on)}` : ''}
+              </a>
+            </>
+          )}
         </Notice>
       )}
 

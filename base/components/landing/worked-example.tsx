@@ -4,10 +4,10 @@ import { Pill } from '@/components/workspace/status-pill';
 import type { Tone } from '@/lib/prior-auth';
 
 /**
- * Three criteria from the request the demo opens on. The quotes and sources
- * are copied word for word from the demo seeds (api/db/seeds), so what a
- * visitor reads here is what they find when they open it; the criteria are
- * shortened to fit. Keep the two in step.
+ * Three of Cigna's criteria from the request the demo opens on. The quotes and
+ * sources are copied word for word from the demo seeds (api/db/seeds), so what
+ * a visitor reads here is what they find when they open it; the criteria are
+ * shortened from db/seeds/policy_library.rb to fit. Keep the three in step.
  */
 const EXAMPLES: Array<{
   label: string;
@@ -22,29 +22,29 @@ const EXAMPLES: Array<{
   {
     label: 'Quoted from the chart',
     labelClass: 'text-blue-deep',
-    criterion: 'BMI of 30 kg/m2 or greater, documented within the last 6 months.',
-    quote: 'Assessment: Obesity, class I (E66.01), BMI 34.0-34.9 (Z68.34).',
+    criterion: 'Behavioral modification and dietary restriction for at least 3 months.',
+    quote: 'She has followed a reduced-calorie diet with our dietitian since January 2026 and walks 30 minutes five days a week.',
     source: 'Office visit · Aug 12, 2026',
     status: { label: 'Met', tone: 'success' },
-    outcome: 'A rule found the sentence. The medical assistant read it in the note and verified it.',
+    outcome: 'A rule found the sentence and its start date. The medical assistant read it in the note and verified it.',
   },
   {
-    label: 'Verified by a person',
+    label: 'Read the way the payer reads it',
     labelClass: 'text-green-deep',
-    criterion: 'A trial of one other weight-management medication, with its outcome or the reason it was stopped.',
-    quote: 'Previously tried Saxenda (liraglutide) from 2025-06 to 2025-10; discontinued due to persistent nausea and vomiting.',
+    criterion: 'Baseline BMI of 30 or greater, measured before any GLP-1 drug.',
+    quote: 'BMI 34.2.',
     source: 'Office visit · Aug 12, 2026',
-    status: { label: 'Met', tone: 'success' },
-    outcome: 'The note names the drug, the dates, and why it was stopped. That is a documented trial.',
+    status: { label: 'Missing', tone: 'danger' },
+    outcome: 'The BMI is high enough, but she took Saxenda in 2025 and this reading is from after it. Staff left it unverified and asked for the earlier one.',
   },
   {
     label: 'Gaps, flagged',
     labelClass: 'text-orange-deep',
-    criterion: 'Trial of a second formulary alternative, with outcome or reason for discontinuation.',
+    criterion: 'Not used together with another GLP-1 drug.',
     quote: null,
-    source: 'The chart has one phentermine fill, with no outcome. That is not a trial, so Nora offers nothing.',
+    source: 'Her medication list shows no GLP-1, but no sentence says she takes none, so Nora offers nothing.',
     status: { label: 'Missing', tone: 'danger' },
-    outcome: 'A prescription is not a documented trial. Staff marked the requirement missing and Nora opened a task for the clinician.',
+    outcome: 'A list is not a statement. Staff marked the requirement missing and Nora opened a task for the clinician.',
   },
 ];
 

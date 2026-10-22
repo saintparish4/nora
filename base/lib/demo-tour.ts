@@ -38,7 +38,7 @@ export const TOUR_STEPS: TourStep[] = [
     page: { status: 'gathering' },
     target: '[data-tour="requirements"]',
     title: 'Nora read the chart against the plan',
-    body: "Each line is one of the payer's criteria. Nora looked through this patient's notes for text that documents each one.",
+    body: "Each line is one of the payer's published criteria. Nora looked through this patient's notes for text that documents each one.",
     seconds: 9,
   },
   {
@@ -63,9 +63,10 @@ export const TOUR_STEPS: TourStep[] = [
     role: 'staff',
     page: { status: 'needs_clarification' },
     target: '[data-tour="requirement"]',
-    before: ['[data-tour="requirements"] li:last-child button'],
-    title: 'A prescription is not a documented trial',
-    body: 'This plan asks for a second medication trial. The chart only shows a pharmacy fill with no outcome, so Nora offered nothing, and the requirement is marked missing.',
+    // Criterion 3 of Cigna's criteria, the baseline BMI (db/seeds/demo_requests.rb).
+    before: ['[data-tour="requirements"] li:nth-child(3) button'],
+    title: 'Read the way the payer reads it',
+    body: 'Cigna asks for the BMI from before any GLP-1. She took Saxenda in 2025, and the BMI Nora found is from after it, so nobody verified it and the requirement is marked missing.',
     seconds: 12,
   },
   {

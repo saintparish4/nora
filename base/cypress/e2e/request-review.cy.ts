@@ -1,6 +1,8 @@
 /**
  * Staff reviewing what Nora proposed for a request it has just read: Marcus
- * Bell's Zepbound request, seeded with rule evidence nobody has verified.
+ * Bell's Zepbound request, on Aetna's criteria (1 age, 2 weight management
+ * program, 3 baseline BMI, 4 comorbidity), seeded with rule evidence nobody
+ * has verified.
  */
 describe('Reviewing evidence on a request', () => {
   beforeEach(() => {
@@ -17,6 +19,7 @@ describe('Reviewing evidence on a request', () => {
   const excerpt = (text: string) => panel().contains('[data-tour="evidence"]', text);
 
   it('shows an excerpt highlighted in its document', () => {
+    requirement(3).click();
     excerpt('Vitals: Weight 196 lb').contains('button', 'View in document').click();
 
     cy.get('[role="dialog"]').within(() => {
@@ -28,7 +31,7 @@ describe('Reviewing evidence on a request', () => {
   });
 
   it('will not mark a requirement met until an excerpt is verified', () => {
-    requirement(1).click();
+    requirement(3).click();
     panel().contains('button', 'Mark met').should('be.disabled');
     panel().contains('Verify at least one piece of evidence first.');
 
@@ -36,12 +39,12 @@ describe('Reviewing evidence on a request', () => {
     excerpt('Vitals: Weight 196 lb').contains('Verified by Jordan Blake');
 
     panel().contains('button', 'Mark met').should('be.enabled').click();
-    requirement(1).contains('Met');
+    requirement(3).contains('Met');
     cy.get('[data-tour="timeline"]').contains('Requirement marked met');
   });
 
   it('strikes out a rejected excerpt and leaves it out of the count', () => {
-    requirement(4).click();
+    requirement(2).click();
     panel().contains('h3', 'Evidence (2)');
 
     excerpt('Continue lifestyle program.').contains('button', 'Reject').click();
@@ -52,30 +55,32 @@ describe('Reviewing evidence on a request', () => {
   });
 
   it('accepts a quote only if the chart says it word for word', () => {
-    requirement(6).click();
+    requirement(4).click();
+    panel().contains('h3', 'Evidence (2)');
     panel().contains('button', 'Cite chart text yourself').click();
-    // Options read "Medication list (Jul 30, 2026)"; pick by title alone.
-    panel().find('select').last().find('option').contains('Medication list').then(($option) => {
+    // Options read "Annual visit (Jul 30, 2026)"; pick by title alone.
+    panel().find('select').last().find('option').contains('Annual visit').then(($option) => {
       panel().find('select').last().select($option.val() as string);
     });
 
-    panel().find('textarea').last().type('Not taking any GLP-1.');
+    panel().find('textarea').last().type('Blood pressure is well controlled.');
     panel().contains('button', 'Add evidence').click();
     cy.get('[data-sonner-toast]').should('exist');
-    panel().contains('Nothing found in the chart for this criterion.');
+    panel().contains('h3', 'Evidence (2)');
 
-    panel().find('textarea').last().clear().type('Active: lisinopril 20 mg daily, metformin 1000 mg twice daily, atorvastatin 20 mg daily.');
+    panel().find('textarea').last().clear().type('BP 142/90 on lisinopril.');
     panel().contains('button', 'Add evidence').click();
     cy.contains('[data-sonner-toast]', 'Evidence added');
-    panel().find('[data-tour="evidence"]').should('have.length', 1).and('contain', 'Added by staff');
+    panel().contains('h3', 'Evidence (3)');
+    excerpt('BP 142/90 on lisinopril.').should('contain', 'Added by staff');
   });
 
   it('asks the clinician to document a missing requirement', () => {
-    requirement(6).click();
-    panel().find('textarea').first().type('No statement either way about other GLP-1 use.');
+    requirement(2).click();
+    panel().find('textarea').first().type('Aetna asks for behavioral modification and continuing follow-up; the note shows diet and cycling only.');
     panel().contains('button', /^Missing$/).click();
 
-    requirement(6).contains('Missing');
+    requirement(2).contains('Missing');
     cy.get('[data-tour="timeline"]').contains('Requirement marked missing');
     cy.get('[data-tour="tasks"]').find('li').should('have.length.at.least', 1);
   });

@@ -3,9 +3,11 @@
 #   @sentry/cli    - source map upload during production builds
 #   unrs-resolver  - native resolver used by eslint-config-next
 #   @parcel/watcher - native file watcher pulled in by tailwindcss
+#   cypress        - downloads the test runner binary for the e2e suite
 allowBuilds:
   '@parcel/watcher': true
   '@sentry/cli': true
+  cypress: true
   sharp: true
   unrs-resolver: true
 # pnpm 12 holds brand-new releases back by default as a supply-chain cooldown.

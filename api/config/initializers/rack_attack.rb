@@ -3,6 +3,10 @@ class Rack::Attack
   # In production you may want a dedicated Redis cache store for lower latency.
   Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
+  # The Cypress suite signs in dozens of times a minute from one address, which
+  # is exactly what the throttles below are for. Never honoured in production.
+  Rack::Attack.enabled = false if ENV["E2E"] == "true" && !Rails.env.production?
+
   # ---------------------------------------------------------------------------
   # Throttles
   # ---------------------------------------------------------------------------

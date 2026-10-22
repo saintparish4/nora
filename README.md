@@ -104,6 +104,7 @@ question", which needs the model.
 ```bash
 make test                   # RSpec + Jest
 make test-backend-postgres  # RSpec against PostgreSQL (docker compose up -d postgres)
+make test-e2e               # Cypress against the real API and console (ports 3000/3001 free)
 make lint                   # RuboCop + ESLint (Brakeman runs in CI; see CLAUDE.md)
 make db-reset               # drop, create, migrate, seed
 ```
@@ -118,6 +119,7 @@ pushes and pull requests to `main` and `develop`:
 | `Rails Tests` | RuboCop, Brakeman, RSpec on SQLite |
 | `Rails Tests (PostgreSQL)` | RSpec and the seeds on PostgreSQL 16 |
 | `Next.js Tests` | ESLint, production build, Jest |
+| `Console E2E (Cypress)` | The console's main flows in a browser, against the API and the seeded demo practice |
 
 ## Data and compliance
 

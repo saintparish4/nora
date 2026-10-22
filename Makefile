@@ -1,4 +1,4 @@
-.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed test-backend-postgres lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
+.PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed test-backend-postgres test-e2e lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
 
 # Default target
 help:
@@ -15,6 +15,7 @@ help:
 	@echo "  make db-migrate   - Run database migrations"
 	@echo "  make db-seed      - Seed database"
 	@echo "  make test-backend-postgres - RSpec against PostgreSQL (needs docker compose up -d postgres)"
+	@echo "  make test-e2e     - Cypress against the real API and console (ports 3000/3001 free)"
 	@echo "  make clean        - Clean build artifacts and dependencies"
 	@echo "  make lint         - Run frontend (ESLint) and backend (RuboCop) linters"
 	@echo "  make lint-frontend - Run ESLint in base/"
@@ -48,6 +49,10 @@ test-backend:
 
 test-frontend:
 	cd base && pnpm test
+
+# Cypress against the real stack; needs ports 3000 and 3001 free.
+test-e2e:
+	cd base && pnpm e2e
 
 # Development
 dev:

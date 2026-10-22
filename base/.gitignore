@@ -45,3 +45,9 @@ next-env.d.ts
 
 # Keep the committed env template.
 !.env.local.example
+
+# Cypress
+/cypress/logs
+/cypress/screenshots
+/cypress/videos
+/cypress/downloads

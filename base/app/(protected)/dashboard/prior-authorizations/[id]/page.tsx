@@ -75,7 +75,14 @@ export default function PriorAuthorizationPage() {
   if (isLoading) return <RequestSkeleton />;
   if (error || !pa) return <ErrorNote error={error ?? new Error('Prior authorization not found')} />;
 
-  const update = (next: PriorAuthorizationDetail) => mutate(next, { revalidate: false });
+  // Reviewing a requirement or an excerpt records an event, and can open or
+  // close a task, without changing the request's updated_at, so the effect
+  // above would not notice. Every edit made here refreshes both.
+  const update = (next: PriorAuthorizationDetail) => {
+    void mutate(next, { revalidate: false });
+    void mutateEvents();
+    void mutateTasks();
+  };
   const editable = isEditable(pa.status);
   const selected = pa.requirements.find((r) => r.id === selectedId) ?? pa.requirements.find((r) => r.status !== 'met' && r.status !== 'not_applicable') ?? pa.requirements[0];
   const documents = patient?.chart_documents ?? [];

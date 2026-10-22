@@ -1,0 +1,9 @@
+{
+  "derived": "external",
+  "rules": "rules",
+  "model": null,
+  "keep": null,
+  "proposals": "medspacy_proposals.jsonl",
+  "cases": 31,
+  "reps": 1
+}

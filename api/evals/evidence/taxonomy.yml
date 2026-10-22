@@ -7,6 +7,11 @@
 # by the same assistant that built the scoring; a second reader has not checked
 # them. `bin/rails eval:evidence:taxonomy` reports scores per type.
 #
+# Amended after the 2026-10-22 runs (RESULTS-2026-10-22.md): criterion 6 of
+# unusual_wording and switching_from_glp1 also tagged `wording`; both state
+# "no other GLP-1" without the word. Per-type tables quoted in that file
+# predate the amendment.
+#
 # Types 1 to 6 are the ones the owner asked for. 7 to 9 were added because some
 # requirements fit none of the six.
 types:
@@ -43,13 +48,13 @@ requirements:
   negated_and_family_history: {1: [threshold], 2: [plain], 3: [negation, experiencer], 4: [timing], 5: [experiencer, negation], 6: [negation]}
   ruled_out_conditions:       {1: [threshold], 2: [plain], 3: [plain], 4: [timing], 5: [plain], 6: [negation]}
   currently_on_ozempic:       {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [absent]}
-  switching_from_glp1:        {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [timing]}
+  switching_from_glp1:        {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [timing, wording]}
   unrelated_visit:            {1: [absent], 2: [absent], 4: [absent], 5: [absent], 6: [absent]}
   weight_goal_no_workup:      {1: [incomplete], 2: [hypothetical], 4: [incomplete], 5: [hypothetical], 6: [absent, wrong_document]}
   uhc_two_trials:             {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [threshold]}
   uhc_one_trial_only:         {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [threshold]}
   uhc_second_drug_no_outcome: {1: [plain], 2: [plain], 4: [timing], 5: [plain], 6: [negation], 7: [incomplete, wrong_document]}
-  unusual_wording:            {1: [wording], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
+  unusual_wording:            {1: [wording], 2: [wording], 4: [wording], 5: [wording], 6: [negation, wording]}
   clinical_shorthand:         {1: [plain], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
   narrative_note:             {1: [wording], 2: [wording], 4: [wording], 5: [wording], 6: [negation]}
   bmi_changed_between_notes:  {1: [timing], 2: [plain], 4: [timing], 5: [plain], 6: [negation]}

@@ -1,0 +1,17 @@
+{
+  "commit": "0eee3f7",
+  "dirty": false,
+  "system": "real",
+  "model_pass": "gpt-4o-mini",
+  "ablate": "hints",
+  "criteria_digest": "a993094ffefef115",
+  "prompt_digest": "1f3a82360afda028",
+  "harness_digest": "38c155bb482d224e",
+  "served_models": [
+    "gpt-4o-mini-2024-07-18"
+  ],
+  "ruby": "4.0.7",
+  "rails": "8.1.3.1",
+  "cases": 31,
+  "reps": 3
+}

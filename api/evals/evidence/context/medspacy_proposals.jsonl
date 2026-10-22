@@ -1,0 +1,137 @@
+{"case_id": "active_med_no_outcome", "rep": 0, "position": 1, "document": 0, "start": 49, "finish": 89, "excerpt": "Vitals: body mass index 35.1, BP 132/84."}
+{"case_id": "active_med_no_outcome", "rep": 0, "position": 2, "document": 0, "start": 91, "finish": 120, "excerpt": "Assessment: Class II obesity."}
+{"case_id": "active_med_no_outcome", "rep": 0, "position": 4, "document": 0, "start": 221, "finish": 352, "excerpt": "He joined a medically supervised weight program in November 2025 with a calorie-restricted diet and strength training twice weekly."}
+{"case_id": "active_med_no_outcome", "rep": 0, "position": 6, "document": 0, "start": 354, "finish": 403, "excerpt": "Plan: add Zepbound; he is not on a GLP-1 agonist."}
+{"case_id": "bmi28_no_comorbidity", "rep": 0, "position": 2, "document": 0, "start": 36, "finish": 67, "excerpt": "Assessment: overweight (E66.3)."}
+{"case_id": "bmi28_no_comorbidity", "rep": 0, "position": 4, "document": 0, "start": 175, "finish": 267, "excerpt": "He has followed a calorie-controlled diet and a running plan with our coach for nine months."}
+{"case_id": "bmi28_no_comorbidity", "rep": 0, "position": 5, "document": 0, "start": 269, "finish": 350, "excerpt": "Phentermine 03/2025 to 05/2025: lost 4 lb, stopped when the 12-week course ended."}
+{"case_id": "bmi28_no_comorbidity", "rep": 0, "position": 6, "document": 0, "start": 352, "finish": 386, "excerpt": "Does not use any GLP-1 medication."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 1, "document": 0, "start": 62, "finish": 71, "excerpt": "BMI 29.1."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 2, "document": 0, "start": 72, "finish": 83, "excerpt": "Overweight."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 3, "document": 0, "start": 85, "finish": 179, "excerpt": "Polysomnography in May 2026 confirmed moderate obstructive sleep apnea (G47.33); CPAP started."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 4, "document": 0, "start": 181, "finish": 313, "excerpt": "He has been in the hospital's weight program since August 2025: reduced-calorie diet plus supervised physical activity twice weekly."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 5, "document": 0, "start": 315, "finish": 378, "excerpt": "Orlistat 60 mg, 09/2025 to 12/2025, stopped for lack of effect."}
+{"case_id": "bmi29_with_sleep_apnea", "rep": 0, "position": 6, "document": 0, "start": 380, "finish": 418, "excerpt": "He is not on a GLP-1 receptor agonist."}
+{"case_id": "bmi_below_threshold", "rep": 0, "position": 2, "document": 0, "start": 59, "finish": 90, "excerpt": "Assessment: overweight (E66.3)."}
+{"case_id": "bmi_below_threshold", "rep": 0, "position": 3, "document": 0, "start": 92, "finish": 131, "excerpt": "Hypertension, controlled on amlodipine."}
+{"case_id": "bmi_below_threshold", "rep": 0, "position": 4, "document": 0, "start": 133, "finish": 205, "excerpt": "Reduced-calorie diet and jogging three times weekly since February 2026."}
+{"case_id": "bmi_below_threshold", "rep": 0, "position": 6, "document": 0, "start": 242, "finish": 265, "excerpt": "Not on a GLP-1 agonist."}
+{"case_id": "bmi_changed_between_notes", "rep": 0, "position": 1, "document": 1, "start": 29, "finish": 70, "excerpt": "BMI 31.5 today after holiday weight gain."}
+{"case_id": "bmi_changed_between_notes", "rep": 0, "position": 2, "document": 0, "start": 25, "finish": 36, "excerpt": "Overweight."}
+{"case_id": "bmi_changed_between_notes", "rep": 0, "position": 2, "document": 1, "start": 72, "finish": 109, "excerpt": "Assessment: obesity, class I (E66.9)."}
+{"case_id": "bmi_changed_between_notes", "rep": 0, "position": 5, "document": 1, "start": 240, "finish": 306, "excerpt": "Qsymia 09/2025 to 12/2025, stopped for dry mouth and mood changes."}
+{"case_id": "bmi_changed_between_notes", "rep": 0, "position": 6, "document": 1, "start": 308, "finish": 332, "excerpt": "No GLP-1 agonist in use."}
+{"case_id": "bmi_only_in_old_note", "rep": 0, "position": 2, "document": 0, "start": 41, "finish": 61, "excerpt": "Assessment: obesity."}
+{"case_id": "bmi_only_in_old_note", "rep": 0, "position": 2, "document": 1, "start": 171, "finish": 196, "excerpt": "Problem: obesity (E66.9)."}
+{"case_id": "bmi_only_in_old_note", "rep": 0, "position": 4, "document": 1, "start": 80, "finish": 169, "excerpt": "He continues the reduced-calorie diet and home exercise routine he began in January 2026."}
+{"case_id": "bmi_only_in_old_note", "rep": 0, "position": 5, "document": 1, "start": 198, "finish": 280, "excerpt": "Contrave 10/2025 to 02/2026, stopped for headaches without meaningful weight loss."}
+{"case_id": "bmi_only_in_old_note", "rep": 0, "position": 6, "document": 1, "start": 282, "finish": 324, "excerpt": "He is not taking a GLP-1 receptor agonist."}
+{"case_id": "clinical_shorthand", "rep": 0, "position": 1, "document": 0, "start": 36, "finish": 64, "excerpt": "Ht 70 in, wt 251 lb, BMI 36."}
+{"case_id": "clinical_shorthand", "rep": 0, "position": 2, "document": 0, "start": 66, "finish": 97, "excerpt": "Dx: obesity class II; HTN; HLD."}
+{"case_id": "clinical_shorthand", "rep": 0, "position": 3, "document": 0, "start": 66, "finish": 97, "excerpt": "Dx: obesity class II; HTN; HLD."}
+{"case_id": "clinical_shorthand", "rep": 0, "position": 5, "document": 0, "start": 188, "finish": 249, "excerpt": "Prior tx: phentermine x 12 wk (2024), d/c'd d/t palpitations."}
+{"case_id": "clinical_shorthand", "rep": 0, "position": 6, "document": 0, "start": 251, "finish": 274, "excerpt": "Denies use of GLP-1 RA."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 1, "document": 0, "start": 50, "finish": 59, "excerpt": "BMI 38.6."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 2, "document": 0, "start": 61, "finish": 117, "excerpt": "Assessment: obesity, class II (E66.01); type 2 diabetes."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 3, "document": 0, "start": 0, "finish": 48, "excerpt": "Rosalind Echeverria, type 2 diabetes and weight."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 3, "document": 0, "start": 61, "finish": 117, "excerpt": "Assessment: obesity, class II (E66.01); type 2 diabetes."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 4, "document": 0, "start": 206, "finish": 288, "excerpt": "She has followed a diabetic reduced-calorie diet and a walking program since 2024."}
+{"case_id": "currently_on_ozempic", "rep": 0, "position": 5, "document": 0, "start": 290, "finish": 352, "excerpt": "Phentermine in 2023 for three months, stopped for jitteriness."}
+{"case_id": "diet_without_activity", "rep": 0, "position": 1, "document": 0, "start": 27, "finish": 50, "excerpt": "BMI of 39.4, BP 138/88."}
+{"case_id": "diet_without_activity", "rep": 0, "position": 2, "document": 0, "start": 52, "finish": 87, "excerpt": "Diagnosis: severe obesity (E66.01)."}
+{"case_id": "diet_without_activity", "rep": 0, "position": 5, "document": 0, "start": 272, "finish": 360, "excerpt": "Orlistat was tried 06/2025 to 09/2025 and stopped for oily stools with no weight change."}
+{"case_id": "diet_without_activity", "rep": 0, "position": 6, "document": 0, "start": 362, "finish": 385, "excerpt": "Not on a GLP-1 agonist."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 1, "document": 0, "start": 47, "finish": 71, "excerpt": "Weight 204 lb, BMI 32.9."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 2, "document": 0, "start": 73, "finish": 93, "excerpt": "Assessment: obesity."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 4, "document": 0, "start": 286, "finish": 434, "excerpt": "Lifestyle: reduced-calorie diet and regular exercise (spin class twice a week, walking daily) for the past eight months, tracked in our program log."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 5, "document": 0, "start": 95, "finish": 189, "excerpt": "We discussed phentermine and Qsymia; she declined both because of her history of palpitations."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 5, "document": 0, "start": 191, "finish": 284, "excerpt": "We also reviewed orlistat, which she does not want because of GI side effects she read about."}
+{"case_id": "drugs_discussed_not_taken", "rep": 0, "position": 6, "document": 0, "start": 436, "finish": 470, "excerpt": "She does not take a GLP-1 agonist."}
+{"case_id": "fill_only_pharmacy_record", "rep": 0, "position": 1, "document": 0, "start": 73, "finish": 82, "excerpt": "BMI 33.8."}
+{"case_id": "fill_only_pharmacy_record", "rep": 0, "position": 2, "document": 0, "start": 84, "finish": 112, "excerpt": "Assessment: Obesity (E66.9)."}
+{"case_id": "fill_only_pharmacy_record", "rep": 0, "position": 4, "document": 0, "start": 114, "finish": 220, "excerpt": "She has done a dietitian-led reduced-calorie diet and gym sessions three times a week since February 2026."}
+{"case_id": "lifestyle_advised_only", "rep": 0, "position": 1, "document": 0, "start": 44, "finish": 55, "excerpt": "BMI = 33.2."}
+{"case_id": "lifestyle_advised_only", "rep": 0, "position": 2, "document": 0, "start": 57, "finish": 98, "excerpt": "Assessment: obesity (E66.9); prediabetes."}
+{"case_id": "lifestyle_advised_only", "rep": 0, "position": 4, "document": 0, "start": 100, "finish": 186, "excerpt": "Advised a reduced-calorie diet and at least 150 minutes of physical activity per week."}
+{"case_id": "lifestyle_advised_only", "rep": 0, "position": 5, "document": 0, "start": 249, "finish": 347, "excerpt": "Prior treatment: phentermine 37.5 mg, 08/2024 to 11/2024, discontinued for anxiety and poor sleep."}
+{"case_id": "lifestyle_advised_only", "rep": 0, "position": 6, "document": 0, "start": 349, "finish": 381, "excerpt": "She is not on any GLP-1 therapy."}
+{"case_id": "lifestyle_two_months", "rep": 0, "position": 1, "document": 0, "start": 44, "finish": 53, "excerpt": "BMI 34.6."}
+{"case_id": "lifestyle_two_months", "rep": 0, "position": 2, "document": 0, "start": 55, "finish": 92, "excerpt": "Assessment: Obesity, class I (E66.9)."}
+{"case_id": "lifestyle_two_months", "rep": 0, "position": 4, "document": 0, "start": 94, "finish": 169, "excerpt": "She started a reduced-calorie diet and a walking program in late July 2026."}
+{"case_id": "lifestyle_two_months", "rep": 0, "position": 5, "document": 0, "start": 171, "finish": 254, "excerpt": "Past medication: Qsymia from 02/2025 to 06/2025, stopped for tingling in her hands."}
+{"case_id": "lifestyle_two_months", "rep": 0, "position": 6, "document": 0, "start": 256, "finish": 292, "excerpt": "She takes no GLP-1 receptor agonist."}
+{"case_id": "med_list_without_statement", "rep": 0, "position": 1, "document": 0, "start": 17, "finish": 26, "excerpt": "BMI 34.0."}
+{"case_id": "med_list_without_statement", "rep": 0, "position": 2, "document": 0, "start": 28, "finish": 70, "excerpt": "Assessment: obesity (E66.9), hypertension."}
+{"case_id": "med_list_without_statement", "rep": 0, "position": 3, "document": 0, "start": 28, "finish": 70, "excerpt": "Assessment: obesity (E66.9), hypertension."}
+{"case_id": "med_list_without_statement", "rep": 0, "position": 4, "document": 0, "start": 72, "finish": 138, "excerpt": "Reduced-calorie diet and daily walking program since January 2026."}
+{"case_id": "med_list_without_statement", "rep": 0, "position": 5, "document": 0, "start": 140, "finish": 200, "excerpt": "Orlistat 02/2025 to 05/2025, stopped for abdominal cramping."}
+{"case_id": "narrative_note", "rep": 0, "position": 1, "document": 0, "start": 114, "finish": 168, "excerpt": "Today she weighs 244 pounds and her BMI comes to 38.9."}
+{"case_id": "narrative_note", "rep": 0, "position": 2, "document": 0, "start": 170, "finish": 213, "excerpt": "I have her down as having class II obesity."}
+{"case_id": "narrative_note", "rep": 0, "position": 4, "document": 0, "start": 215, "finish": 414, "excerpt": "Starting last November she cut her intake to about 1,400 calories a day on a plan our dietitian wrote, and she has been going to a senior fitness class on Mondays, Wednesdays, and Fridays ever since."}
+{"case_id": "narrative_note", "rep": 0, "position": 5, "document": 0, "start": 416, "finish": 561, "excerpt": "Two years ago another doctor had her on naltrexone-bupropion for about four months; she stopped because it made her dizzy and she was not losing."}
+{"case_id": "negated_and_family_history", "rep": 0, "position": 2, "document": 0, "start": 70, "finish": 101, "excerpt": "Assessment: overweight (E66.3)."}
+{"case_id": "negated_and_family_history", "rep": 0, "position": 4, "document": 0, "start": 283, "finish": 409, "excerpt": "She began a reduced-calorie diet eight months ago and added a physical activity plan (swimming twice weekly) at the same time."}
+{"case_id": "no_diagnosis_recorded", "rep": 0, "position": 1, "document": 0, "start": 67, "finish": 95, "excerpt": "Vitals: BMI 31.8, BP 122/78."}
+{"case_id": "no_diagnosis_recorded", "rep": 0, "position": 4, "document": 0, "start": 155, "finish": 248, "excerpt": "She has followed a reduced-calorie diet and a home exercise video program since January 2026."}
+{"case_id": "no_diagnosis_recorded", "rep": 0, "position": 5, "document": 0, "start": 250, "finish": 315, "excerpt": "Contrave 06/2025 to 10/2025: stopped for constipation, lost 2 lb."}
+{"case_id": "only_requested_drug", "rep": 0, "position": 1, "document": 0, "start": 28, "finish": 40, "excerpt": "BMI of 37.9."}
+{"case_id": "only_requested_drug", "rep": 0, "position": 2, "document": 0, "start": 42, "finish": 64, "excerpt": "Dx: obesity, class II."}
+{"case_id": "only_requested_drug", "rep": 0, "position": 4, "document": 0, "start": 66, "finish": 163, "excerpt": "He has been on a reduced-calorie diet and exercise plan with our health coach since January 2026."}
+{"case_id": "only_requested_drug", "rep": 0, "position": 6, "document": 0, "start": 293, "finish": 337, "excerpt": "Not currently on any GLP-1 receptor agonist."}
+{"case_id": "pass_basic", "rep": 0, "position": 1, "document": 0, "start": 97, "finish": 147, "excerpt": "Vitals: Weight 232 lb, height 5 ft 7 in, BMI 36.3."}
+{"case_id": "pass_basic", "rep": 0, "position": 2, "document": 0, "start": 160, "finish": 199, "excerpt": "Assessment: Obesity, class II (E66.01)."}
+{"case_id": "pass_basic", "rep": 0, "position": 4, "document": 0, "start": 201, "finish": 356, "excerpt": "She has followed a reduced-calorie diet with the clinic dietitian and a supervised exercise program (water aerobics three times weekly) since January 2026."}
+{"case_id": "pass_basic", "rep": 0, "position": 5, "document": 0, "start": 358, "finish": 470, "excerpt": "Medication history: Contrave was taken from 05/2025 to 09/2025 and stopped because of nausea and no weight loss."}
+{"case_id": "pass_basic", "rep": 0, "position": 6, "document": 0, "start": 472, "finish": 517, "excerpt": "She is not taking any GLP-1 receptor agonist."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 1, "document": 0, "start": 28, "finish": 70, "excerpt": "Height 5 ft 4 in, weight 167 lb, BMI 28.6."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 2, "document": 0, "start": 72, "finish": 102, "excerpt": "Diagnoses: Overweight (E66.3)."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 3, "document": 0, "start": 103, "finish": 145, "excerpt": "Essential hypertension (I10), on losartan."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 3, "document": 0, "start": 146, "finish": 192, "excerpt": "Mixed hyperlipidemia (E78.2), on rosuvastatin."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 4, "document": 0, "start": 194, "finish": 360, "excerpt": "Since October 2025 she has attended our lifestyle program: a reduced-calorie diet with weekly dietitian check-ins and a walking group that meets four mornings a week."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 5, "document": 0, "start": 362, "finish": 467, "excerpt": "Phentermine 15 mg was taken 01/2025 to 04/2025; she lost 2 lb and it was stopped for elevated heart rate."}
+{"case_id": "pass_bmi28_with_comorbidity", "rep": 0, "position": 6, "document": 0, "start": 469, "finish": 542, "excerpt": "Ruth is not on any GLP-1 medication and will not combine Wegovy with one."}
+{"case_id": "pass_split_documents", "rep": 0, "position": 1, "document": 0, "start": 58, "finish": 92, "excerpt": "BMI today is 41.2 (weight 287 lb)."}
+{"case_id": "pass_split_documents", "rep": 0, "position": 2, "document": 1, "start": 3, "finish": 26, "excerpt": "Morbid obesity (E66.01)"}
+{"case_id": "pass_split_documents", "rep": 0, "position": 4, "document": 0, "start": 94, "finish": 231, "excerpt": "For the past ten months he has kept a 1,800-calorie meal plan set by our dietitian and walks on a treadmill 40 minutes, five days a week."}
+{"case_id": "pass_split_documents", "rep": 0, "position": 5, "document": 2, "start": 32, "finish": 119, "excerpt": "Past: Qsymia 7.5/46 mg, 11/2024 to 03/2025, discontinued for paresthesias and insomnia."}
+{"case_id": "pass_split_documents", "rep": 0, "position": 6, "document": 0, "start": 285, "finish": 338, "excerpt": "No other GLP-1 agonist will be used while on Saxenda."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 1, "document": 0, "start": 21, "finish": 30, "excerpt": "BMI 29.4."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 2, "document": 0, "start": 32, "finish": 55, "excerpt": "Assessment: overweight."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 3, "document": 0, "start": 113, "finish": 210, "excerpt": "Hypertension was suspected last year but home readings were normal and the diagnosis was removed."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 3, "document": 0, "start": 212, "finish": 270, "excerpt": "Type 2 diabetes: A1c 7.1% in July 2026, started metformin."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 4, "document": 0, "start": 272, "finish": 329, "excerpt": "Reduced-calorie diet and gym program since February 2026."}
+{"case_id": "ruled_out_conditions", "rep": 0, "position": 6, "document": 0, "start": 398, "finish": 427, "excerpt": "He is not on a GLP-1 agonist."}
+{"case_id": "rx_never_picked_up", "rep": 0, "position": 1, "document": 0, "start": 38, "finish": 63, "excerpt": "BMI: 31.4; weight 189 lb."}
+{"case_id": "rx_never_picked_up", "rep": 0, "position": 1, "document": 0, "start": 65, "finish": 109, "excerpt": "Impression: obesity, BMI 31.0-31.9 (Z68.31)."}
+{"case_id": "rx_never_picked_up", "rep": 0, "position": 2, "document": 0, "start": 65, "finish": 109, "excerpt": "Impression: obesity, BMI 31.0-31.9 (Z68.31)."}
+{"case_id": "rx_never_picked_up", "rep": 0, "position": 4, "document": 0, "start": 200, "finish": 322, "excerpt": "Diet: reduced-calorie plan (1,500 kcal/day) since December 2025, with brisk walking 30 minutes daily over the same period."}
+{"case_id": "rx_never_picked_up", "rep": 0, "position": 6, "document": 0, "start": 324, "finish": 417, "excerpt": "No GLP-1 receptor agonist is on her medication list and none will be added alongside Saxenda."}
+{"case_id": "switching_from_glp1", "rep": 0, "position": 1, "document": 0, "start": 18, "finish": 44, "excerpt": "BMI 35.7; obesity (E66.9)."}
+{"case_id": "switching_from_glp1", "rep": 0, "position": 2, "document": 0, "start": 18, "finish": 44, "excerpt": "BMI 35.7; obesity (E66.9)."}
+{"case_id": "switching_from_glp1", "rep": 0, "position": 4, "document": 0, "start": 210, "finish": 333, "excerpt": "Portion-controlled 1,700 kcal diet and resistance training three days a week since October 2025, logged with our dietitian."}
+{"case_id": "switching_from_glp1", "rep": 0, "position": 5, "document": 0, "start": 46, "finish": 117, "excerpt": "He has taken Saxenda since 11/2025 with a 3 lb loss and ongoing nausea."}
+{"case_id": "switching_from_glp1", "rep": 0, "position": 5, "document": 0, "start": 119, "finish": 208, "excerpt": "Saxenda will be stopped before the first Wegovy dose; the two will not be taken together."}
+{"case_id": "uhc_one_trial_only", "rep": 0, "position": 1, "document": 0, "start": 18, "finish": 27, "excerpt": "BMI 36.0."}
+{"case_id": "uhc_one_trial_only", "rep": 0, "position": 2, "document": 0, "start": 29, "finish": 56, "excerpt": "Obesity, class II (E66.01)."}
+{"case_id": "uhc_one_trial_only", "rep": 0, "position": 4, "document": 0, "start": 184, "finish": 285, "excerpt": "Low-calorie meal plan and physical activity (yoga and walking) since November 2025, reviewed monthly."}
+{"case_id": "uhc_one_trial_only", "rep": 0, "position": 5, "document": 0, "start": 58, "finish": 133, "excerpt": "Contrave was taken 04/2025 to 08/2025 and stopped for nausea and dizziness."}
+{"case_id": "uhc_one_trial_only", "rep": 0, "position": 6, "document": 0, "start": 287, "finish": 330, "excerpt": "She is not taking a GLP-1 receptor agonist."}
+{"case_id": "uhc_second_drug_no_outcome", "rep": 0, "position": 1, "document": 0, "start": 24, "finish": 33, "excerpt": "BMI 33.5."}
+{"case_id": "uhc_second_drug_no_outcome", "rep": 0, "position": 2, "document": 0, "start": 35, "finish": 63, "excerpt": "Assessment: obesity (E66.9)."}
+{"case_id": "uhc_second_drug_no_outcome", "rep": 0, "position": 4, "document": 0, "start": 156, "finish": 227, "excerpt": "Reduced-calorie diet and exercise (cycling) program since January 2026."}
+{"case_id": "uhc_second_drug_no_outcome", "rep": 0, "position": 5, "document": 0, "start": 65, "finish": 154, "excerpt": "Orlistat 120 mg was taken 10/2024 to 02/2025; stopped for GI side effects with 1 lb lost."}
+{"case_id": "uhc_second_drug_no_outcome", "rep": 0, "position": 6, "document": 0, "start": 229, "finish": 254, "excerpt": "Not on any GLP-1 agonist."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 1, "document": 0, "start": 61, "finish": 70, "excerpt": "BMI 40.2."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 2, "document": 0, "start": 72, "finish": 107, "excerpt": "Diagnosis: morbid obesity (E66.01)."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 4, "document": 0, "start": 290, "finish": 420, "excerpt": "He has been enrolled in our nutrition and exercise program (reduced-calorie diet, cardio three times weekly) since September 2025."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 5, "document": 0, "start": 109, "finish": 288, "excerpt": "Prior medications for weight: phentermine 01/2024 to 04/2024, stopped for elevated blood pressure; Qsymia 08/2024 to 01/2025, stopped after 5 months with less than 3% weight loss."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 6, "document": 0, "start": 422, "finish": 465, "excerpt": "He is not using any GLP-1 receptor agonist."}
+{"case_id": "uhc_two_trials", "rep": 0, "position": 7, "document": 0, "start": 109, "finish": 288, "excerpt": "Prior medications for weight: phentermine 01/2024 to 04/2024, stopped for elevated blood pressure; Qsymia 08/2024 to 01/2025, stopped after 5 months with less than 3% weight loss."}
+{"case_id": "unusual_wording", "rep": 0, "position": 1, "document": 0, "start": 36, "finish": 94, "excerpt": "Body mass index is 33.1 (weight 205 lb, height 5 ft 6 in)."}
+{"case_id": "unusual_wording", "rep": 0, "position": 1, "document": 0, "start": 96, "finish": 122, "excerpt": "Assessment: E66.9, Z68.33."}
+{"case_id": "unusual_wording", "rep": 0, "position": 4, "document": 0, "start": 124, "finish": 297, "excerpt": "For the last eleven months she has eaten a hypocaloric Mediterranean-style diet planned by our nutrition service and has done pool-based aerobic training three times a week."}
+{"case_id": "unusual_wording", "rep": 0, "position": 5, "document": 0, "start": 299, "finish": 371, "excerpt": "Adipex-P was used from 02/2025 to 05/2025 and discontinued for insomnia."}
+{"case_id": "weight_without_bmi", "rep": 0, "position": 2, "document": 0, "start": 86, "finish": 125, "excerpt": "Assessment: obesity, class II (E66.01)."}
+{"case_id": "weight_without_bmi", "rep": 0, "position": 4, "document": 0, "start": 127, "finish": 265, "excerpt": "She has kept a 1,500-calorie eating plan and attends a twice-weekly exercise class through the community center, both since December 2025."}
+{"case_id": "weight_without_bmi", "rep": 0, "position": 5, "document": 0, "start": 267, "finish": 344, "excerpt": "Saxenda was used 03/2025 to 07/2025 and stopped because of persistent nausea."}
+{"case_id": "weight_without_bmi", "rep": 0, "position": 6, "document": 0, "start": 346, "finish": 384, "excerpt": "No other GLP-1 agonist is being taken."}

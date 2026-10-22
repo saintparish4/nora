@@ -109,6 +109,50 @@ module EvidenceEval
       end
     end
 
+    # Scores per failure type (taxonomy.yml), pooled over requirements and
+    # reps, for each round side by side. Cells are counts, not rates with
+    # intervals: most types hold a handful of requirements, and a rate would
+    # suggest more than they can show.
+    def taxonomy(rounds, split: "all")
+      taxonomy = YAML.load_file(ROOT.join("taxonomy.yml"))
+      tags = taxonomy.fetch("requirements")
+      state = JSON.parse(ROOT.join("state.json").read)
+      keep = { "train" => state["train_ids"], "test" => state["test_ids"] }[split]
+
+      rows = rounds.to_h do |round|
+        traces = ROOT.join(round, "traces").glob("*.json").sort.map { |path| JSON.parse(path.read) }
+        abort "no traces under #{round}" if traces.empty?
+        traces.select! { |t| keep.nil? || keep.include?(t["case_id"]) }
+        requirements = traces.flat_map do |t|
+          t["requirements"].select { |r| %w[supported unsupported].include?(r["label"]) }.map do |r|
+            types = tags.dig(t["case_id"], r["position"])
+            abort "taxonomy.yml has no tag for #{t['case_id']} criterion #{r['position']}" if types.blank?
+            r.merge("types" => types)
+          end
+        end
+        [ round, requirements ]
+      end
+
+      puts "failure types, split=#{split}, pooled over requirements and reps"
+      puts "clean = unsupported with nothing proposed; found = supported with a supporting excerpt; precision = proposed excerpts that support"
+      puts
+      puts "| type | " + rounds.map { |r| "#{r} clean | #{r} found | #{r} precision" }.join(" | ") + " |"
+      puts "|---|" + ("---|" * rounds.size * 3)
+      taxonomy.fetch("types").each_key do |type|
+        cells = rounds.map do |round|
+          group = rows[round].select { |r| r["types"].include?(type) }
+          unsup = group.select { |r| r["label"] == "unsupported" }
+          sup = group.select { |r| r["label"] == "supported" }
+          excerpts = group.flat_map { |r| r["proposals"] }
+          [ ratio(unsup.count { |r| r["proposals"].empty? }, unsup.size), ratio(sup.count { |r| r["found"] }, sup.size),
+            ratio(excerpts.count { |p| p["verdict"] == "support" }, excerpts.size) ].join(" | ")
+        end
+        puts "| #{type} | #{cells.join(' | ')} |"
+      end
+    end
+
+    def ratio(hits, total) = total.zero? ? "-" : "#{hits}/#{total}"
+
     # Cases checked against the policy library in the scratch database.
     def prepared_cases
       runner = Runner.new(round: "review", out: StringIO.new)

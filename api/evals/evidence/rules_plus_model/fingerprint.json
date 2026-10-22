@@ -1,0 +1,9 @@
+{
+  "derived": "rules_plus_model",
+  "rules": "rules",
+  "model": "model_alone",
+  "keep": "keep_model_alone.jsonl",
+  "proposals": null,
+  "cases": 31,
+  "reps": 3
+}

@@ -38,6 +38,8 @@ bin/rails eval:evidence               # rule pass only -> evals/evidence/baselin
 bin/rails eval:evidence ROUND=v1      # after a change, a new round
 bin/rails eval:evidence:summary       # totals by criterion and by source
 bin/rails eval:evidence:graded        # GRADED.md: graded examples, train slice
+bin/rails eval:evidence:taxonomy ROUNDS=rules,filtered SPLIT=test   # scores per failure type (taxonomy.yml)
+bin/rails eval:evidence:derive CONDITION=gated ROUND=gated MODEL=model_alone   # combine rounds; see PLAN-2026-10-22.md
 python3 ~/.claude/skills/eval-discipline/scripts/score.py evals/evidence --metric clean
 python3 ~/.claude/skills/eval-discipline/scripts/score.py evals/evidence --metric found --split test
 ```
@@ -89,3 +91,12 @@ result here.
   library.
 - 31 cases resolve large differences only. The interval on `clean` is about
   20 points either way.
+
+## Going deeper
+
+`PROTOCOL.md` is the plan for making these numbers mean more: criteria from
+published payer policies (`policies/`), the n2c2 benchmark, a labelling
+protocol for independent reviewers, a planted-error study of the human check,
+and a sealed test set. `PLAN-2026-10-22.md` and `RESULTS-2026-10-22.md` are
+the first pre-registered round under it: the model pass, a medspaCy/ConText
+filter, and a medspaCy baseline (`context/`, its own Python environment).

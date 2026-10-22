@@ -110,6 +110,16 @@ namespace :eval do
       EvidenceEval::Report.graded(ENV.fetch("ROUND", "baseline"))
     end
 
+    desc "Build ROUND from other rounds (PLAN-2026-10-22.md): CONDITION=rules_plus_model|gated|filtered|external RULES= MODEL= KEEP= PROPOSALS="
+    task derive: :environment do
+      require Rails.root.join("evals/evidence/harness")
+      require Rails.root.join("evals/evidence/derive")
+      EvidenceEval::Derive.call(condition: ENV.fetch("CONDITION"), round: ENV.fetch("ROUND"), rules: ENV.fetch("RULES", "rules"),
+                                model: ENV["MODEL"], keep: ENV["KEEP"], proposals: ENV["PROPOSALS"])
+    rescue EvidenceEval::HarnessError => e
+      abort "derive stopped: #{e.message}"
+    end
+
     desc "Scores per failure type (taxonomy.yml) for ROUNDS=a,b side by side; SPLIT=train|test|all"
     task taxonomy: :environment do
       require Rails.root.join("evals/evidence/harness")

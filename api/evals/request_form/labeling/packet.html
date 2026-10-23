@@ -1,0 +1,1836 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Nora labelling packet</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; color: #171717; max-width: 860px; margin: 32px auto; padding: 0 16px; }
+  h1 { font-size: 28px; } h2 { margin-top: 48px; border-top: 2px solid #171717; padding-top: 16px; page-break-before: always; }
+  h3 { font-size: 16px; margin: 20px 0 6px; } table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
+  pre { white-space: pre-wrap; font: inherit; background: #f6f4ef; padding: 12px; border-radius: 8px; }
+  .q { margin: 10px 0; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; }
+  .when { color: #8a5a00; font-size: 13px; } .muted { color: #666; font-size: 13px; }
+</style></head><body>
+<h1>Labelling packet: 20 prior authorization requests</h1>
+<p>Every patient, plan and note here is invented. For each request, read the chart and answer the plan's questions the way you would at work, in <code>answer-sheet.csv</code>:</p>
+<ul>
+  <li>an answer: the choice's code (for example <code>yes</code> or <code>27-29.9</code>), several codes separated by <code>;</code>, or a number;</li>
+  <li><code>ASK</code>: the chart does not answer it and you would ask the prescriber's office;</li>
+  <li><code>N/A</code>: the question does not apply to this patient (see "Only if").</li>
+</ul>
+<p>If a question applies only depending on one you answered ASK, answer it anyway if you can. Use the note column for anything you want to say. Work alone, and do not look anything up in Nora.</p>
+<h2>R01: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-28</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R02: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Focus</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-28</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R03: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>Service Benefit Plan</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-28</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R04: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-03-01</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R05: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-28</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+<tr><td>2026-05-04</td><td>stopped</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td></td>
+  <td></td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R06: Saxenda, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Tom Okafor · born 1978-01-09 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>R70331862</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65, rxid R70331862</td></tr>
+<tr><td>cancelled</td><td>Aetna</td>
+  <td></td>
+  <td>OLD555</td>
+  <td></td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-28</td><td>active</td>
+  <td>Saxenda 18 mg/3 mL pen injector</td>
+  <td>5 pen per 30 days</td>
+  <td>Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.36</td><td>BMI 36.0-36.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>G47.33</td><td>Obstructive sleep apnea</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-28: 36.5</p>
+<h3>Visit notes</h3>
+<p><strong>Weight management follow-up</strong>, 2026-08-28</p><pre>Patient: Tom Okafor  DOB: 01/09/1978
+
+Tom Okafor returns for weight management. He has been in a supervised lifestyle program with reduced-calorie diet and physical activity (gym three days a week) since December 2025. Weight is stable.
+
+Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
+
+Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+
+Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> How many pre-filled pens will the patient need for 90 days? <span class="muted">(pens-90-days)</span>
+  
+  <div class="muted">Choices: a number</div></div>
+<div class="q"><strong>3.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>4.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>5.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>b.</strong> Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide). <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 6. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 6. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R07: Zepbound, Aetna</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Marcus Bell · born 1971-11-02 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Aetna</td>
+  <td>Open Access Managed Choice</td>
+  <td>W228841093</td>
+  <td>group 0884102, rxbin 999102, rxpcn DEMOAET, rxgroup RXAET01, rxid W228841093</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-07-30</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.3</td><td>Overweight</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.28</td><td>BMI 28.0-28.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E11.9</td><td>Type 2 diabetes mellitus without complications</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-07-30: 28.4</p>
+<h3>Visit notes</h3>
+<p><strong>Annual visit</strong>, 2026-07-30</p><pre>Patient: Marcus Bell, DOB 11/02/1971
+
+Marcus Bell presents for his annual exam and to discuss weight. He has worked with a nutrition coach on a reduced-calorie meal plan since November 2025 and does physical activity (cycling) three times weekly.
+
+Vitals: Weight 196 lb, height 5 ft 10 in, BMI 28.4. BP 142/90 on lisinopril.
+
+Assessment:
+- Overweight (E66.3), BMI 28.0-28.9 (Z68.28)
+- Essential hypertension (I10), not at goal
+- Type 2 diabetes (E11.9), A1c 7.4%
+
+Plan: Phentermine 37.5 mg was tried March to May 2025 with 3 lb loss; stopped due to palpitations and elevated blood pressure. Will request Zepbound. Continue lifestyle program.</pre>
+<p><strong>Medication list</strong>, 2026-07-30</p><pre>Active: lisinopril 20 mg daily, metformin 1000 mg twice daily, atorvastatin 20 mg daily.
+Inactive: phentermine 37.5 mg daily (03/2025 to 05/2025), stopped for palpitations.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the patient 18 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Has the patient participated in a comprehensive weight management program (behavioral modification, reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months before drug therapy? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What was the patient&#39;s baseline BMI, before any weight-loss drug? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If baseline BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example hypertension, type 2 diabetes, or dyslipidemia)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What was the patient&#39;s baseline BMI, before any weight-lo...&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R08: Zepbound, Aetna</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Marcus Bell · born 1971-11-02 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Aetna</td>
+  <td>Open Access Managed Choice</td>
+  <td>W228841093</td>
+  <td>group 0884102, rxbin 999102, rxpcn DEMOAET, rxgroup RXAET01, rxid W228841093</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-07-30</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.3</td><td>Overweight</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.28</td><td>BMI 28.0-28.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E11.9</td><td>Type 2 diabetes mellitus without complications</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-07-30: 28.4</p>
+<h3>Visit notes</h3>
+<p><strong>Annual visit</strong>, 2026-07-30</p><pre>Patient: Marcus Bell, DOB 11/02/1971
+
+Marcus Bell presents for his annual exam and to discuss weight. He has worked with a nutrition coach on a reduced-calorie meal plan since November 2025 and does physical activity (cycling) three times weekly.
+
+Vitals: Weight 196 lb, height 5 ft 10 in, BMI 28.4. BP 142/90 on lisinopril.
+
+Assessment:
+- Overweight (E66.3), BMI 28.0-28.9 (Z68.28)
+- Essential hypertension (I10), not at goal
+- Type 2 diabetes (E11.9), A1c 7.4%
+
+Plan: Phentermine 37.5 mg was tried March to May 2025 with 3 lb loss; stopped due to palpitations and elevated blood pressure. Will request Zepbound. Continue lifestyle program.</pre>
+<p><strong>Medication list</strong>, 2026-07-30</p><pre>Active: lisinopril 20 mg daily, metformin 1000 mg twice daily, atorvastatin 20 mg daily.
+Inactive: phentermine 37.5 mg daily (03/2025 to 05/2025), stopped for palpitations.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the patient 18 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Has the patient participated in a comprehensive weight management program (behavioral modification, reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months before drug therapy? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What was the patient&#39;s baseline BMI, before any weight-loss drug? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If baseline BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example hypertension, type 2 diabetes, or dyslipidemia)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What was the patient&#39;s baseline BMI, before any weight-lo...&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R09: Zepbound, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Marcus Bell · born 1971-11-02 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>W228841093</td>
+  <td>group 0884102, rxbin 999102, rxpcn DEMOAET, rxgroup RXAET01, rxid W228841093</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-07-30</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.3</td><td>Overweight</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.28</td><td>BMI 28.0-28.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E11.9</td><td>Type 2 diabetes mellitus without complications</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-07-30: 28.4</p>
+<h3>Visit notes</h3>
+<p><strong>Annual visit</strong>, 2026-07-30</p><pre>Patient: Marcus Bell, DOB 11/02/1971
+
+Marcus Bell presents for his annual exam and to discuss weight. He has worked with a nutrition coach on a reduced-calorie meal plan since November 2025 and does physical activity (cycling) three times weekly.
+
+Vitals: Weight 196 lb, height 5 ft 10 in, BMI 28.4. BP 142/90 on lisinopril.
+
+Assessment:
+- Overweight (E66.3), BMI 28.0-28.9 (Z68.28)
+- Essential hypertension (I10), not at goal
+- Type 2 diabetes (E11.9), A1c 7.4%
+
+Plan: Phentermine 37.5 mg was tried March to May 2025 with 3 lb loss; stopped due to palpitations and elevated blood pressure. Will request Zepbound. Continue lifestyle program.</pre>
+<p><strong>Medication list</strong>, 2026-07-30</p><pre>Active: lisinopril 20 mg daily, metformin 1000 mg twice daily, atorvastatin 20 mg daily.
+Inactive: phentermine 37.5 mg daily (03/2025 to 05/2025), stopped for palpitations.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> Standard/Basic Option Patient: Has the patient tried and failed Saxenda and Wegovy? Please select answer below: <span class="muted">(tried-saxenda-wegovy)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: both = Yes, Saxenda and Wegovy | saxenda = No, Saxenda only | wegovy = No, Wegovy only | neither = No, the patient has not tried and failed any of these medications.</div></div>
+<div class="q"><strong>2.</strong> Standard/Basic Option Patient Would you like to switch to a preferred medication? The preferred medications are Saxenda and Wegovy. Please select answer below: <span class="muted">(switch-preferred)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: saxenda = Yes, switch to Saxenda | wegovy = Yes, switch to Wegovy | no = No, do not switch | exception = No, do not switch however the patient has a medical exception | medical-director = No, do not switch however I would like to speak with a medical director to discuss the case</div></div>
+<div class="q"><strong>3.</strong> Blue Focus Patient: This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. DOCUMENTATION IS REQUIRED: Please specify medical record page number(s). <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>4.</strong> Blue Focus Patient: Would you like to switch to a preferred medication? The preferred medication is generic Saxenda (liraglutide). Please select answer below: <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>5.</strong> Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | osa = Moderate to severe obstructive sleep apnea (OSA) with obesity | none = None of the above</div></div>
+<div class="q"><strong>7.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>8.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>9.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>10.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to a. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>b.</strong> Does the patient have an intolerance or contraindication or have they had an inadequate treatment response to at least TWO oral medications for weight management? Oral medications for weight management include: benzphetamine, diethylpropion, phentermine, Qsymia, etc. <span class="muted">(initiation-oral-trials)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>a.</strong> Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 10. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to a. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R10: Zepbound, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Marcus Bell · born 1971-11-02 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>W228841093</td>
+  <td>group 0884102, rxbin 999102, rxpcn DEMOAET, rxgroup RXAET01, rxid W228841093</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-07-30</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.3</td><td>Overweight</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.28</td><td>BMI 28.0-28.9, adult</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-07-30: 28.4</p>
+<h3>Visit notes</h3>
+<p><strong>Annual visit</strong>, 2026-07-30</p><pre>Patient: Marcus Bell, DOB 11/02/1971
+
+Marcus Bell presents for his annual exam and to discuss weight. He has worked with a nutrition coach on a reduced-calorie meal plan since November 2025 and does physical activity (cycling) three times weekly.
+
+Vitals: Weight 196 lb, height 5 ft 10 in, BMI 28.4. BP 142/90 on lisinopril.
+
+Assessment:
+- Overweight (E66.3), BMI 28.0-28.9 (Z68.28)
+- Essential hypertension (I10), not at goal
+- Type 2 diabetes (E11.9), A1c 7.4%
+
+Plan: Phentermine 37.5 mg was tried March to May 2025 with 3 lb loss; stopped due to palpitations and elevated blood pressure. Will request Zepbound. Continue lifestyle program.</pre>
+<p><strong>Medication list</strong>, 2026-07-30</p><pre>Active: lisinopril 20 mg daily, metformin 1000 mg twice daily, atorvastatin 20 mg daily.
+Inactive: phentermine 37.5 mg daily (03/2025 to 05/2025), stopped for palpitations.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> Standard/Basic Option Patient: Has the patient tried and failed Saxenda and Wegovy? Please select answer below: <span class="muted">(tried-saxenda-wegovy)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: both = Yes, Saxenda and Wegovy | saxenda = No, Saxenda only | wegovy = No, Wegovy only | neither = No, the patient has not tried and failed any of these medications.</div></div>
+<div class="q"><strong>2.</strong> Standard/Basic Option Patient Would you like to switch to a preferred medication? The preferred medications are Saxenda and Wegovy. Please select answer below: <span class="muted">(switch-preferred)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: saxenda = Yes, switch to Saxenda | wegovy = Yes, switch to Wegovy | no = No, do not switch | exception = No, do not switch however the patient has a medical exception | medical-director = No, do not switch however I would like to speak with a medical director to discuss the case</div></div>
+<div class="q"><strong>3.</strong> Blue Focus Patient: This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. DOCUMENTATION IS REQUIRED: Please specify medical record page number(s). <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>4.</strong> Blue Focus Patient: Would you like to switch to a preferred medication? The preferred medication is generic Saxenda (liraglutide). Please select answer below: <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>5.</strong> Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | osa = Moderate to severe obstructive sleep apnea (OSA) with obesity | none = None of the above</div></div>
+<div class="q"><strong>7.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>8.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>9.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>10.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to a. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>b.</strong> Does the patient have an intolerance or contraindication or have they had an inadequate treatment response to at least TWO oral medications for weight management? Oral medications for weight management include: benzphetamine, diethylpropion, phentermine, Qsymia, etc. <span class="muted">(initiation-oral-trials)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>a.</strong> Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 10. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to a. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R11: Wegovy, Cigna</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Jane Rivera · born 1984-03-14 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Cigna</td>
+  <td>Open Access Plus</td>
+  <td>U90114572</td>
+  <td>group 3341270</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-12</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.811</td><td>Obesity, class 1</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.34</td><td>BMI 34.0-34.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>R73.03</td><td>Prediabetes</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-12: 34.2</p>
+<h3>Visit notes</h3>
+<p><strong>Office visit, weight management</strong>, 2026-08-12</p><pre>Patient: Jane Rivera   DOB: 03/14/1984   MRN: DEMO-1001
+Provider: Avery Chen, MD
+
+Chief complaint: Follow-up for weight management.
+
+HPI: Jane Rivera is a 42-year-old woman seen for ongoing weight management. She has followed a reduced-calorie diet with our dietitian since January 2026 and walks 30 minutes five days a week. Weight is down 4 lb over 7 months despite adherence.
+
+Vitals: Height 5 ft 5 in. Weight 214 lb. BMI 34.2. BP 128/82.
+
+Assessment: Obesity, class 1 (E66.811), BMI 34.0-34.9 (Z68.34). Prediabetes, A1c 6.1%.
+
+Plan: Discussed GLP-1 therapy. Previously tried Saxenda (liraglutide) from 2025-06 to 2025-10; discontinued due to persistent nausea and vomiting. Will request prior authorization for Wegovy 0.25 mg weekly with titration. Continue diet and activity program.</pre>
+<p><strong>Medication history</strong>, 2026-08-12</p><pre>Current medications: metformin 500 mg daily (prediabetes), cetirizine 10 mg daily.
+Past medications: Saxenda (liraglutide 3 mg) 06/2025 to 10/2025, stopped for GI intolerance (nausea, vomiting).</pre>
+<p><strong>Problem list</strong>, 2026-08-12</p><pre>1. Obesity, class 1 (E66.811)
+2. Prediabetes (R73.03)
+3. Seasonal allergic rhinitis (J30.2)</pre>
+<p><strong>Pharmacy fill history</strong>, 2026-08-12</p><pre>Outside pharmacy fill history, received 08/12/2026.
+
+Phentermine 37.5 mg tablets, quantity 30, filled 02/03/2025; no refills on record.
+Saxenda (liraglutide) 3 mg pen, filled monthly 06/2025 through 10/2025.
+Metformin 500 mg tablets, filled monthly, most recent fill 07/28/2026.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the patient 18 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Has the patient engaged in a trial of behavioral modification and dietary restriction for at least 3 months? <span class="muted">(behavioral-trial)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What was the patient&#39;s BMI at baseline, before any GLP-1 or GLP-1/GIP drug? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If baseline BMI is 27 to 29.9: does the patient have one of hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, COPD, MASLD/NAFLD, polycystic ovarian syndrome, or coronary artery disease? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What was the patient&#39;s BMI at baseline, before any GLP-1 ...&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used with behavioral modification and a reduced-calorie diet? <span class="muted">(with-lifestyle)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used together with another GLP-1 or GLP-1/GIP agonist? <span class="muted">(other-glp1)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R12: Wegovy, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Jane Rivera · born 2010-05-01 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Basic</td>
+  <td>U90114572</td>
+  <td>group 3341270</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-08-12</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.811</td><td>Obesity, class 1</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.34</td><td>BMI 34.0-34.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>R73.03</td><td>Prediabetes</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-08-12: 34.2</p>
+<h3>Visit notes</h3>
+<p><strong>Office visit, weight management</strong>, 2026-08-12</p><pre>Patient: Jane Rivera   DOB: 03/14/1984   MRN: DEMO-1001
+Provider: Avery Chen, MD
+
+Chief complaint: Follow-up for weight management.
+
+HPI: Jane Rivera is a 42-year-old woman seen for ongoing weight management. She has followed a reduced-calorie diet with our dietitian since January 2026 and walks 30 minutes five days a week. Weight is down 4 lb over 7 months despite adherence.
+
+Vitals: Height 5 ft 5 in. Weight 214 lb. BMI 34.2. BP 128/82.
+
+Assessment: Obesity, class 1 (E66.811), BMI 34.0-34.9 (Z68.34). Prediabetes, A1c 6.1%.
+
+Plan: Discussed GLP-1 therapy. Previously tried Saxenda (liraglutide) from 2025-06 to 2025-10; discontinued due to persistent nausea and vomiting. Will request prior authorization for Wegovy 0.25 mg weekly with titration. Continue diet and activity program.</pre>
+<p><strong>Medication history</strong>, 2026-08-12</p><pre>Current medications: metformin 500 mg daily (prediabetes), cetirizine 10 mg daily.
+Past medications: Saxenda (liraglutide 3 mg) 06/2025 to 10/2025, stopped for GI intolerance (nausea, vomiting).</pre>
+<p><strong>Problem list</strong>, 2026-08-12</p><pre>1. Obesity, class 1 (E66.811)
+2. Prediabetes (R73.03)
+3. Seasonal allergic rhinitis (J30.2)</pre>
+<p><strong>Pharmacy fill history</strong>, 2026-08-12</p><pre>Outside pharmacy fill history, received 08/12/2026.
+
+Phentermine 37.5 mg tablets, quantity 30, filled 02/03/2025; no refills on record.
+Saxenda (liraglutide) 3 mg pen, filled monthly 06/2025 through 10/2025.
+Metformin 500 mg tablets, filled monthly, most recent fill 07/28/2026.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong></strong> Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  <div class="when">Only if the prescription is for pens.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Tablets: Will the patient need more than 90 tablets every 90 days? <span class="muted">(tablets-over-limit)</span>
+  <div class="when">Only if the prescription is for tablets.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | obesity = Obesity, used for chronic weight management | cv-risk = Major adverse cardiovascular risk reduction associated with established CV disease and either obesity or being overweight (chronic weight management) | mash = Noncirrhotic metabolic dysfunction-associated steatohepatitis (MASH) | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>3.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>4.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>5.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R13: Wegovy, UnitedHealthcare</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Elena Petrov · born 1966-09-30 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>UnitedHealthcare</td>
+  <td>Navigate</td>
+  <td>UHC900287710</td>
+  <td>group 771204, rxbin 999101, rxpcn DEMOUHC, rxgroup RXUHC77, rxid UHC900287710</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-09-02</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.38</td><td>BMI 38.0-38.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E78.5</td><td>Hyperlipidemia, unspecified</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-09-02: 38.1</p>
+<h3>Visit notes</h3>
+<p><strong>Office visit</strong>, 2026-09-02</p><pre>Patient: Elena Petrov, DOB 09/30/1966, MRN DEMO-1005
+
+Elena Petrov is seen to discuss weight management. She has completed a 9-month reduced-calorie diet and physical activity program with our dietitian, with a 5 lb loss.
+
+Vitals: BMI 38.1. BP 136/86 on amlodipine.
+
+Assessment: Obesity, class 2 (E66.812), BMI 38.0-38.9 (Z68.38). Hypertension (I10). Dyslipidemia (E78.5).
+
+Medication history: Phentermine 03/2024 to 06/2024, stopped for insomnia and palpitations. Contrave (naltrexone/bupropion) 09/2024 to 02/2025, stopped for headaches and inadequate response.
+
+Plan: Request Wegovy, to be used alongside her diet and activity program. She is not taking any other GLP-1 receptor agonist.</pre>
+<p><strong>Problem list</strong>, 2026-09-02</p><pre>Obesity, class 2 (E66.812)
+Essential hypertension (I10)
+Dyslipidemia (E78.5)</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the medication being requested for weight loss? <span class="muted">(indication)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Is the patient 12 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used as an adjunct to lifestyle modification (for example dietary or caloric restriction, exercise, behavioral support, or a community-based program)? <span class="muted">(adjunct)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What is the patient&#39;s body mass index (BMI)? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example dyslipidemia, hypertension, type 2 diabetes, or sleep apnea)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What is the patient&#39;s body mass index (BMI)?&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R14: Wegovy, UnitedHealthcare</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Elena Petrov · born 1966-09-30 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>UnitedHealthcare</td>
+  <td>Navigate</td>
+  <td>UHC900287710</td>
+  <td>group 771204, rxbin 999101, rxpcn DEMOUHC, rxgroup RXUHC77, rxid UHC900287710</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-09-02</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.38</td><td>BMI 38.0-38.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E78.5</td><td>Hyperlipidemia, unspecified</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-09-02: 38.1 · 2026-10-10: 28.9</p>
+<h3>Visit notes</h3>
+<p><strong>Office visit</strong>, 2026-09-02</p><pre>Patient: Elena Petrov, DOB 09/30/1966, MRN DEMO-1005
+
+Elena Petrov is seen to discuss weight management. She has completed a 9-month reduced-calorie diet and physical activity program with our dietitian, with a 5 lb loss.
+
+Vitals: BMI 38.1. BP 136/86 on amlodipine.
+
+Assessment: Obesity, class 2 (E66.812), BMI 38.0-38.9 (Z68.38). Hypertension (I10). Dyslipidemia (E78.5).
+
+Medication history: Phentermine 03/2024 to 06/2024, stopped for insomnia and palpitations. Contrave (naltrexone/bupropion) 09/2024 to 02/2025, stopped for headaches and inadequate response.
+
+Plan: Request Wegovy, to be used alongside her diet and activity program. She is not taking any other GLP-1 receptor agonist.</pre>
+<p><strong>Problem list</strong>, 2026-09-02</p><pre>Obesity, class 2 (E66.812)
+Essential hypertension (I10)
+Dyslipidemia (E78.5)</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the medication being requested for weight loss? <span class="muted">(indication)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Is the patient 12 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used as an adjunct to lifestyle modification (for example dietary or caloric restriction, exercise, behavioral support, or a community-based program)? <span class="muted">(adjunct)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What is the patient&#39;s body mass index (BMI)? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example dyslipidemia, hypertension, type 2 diabetes, or sleep apnea)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What is the patient&#39;s body mass index (BMI)?&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R15: Wegovy, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Elena Petrov · born 1966-09-30 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>UHC900287710</td>
+  <td>group 771204, rxbin 999101, rxpcn DEMOUHC, rxgroup RXUHC77, rxid UHC900287710</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-09-02</td><td>active</td>
+  <td>semaglutide 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.812</td><td>Obesity, class 2</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.38</td><td>BMI 38.0-38.9, adult</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>I10</td><td>Essential hypertension</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E78.5</td><td>Hyperlipidemia, unspecified</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-09-02: 38.1</p>
+<h3>Visit notes</h3>
+<p><strong>Office visit</strong>, 2026-09-02</p><pre>Patient: Elena Petrov, DOB 09/30/1966, MRN DEMO-1005
+
+Elena Petrov is seen to discuss weight management. She has completed a 9-month reduced-calorie diet and physical activity program with our dietitian, with a 5 lb loss.
+
+Vitals: BMI 38.1. BP 136/86 on amlodipine.
+
+Assessment: Obesity, class 2 (E66.812), BMI 38.0-38.9 (Z68.38). Hypertension (I10). Dyslipidemia (E78.5).
+
+Medication history: Phentermine 03/2024 to 06/2024, stopped for insomnia and palpitations. Contrave (naltrexone/bupropion) 09/2024 to 02/2025, stopped for headaches and inadequate response.
+
+Plan: Request Wegovy, to be used alongside her diet and activity program. She is not taking any other GLP-1 receptor agonist.</pre>
+<p><strong>Problem list</strong>, 2026-09-02</p><pre>Obesity, class 2 (E66.812)
+Essential hypertension (I10)
+Dyslipidemia (E78.5)</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong></strong> Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  <div class="when">Only if the prescription is for pens.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Tablets: Will the patient need more than 90 tablets every 90 days? <span class="muted">(tablets-over-limit)</span>
+  <div class="when">Only if the prescription is for tablets.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | obesity = Obesity, used for chronic weight management | cv-risk = Major adverse cardiovascular risk reduction associated with established CV disease and either obesity or being overweight (chronic weight management) | mash = Noncirrhotic metabolic dysfunction-associated steatohepatitis (MASH) | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>3.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>4.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>5.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R16: Wegovy, Cigna</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Priya Nair · born 1990-06-21 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Cigna</td>
+  <td>Open Access Plus</td>
+  <td>U55120394</td>
+  <td>group 3341270, rxgroup RXCIG22</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>E66.9</td><td>Obesity, unspecified</td></tr>
+<tr><td>Problem list</td>
+  <td>active</td><td>Z68.31</td><td>BMI 31.0-31.9, adult</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-09-10: 31.0</p>
+<h3>Visit notes</h3>
+<p><strong>New patient visit</strong>, 2026-09-10</p><pre>Patient: Priya Nair (DOB 06/21/1990)
+
+New patient establishing care. Interested in weight-loss medication. Started a reduced-calorie diet about 2 months ago on her own. No structured exercise program yet.
+
+Vitals: BMI 31.0, BP 118/76.
+
+Assessment: Obesity (E66.9), BMI 31.0-31.9 (Z68.31).
+
+Plan: Discussed that most plans require 6 months of documented lifestyle program. Referred to dietitian. Will consider Wegovy after follow-up. No prior weight-loss medications.</pre>
+<h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the patient 18 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Has the patient engaged in a trial of behavioral modification and dietary restriction for at least 3 months? <span class="muted">(behavioral-trial)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What was the patient&#39;s BMI at baseline, before any GLP-1 or GLP-1/GIP drug? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If baseline BMI is 27 to 29.9: does the patient have one of hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, COPD, MASLD/NAFLD, polycystic ovarian syndrome, or coronary artery disease? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What was the patient&#39;s BMI at baseline, before any GLP-1 ...&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used with behavioral modification and a reduced-calorie diet? <span class="muted">(with-lifestyle)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used together with another GLP-1 or GLP-1/GIP agonist? <span class="muted">(other-glp1)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R17: Wegovy, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Andy346 Rogahn59 · born 1958-11-24 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Standard</td>
+  <td>SYN900000</td>
+  <td>group 65, rxbin 999104, rxpcn DEMOFEP, rxgroup RXFEP65</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-10-01</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject under the skin once weekly.</td></tr>
+<tr><td>2026-03-17</td><td>completed</td>
+  <td>(see the medication record)</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2024-07-30</td><td>completed</td>
+  <td>(see the medication record)</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2017-01-16</td><td>active</td>
+  <td>Nitroglycerin 0.4 MG/ACTUAT Mucosal Spray</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2017-01-16</td><td>active</td>
+  <td>24 HR metoprolol succinate 100 MG Extended Release Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2017-01-16</td><td>active</td>
+  <td>Simvastatin 20 MG Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2017-01-16</td><td>active</td>
+  <td>Clopidogrel 75 MG Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2006-03-19</td><td>active</td>
+  <td>prasugrel 10 MG Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2006-03-19</td><td>active</td>
+  <td>irbesartan 300 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2006-03-19</td><td>active</td>
+  <td>atorvastatin 20 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2006-03-19</td><td>active</td>
+  <td>carvedilol 3.125 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2006-03-19</td><td>active</td>
+  <td>aspirin 81 MG Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>224299000</td><td>Received higher education (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>40055000</td><td>Chronic sinusitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>162864005</td><td>Body mass index 30+ - obesity (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>401314000</td><td>Acute non-ST segment elevation myocardial infarction (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>399211009</td><td>History of myocardial infarction (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>414545008</td><td>Ischemic heart disease (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>274531002</td><td>Abnormal findings diagnostic imaging heart+coronary circulat (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>266948004</td><td>Has a criminal record (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>73595000</td><td>Stress (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>73595000</td><td>Stress (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>66383009</td><td>Gingivitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>195662009</td><td>Acute viral pharyngitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>741062008</td><td>Not in labor force (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>278558000</td><td>Dental filling lost (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>73595000</td><td>Stress (finding)</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2024-02-19: 27.92 · 2024-07-16: 27.92 · 2025-02-24: 27.92 · 2026-03-02: 27.92</p>
+<h3>Visit notes</h3>
+<p class="muted">No visit notes in this chart.</p><h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong></strong> Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  <div class="when">Only if the prescription is for pens.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Tablets: Will the patient need more than 90 tablets every 90 days? <span class="muted">(tablets-over-limit)</span>
+  <div class="when">Only if the prescription is for tablets.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>1.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | obesity = Obesity, used for chronic weight management | cv-risk = Major adverse cardiovascular risk reduction associated with established CV disease and either obesity or being overweight (chronic weight management) | mash = Noncirrhotic metabolic dysfunction-associated steatohepatitis (MASH) | none = None of the above</div></div>
+<div class="q"><strong>2.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>3.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>4.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound? <span class="muted">(change-from-zepbound)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>7. a.</strong> This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below: <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>5.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below: <span class="muted">(initiation-pediatric-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: under-95 = Less than 95th percentile | 95-plus = Greater than or equal to 95th percentile</div></div>
+<div class="q"><strong>b. i.</strong> Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 5. is &quot;NO – this is INITIATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to b. i. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>a.</strong> Age 12-17: Has the patient maintained clinically significant weight loss? <span class="muted">(continuation-pediatric)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 12 to 17.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>b.</strong> Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 5. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;, and the patient is 18 or older.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to b. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R18: Zepbound, Blue Cross Blue Shield Federal Employee Program</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Angele108 Dickinson688 · born 1976-03-15 · female</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Blue Cross Blue Shield Federal Employee Program</td>
+  <td>FEP Blue Focus</td>
+  <td>SYN900001</td>
+  <td>group 131</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-10-01</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject under the skin once weekly.</td></tr>
+<tr><td>2026-08-17</td><td>active</td>
+  <td>Acetaminophen 300 MG / Hydrocodone Bitartrate 5 MG Oral Tablet</td>
+  <td></td>
+  <td>Every four to six hours (qualifier value)</td></tr>
+<tr><td>2026-08-17</td><td>active</td>
+  <td>12 HR Hydrocodone Bitartrate 10 MG Extended Release Oral Capsule</td>
+  <td></td>
+  <td>Every twelve hours as required (qualifier value)</td></tr>
+<tr><td>2026-08-17</td><td>active</td>
+  <td>72 HR Fentanyl 0.025 MG/HR Transdermal System</td>
+  <td></td>
+  <td>Every seventy two hours (qualifier value)</td></tr>
+<tr><td>2026-08-17</td><td>active</td>
+  <td>Acetaminophen 325 MG / Oxycodone Hydrochloride 10 MG Oral Tablet [Percocet]</td>
+  <td></td>
+  <td>Every six hours (qualifier value)</td></tr>
+<tr><td>2026-08-17</td><td>active</td>
+  <td>Abuse-Deterrent 12 HR Oxycodone Hydrochloride 10 MG Extended Release Oral Tablet [Oxycontin]</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2025-08-11</td><td>completed</td>
+  <td>Acetaminophen 300 MG / Hydrocodone Bitartrate 5 MG Oral Tablet</td>
+  <td></td>
+  <td>Every four to six hours (qualifier value)</td></tr>
+<tr><td>2025-08-11</td><td>completed</td>
+  <td>12 HR Hydrocodone Bitartrate 10 MG Extended Release Oral Capsule</td>
+  <td></td>
+  <td>Every twelve hours as required (qualifier value)</td></tr>
+<tr><td>2025-08-11</td><td>completed</td>
+  <td>72 HR Fentanyl 0.025 MG/HR Transdermal System</td>
+  <td></td>
+  <td>Every seventy two hours (qualifier value)</td></tr>
+<tr><td>2025-08-11</td><td>completed</td>
+  <td>Acetaminophen 325 MG / Oxycodone Hydrochloride 10 MG Oral Tablet [Percocet]</td>
+  <td></td>
+  <td>Every six hours (qualifier value)</td></tr>
+<tr><td>2025-08-11</td><td>completed</td>
+  <td>Abuse-Deterrent 12 HR Oxycodone Hydrochloride 10 MG Extended Release Oral Tablet [Oxycontin]</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2024-08-05</td><td>completed</td>
+  <td>Acetaminophen 300 MG / Hydrocodone Bitartrate 5 MG Oral Tablet</td>
+  <td></td>
+  <td>Every four to six hours (qualifier value)</td></tr>
+<tr><td>2024-08-05</td><td>completed</td>
+  <td>12 HR Hydrocodone Bitartrate 10 MG Extended Release Oral Capsule</td>
+  <td></td>
+  <td>Every twelve hours as required (qualifier value)</td></tr>
+<tr><td>2024-08-05</td><td>completed</td>
+  <td>72 HR Fentanyl 0.025 MG/HR Transdermal System</td>
+  <td></td>
+  <td>Every seventy two hours (qualifier value)</td></tr>
+<tr><td>2024-08-05</td><td>completed</td>
+  <td>Acetaminophen 325 MG / Oxycodone Hydrochloride 10 MG Oral Tablet [Percocet]</td>
+  <td></td>
+  <td>Every six hours (qualifier value)</td></tr>
+<tr><td>2024-08-05</td><td>completed</td>
+  <td>Abuse-Deterrent 12 HR Oxycodone Hydrochloride 10 MG Extended Release Oral Tablet [Oxycontin]</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2024-07-21</td><td>completed</td>
+  <td>(see the medication record)</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2023-07-31</td><td>completed</td>
+  <td>Acetaminophen 300 MG / Hydrocodone Bitartrate 5 MG Oral Tablet</td>
+  <td></td>
+  <td>Every four to six hours (qualifier value)</td></tr>
+<tr><td>2023-07-31</td><td>completed</td>
+  <td>12 HR Hydrocodone Bitartrate 10 MG Extended Release Oral Capsule</td>
+  <td></td>
+  <td>Every twelve hours as required (qualifier value)</td></tr>
+<tr><td>2023-07-31</td><td>completed</td>
+  <td>72 HR Fentanyl 0.025 MG/HR Transdermal System</td>
+  <td></td>
+  <td>Every seventy two hours (qualifier value)</td></tr>
+<tr><td>2023-07-31</td><td>completed</td>
+  <td>Acetaminophen 325 MG / Oxycodone Hydrochloride 10 MG Oral Tablet [Percocet]</td>
+  <td></td>
+  <td>Every six hours (qualifier value)</td></tr>
+<tr><td>2023-07-31</td><td>completed</td>
+  <td>Abuse-Deterrent 12 HR Oxycodone Hydrochloride 10 MG Extended Release Oral Tablet [Oxycontin]</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2006-10-17</td><td>active</td>
+  <td>NDA020800 0.3 ML Epinephrine 1 MG/ML Auto-Injector</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2006-10-17</td><td>active</td>
+  <td>Fexofenadine hydrochloride 60 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2006-10-06</td><td>active</td>
+  <td>Hydrocortisone 10 MG/ML Topical Cream</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>473461003</td><td>Educated to high school level (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>82423001</td><td>Chronic pain (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>278860009</td><td>Chronic low back pain (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>60573004</td><td>Aortic valve stenosis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>422650009</td><td>Social isolation (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>73595000</td><td>Stress (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>160904001</td><td>Part-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>444814009</td><td>Viral sinusitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>75498004</td><td>Acute bacterial sinusitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>714628002</td><td>Prediabetes (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>73595000</td><td>Stress (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>80583007</td><td>Severe anxiety (panic) (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>66383009</td><td>Gingivitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>18718003</td><td>Gingival disease (disorder)</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2024-08-05: 27.78 · 2025-08-11: 27.78 · 2026-08-17: 27.78</p>
+<h3>Visit notes</h3>
+<p class="muted">No visit notes in this chart.</p><h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is this request for brand or generic? <span class="muted">(brand-generic)</span>
+  
+  <div class="muted">Choices: brand = Brand | generic = Generic</div></div>
+<div class="q"><strong>1.</strong> Standard/Basic Option Patient: Has the patient tried and failed Saxenda and Wegovy? Please select answer below: <span class="muted">(tried-saxenda-wegovy)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: both = Yes, Saxenda and Wegovy | saxenda = No, Saxenda only | wegovy = No, Wegovy only | neither = No, the patient has not tried and failed any of these medications.</div></div>
+<div class="q"><strong>2.</strong> Standard/Basic Option Patient Would you like to switch to a preferred medication? The preferred medications are Saxenda and Wegovy. Please select answer below: <span class="muted">(switch-preferred)</span>
+  <div class="when">Only if the plan is FEP Blue Standard or Blue Basic.</div>
+  <div class="muted">Choices: saxenda = Yes, switch to Saxenda | wegovy = Yes, switch to Wegovy | no = No, do not switch | exception = No, do not switch however the patient has a medical exception | medical-director = No, do not switch however I would like to speak with a medical director to discuss the case</div></div>
+<div class="q"><strong>3.</strong> Blue Focus Patient: This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. DOCUMENTATION IS REQUIRED: Please specify medical record page number(s). <span class="muted">(focus-nonformulary)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: specified = Please specify the formulary alternative medication(s) and medical record page number(s) | none = The patient has not tried and failed any formulary alternatives.</div></div>
+<div class="q"><strong>4.</strong> Blue Focus Patient: Would you like to switch to a preferred medication? The preferred medication is generic Saxenda (liraglutide). Please select answer below: <span class="muted">(focus-switch-generic)</span>
+  <div class="when">Only if the plan is FEP Blue Focus.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>5.</strong> Will the patient need more than 12 single-dose pens every 84 days? <span class="muted">(pens-over-limit)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>6.</strong> What is the patient&#39;s diagnosis? <span class="muted">(diagnosis)</span>
+  
+  <div class="muted">Choices: chronic = Chronic weight management | obesity = Obesity, used for chronic weight management | elevated-bmi = Elevated BMI, used for chronic weight management | osa = Moderate to severe obstructive sleep apnea (OSA) with obesity | none = None of the above</div></div>
+<div class="q"><strong>7.</strong> Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>8.</strong> Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below. <span class="muted">(glp1)</span>
+  
+  <div class="muted">Choices: no-glp1 = No, the patient is not using another GLP-1 | change = Yes, this is a change in therapy from another GLP-1 (specify medication) | additional = Yes, this is a request for an additional GLP-1 (specify medication)</div></div>
+<div class="q"><strong>9.</strong> Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss? <span class="muted">(pa-combination)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>10.</strong> Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below: <span class="muted">(continuation)</span>
+  
+  <div class="muted">Choices: initiation = NO – this is INITIATION of therapy | continuation = YES – this is a PA renewal for CONTINUATION of therapy</div></div>
+<div class="q"><strong>a.</strong> What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below: <span class="muted">(initiation-bmi)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong>ii.</strong> If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below: <span class="muted">(initiation-comorbidity)</span>
+  <div class="when">Only if the answer to a. is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: type-2-diabetes-mellitus = Type 2 diabetes mellitus | dyslipidemia = Dyslipidemia | hypertension = Hypertension | congenital-heart-disease = Congenital heart disease | cerebrovascular-disease = Cerebrovascular disease | peripheral-artery-disease-pad = Peripheral artery disease (PAD) | coronary-heart-disease = Coronary heart disease | acute-coronary-syndrome-acs = Acute coronary syndrome (ACS) | myocardial-infarction-mi = Myocardial infarction (MI) | unstable-angina = Unstable angina | coronary-or-other-arterial-revascularization = Coronary or other arterial revascularization | prior-percutaneous-coronary-intervention-coronary-bypass-surgery = Prior percutaneous coronary intervention/coronary bypass surgery | none-of-the-above = None of the above</div></div>
+<div class="q"><strong>b.</strong> Does the patient have an intolerance or contraindication or have they had an inadequate treatment response to at least TWO oral medications for weight management? Oral medications for weight management include: benzphetamine, diethylpropion, phentermine, Qsymia, etc. <span class="muted">(initiation-oral-trials)</span>
+  <div class="when">Only if the answer to 10. is &quot;NO – this is INITIATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>a.</strong> Has the patient lost at least 5 percent of their baseline body weight? <span class="muted">(continuation-loss)</span>
+  <div class="when">Only if the answer to 10. is &quot;YES – this is a PA renewal for CONTINUATION of therapy&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong>*</strong> If NO, has the patient continued to maintain their initial 5 percent weight loss? <span class="muted">(continuation-maintained)</span>
+  <div class="when">Only if the answer to a. is &quot;No&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R19: Wegovy, UnitedHealthcare</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Anton902 Nathanael908 Ward668 · born 1989-03-19 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>UnitedHealthcare</td>
+  <td>Choice Plus</td>
+  <td>SYN900002</td>
+  <td>group 902211, rxbin 999101, rxpcn DEMOUHC, rxgroup RXUHC12</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-10-01</td><td>active</td>
+  <td>Wegovy 0.25 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject under the skin once weekly.</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>160968000</td><td>Risk activity involvement (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>473461003</td><td>Educated to high school level (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>423315002</td><td>Limited social contact (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>714628002</td><td>Prediabetes (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>271737000</td><td>Anemia (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>741062008</td><td>Not in labor force (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>73595000</td><td>Stress (finding)</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2026-06-07: 29.5</p>
+<h3>Visit notes</h3>
+<p class="muted">No visit notes in this chart.</p><h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the medication being requested for weight loss? <span class="muted">(indication)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Is the patient 12 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Will the medication be used as an adjunct to lifestyle modification (for example dietary or caloric restriction, exercise, behavioral support, or a community-based program)? <span class="muted">(adjunct)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What is the patient&#39;s body mass index (BMI)? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example dyslipidemia, hypertension, type 2 diabetes, or sleep apnea)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What is the patient&#39;s body mass index (BMI)?&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<h2>R20: Zepbound, Aetna</h2>
+<p class="muted">The request is dated 2026-10-23.</p>
+<h3>Patient</h3>
+<p>Bernard308 Harris789 · born 1980-03-05 · male</p>
+<h3>Coverages</h3>
+<table><tr><th>Status</th><th>Payer</th><th>Plan</th><th>Member ID</th><th>Other IDs on the record</th></tr>
+<tr><td>active</td><td>Aetna</td>
+  <td>Choice POS II</td>
+  <td>SYN900003</td>
+  <td>group 0550120, rxbin 999102, rxpcn DEMOAET</td></tr>
+</table>
+<h3>Prescriptions</h3>
+<table><tr><th>Written</th><th>Status</th><th>Drug</th><th>Quantity</th><th>Directions</th></tr>
+<tr><td>2026-10-01</td><td>active</td>
+  <td>Zepbound 2.5 mg/0.5 mL auto-injector</td>
+  <td>4 pen per 28 days</td>
+  <td>Inject under the skin once weekly.</td></tr>
+<tr><td>2026-06-23</td><td>completed</td>
+  <td>sulfamethoxazole 800 MG / trimethoprim 160 MG Oral Tablet</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2026-06-17</td><td>active</td>
+  <td>tramadol hydrochloride 50 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2025-06-25</td><td>completed</td>
+  <td>(see the medication record)</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2025-06-11</td><td>completed</td>
+  <td>tramadol hydrochloride 50 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2024-12-15</td><td>completed</td>
+  <td>Naproxen sodium 220 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2024-06-26</td><td>completed</td>
+  <td>(see the medication record)</td>
+  <td></td>
+  <td></td></tr>
+<tr><td>2024-06-05</td><td>completed</td>
+  <td>tramadol hydrochloride 50 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2023-05-31</td><td>completed</td>
+  <td>tramadol hydrochloride 50 MG Oral Tablet</td>
+  <td></td>
+  <td>Take as needed.</td></tr>
+<tr><td>2014-05-31</td><td>active</td>
+  <td>Acetaminophen 300 MG / Hydrocodone Bitartrate 5 MG Oral Tablet</td>
+  <td></td>
+  <td>Every four to six hours (qualifier value)</td></tr>
+</table>
+<h3>Diagnoses</h3>
+<table><tr><th>Where</th><th>Status</th><th>Code</th><th>Description</th></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>473461003</td><td>Educated to high school level (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>706893006</td><td>Victim of intimate partner abuse (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>82423001</td><td>Chronic pain (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>278860009</td><td>Chronic low back pain (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>162864005</td><td>Body mass index 30+ - obesity (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>73595000</td><td>Stress (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>160904001</td><td>Part-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>714628002</td><td>Prediabetes (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>271737000</td><td>Anemia (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>160903007</td><td>Full-time employment (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>312608009</td><td>Laceration - injury (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>283371005</td><td>Laceration of forearm (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>423315002</td><td>Limited social contact (finding)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>66383009</td><td>Gingivitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>18718003</td><td>Gingival disease (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>active</td><td>314529007</td><td>Medication review due (situation)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>307426000</td><td>Acute infective cystitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>66383009</td><td>Gingivitis (disorder)</td></tr>
+<tr><td>Visit diagnosis</td>
+  <td>resolved</td><td>109570002</td><td>Primary dental caries (disorder)</td></tr>
+</table>
+<h3>Vitals: BMI</h3>
+<p>2024-06-05: 30.46 · 2025-06-11: 29.99 · 2026-06-17: 28.12</p>
+<h3>Visit notes</h3>
+<p class="muted">No visit notes in this chart.</p><h3>The plan's questions</h3>
+<div class="q"><strong></strong> Is the patient 18 years of age or older? <span class="muted">(age)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> Has the patient participated in a comprehensive weight management program (behavioral modification, reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months before drug therapy? <span class="muted">(program)</span>
+  
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+<div class="q"><strong></strong> What was the patient&#39;s baseline BMI, before any weight-loss drug? <span class="muted">(bmi)</span>
+  
+  <div class="muted">Choices: under-27 = Less than 27 kg/m2 | 27-29.9 = Between 27 kg/m2 and 29.9 kg/m2 | 30-plus = Greater than or equal to 30kg/m2</div></div>
+<div class="q"><strong></strong> If baseline BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example hypertension, type 2 diabetes, or dyslipidemia)? <span class="muted">(comorbidity)</span>
+  <div class="when">Only if the answer to &quot;What was the patient&#39;s baseline BMI, before any weight-lo...&quot; is &quot;Between 27 kg/m2 and 29.9 kg/m2&quot;.</div>
+  <div class="muted">Choices: yes = Yes | no = No</div></div>
+</body></html>

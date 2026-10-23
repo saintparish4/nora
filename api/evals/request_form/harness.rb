@@ -19,14 +19,38 @@ module RequestFormEval
 
   DONT_KNOW = %w[ask_prescriber check_chart].freeze
 
+  def self.spec = YAML.safe_load_file(ROOT.join("cases.yml"), aliases: true)
+
+  def self.base_resources
+    @base_resources ||= Fhir::BundleSource.load(Fhir::DEMO_BUNDLES) + Fhir::BundleSource.load(ROOT.join("patients"))
+  end
+
+  # A case's chart: every resource, with the case's changes applied to a copy.
+  def self.resources_for(kase)
+    resources = JSON.parse(JSON.generate(base_resources))
+    Array(kase["mutate"]).each do |op|
+      if op["add"]
+        resources << op["add"]
+        next
+      end
+      type, id = (op["set"] || op["unset"] || op["delete"]).split("/", 2)
+      target = resources.find { |r| r["resourceType"] == type && r["id"] == id } or raise "no #{type}/#{id} to change"
+      next resources.delete(target) if op["delete"]
+
+      *path, last = op["path"].split(".").map { |k| k.match?(/\A\d+\z/) ? k.to_i : k }
+      parent = path.empty? ? target : target.dig(*path)
+      op["set"] ? parent[last] = op["value"] : parent.delete(last)
+    end
+    resources
+  end
+
   class Runner
     def initialize(out: $stdout, only: nil)
       @out = out
       @only = only
-      spec = YAML.safe_load_file(ROOT.join("cases.yml"), aliases: true)
+      spec = RequestFormEval.spec
       @patients = spec.fetch("patients")
       @cases = spec.fetch("cases").select { |c| only.nil? || only.include?(c["id"]) }
-      @resources = Fhir::BundleSource.load(Fhir::DEMO_BUNDLES) + Fhir::BundleSource.load(ROOT.join("patients"))
     end
 
     # @return [Hash] totals and per-case results
@@ -40,7 +64,7 @@ module RequestFormEval
     private
 
     def run(kase)
-      source = Fhir::BundleSource.new(resources: mutate(JSON.parse(JSON.generate(@resources)), kase["mutate"]), label: "eval")
+      source = Fhir::BundleSource.new(resources: RequestFormEval.resources_for(kase), label: "eval")
       chart = Fhir::Chart.new(source: source, patient_id: kase.fetch("patient"))
       request = Request.new(item_name: kase.fetch("item"), created_at: nil)
       set = RequestForm::QuestionSet.for(payer: kase.fetch("payer"), item: kase.fetch("item")) or
@@ -50,23 +74,6 @@ module RequestFormEval
       answers = RequestForm::ClinicalAnswers.call(request, chart: chart, question_set: set, requirements: requirements(kase),
                                                            as_of: Date.iso8601(kase.fetch("as_of", "2026-10-23")))
       { id: kase["id"], fields: score_fields(kase, fields), answers: score_answers(kase, set, answers) }
-    end
-
-    def mutate(resources, ops)
-      Array(ops).each do |op|
-        if op["add"]
-          resources << op["add"]
-          next
-        end
-        type, id = (op["set"] || op["unset"] || op["delete"]).split("/", 2)
-        target = resources.find { |r| r["resourceType"] == type && r["id"] == id } or raise "no #{type}/#{id} to change"
-        next resources.delete(target) if op["delete"]
-
-        *path, last = op["path"].split(".").map { |k| k.match?(/\A\d+\z/) ? k.to_i : k }
-        parent = path.empty? ? target : target.dig(*path)
-        op["set"] ? parent[last] = op["value"] : parent.delete(last)
-      end
-      resources
     end
 
     def requirements(kase)

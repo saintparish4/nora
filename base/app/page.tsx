@@ -24,22 +24,22 @@ const PRINCIPLES = [
   {
     title: 'People decide',
     className: 'text-green-deep',
-    body: 'Staff verify each excerpt and a clinician approves the packet. Nora never marks a requirement met on its own and never judges medical necessity.',
+    body: 'Staff verify each excerpt and do the final check before submitting under the prescriber’s name. Nora never marks a requirement met on its own and never judges medical necessity.',
   },
   {
     title: 'Gaps become tasks',
     className: 'text-orange-deep',
-    body: 'When documentation is missing or unclear, the ordering clinician gets a task that names the criterion. It closes when the requirement is resolved.',
+    body: 'When documentation is missing or unclear, staff get a task that names the criterion, with the option to ask the prescriber’s office. Nothing else waits on it.',
   },
   {
     title: 'A record of everything',
     className: 'text-purple-deep',
-    body: 'Each status change has a person and a time. Approval pins exactly what was approved, and any edit afterwards sends the request back for review.',
+    body: 'Each status change has a person and a time. The final check records exactly what was submitted, by whom, and on whose behalf.',
   },
 ];
 
 // The statuses the demo's decided request actually passed through, in order.
-const JOURNEY: PaStatus[] = ['gathering', 'ready_for_review', 'approved', 'submitted', 'payer_pending', 'approved_by_payer'];
+const JOURNEY: PaStatus[] = ['gathering', 'ready_for_review', 'submitted', 'payer_pending', 'approved_by_payer'];
 
 export default function Home() {
   return (
@@ -71,8 +71,8 @@ export default function Home() {
               Healthcare, followed through.
             </h1>
             <p className="mx-auto mt-5 max-w-[30rem] text-[1.0625rem] leading-[1.55] font-medium text-body">
-              Nora checks a patient&apos;s chart against the payer&apos;s criteria, quotes the evidence for each one, and
-              prepares the prior authorization packet for a person to approve.
+              Nora helps front-desk staff and medical assistants finish a medication prior authorization: it checks the
+              chart against the payer&apos;s criteria, quotes the evidence for each one, and gets the request ready to submit.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/demo?tour=1" className={`${primaryPill} h-12 px-6 text-[1.0625rem]`}>
@@ -124,14 +124,14 @@ export default function Home() {
           <div>
             <p className="text-[0.9375rem] font-semibold text-green-deep">From order to packet</p>
             <h2 id="how-heading" className="mt-3 text-[2rem] leading-[1.1] sm:text-[2.75rem]">
-              Pick up where the clinician left off.
+              Pick up where the prescription left off.
             </h2>
             <p className="mt-5 max-w-[30rem] text-[1.0625rem] leading-[1.55] text-body">
-              The clinician has already decided what the patient needs. A medical assistant adds the chart notes, picks
-              the medication and the plan, and Nora does the searching.
+              The doctor has already prescribed, and the pharmacy says the plan wants a prior authorization. Front-desk
+              staff or a medical assistant open the request, and Nora does the searching.
             </p>
             <ul className="mt-6 space-y-3 text-[1.0625rem] font-medium text-green-deep">
-              {['One requirement per payer criterion', 'Chart quotes with their source and date', 'Clinician approval, then a PDF packet'].map((item) => (
+              {['One requirement per payer criterion', 'Chart quotes with their source and date', 'A final check by staff, then a PDF packet'].map((item) => (
                 <li key={item} className="flex items-center gap-3">
                   <Check aria-hidden className="size-5 shrink-0" strokeWidth={2.75} />
                   {item}
@@ -162,15 +162,15 @@ export default function Home() {
             <div>
               <h2 id="explore-heading" className="text-[2rem] leading-[1.1] sm:text-[2.75rem]">Explore Nora.</h2>
               <p className="mt-4 max-w-[26rem] text-[1.0625rem] leading-[1.55] text-body">
-                Sign in as the medical assistant to review evidence, or as the clinician to approve a packet. Every
+                Sign in as the medical assistant: the requests, their evidence, the gaps, and the final check. Every
                 patient and note is invented.
               </p>
               <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[1.0625rem] font-medium text-blue-deep">
                 <Link href="/demo" className="inline-flex items-center gap-2 hover:underline">
                   Open as the medical assistant <ArrowRight aria-hidden className="size-[18px]" />
                 </Link>
-                <Link href="/demo?as=clinician" className="inline-flex items-center gap-2 hover:underline">
-                  Open as the clinician <ArrowRight aria-hidden className="size-[18px]" />
+                <Link href="/demo?tour=1" className="inline-flex items-center gap-2 hover:underline">
+                  Watch the walkthrough <ArrowRight aria-hidden className="size-[18px]" />
                 </Link>
               </div>
             </div>

@@ -8,8 +8,9 @@ const ROLE_LABELS = { staff: 'medical assistant', clinician: 'clinician', admin:
 
 /**
  * Shown across the workspace while signed in to the shared demo practice:
- * says who the visitor is and that the data is synthetic and shared, and
- * offers the other persona, since only the clinician can approve a packet.
+ * says who the visitor is and that the data is synthetic and shared. Staff do
+ * the whole request, so someone who came in as the clinician is offered the
+ * way back to the medical assistant, and nobody is sent the other way.
  */
 export function DemoBanner() {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ export function DemoBanner() {
   return (
     <DemoBannerFrame
       who={<>You are {name}{user.role ? `, the ${ROLE_LABELS[user.role]}` : ''}.</>}
-      other={user.role === 'clinician' ? 'staff' : 'clinician'}
+      other={user.role === 'staff' ? undefined : 'staff'}
     />
   );
 }
@@ -28,7 +29,7 @@ export function DemoBanner() {
  * The banner's box on its own, so /demo can draw it before sign-in and the
  * workspace below starts where it will stay once the real banner takes over.
  */
-export function DemoBannerFrame({ who, other }: { who: React.ReactNode; other: 'staff' | 'clinician' }) {
+export function DemoBannerFrame({ who, other }: { who: React.ReactNode; other?: 'staff' }) {
   return (
     <aside aria-label="Demo practice" className="bg-tile-strong text-sm text-body">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-x-6 gap-y-1.5 px-5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
@@ -44,10 +45,12 @@ export function DemoBannerFrame({ who, other }: { who: React.ReactNode; other: '
         </p>
         <span className="flex shrink-0 flex-wrap gap-x-5 gap-y-1 pl-[18px] font-medium text-blue-deep sm:pl-0">
           <Link href="/demo?tour=1" className="hover:underline">Watch the walkthrough</Link>
-          <Link href={`/demo?as=${other}`} className="inline-flex items-center gap-1 hover:underline">
-            Switch to the {ROLE_LABELS[other]}
-            <ArrowRight aria-hidden className="size-4" />
-          </Link>
+          {other && (
+            <Link href={`/demo?as=${other}`} className="inline-flex items-center gap-1 hover:underline">
+              Switch to the {ROLE_LABELS[other]}
+              <ArrowRight aria-hidden className="size-4" />
+            </Link>
+          )}
         </span>
       </div>
     </aside>

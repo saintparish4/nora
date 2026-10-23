@@ -33,14 +33,14 @@ describe('DemoBanner', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('tells the medical assistant who they are and offers the clinician', () => {
+  it('tells the medical assistant who they are, and sends them nowhere else: staff do the whole request', () => {
     mockUseAuth.mockReturnValue({ user: demoUser('staff', 'Jordan', 'Blake') })
 
     render(<DemoBanner />)
 
     expect(screen.getByLabelText('Demo practice').textContent).toContain('You are Jordan Blake, the medical assistant.')
     expect(screen.getByLabelText('Demo practice').textContent).toContain('synthetic')
-    expect(screen.getByRole('link', { name: 'Switch to the clinician' }).getAttribute('href')).toBe('/demo?as=clinician')
+    expect(screen.queryByRole('link', { name: /Switch to/ })).toBeNull()
   })
 
   it('offers the walkthrough', () => {

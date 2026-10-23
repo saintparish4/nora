@@ -20,8 +20,8 @@ import { PageHeader, Panel, Card, ErrorNote } from '@/components/workspace/page-
 import { Notice } from '@/components/workspace/notice';
 
 const ROLES: Array<{ value: Role; label: string; hint: string }> = [
-  { value: 'staff', label: 'Staff', hint: 'Prepares requests and reviews evidence' },
-  { value: 'clinician', label: 'Clinician', hint: 'Also approves packets' },
+  { value: 'staff', label: 'Staff', hint: 'Prepares, checks and submits requests' },
+  { value: 'clinician', label: 'Clinician', hint: 'Prescribes; requests go out under their name' },
   { value: 'admin', label: 'Admin', hint: 'Also manages the practice and its members' },
 ];
 

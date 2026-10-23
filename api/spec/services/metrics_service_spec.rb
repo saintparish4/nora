@@ -3,17 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Workspace::MetricsService do
-  it 'reports medians for time to approval and reported prep minutes, plus payer outcomes' do
+  it 'reports medians for time to submission and reported prep minutes, plus payer outcomes' do
     pa = create_prior_authorization
     org = pa.organization
     staff = pa.created_by
-    clinician = pa.requested_by
 
     travel_to(pa.created_at + 20.minutes) do
       resolve_all_requirements!(pa, actor: staff)
-      Authorizations::ApproveService.call(pa, actor: clinician)
+      Authorizations::SubmitService.call(pa, actor: staff, prep_minutes_reported: 6)
     end
-    Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'submitted', prep_minutes_reported: 6)
     Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'denied')
 
     other = create_prior_authorization(organization: org)
@@ -23,17 +21,16 @@ RSpec.describe Workspace::MetricsService do
 
     expect(metrics).to include(
       requests_created: 2,
-      requests_approved: 1,
-      median_minutes_to_approval: 20.0,
-      median_reported_prep_minutes: 6,
       submitted: 1,
+      median_minutes_to_submission: 20.0,
+      median_reported_prep_minutes: 6,
       payer_approved: 0,
       payer_denied: 1
     )
   end
 
-  it 'returns nil medians when nothing has been approved' do
-    expect(described_class.call(organization: create(:organization))).to include(median_minutes_to_approval: nil, requests_created: 0)
+  it 'returns nil medians when nothing has been submitted' do
+    expect(described_class.call(organization: create(:organization))).to include(median_minutes_to_submission: nil, requests_created: 0)
   end
 
   it 'is served at GET /api/v1/metrics', type: :request do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_181339) do
   create_table "approvals", force: :cascade do |t|
     t.integer "approvable_id", null: false
     t.string "approvable_type", null: false
@@ -88,11 +88,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
 
   create_table "organizations", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "demo", default: false, null: false
     t.string "name", null: false
     t.string "npi"
     t.string "timezone", default: "America/New_York", null: false
     t.datetime "updated_at", null: false
+    t.boolean "demo", default: false, null: false
   end
 
   create_table "patient_coverages", force: :cascade do |t|
@@ -232,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
     t.string "subject_type", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.datetime "asked_prescriber_at"
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["organization_id", "status"], name: "index_tasks_on_organization_id_and_status"
     t.index ["organization_id"], name: "index_tasks_on_organization_id"

@@ -55,8 +55,8 @@ RSpec.describe 'Prior authorization workflow services' do
     end
   end
 
-  describe 'review and approval' do
-    it 'moves to ready for review once every requirement is resolved' do
+  describe 'review and submission' do
+    it 'moves to ready to submit (ready_for_review) once every requirement is resolved' do
       resolve_all_requirements!(pa, actor: staff)
       expect(pa.status).to eq('ready_for_review')
     end
@@ -67,7 +67,8 @@ RSpec.describe 'Prior authorization workflow services' do
       end
       expect(pa.reload.status).to eq('needs_clarification')
       expect(Task.open.where(subject: pa).count).to eq(3)
-      expect(Task.open.where(subject: pa).pluck(:assignee_id).uniq).to eq([ clinician.id ])
+      # Staff own the request, so the gaps are theirs to chase, not the prescriber's.
+      expect(Task.open.where(subject: pa).pluck(:assignee_id).uniq).to eq([ staff.id ])
     end
 
     it 'closes the task once the requirement is resolved' do
@@ -103,73 +104,82 @@ RSpec.describe 'Prior authorization workflow services' do
       expect(ev.extracted_by).to eq('human')
     end
 
-    describe Authorizations::ApproveService do
-      before { resolve_all_requirements!(pa, actor: staff) }
-
-      it 'refuses staff' do
-        expect { Authorizations::ApproveService.call(pa, actor: staff) }
-          .to raise_error(Authorizations::Error, /clinician or an admin/)
+    describe Authorizations::SubmitService do
+      it 'refuses a request that is not ready to submit' do
+        expect { Authorizations::SubmitService.call(pa, actor: staff) }
+          .to raise_error(Authorizations::Error, /ready to submit/)
       end
 
-      it 'lets a clinician approve and pins the content digest' do
-        Authorizations::ApproveService.call(pa, actor: clinician)
-        expect(pa.reload.status).to eq('approved')
-        expect(pa.latest_approval.content_digest).to eq(pa.content_digest)
-        expect(pa).to be_approval_current
-      end
+      context 'once every requirement is resolved' do
+        before { resolve_all_requirements!(pa, actor: staff) }
 
-      it 'voids the approval when evidence changes afterwards' do
-        Authorizations::ApproveService.call(pa, actor: clinician)
-        req = pa.requirements.first
-        doc = pa.patient.chart_documents.first
-        Authorizations::AddEvidenceService.call(req, actor: staff, document: doc, quote: 'BP 128/82.')
+        it 'lets the staff member submit, recording the final check on behalf of the prescriber' do
+          Authorizations::SubmitService.call(pa, actor: staff, payer_reference: 'PA-778812', prep_minutes_reported: 6)
+          pa.reload
 
-        expect(pa.reload.status).to eq('ready_for_review')
-        expect(pa).not_to be_approval_current
-        expect(pa.workflow_events.pluck(:event_type)).to include('approval_invalidated')
+          expect([ pa.status, pa.payer_reference, pa.prep_minutes_reported ]).to eq([ 'submitted', 'PA-778812', 6 ])
+          expect(pa.submitted_at).to be_present
+          expect(pa.latest_approval.approved_by).to eq(staff)
+          expect(pa.latest_approval.content_digest).to eq(pa.content_digest)
+          check = pa.workflow_events.find_by!(event_type: 'final_check')
+          expect([ check.actor, check.payload['on_behalf_of_id'] ]).to eq([ staff, clinician.id ])
+        end
+
+        it 'needs no clinician: any member of the practice can submit' do
+          front_desk = create(:user, organization: pa.organization)
+          expect { Authorizations::SubmitService.call(pa, actor: front_desk) }.to change { pa.reload.status }.to('submitted')
+        end
       end
     end
 
     describe Authorizations::ManualTransitionService do
       before do
         resolve_all_requirements!(pa, actor: staff)
-        Authorizations::ApproveService.call(pa, actor: clinician)
-      end
-
-      it 'submits an approved request and records the payer reference' do
-        Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'submitted', payer_reference: 'PA-778812', prep_minutes_reported: 6)
-        pa.reload
-        expect([ pa.status, pa.payer_reference, pa.prep_minutes_reported ]).to eq([ 'submitted', 'PA-778812', 6 ])
-        expect(pa.submitted_at).to be_present
+        Authorizations::SubmitService.call(pa, actor: staff)
       end
 
       it 'records the decision time' do
-        Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'submitted')
         Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'approved_by_payer')
         expect(pa.reload.decided_at).to be_present
       end
 
-      it 'refuses statuses Nora sets itself' do
+      it 'refuses statuses Nora sets itself, submission included' do
         expect { Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'ready_for_review') }
+          .to raise_error(Authorizations::Error, /set by Nora/)
+        expect { Authorizations::ManualTransitionService.call(pa, actor: staff, to: 'submitted') }
           .to raise_error(Authorizations::Error, /set by Nora/)
       end
     end
   end
 
+  describe Tasks::AskPrescriberService do
+    it "records that the prescriber's office was asked, and keeps the task open with staff" do
+      Authorizations::RequirementReviewService.call(pa.requirements.first, actor: staff, status: 'missing')
+      task = Task.open.find_by!(subject: pa)
+
+      Tasks::AskPrescriberService.call(task, actor: staff)
+
+      expect(task.reload.status).to eq('open')
+      expect(task.assignee).to eq(staff)
+      expect(task.asked_prescriber_at).to be_present
+      expect(pa.workflow_events.find_by!(event_type: 'asked_prescriber').payload['prescriber_id']).to eq(clinician.id)
+    end
+  end
+
   describe Authorizations::PacketService do
-    it 'refuses before approval' do
-      expect { Authorizations::PacketService.call(pa) }.to raise_error(Authorizations::Error, /approved packet/)
+    it 'refuses before the request is submitted' do
+      expect { Authorizations::PacketService.call(pa) }.to raise_error(Authorizations::Error, /final check/)
     end
 
-    it 'renders a PDF with the cited excerpts once approved' do
+    it 'renders a PDF with the cited excerpts, who checked it, and whose name it went out under' do
       resolve_all_requirements!(pa, actor: staff)
-      Authorizations::ApproveService.call(pa, actor: clinician)
+      Authorizations::SubmitService.call(pa, actor: staff)
       pdf = Authorizations::PacketService.call(pa.reload)
 
       expect(pdf).to start_with('%PDF')
       text = PDF::Reader.new(StringIO.new(pdf)).pages.map(&:text).join(' ')
-      expect(text).to include('Prior authorization request', 'BMI 34.2', 'Approved by')
-      expect(text).to match(/Approved by: .* (EDT|EST)/)
+      expect(text).to include('Prior authorization request', 'BMI 34.2', 'Submitted on behalf of')
+      expect(text).to match(/Final check: .* (EDT|EST)/)
     end
   end
 
@@ -192,7 +202,7 @@ RSpec.describe 'Prior authorization workflow services' do
   describe Workspace::TodayService do
     it 'lists what needs a person and counts by status' do
       pa.requirements.each { |req| Authorizations::RequirementReviewService.call(req, actor: staff, status: 'missing') }
-      data = Workspace::TodayService.call(organization: pa.organization, user: clinician)
+      data = Workspace::TodayService.call(organization: pa.organization, user: staff)
 
       expect(data[:counts][:by_status]).to eq('needs_clarification' => 1)
       expect(data[:needs_attention].map { |i| i[:kind] }).to eq([ 'needs_clarification' ])

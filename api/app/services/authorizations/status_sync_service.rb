@@ -1,9 +1,9 @@
 module Authorizations
   # Moves a prior authorization that is still being prepared to the status its
-  # requirements imply, and pulls an approved one back when its content no
-  # longer matches what was approved.
+  # requirements imply. (A request left "approved" by the old clinician flow is
+  # pulled back when its content no longer matches.)
   #
-  #   every requirement met or not applicable      -> ready_for_review
+  #   every requirement met or not applicable      -> ready_for_review (ready to submit)
   #   something missing or unclear, none pending   -> needs_clarification
   #   otherwise (evidence awaiting a person)       -> gathering
   class StatusSyncService

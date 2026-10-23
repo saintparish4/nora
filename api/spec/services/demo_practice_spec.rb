@@ -86,13 +86,14 @@ RSpec.describe 'Demo practice' do
       expect(plan_of_care.evidence.select(&:rejected?)).not_to be_empty
     end
 
-    it 'opens a task for the ordering clinician on each requirement left open' do
+    it "opens a staff task on each requirement left open, and has asked the prescriber's office about one" do
       featured = Demo::Practice.featured_request
       tasks = Task.open.where(subject: featured)
 
       # 4 is the comorbidity criterion, which waits on the baseline BMI.
       expect(tasks.map(&:source)).to contain_exactly(requirement(featured, 3), requirement(featured, 4), requirement(featured, 6))
-      expect(tasks.map { |task| task.assignee.email }.uniq).to eq([ 'clinician@nora.com' ])
+      expect(tasks.map { |task| task.assignee.email }.uniq).to eq([ 'ma@nora.com' ])
+      expect(tasks.select(&:asked_prescriber_at).map(&:source)).to eq([ requirement(featured, 3) ])
     end
 
     it 'puts each request on its payer\'s published criteria' do
@@ -118,10 +119,10 @@ RSpec.describe 'Demo practice' do
       expect(evidence.distinct.pluck(:extracted_by)).to eq([ 'rule' ])
     end
 
-    it 'carries a current approval and a packet for the decided request' do
+    it "carries the staff member's final check and a packet for the decided request" do
       decided = request_for(organization, 'DEMO-1005')
 
-      expect(decided.latest_approval.approved_by.email).to eq('clinician@nora.com')
+      expect(decided.latest_approval.approved_by.email).to eq('ma@nora.com')
       expect(decided).to be_approval_current
       expect(Authorizations::PacketService.call(decided)).to start_with('%PDF')
     end
@@ -134,7 +135,7 @@ RSpec.describe 'Demo practice' do
       expect(events.where(actor_id: nil)).to be_empty
       expect([ decided.created_at, decided.latest_approval.created_at, decided.submitted_at, decided.decided_at ])
         .to eq([ decided.created_at, decided.latest_approval.created_at, decided.submitted_at, decided.decided_at ].sort)
-      expect(decided.submitted_at.to_date).to be > decided.created_at.to_date
+      expect(decided.submitted_at).to be > decided.created_at
     end
 
     it 'adds nothing when the seeds run again' do

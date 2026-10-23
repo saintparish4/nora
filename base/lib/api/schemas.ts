@@ -221,10 +221,12 @@ export const PriorAuthorizationSchema = z.object({
 
 export const PriorAuthorizationDetailSchema = PriorAuthorizationSchema.extend({
   requirements: z.array(RequirementSchema),
-  approval: z
+  /** The staff member's final check before submitting, under the prescriber's name. */
+  final_check: z
     .object({
-      approved_by: MemberSchema,
-      approved_at: z.string(),
+      checked_by: MemberSchema,
+      checked_at: z.string(),
+      on_behalf_of: MemberSchema,
       current: z.boolean(),
     })
     .nullish(),
@@ -248,6 +250,8 @@ export const TaskSchema = z.object({
   due_on: z.string().nullish(),
   overdue: z.boolean(),
   completed_at: z.string().nullish(),
+  /** When staff asked the prescriber's office; the task stays open and nothing waits on it. */
+  asked_prescriber_at: z.string().nullish(),
   assignee: MemberSchema.nullish(),
   subject: z.object({
     type: z.string(),
@@ -279,11 +283,10 @@ export const TodaySchema = z.object({
 export const MetricsSchema = z.object({
   window_days: z.number(),
   requests_created: z.number(),
-  requests_approved: z.number(),
-  median_minutes_to_approval: z.number().nullable(),
+  submitted: z.number(),
+  median_minutes_to_submission: z.number().nullable(),
   median_reported_prep_minutes: z.number().nullable(),
   reported_prep_count: z.number(),
-  submitted: z.number(),
   payer_approved: z.number(),
   payer_denied: z.number(),
 });

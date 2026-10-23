@@ -1,8 +1,10 @@
 module Tasks
   # Keeps follow-up tasks in step with a prior authorization's requirements.
-  # A missing or unclear requirement gets one open task for the requesting
-  # clinician; once resolved, the task closes. A closed or cancelled PA
-  # dismisses whatever is left.
+  # A missing or unclear requirement gets one open task for the staff member
+  # who owns the request: find the documentation, or ask the prescriber's
+  # office (Tasks::AskPrescriberService), which nothing waits on. Once the
+  # requirement is resolved the task closes. A closed or cancelled PA dismisses
+  # whatever is left.
   class SyncService
     NEEDS_TASK = %w[missing unclear].freeze
     DUE_IN = 2.days
@@ -32,8 +34,8 @@ module Tasks
             organization_id: @pa.organization_id,
             subject: @pa,
             source: requirement,
-            assignee: @pa.requested_by,
-            title: "Document for #{@pa.item_name}: #{requirement.policy_criterion.text.truncate(160)}",
+            assignee: @pa.assigned_to || @pa.requested_by,
+            title: "Find documentation for #{@pa.item_name}: #{requirement.policy_criterion.text.truncate(160)}",
             due_on: DUE_IN.from_now.to_date
           )
           WorkflowEvent.record!(subject: @pa, event_type: "task_created", actor: @actor,

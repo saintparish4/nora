@@ -10,9 +10,9 @@ describe('Today', () => {
     const expected: Record<string, string> = {
       'Gathering evidence': '1',
       'Need clarification': '1',
-      'Ready for approval': '1',
-      'Ready to submit': '0',
+      'Ready to submit': '1',
       'With payer': '0',
+      Decided: '1',
     };
     for (const [label, count] of Object.entries(expected)) {
       cy.contains('[data-tour="counts"] a', label).find('p').first().should('have.text', count);

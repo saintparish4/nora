@@ -21,7 +21,7 @@ RSpec.describe 'Prior authorizations API', type: :request do
     parsed_body['prior_authorization']
   end
 
-  it 'runs the whole flow: create, extract, review, approve, packet, submit, decide' do
+  it 'runs the whole flow: create, extract, review, final check and submit, packet, decide' do
     pa = create_pa
     expect(pa['status']).to eq('gathering')
     expect(pa['requirements'].size).to eq(3)
@@ -52,29 +52,28 @@ RSpec.describe 'Prior authorizations API', type: :request do
     end
     expect(parsed_body['prior_authorization']['status']).to eq('ready_for_review')
 
-    post "/api/v1/prior_authorizations/#{id}/approve", headers: auth_headers(staff)
+    # Submitting is the staff member's own step; no clinician sign-off exists.
+    post "/api/v1/prior_authorizations/#{id}/transition", headers: auth_headers(staff), as: :json, params: { to: 'submitted' }
     expect(response).to have_http_status(:unprocessable_content)
-    expect(parsed_body['error']).to match(/clinician or an admin/)
 
-    post "/api/v1/prior_authorizations/#{id}/approve", headers: auth_headers(clinician)
-    expect(parsed_body['prior_authorization']['status']).to eq('approved')
-    expect(parsed_body['prior_authorization']['approval']['current']).to be true
-    expect(parsed_body['prior_authorization']['allowed_transitions']).to include('submitted', 'cancelled')
+    post "/api/v1/prior_authorizations/#{id}/submit", headers: auth_headers(staff), as: :json,
+         params: { payer_reference: 'PA-1', prep_minutes_reported: 5 }
+    submitted = parsed_body['prior_authorization']
+    expect(submitted['status']).to eq('submitted')
+    expect(submitted['final_check']['checked_by']['id']).to eq(staff.id)
+    expect(submitted['final_check']['on_behalf_of']['id']).to eq(clinician.id)
+    expect(submitted['final_check']['current']).to be true
 
     get "/api/v1/prior_authorizations/#{id}/packet", headers: auth_headers(staff)
     expect(response.media_type).to eq('application/pdf')
     expect(response.body).to start_with('%PDF')
-
-    post "/api/v1/prior_authorizations/#{id}/transition", headers: auth_headers(staff), as: :json,
-         params: { to: 'submitted', payer_reference: 'PA-1', prep_minutes_reported: 5 }
-    expect(parsed_body['prior_authorization']['status']).to eq('submitted')
 
     post "/api/v1/prior_authorizations/#{id}/transition", headers: auth_headers(staff), as: :json, params: { to: 'approved_by_payer' }
     expect(parsed_body['prior_authorization']['status']).to eq('approved_by_payer')
 
     get "/api/v1/prior_authorizations/#{id}/events", headers: auth_headers(staff)
     types = parsed_body['events'].map { |e| e['event_type'] }
-    expect(types).to include('created', 'extraction_started', 'extraction_succeeded', 'evidence_verified', 'approved', 'packet_downloaded')
+    expect(types).to include('created', 'extraction_started', 'extraction_succeeded', 'evidence_verified', 'final_check', 'packet_downloaded')
     expect(types.last).to eq('status_changed')
   end
 
@@ -128,17 +127,17 @@ RSpec.describe 'Prior authorizations API', type: :request do
   end
 
   describe 'Today and tasks' do
-    it 'shows what needs attention and lets a person close a task' do
+    it "shows staff what needs attention, lets them ask the prescriber's office, and close a task" do
       id = create_pa['id']
       AuthorizationRequirement.where(prior_authorization_id: id).find_each do |req|
         patch "/api/v1/authorization_requirements/#{req.id}", headers: auth_headers(staff), as: :json, params: { status: 'missing' }
       end
 
-      get '/api/v1/today', headers: auth_headers(clinician)
+      get '/api/v1/today', headers: auth_headers(staff)
       expect(parsed_body['needs_attention'].first['kind']).to eq('needs_clarification')
       expect(parsed_body['my_tasks'].size).to eq(3)
 
-      get '/api/v1/tasks', params: { mine: 'true', status: 'open' }, headers: auth_headers(clinician)
+      get '/api/v1/tasks', params: { mine: 'true', status: 'open' }, headers: auth_headers(staff)
       task = parsed_body['tasks'].first
       expect(task['subject']['item_name']).to eq('Wegovy')
 
@@ -147,7 +146,11 @@ RSpec.describe 'Prior authorizations API', type: :request do
       get '/api/v1/tasks', params: { prior_authorization_id: id + 1000 }, headers: auth_headers(staff)
       expect(parsed_body['tasks']).to be_empty
 
-      patch "/api/v1/tasks/#{task['id']}", headers: auth_headers(clinician), as: :json, params: { status: 'done' }
+      post "/api/v1/tasks/#{task['id']}/ask_prescriber", headers: auth_headers(staff)
+      expect(parsed_body['task']['asked_prescriber_at']).to be_present
+      expect(parsed_body['task']['status']).to eq('open')
+
+      patch "/api/v1/tasks/#{task['id']}", headers: auth_headers(staff), as: :json, params: { status: 'done' }
       expect(parsed_body['task']['status']).to eq('done')
     end
   end

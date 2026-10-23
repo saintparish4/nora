@@ -70,13 +70,13 @@ export const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="tasks"]',
     title: 'The gap becomes a task',
-    body: 'The ordering clinician is asked to document exactly what is missing. The task closes when the requirement is resolved.',
+    body: 'Each gap is a task for Jordan. For the baseline BMI, Jordan has asked the prescriber’s office; nothing else waits on the answer.',
     seconds: 8,
   },
   {
-    target: '[data-tour="approval"]',
-    title: 'Not Jordan’s to approve',
-    body: 'Requirements are still open, and only a clinician can sign off, so the button is locked. When she approves, Nora pins the exact evidence she saw; any later edit voids it.',
+    target: '[data-tour="submit"]',
+    title: 'The final check is Jordan’s',
+    body: 'Requirements are still open, so it cannot go yet. Once they are resolved, Jordan checks every answer and its source and submits under Dr. Chen’s name; Nora records exactly what went out.',
     seconds: 11,
   },
   {

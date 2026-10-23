@@ -35,7 +35,7 @@ const EXAMPLES: Array<{
     quote: 'BMI 34.2.',
     source: 'Office visit · Aug 12, 2026',
     status: { label: 'Missing', tone: 'danger' },
-    outcome: 'The BMI is high enough, but she took Saxenda in 2025 and this reading is from after it. Staff left it unverified and asked for the earlier one.',
+    outcome: 'The BMI is high enough, but she took Saxenda in 2025 and this reading is from after it. Staff left it unverified and asked the prescriber’s office for the earlier one.',
   },
   {
     label: 'Gaps, flagged',
@@ -44,7 +44,7 @@ const EXAMPLES: Array<{
     quote: null,
     source: 'Her medication list shows no GLP-1, but no sentence says she takes none, so Nora offers nothing.',
     status: { label: 'Missing', tone: 'danger' },
-    outcome: 'A list is not a statement. Staff marked the requirement missing and Nora opened a task for the clinician.',
+    outcome: 'A list is not a statement. Staff marked the requirement missing and Nora opened a task for them to find it.',
   },
 ];
 

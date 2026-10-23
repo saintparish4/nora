@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/context';
 import {
-  approvePriorAuthorization,
+  submitPriorAuthorization,
   downloadPacket,
   startExtraction,
   transitionPriorAuthorization,
@@ -23,7 +23,7 @@ import {
   type WorkflowEvent,
 } from '@/lib/api';
 import {
-  approvalBlocker,
+  submitBlocker,
   describeEvent,
   isEditable,
   packetAvailable,
@@ -165,7 +165,7 @@ export default function PriorAuthorizationPage() {
         </div>
 
         <div className="space-y-6">
-          <ApprovalPanel pa={pa} role={user?.role} onUpdate={update} />
+          <SubmitPanel pa={pa} onUpdate={update} />
           <StatusPanel pa={pa} onUpdate={update} />
           <AssignmentPanel pa={pa} onUpdate={update} />
           <Panel title="Follow-up tasks" tour="tasks" busy={!tasks}>
@@ -285,22 +285,32 @@ function ExtractionBanner({ pa, documentCount, onUpdate }: {
   );
 }
 
-function ApprovalPanel({ pa, role, onUpdate }: {
-  pa: PriorAuthorizationDetail;
-  role: Role | undefined;
-  onUpdate: (pa: PriorAuthorizationDetail) => void;
-}) {
+/**
+ * The staff member's final check, and submission under the prescriber's name.
+ * No clinician signs off: staff own the request, the way practices submit on
+ * CoverMyMeds. Confirming the check records who submitted, on whose behalf,
+ * and exactly what was sent.
+ */
+function SubmitPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate: (pa: PriorAuthorizationDetail) => void }) {
+  const [reference, setReference] = useState(pa.payer_reference ?? '');
+  const [minutes, setMinutes] = useState(pa.prep_minutes_reported?.toString() ?? '');
+  const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
-  const blocker = approvalBlocker(pa, role);
+  const blocker = submitBlocker(pa);
+  const check = pa.final_check;
   const packetReady = packetAvailable(pa);
 
-  const approve = async () => {
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
     setBusy(true);
     try {
-      onUpdate(await approvePriorAuthorization(pa.id));
-      toast.success('Approved');
+      onUpdate(await submitPriorAuthorization(pa.id, {
+        payer_reference: reference || undefined,
+        prep_minutes_reported: minutes ? Number(minutes) : undefined,
+      }));
+      toast.success('Submitted');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Could not approve');
+      toast.error(error instanceof Error ? error.message : 'Could not submit');
     } finally {
       setBusy(false);
     }
@@ -315,18 +325,37 @@ function ApprovalPanel({ pa, role, onUpdate }: {
   };
 
   return (
-    <Panel title="Approval" tour="approval">
-      {pa.approval && (
-        <p className={`mb-3 text-sm leading-relaxed ${pa.approval.current ? 'text-body' : 'text-yellow-deep'}`}>
-          {pa.approval.current ? 'Approved' : 'Earlier approval voided after an edit'} by {pa.approval.approved_by.name},{' '}
-          {formatDateTime(pa.approval.approved_at)}.
+    <Panel title={check ? 'Submitted' : 'Final check and submit'} tour="submit">
+      {check ? (
+        <p className="text-sm leading-relaxed text-body">
+          Checked and submitted by {check.checked_by.name} on behalf of {check.on_behalf_of.name}, {formatDateTime(check.checked_at)}.
         </p>
-      )}
-      {isEditable(pa.status) && !(pa.status === 'approved' && pa.approval?.current) && (
-        <>
-          <Button className="w-full" disabled={busy || blocker !== null} onClick={approve}>Approve packet</Button>
-          {blocker && <p className="mt-2 text-xs text-muted-foreground">{blocker}</p>}
-        </>
+      ) : isEditable(pa.status) ? (
+        <form onSubmit={submit} className="space-y-3">
+          {blocker ? (
+            <p className="text-sm leading-relaxed text-muted-foreground">{blocker}</p>
+          ) : (
+            <>
+              <label className="flex items-start gap-3 text-sm leading-relaxed text-body">
+                <input type="checkbox" className="mt-1 size-4 accent-[#171717]" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+                <span>
+                  I checked every answer and its source. This goes to the plan under {pa.requested_by.name}&apos;s name.
+                </span>
+              </label>
+              <div className="space-y-2">
+                <Label htmlFor="payer_reference">Payer reference (optional)</Label>
+                <Input id="payer_reference" value={reference} onChange={(e) => setReference(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="prep_minutes">Minutes you spent preparing this (optional)</Label>
+                <Input id="prep_minutes" type="number" min={0} max={600} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
+              </div>
+            </>
+          )}
+          <Button type="submit" className="w-full" disabled={busy || blocker !== null || !checked}>Submit to the plan</Button>
+        </form>
+      ) : (
+        <p className="text-sm text-muted-foreground">This request is no longer being prepared.</p>
       )}
       {packetReady && (
         <Button className="mt-3 w-full" variant="outline" onClick={download}>Download packet (PDF)</Button>
@@ -337,8 +366,6 @@ function ApprovalPanel({ pa, role, onUpdate }: {
 
 function StatusPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate: (pa: PriorAuthorizationDetail) => void }) {
   const [target, setTarget] = useState<PaStatus | ''>('');
-  const [reference, setReference] = useState(pa.payer_reference ?? '');
-  const [minutes, setMinutes] = useState(pa.prep_minutes_reported?.toString() ?? '');
   const [busy, setBusy] = useState(false);
 
   if (pa.allowed_transitions.length === 0) {
@@ -348,24 +375,19 @@ function StatusPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate:
           {pa.submitted_at ? `Submitted ${formatCalendarDate(pa.submitted_at)}. ` : ''}
           {pa.decided_at ? `Decided ${formatCalendarDate(pa.decided_at)}. ` : ''}
           {pa.payer_reference ? `Payer reference ${pa.payer_reference}.` : ''}
-          {!pa.submitted_at && !pa.payer_reference && 'Approve the packet to submit it.'}
+          {!pa.submitted_at && !pa.payer_reference && 'Do the final check to submit it.'}
         </p>
       </Panel>
     );
   }
 
-  const submit = async (e: FormEvent) => {
+  const change = async (e: FormEvent) => {
     e.preventDefault();
     if (!target) return;
     if (target === 'cancelled' && !window.confirm('Cancel this prior authorization?')) return;
     setBusy(true);
     try {
-      onUpdate(
-        await transitionPriorAuthorization(pa.id, target, {
-          payer_reference: reference || undefined,
-          prep_minutes_reported: minutes ? Number(minutes) : undefined,
-        })
-      );
+      onUpdate(await transitionPriorAuthorization(pa.id, target));
       setTarget('');
       toast.success('Status updated');
     } catch (error) {
@@ -377,7 +399,7 @@ function StatusPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate:
 
   return (
     <Panel title="Status">
-      <form onSubmit={submit} className="space-y-3">
+      <form onSubmit={change} className="space-y-3">
         <div className="flex flex-wrap gap-2">
           {pa.allowed_transitions.map((s) => (
             <Button key={s} type="button" size="sm" variant={target === s ? 'default' : 'outline'} aria-pressed={target === s} onClick={() => setTarget(s)}>
@@ -385,19 +407,6 @@ function StatusPanel({ pa, onUpdate }: { pa: PriorAuthorizationDetail; onUpdate:
             </Button>
           ))}
         </div>
-        {target === 'submitted' && (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="payer_reference">Payer reference (optional)</Label>
-              <Input id="payer_reference" value={reference} onChange={(e) => setReference(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="prep_minutes">Minutes you spent preparing this (optional)</Label>
-              <Input id="prep_minutes" type="number" min={0} max={600} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
-              <p className="text-xs text-muted-foreground">Used to measure time saved. Your estimate is fine.</p>
-            </div>
-          </>
-        )}
         {target && <Button type="submit" size="sm" disabled={busy}>Confirm: {TRANSITION_LABELS[target] ?? target}</Button>}
       </form>
     </Panel>

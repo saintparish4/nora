@@ -13,6 +13,12 @@ module Api
         render json: { tasks: tasks.map(&:as_api_json), meta: meta }
       end
 
+      # POST /api/v1/tasks/:id/ask_prescriber
+      def ask_prescriber
+        task = Tasks::AskPrescriberService.call(current_organization.tasks.find(params[:id]), actor: current_user)
+        render json: { task: task.as_api_json }
+      end
+
       # PATCH /api/v1/tasks/:id  { status, assignee_id }
       def update
         task = current_organization.tasks.find(params[:id])

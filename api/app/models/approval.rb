@@ -1,6 +1,6 @@
-# A person's sign-off on the exact content of a record at a moment in time.
-# `content_digest` pins what they approved; if the record's digest moves on,
-# the approval no longer covers it. Immutable once written.
+# A person's check of the exact content of a record at a moment in time. For a
+# prior authorization it is the staff member's final check before submitting:
+# `content_digest` pins what was submitted. Immutable once written.
 class Approval < ApplicationRecord
   belongs_to :approvable, polymorphic: true
   belongs_to :approved_by, class_name: "User"

@@ -1,44 +1,39 @@
 import { describe, it, expect } from '@jest/globals'
 import {
-  approvalBlocker,
   describeEvent,
   highlightSegments,
   isEditable,
   metBlocker,
   packetAvailable,
   sortEvidence,
+  submitBlocker,
   unresolvedRequirements,
 } from '@/lib/prior-auth'
 import { priorAuthorizationFixture } from '../fixtures/prior-authorization'
 
-describe('approvalBlocker', () => {
-  it('blocks staff regardless of state', () => {
-    const pa = priorAuthorizationFixture({ status: 'ready_for_review' })
-    expect(approvalBlocker(pa, 'staff')).toMatch(/clinician or an admin/)
-  })
-
+describe('submitBlocker', () => {
   it('counts requirements that are still open', () => {
     const pa = priorAuthorizationFixture()
-    expect(approvalBlocker(pa, 'clinician')).toBe('1 requirement still needs to be met or marked not applicable.')
+    expect(submitBlocker(pa)).toBe('1 requirement still needs to be met or marked not applicable.')
   })
 
-  it('allows a clinician once every requirement is resolved and the request is ready', () => {
+  it('lets staff submit once every requirement is resolved and the request is ready: no clinician needed', () => {
     const base = priorAuthorizationFixture()
     const pa = priorAuthorizationFixture({
       status: 'ready_for_review',
       requirements: base.requirements.map((r) => ({ ...r, status: r.status === 'pending' ? 'not_applicable' : r.status, note: 'n/a' })),
     })
     expect(unresolvedRequirements(pa)).toHaveLength(0)
-    expect(approvalBlocker(pa, 'clinician')).toBeNull()
-    expect(approvalBlocker(pa, 'admin')).toBeNull()
+    expect(submitBlocker(pa)).toBeNull()
   })
 
-  it('says so when the current approval still stands', () => {
+  it('refuses a request that is not ready to submit', () => {
+    const base = priorAuthorizationFixture()
     const pa = priorAuthorizationFixture({
-      status: 'approved',
-      approval: { approved_by: { id: 2, name: 'Avery Chen', email: 'a@example.com', role: 'clinician' }, approved_at: '2026-09-30T13:00:00Z', current: true },
+      status: 'submitted',
+      requirements: base.requirements.map((r) => ({ ...r, status: 'met' })),
     })
-    expect(approvalBlocker(pa, 'clinician')).toBe('Already approved.')
+    expect(submitBlocker(pa)).toMatch(/ready to submit/)
   })
 })
 
@@ -60,24 +55,24 @@ describe('metBlocker', () => {
 })
 
 describe('packetAvailable', () => {
-  const approval = { approved_by: { id: 2, name: 'Avery Chen', email: 'a@example.com', role: 'clinician' as const }, approved_at: '2026-09-30T13:00:00Z', current: true }
+  const check = {
+    checked_by: { id: 1, name: 'Jordan Blake', email: 'ma@example.com', role: 'staff' as const },
+    checked_at: '2026-09-30T13:00:00Z',
+    on_behalf_of: { id: 2, name: 'Avery Chen', email: 'a@example.com', role: 'clinician' as const },
+    current: true,
+  }
 
-  it('needs an approval', () => {
-    expect(packetAvailable({ status: 'approved', approval: null })).toBe(false)
+  it('needs the final check', () => {
+    expect(packetAvailable({ status: 'submitted', final_check: null })).toBe(false)
   })
 
-  it('needs the approval to be current while still approved', () => {
-    expect(packetAvailable({ status: 'approved', approval })).toBe(true)
-    expect(packetAvailable({ status: 'approved', approval: { ...approval, current: false } })).toBe(false)
-  })
-
-  it('stays available after submission and a decision', () => {
-    expect(packetAvailable({ status: 'submitted', approval })).toBe(true)
-    expect(packetAvailable({ status: 'denied', approval })).toBe(true)
+  it('is available once submitted, and after a decision', () => {
+    expect(packetAvailable({ status: 'submitted', final_check: check })).toBe(true)
+    expect(packetAvailable({ status: 'denied', final_check: check })).toBe(true)
   })
 
   it('is not offered for a cancelled request', () => {
-    expect(packetAvailable({ status: 'cancelled', approval })).toBe(false)
+    expect(packetAvailable({ status: 'cancelled', final_check: check })).toBe(false)
   })
 })
 
@@ -134,6 +129,6 @@ describe('describeEvent', () => {
   })
 
   it('labels status changes', () => {
-    expect(describeEvent('status_changed', {}, 'ready_for_review')).toBe('Status: Ready for approval')
+    expect(describeEvent('status_changed', {}, 'ready_for_review')).toBe('Status: Ready to submit')
   })
 })

@@ -195,18 +195,18 @@ export function DemoTour() {
       // element here, along with the size and position written onto it.
       <div key="tour-end" className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 p-5" role="dialog" aria-modal="true" aria-labelledby="tour-end">
         <div className="w-full max-w-md rounded-tile bg-white p-7 text-center">
-          <h2 id="tour-end" className="text-[1.75rem] leading-tight">That is the loop, up to the clinician.</h2>
+          <h2 id="tour-end" className="text-[1.75rem] leading-tight">That is the loop.</h2>
           <p className="mt-3 text-[0.9375rem] leading-relaxed text-body">
-            Chart to criteria, quotes a person verifies, gaps turned into tasks. The rest is yours to explore: switch to the
-            clinician to approve a packet, or open a request the payer has already decided. Every patient here is invented.
+            Chart to criteria, quotes a person verifies, gaps turned into tasks, and a final check by staff before it goes
+            out. See a request that is ready to submit, or one the payer has already decided. Every patient here is invented.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             <Button onClick={() => update(null)}>Explore it yourself</Button>
             <Button variant="secondary" onClick={() => update({ step: 0, playing: true })}>Watch again</Button>
           </div>
           <p className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm">
-            <Link href="/demo?as=clinician" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
-              Switch to the clinician
+            <Link href="/dashboard/prior-authorizations?status=ready_for_review" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
+              See a request ready to submit
             </Link>
             <Link href="/dashboard/prior-authorizations?status=approved_by_payer" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
               See a decided request

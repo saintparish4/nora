@@ -22,7 +22,7 @@ export function DemoStage({ screen, role, children }: {
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <DemoBannerFrame
         who={role ? <>Signing you in as the {label}.</> : <>Opening the demo practice.</>}
-        other={role === 'clinician' ? 'staff' : 'clinician'}
+        other={role === 'clinician' ? 'staff' : undefined}
       />
       <div className="sticky top-0 z-40 border-b border-border bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex h-[68px] max-w-[1200px] items-center gap-6 px-5 sm:px-8">

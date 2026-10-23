@@ -34,9 +34,8 @@ module Workspace
       [ "extraction_failed", "Evidence extraction failed", ->(_user) { "Retry extraction" },
         ->(pa) { pa.extraction_status == "failed" && PriorAuthorization::PREPARING.include?(pa.status) } ],
       [ "needs_clarification", "Documentation missing or unclear", ->(_user) { "Review" }, ->(pa) { pa.status == "needs_clarification" } ],
-      [ "ready_for_review", "Ready for approval", ->(user) { user.approver? ? "Approve" : "Awaiting clinician approval" },
-        ->(pa) { pa.status == "ready_for_review" } ],
-      [ "ready_to_submit", "Approved, not yet submitted", ->(_user) { "Download and submit" }, ->(pa) { pa.status == "approved" } ],
+      [ "ready_to_submit", "Ready to submit", ->(_user) { "Final check and submit" },
+        ->(pa) { %w[ready_for_review approved].include?(pa.status) } ],
       [ "denied", "Denied by payer", ->(_user) { "Appeal or close" }, ->(pa) { pa.status == "denied" } ]
     ].freeze
 

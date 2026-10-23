@@ -18,8 +18,11 @@ export const PA_STATUS_LABELS: Record<PaStatus, string> = {
   draft: 'Draft',
   gathering: 'Gathering evidence',
   needs_clarification: 'Needs clarification',
-  ready_for_review: 'Ready for approval',
-  approved: 'Approved',
+  // Stored as ready_for_review: every requirement resolved, waiting for the
+  // staff member's final check.
+  ready_for_review: 'Ready to submit',
+  // Left from the old clinician-approval flow; no longer entered.
+  approved: 'Checked',
   submitted: 'Submitted',
   payer_pending: 'With payer',
   approved_by_payer: 'Payer approved',
@@ -86,7 +89,6 @@ export const EXTRACTED_BY_LABELS: Record<Evidence['extracted_by'], string> = {
 };
 
 export const TRANSITION_LABELS: Partial<Record<PaStatus, string>> = {
-  submitted: 'Mark submitted',
   payer_pending: 'Payer is reviewing',
   approved_by_payer: 'Payer approved',
   denied: 'Payer denied',
@@ -97,44 +99,36 @@ export const TRANSITION_LABELS: Partial<Record<PaStatus, string>> = {
 
 const EDITABLE_STATUSES: PaStatus[] = ['draft', 'gathering', 'needs_clarification', 'ready_for_review', 'approved'];
 
-/** Evidence and requirements can change in these statuses (an edit voids approval). */
+/** Evidence and requirements can change in these statuses, until the request is submitted. */
 export function isEditable(status: PaStatus): boolean {
   return EDITABLE_STATUSES.includes(status);
 }
 
-const APPROVER_ROLES: Role[] = ['clinician', 'admin'];
-
-export function canApprove(role: Role | undefined): boolean {
-  return role !== undefined && APPROVER_ROLES.includes(role);
-}
-
-/** Requirements a person still has to act on before approval. */
+/** Requirements a person still has to act on before submitting. */
 export function unresolvedRequirements(pa: Pick<PriorAuthorizationDetail, 'requirements'>): Requirement[] {
   return pa.requirements.filter((r) => r.status !== 'met' && r.status !== 'not_applicable');
 }
 
 /**
- * Why the Approve button is disabled, or null when it can be pressed. Mirrors
- * the server's rules so the reason shows before a request is made; the server
+ * Why the request cannot be submitted yet, or null when it can. Any member of
+ * the practice can submit; there is no clinician sign-off. Mirrors the
+ * server's rules so the reason shows before a request is made; the server
  * still decides.
  */
-export function approvalBlocker(pa: PriorAuthorizationDetail, role: Role | undefined): string | null {
-  if (pa.status === 'approved' && pa.approval?.current) return 'Already approved.';
-  if (!canApprove(role)) return 'Only a clinician or an admin can approve.';
+export function submitBlocker(pa: PriorAuthorizationDetail): string | null {
   const open = unresolvedRequirements(pa);
   if (open.length > 0) {
     return `${open.length} requirement${open.length === 1 ? '' : 's'} still need${open.length === 1 ? 's' : ''} to be met or marked not applicable.`;
   }
-  if (pa.status !== 'ready_for_review') return 'Only a request that is ready for approval can be approved.';
+  if (pa.status !== 'ready_for_review' && pa.status !== 'approved') return 'Only a request that is ready to submit can be submitted.';
   return null;
 }
 
-const PACKET_STATUSES: PaStatus[] = ['approved', 'submitted', 'payer_pending', 'approved_by_payer', 'denied', 'appealed', 'closed'];
+const PACKET_STATUSES: PaStatus[] = ['submitted', 'payer_pending', 'approved_by_payer', 'denied', 'appealed', 'closed'];
 
-/** Mirrors the server: a packet exists once approved, and while approved only if nothing changed since. */
-export function packetAvailable(pa: Pick<PriorAuthorizationDetail, 'status' | 'approval'>): boolean {
-  if (!pa.approval || !PACKET_STATUSES.includes(pa.status)) return false;
-  return pa.status !== 'approved' || pa.approval.current;
+/** Mirrors the server: a packet exists once the final check is done and the request submitted. */
+export function packetAvailable(pa: Pick<PriorAuthorizationDetail, 'status' | 'final_check'>): boolean {
+  return Boolean(pa.final_check) && PACKET_STATUSES.includes(pa.status);
 }
 
 /** Why a requirement cannot be marked met yet, or null. */
@@ -206,10 +200,14 @@ export function describeEvent(eventType: string, payload: Record<string, unknown
       return 'Evidence rejected';
     case 'requirement_reviewed':
       return `Requirement marked ${REQUIREMENT_LABELS[payload.to as RequirementStatus]?.toLowerCase() ?? payload.to}`;
+    case 'final_check':
+      return 'Final check done; submitted under the prescriber\'s name';
+    case 'asked_prescriber':
+      return 'Asked the prescriber\'s office';
     case 'approved':
-      return 'Approved';
+      return 'Approved (earlier workflow)';
     case 'approval_invalidated':
-      return 'Approval voided: content changed';
+      return 'Approval voided: content changed (earlier workflow)';
     case 'assigned':
       return 'Reassigned';
     case 'packet_downloaded':

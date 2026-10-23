@@ -7,9 +7,12 @@ module Fhir
 
     attr_reader :label
 
-    def initialize(base:, token: nil)
+    # @param token [String, nil] a fixed bearer token (FHIR_BEARER_TOKEN)
+    # @param auth [#token, nil] fetches one instead, e.g. SmartBackendAuth
+    def initialize(base:, token: nil, auth: nil)
       @base = base.chomp("/")
       @token = token
+      @auth = auth
       @label = URI(@base).host
     end
 
@@ -32,7 +35,8 @@ module Fhir
     def get(path)
       uri = URI("#{@base}/#{path}")
       request = Net::HTTP::Get.new(uri, "Accept" => "application/fhir+json")
-      request["Authorization"] = "Bearer #{@token}" if @token
+      token = @auth&.token || @token
+      request["Authorization"] = "Bearer #{token}" if token
       response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https", open_timeout: TIMEOUT, read_timeout: TIMEOUT) do |http|
         http.request(request)
       end

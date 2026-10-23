@@ -4,9 +4,14 @@ module Fhir
   class BundleSource
     attr_reader :label
 
-    def initialize(dir:)
-      @label = "demo FHIR bundles"
-      @resources = Dir.glob(File.join(dir, "*.json")).sort.flat_map do |path|
+    def initialize(dir: nil, resources: nil, label: "demo FHIR bundles")
+      @label = label
+      @resources = resources || self.class.load(dir)
+    end
+
+    # Every resource in the transaction Bundles in a directory.
+    def self.load(dir)
+      Dir.glob(File.join(dir, "*.json")).sort.flat_map do |path|
         JSON.parse(File.read(path)).fetch("entry", []).map { |entry| entry["resource"] }
       end
     end

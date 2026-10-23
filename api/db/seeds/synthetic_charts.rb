@@ -33,7 +33,7 @@ patients = [
 
         Vitals: Height 5 ft 5 in. Weight 214 lb. BMI 34.2. BP 128/82.
 
-        Assessment: Obesity, class I (E66.01), BMI 34.0-34.9 (Z68.34). Prediabetes, A1c 6.1%.
+        Assessment: Obesity, class 1 (E66.811), BMI 34.0-34.9 (Z68.34). Prediabetes, A1c 6.1%.
 
         Plan: Discussed GLP-1 therapy. Previously tried Saxenda (liraglutide) from 2025-06 to 2025-10; discontinued due to persistent nausea and vomiting. Will request prior authorization for Wegovy 0.25 mg weekly with titration. Continue diet and activity program.
       NOTE
@@ -42,7 +42,7 @@ patients = [
         Past medications: Saxenda (liraglutide 3 mg) 06/2025 to 10/2025, stopped for GI intolerance (nausea, vomiting).
       NOTE
       { kind: "problem_list", title: "Problem list", occurred_on: "2026-08-12", body: <<~NOTE },
-        1. Obesity, class I (E66.01)
+        1. Obesity, class 1 (E66.811)
         2. Prediabetes (R73.03)
         3. Seasonal allergic rhinitis (J30.2)
       NOTE
@@ -109,7 +109,7 @@ patients = [
 
         Vitals: BMI 36.5. BP 130/84. Obstructive sleep apnea on CPAP.
 
-        Assessment: Obesity, class II (E66.01), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
+        Assessment: Obesity, class 2 (E66.812), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
 
         Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.
       NOTE
@@ -126,14 +126,14 @@ patients = [
 
         Vitals: BMI 38.1. BP 136/86 on amlodipine.
 
-        Assessment: Obesity, class II (E66.01), BMI 38.0-38.9 (Z68.38). Hypertension (I10). Dyslipidemia (E78.5).
+        Assessment: Obesity, class 2 (E66.812), BMI 38.0-38.9 (Z68.38). Hypertension (I10). Dyslipidemia (E78.5).
 
         Medication history: Phentermine 03/2024 to 06/2024, stopped for insomnia and palpitations. Contrave (naltrexone/bupropion) 09/2024 to 02/2025, stopped for headaches and inadequate response.
 
         Plan: Request Wegovy, to be used alongside her diet and activity program. She is not taking any other GLP-1 receptor agonist.
       NOTE
       { kind: "problem_list", title: "Problem list", occurred_on: "2026-09-02", body: <<~NOTE }
-        Obesity, class II (E66.01)
+        Obesity, class 2 (E66.812)
         Essential hypertension (I10)
         Dyslipidemia (E78.5)
       NOTE
@@ -143,7 +143,9 @@ patients = [
 
 patients.each do |attrs|
   patient = org.patients.find_or_initialize_by(mrn: attrs[:mrn])
-  patient.update!(attrs.slice(:first_name, :last_name, :date_of_birth, :sex))
+  # Its structured chart (coverage, prescription, prescriber, diagnoses, BMI)
+  # lives in db/fhir/demo/<fhir_id>.json, read over FHIR.
+  patient.update!(attrs.slice(:first_name, :last_name, :date_of_birth, :sex).merge(fhir_id: attrs[:mrn].downcase))
 
   payer, plan_name, member_id = attrs[:coverage]
   patient.coverages.find_or_create_by!(insurance_plan: plan.call(payer, plan_name), member_id: member_id)

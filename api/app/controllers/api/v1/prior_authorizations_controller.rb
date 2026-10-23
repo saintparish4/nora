@@ -102,6 +102,16 @@ module Api
         send_data pdf, filename: "prior-authorization-#{pa.id}.pdf", type: "application/pdf", disposition: "attachment"
       end
 
+      # GET /api/v1/prior_authorizations/:id/request_form
+      #
+      # What staff enter on CoverMyMeds, filled from the patient's chart over
+      # FHIR, each value with its source. Reads only; nothing is stored.
+      def request_form
+        pa = find_pa
+        log_phi_access("PriorAuthorization", pa.id, :view)
+        render json: { request_form: RequestForm::Builder.call(pa) }
+      end
+
       # GET /api/v1/prior_authorizations/:id/events
       def events
         # Only the id is needed to scope the events; skip the request's preloads.

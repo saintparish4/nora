@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "cigna-wegovy",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Wegovy for weight loss (Cigna)</p><ol><li>Is the patient 18 years of age or older?</li><li>Has the patient engaged in a trial of behavioral modification and dietary restriction for at least 3 months?</li><li>What was the patient&#39;s BMI at baseline, before any GLP-1 or GLP-1/GIP drug?</li><li>If baseline BMI is 27 to 29.9: does the patient have one of hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, COPD, MASLD/NAFLD, polycystic ovarian syndrome, or coronary artery disease?</li><li>Will the medication be used with behavioral modification and a reduced-calorie diet?</li><li>Will the medication be used together with another GLP-1 or GLP-1/GIP agonist?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/cigna-wegovy",
   "version": "derived-2026-10-23",
   "name": "CignaWegovy",
@@ -70,7 +79,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"age\""
           }
         }
@@ -122,7 +131,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"behavioral-trial\""
           }
         }
@@ -170,7 +179,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"bmi\""
           }
         }
@@ -229,7 +238,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"comorbidity\""
           }
         }
@@ -291,7 +300,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"with-lifestyle\""
           }
         }
@@ -343,7 +352,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraCignaWegovy.\"other-glp1\""
           }
         }

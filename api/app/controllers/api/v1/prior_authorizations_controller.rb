@@ -125,6 +125,19 @@ module Api
         render json: { request_form: RequestForm::Builder.call(pa.reload) }
       end
 
+      # GET /api/v1/prior_authorizations/:id/questionnaire_response
+      #
+      # The plan's questions as submitted: the DTR QuestionnaireResponse kept
+      # with the final check, as FHIR JSON. Not found before submission.
+      def questionnaire_response
+        pa = find_pa
+        response = pa.approvals.order(:created_at).last&.submitted_form&.dig("questionnaire_response")
+        return head :not_found if response.nil?
+
+        log_phi_access("PriorAuthorization", pa.id, :view)
+        render json: response, content_type: "application/fhir+json"
+      end
+
       # GET /api/v1/prior_authorizations/:id/events
       def events
         # Only the id is needed to scope the events; skip the request's preloads.

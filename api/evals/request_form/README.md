@@ -52,6 +52,10 @@ The first run is in `runs/2026-10-23-first.txt` and the second in `runs/2026-10-
 
 The one remaining miss is a real limitation, not a bug: Synthea's Andy Rogahn has myocardial infarction and ischemic heart disease as SNOMED encounter diagnoses. A person reading Encounters would answer the FEP comorbidity question; Nora reads only the ICD-10 problem list, so it says "ask". That is the safe direction.
 
+## After the move to CQL
+
+Since 2026-10-23 the answers come from CQL (`docs/DTR-AND-CQL.md`), not Ruby. The eval was the check on that rewrite. Run on the same cases, it scored exactly as above: 580/580 fields, 140 of 141, 46 of 46, 0 harmful.
+
 ## What this does not show
 
 - That the derived question sets (UnitedHealthcare, Aetna, Cigna) match what CoverMyMeds actually asks. Those plans' questions are behind CoverMyMeds' login.

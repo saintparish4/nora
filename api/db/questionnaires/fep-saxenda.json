@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "fep-saxenda",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Saxenda Prior Approval Request (FEP)</p><ol><li>Is this request for brand or generic?</li><li>1. What is the patient&#39;s diagnosis?</li><li>2. How many pre-filled pens will the patient need for 90 days?</li><li>3. Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?</li><li>4. Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.</li><li>5. Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?</li><li>6. Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound?</li><li>7. a. This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below:</li><li>b. Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide).</li><li>6. Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:</li><li>a. Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below:</li><li>b. i. Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:</li><li>ii. If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:</li><li>a. Age 12-17: Has the patient maintained clinically significant weight loss?</li><li>b. Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight?</li><li>* If NO, has the patient continued to maintain their initial 5 percent weight loss?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/fep-saxenda",
   "version": "2026-01-12",
   "name": "FepSaxenda",
@@ -69,7 +78,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"age-group\""
           }
         }
@@ -112,7 +121,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"plan-option\""
           }
         }
@@ -156,7 +165,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"brand-generic\""
           }
         }
@@ -201,7 +210,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"diagnosis\""
           }
         }
@@ -264,7 +273,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"pens-90-days\""
           }
         }
@@ -301,7 +310,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"program\""
           }
         }
@@ -354,7 +363,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"glp1\""
           }
         }
@@ -414,7 +423,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"pa-combination\""
           }
         }
@@ -463,7 +472,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"change-from-zepbound\""
           }
         }
@@ -518,7 +527,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"focus-nonformulary\""
           }
         }
@@ -573,7 +582,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"focus-switch-generic\""
           }
         }
@@ -628,7 +637,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"continuation\""
           }
         }
@@ -673,7 +682,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"initiation-pediatric-bmi\""
           }
         }
@@ -737,7 +746,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"initiation-bmi\""
           }
         }
@@ -809,7 +818,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"initiation-comorbidity\""
           }
         }
@@ -941,7 +950,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"continuation-pediatric\""
           }
         }
@@ -1005,7 +1014,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"continuation-loss\""
           }
         }
@@ -1069,7 +1078,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraFepSaxenda.\"continuation-maintained\""
           }
         }

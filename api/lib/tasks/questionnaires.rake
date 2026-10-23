@@ -62,7 +62,10 @@ module QuestionnaireBuild
   def resource(d)
     src = d[:source]
     {
-      resourceType: "Questionnaire", id: d[:id], url: "#{BASE}/Questionnaire/#{d[:id]}",
+      resourceType: "Questionnaire", id: d[:id],
+      meta: { profile: [ "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire" ] },
+      text: { status: "generated", div: narrative(d) },
+      url: "#{BASE}/Questionnaire/#{d[:id]}",
       version: src[:revised] || "derived-2026-10-23",
       name: d[:id].split("-").map(&:capitalize).join, title: d[:title], status: "active",
       date: src[:revised] || "2026-10-23", publisher: src[:publisher], subjectType: [ "Patient" ],
@@ -99,7 +102,7 @@ module QuestionnaireBuild
         # Where the answer comes from, so Nora can say why it could not find
         # one. The answer itself is the CQL expression below.
         { url: "#{EXT}/answer-rule", extension: [ { url: "from", valueCode: i[:from] } ] + rule },
-        { url: INITIAL_EXPRESSION, valueExpression: { language: "text/cql-identifier", expression: %(#{library}."#{i[:link]}") } }
+        { url: INITIAL_EXPRESSION, valueExpression: { language: "text/cql", expression: %(#{library}."#{i[:link]}") } }
       ].select(&:itself),
       answerOption: i[:options]&.map { |code, display| { valueCoding: { system: system, code: code, display: display } } },
       enableWhen: i[:enable_when]&.map do |w|
@@ -113,6 +116,12 @@ module QuestionnaireBuild
   def runner_digest
     files = %w[run.mjs package-lock.json].map { |f| Rails.root.join("cql", f).read }
     "Built by bin/rails questionnaires:runner from run.mjs and package-lock.json #{Digest::SHA256.hexdigest(files.join)[0, 16]}"
+  end
+
+  # The narrative DTR requires: the title and the questions, as XHTML.
+  def narrative(d)
+    questions = d[:items].reject { |i| i[:hidden] }.map { |i| "<li>#{ERB::Util.html_escape([ i[:prefix], i[:text] ].compact.join(' '))}</li>" }
+    %(<div xmlns="http://www.w3.org/1999/xhtml"><p>#{ERB::Util.html_escape(d[:title])}</p><ol>#{questions.join}</ol></div>)
   end
 
   def library_name(d) = "Nora#{d[:id].split('-').map(&:capitalize).join}"

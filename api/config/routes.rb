@@ -51,6 +51,7 @@ Rails.application.routes.draw do
           post :submit
           get :request_form
           post :request_form_answer
+          get :questionnaire_response
           post :transition
           get :packet
           get :events

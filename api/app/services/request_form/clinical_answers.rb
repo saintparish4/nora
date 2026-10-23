@@ -44,12 +44,15 @@ module RequestForm
     # @param as_of [Date, nil] the day the request was opened.
     # @param staff [Hash{String => FormAnswer}, nil] people's answers by
     #   question; read from the request when nil, none when it has none.
-    def initialize(prior_authorization, chart:, question_set:, requirements: nil, as_of: nil, staff: nil)
+    # @param elm [Hash{String => Hash}, nil] CQL to run instead of Nora's own:
+    #   the libraries a payer's DTR package carried
+    def initialize(prior_authorization, chart:, question_set:, requirements: nil, as_of: nil, staff: nil, elm: nil)
       @pa = prior_authorization
       @chart = chart
       @set = question_set
       @requirements = requirements
       @as_of = as_of || (prior_authorization.created_at || Time.current).to_date
+      @elm = elm
       @staff = staff || (prior_authorization.respond_to?(:form_answers) ? prior_authorization.form_answers.includes(:recorded_by).index_by(&:link_id) : {})
     end
 
@@ -57,7 +60,7 @@ module RequestForm
     #   that depends on an unanswered one is kept, with depends_on set.
     # @raise [Cql::Error] when the CQL cannot run
     def call
-      @cql = Cql.call(library: @set.library, resources: resources, as_of: @as_of)
+      @cql = Cql.call(library: @set.library, resources: resources, as_of: @as_of, libraries: @elm)
       results = @set.items.to_h { |item| [ item.link_id, answer(item) ] }
       enabled = {}
       @set.items.filter_map do |item|

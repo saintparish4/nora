@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "uhc-wegovy",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Wegovy for weight loss (UnitedHealthcare)</p><ol><li>Is the medication being requested for weight loss?</li><li>Is the patient 12 years of age or older?</li><li>Will the medication be used as an adjunct to lifestyle modification (for example dietary or caloric restriction, exercise, behavioral support, or a community-based program)?</li><li>What is the patient&#39;s body mass index (BMI)?</li><li>If BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example dyslipidemia, hypertension, type 2 diabetes, or sleep apnea)?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/uhc-wegovy",
   "version": "derived-2026-10-23",
   "name": "UhcWegovy",
@@ -74,7 +83,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraUhcWegovy.\"indication\""
           }
         }
@@ -122,7 +131,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraUhcWegovy.\"age\""
           }
         }
@@ -174,7 +183,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraUhcWegovy.\"adjunct\""
           }
         }
@@ -218,7 +227,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraUhcWegovy.\"bmi\""
           }
         }
@@ -277,7 +286,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "language": "text/cql-identifier",
+            "language": "text/cql",
             "expression": "NoraUhcWegovy.\"comorbidity\""
           }
         }

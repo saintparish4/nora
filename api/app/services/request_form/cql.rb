@@ -27,9 +27,11 @@ module RequestForm
 
     # @param library [String] the question set's library, e.g. "NoraFepSaxenda"
     # @param resources [Array<Hash>] the patient's FHIR resources
+    # @param libraries [Hash{String => Hash}, nil] ELM to run instead of
+    #   Nora's own, e.g. what a payer's DTR package carried (Dtr::Package.elm)
     # @return [Hash{String => Object}] every expression's value
-    def self.call(library:, resources:, as_of:)
-      input = { libraries: elm.values, main: library, parameters: { AsOf: as_of.iso8601 },
+    def self.call(library:, resources:, as_of:, libraries: nil)
+      input = { libraries: (libraries || elm).values, main: library, parameters: { AsOf: as_of.iso8601 },
                 bundle: { resourceType: "Bundle", type: "collection", entry: resources.map { |r| { resource: r } } } }
       out, err, status = Open3.capture3(ENV.fetch("NODE_BINARY", "node"), RUNNER.to_s, stdin_data: JSON.generate(input),
                                         chdir: RUNNER.dirname.to_s)

@@ -40,4 +40,14 @@ RSpec.describe RequestForm::QuestionnaireResponseBuilder do
     expect(form.dig('questionnaire_response', 'item').size).to eq(11)
     expect(tom.workflow_events.find_by(event_type: 'final_check').payload['form_digest']).to match(/\A\h{64}\z/)
   end
+
+  it 'can be exported as FHIR once submitted, and not before', type: :request do
+    get "/api/v1/prior_authorizations/#{tom.id}/questionnaire_response", headers: auth_headers(staff)
+    expect(response).to have_http_status(:not_found)
+
+    Authorizations::SubmitService.call(tom, actor: staff)
+    get "/api/v1/prior_authorizations/#{tom.id}/questionnaire_response", headers: auth_headers(staff)
+    expect(response.media_type).to eq('application/fhir+json')
+    expect(parsed_body).to include('resourceType' => 'QuestionnaireResponse', 'status' => 'completed')
+  end
 end

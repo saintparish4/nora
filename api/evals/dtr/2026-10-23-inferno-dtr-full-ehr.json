@@ -1,0 +1,171 @@
+{
+  "suite": "dtr_full_ehr: Da Vinci DTR Full EHR Test Suite v2.0.1 (davinci_dtr_test_kit 0.18.0, hosted)",
+  "client_type": "SMART Backend Services, confidential asymmetric",
+  "instance": "https://inferno.healthit.gov/suites (demonstration only; sessions are deleted after a month)",
+  "run_on": "2026-10-23",
+  "request": "Tom Okafor, Saxenda, FEP Blue Standard (synthetic, e2e database). Package: Nora's fep-saxenda Questionnaire with its CQL libraries, given to Inferno as the custom $questionnaire-package response.",
+  "runs": [
+    {
+      "session": "https://inferno.healthit.gov/suites/dtr_full_ehr/3X3eXbmpLfc",
+      "what": "Static workflow; expressions declared text/cql-identifier; no QuestionnaireResponse supplied",
+      "tests": [
+        {
+          "test": "dtr_qp_request_validation",
+          "result": "fail",
+          "message": "Request made to wrong URL: https://inferno.healthit.gov:443/suites/custom/dtr_full_ehr/fhir/Questionnaire/$questionnaire-package. Should instead be to https://inferno.healthit.gov/suites/custom/dtr_full_ehr/fhir/Questionnaire/$questionnaire-package."
+        },
+        {
+          "test": "dtr_custom_qp_validation",
+          "result": "fail",
+          "message": "Resource does not conform to the profile: http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-qpackage-output-parameters|2.0.1",
+          "errors": [
+            "Parameters: Parameters.parameter[0].resource: Constraint failed: bdl-3: 'entry.request mandatory for batch/transaction/history, otherwise prohibited' (defined in http://hl7.org/fhir/StructureDefinition/Bundle)",
+            "Parameters: Parameters.parameter[0].resource: Constraint failed: bdl-4: 'entry.response mandatory for batch-response/transaction-response/history, otherwise prohibited' (defined in http://hl7.org/fhir/StructureDefinition/Bundle)"
+          ]
+        },
+        {
+          "test": "dtr_custom_questionnaire_libraries",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_custom_questionnaire_extensions",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_custom_questionnaire_expressions",
+          "result": "fail",
+          "message": "Initial expression logic not written in CQL."
+        },
+        {
+          "test": "dtr_prepopulation_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_launch_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qp_request",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_prepopulation_override_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_rendering_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_store_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qr_conformance",
+          "result": "skip",
+          "message": "Completed QuestionnaireResponse input was blank"
+        },
+        {
+          "test": "dtr_full_ehr_qr_correctness",
+          "result": "skip",
+          "message": "Completed QuestionnaireResponse input was blank"
+        }
+      ]
+    },
+    {
+      "session": "https://inferno.healthit.gov/suites/dtr_full_ehr/3ed4VePuejB",
+      "what": "Static workflow after switching expressions to text/cql, with the QuestionnaireResponse Nora stored at the final check",
+      "tests": [
+        {
+          "test": "dtr_custom_qp_validation",
+          "result": "fail",
+          "message": "Resource does not conform to the profile: http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-qpackage-output-parameters|2.0.1",
+          "errors": [
+            "Parameters: Parameters.parameter[0].resource: Constraint failed: bdl-3: 'entry.request mandatory for batch/transaction/history, otherwise prohibited' (defined in http://hl7.org/fhir/StructureDefinition/Bundle)",
+            "Parameters: Parameters.parameter[0].resource: Constraint failed: bdl-4: 'entry.response mandatory for batch-response/transaction-response/history, otherwise prohibited' (defined in http://hl7.org/fhir/StructureDefinition/Bundle)"
+          ]
+        },
+        {
+          "test": "dtr_custom_questionnaire_libraries",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qp_request",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_launch_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_qp_request_validation",
+          "result": "fail",
+          "message": "Request made to wrong URL: https://inferno.healthit.gov:443/suites/custom/dtr_full_ehr/fhir/Questionnaire/$questionnaire-package. Should instead be to https://inferno.healthit.gov/suites/custom/dtr_full_ehr/fhir/Questionnaire/$questionnaire-package."
+        },
+        {
+          "test": "dtr_rendering_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_custom_questionnaire_extensions",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_custom_questionnaire_expressions",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_prepopulation_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_prepopulation_override_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qr_conformance",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qr_correctness",
+          "result": "skip",
+          "message": "Couldn't find Questionnaire https://nora.example/fhir/Questionnaire/fep-saxenda|2026-01-12 in the provided custom questionnaire package\n                to validate the QuestionnaireResponse."
+        },
+        {
+          "test": "dtr_full_ehr_store_attest",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "session": "https://inferno.healthit.gov/suites/dtr_full_ehr/3ed4VePuejB",
+      "what": "Diagnostic only: the same QuestionnaireResponse with the version removed from its questionnaire canonical, because Inferno looks the Questionnaire up by exact URL",
+      "tests": [
+        {
+          "test": "dtr_full_ehr_store_attest",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qr_conformance",
+          "result": "pass"
+        },
+        {
+          "test": "dtr_full_ehr_qr_correctness",
+          "result": "fail",
+          "message": "QuestionnaireResponse is not correct, see error message(s)",
+          "errors": [
+            "`origin.source` extension on item `program` contains unexpected value.\n                             Expected: auto or override. Found: manual",
+            "No answer for item focus-nonformulary",
+            "No answer for item focus-switch-generic",
+            "No answer for item initiation-pediatric-bmi",
+            "No answer for item initiation-comorbidity",
+            "No answer for item continuation-pediatric",
+            "No answer for item continuation-loss",
+            "No answer for item continuation-maintained"
+          ]
+        }
+      ]
+    }
+  ],
+  "diagnostic": "A $questionnaire-package request sent with curl in a separate session (https://inferno.healthit.gov/suites/dtr_full_ehr/bn8XPSu4Iqa) got the same wrong-URL failure (:443), so that failure is not Nora's HTTP client. Inferno's own Dinner Order package, given as the custom package there, failed the same output-parameters profile check (on the parameter name)."
+}

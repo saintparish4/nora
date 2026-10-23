@@ -170,3 +170,27 @@ module FhirDemo
     }
   end
 end
+
+namespace :dtr do
+  desc "Write each question set as a DTR $questionnaire-package response into tmp/dtr-packages (generated; not committed)"
+  task packages: :environment do
+    dir = Rails.root.join("tmp/dtr-packages").tap(&:mkpath)
+    RequestForm::QuestionSet.all.each { |set| dir.join("#{set.id}.json").write(JSON.pretty_generate(Dtr::Package.for(set)) + "\n") }
+    puts "Wrote #{RequestForm::QuestionSet.all.size} packages to #{dir.relative_path_from(Rails.root)}"
+  end
+
+  desc "As a DTR client: fetch a payer's questions for a request and fill them in (PAYER_BASE, REQUEST_ID, FHIR_CLIENT_ID, FHIR_PRIVATE_KEY_PATH; OUT)"
+  task fill: :environment do
+    pa = PriorAuthorization.find(ENV.fetch("REQUEST_ID"))
+    base = ENV.fetch("PAYER_BASE")
+    auth = Fhir::SmartBackendAuth.new(base: base, client_id: ENV.fetch("FHIR_CLIENT_ID"),
+                                      private_key: OpenSSL::PKey::RSA.new(File.read(ENV.fetch("FHIR_PRIVATE_KEY_PATH"))))
+    chart = Fhir::Chart.new(source: Fhir.source, patient_id: pa.patient.fhir_id)
+    order = chart.medication_requests.find { |rx| RequestForm::AdminFields.prescribes?(rx, pa.item_name) }
+    package = Dtr::PayerClient.new(base: base, auth: auth).questionnaire_package(coverage: chart.coverages.first, order: order)
+    responses = Dtr::Fill.call(pa, package: package)
+    out = JSON.pretty_generate(responses.one? ? responses.first : responses)
+    ENV["OUT"] ? File.write(ENV["OUT"], out) : puts(out)
+    warn "Filled #{responses.size} questionnaire(s) from #{base}"
+  end
+end

@@ -12,9 +12,11 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 - **Quotes, never claims:** every requirement is answered with the chart's own sentence, its document and date. Staff verify each quote, and Nora never marks a requirement met by itself.
 - **Real payer criteria:** the initial-authorization criteria for Wegovy, Zepbound and Saxenda from UnitedHealthcare, Aetna, Cigna and the BCBS Federal Employee Program, each linked to its published policy and effective date. Criteria are versioned, so a request keeps the criteria it was opened under.
 - **The CoverMyMeds form, filled from the chart:** demographics, insurance with BIN/PCN/Rx group, prescriber with NPI, drug, quantity, days' supply and diagnoses are read from the chart over FHIR R4 (US Core), by lookup, with no model. Each value shows the FHIR element and the Epic screen it came from, ready to paste; a value the chart lacks says where to get it (the card scan in Coverages, or the pharmacy).
-- **The plan's own questions:** the BCBS FEP forms for Wegovy, Zepbound and Saxenda word for word, and question sets derived from UnitedHealthcare, Aetna and Cigna criteria, as branching FHIR Questionnaires. Each question is answered from structured chart data or a verified quote, or explained in plain language and listed for the prescriber's office. Nora never answers a clinical question it cannot source.
+- **The plan's own questions, answered in CQL:** the BCBS FEP forms for Wegovy, Zepbound and Saxenda word for word, and question sets derived from UnitedHealthcare, Aetna and Cigna criteria, as branching FHIR Questionnaires. Every answer is a named CQL expression over the patient's US Core data and the quotes a person verified, the way Da Vinci DTR fills in a form. An expression that returns nothing is explained in plain language and listed for the prescriber's office. Nora never answers a question it cannot source. ([How it works](docs/DTR-AND-CQL.md))
+- **What the office said goes on the record:** staff record the prescriber's office's reply, or correct Nora's answer, and each answer keeps its origin (Nora's CQL, entered by staff, or changed by staff) in a DTR QuestionnaireResponse that the final check keeps with the submission.
+- **Modelled on the wire format:** each question set is also written as the NCPDP SCRIPT ePA question set a PBM sends to CoverMyMeds, and mapped back to FHIR. [What survives the trip, and what does not](docs/NCPDP-MAPPING.md).
 - **Gaps become tasks:** a requirement the chart does not support is marked missing and becomes a task for staff, with the option to ask the prescriber's office. Nothing else waits on it.
-- **The form is measured too:** 20 labelled cases (demo patients, variants, and Synthea patients) score the request form's fields by exact match and its answers on accuracy and correct "don't know": 580/580 fields, 140 of 141 answerable questions, 0 answered without a source ([the eval](api/evals/request_form/README.md)). Nora's FHIR client passes ONC Inferno's SMART Backend Services client tests. A [timed-task protocol](docs/TIMED-TASK-PROTOCOL.md) is written for people who do this work.
+- **The form is measured too:** 20 labelled cases (demo patients, variants, and Synthea patients) score the request form's fields by exact match and its answers on accuracy and correct "don't know": 580/580 fields, 140 of 141 answerable questions, 0 answered without a source ([the eval](api/evals/request_form/README.md)). Nora's FHIR client passes ONC Inferno's SMART Backend Services client tests. Against Inferno's Da Vinci DTR Full EHR suite it passes 10 of 13 tests, and the [failures are reported as they came](docs/DTR-AND-CQL.md). A [timed-task protocol](docs/TIMED-TASK-PROTOCOL.md) and a blind labelling kit with Cohen's kappa are ready for people who do this work. Neither has been run yet.
 - **Measured, not assumed:** an evaluation, planned in writing before it ran, found that adding a language model made the evidence worse (it proposed text for unsupported requirements far more often), so Nora runs on rules. [The evaluation in two minutes](docs/EVALUATION.md).
 - **A final check that means something:** before submitting, staff confirm every answer and its source. Nora records exactly what went out, who submitted it, and the prescriber it went out under. The packet renders as a PDF and is tracked to the payer's decision.
 - **Workflow integrity:** a request's status changes only through one service that records an event and an actor; every read or write of patient data is logged; the browser authenticates with an httpOnly cookie and a CSRF token.
@@ -29,6 +31,8 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 | **Active Job, solid_queue** | Evidence extraction in the background |
 | **OpenAI via `Ai::Client`** | Optional model pass and payer-question help, behind one adapter (off by default) |
 | **FHIR R4, US Core 6.1** | Structured chart reads (Patient, Coverage, MedicationRequest, Condition, Observation, Practitioner) and the plans' questions as Questionnaires, checked with the HL7 validator |
+| **CQL, Da Vinci DTR 2.0.1** | Every answer to a plan's question: cqframework's translator for ELM, `cql-execution` and `cql-exec-fhir` in Node to run it; QuestionnaireResponses with information origin |
+| **NCPDP SCRIPT ePA (2023011)** | The question sets as PAInitiationResponse QuestionSets, and back to FHIR |
 | **prawn, pdf-reader** | Submitted packets as PDF; text from uploaded chart PDFs |
 | **Next.js 16, React 19, TypeScript** | The staff console |
 | **Tailwind CSS, shadcn/ui, SWR, Zod** | Styling, components, data fetching, response validation |
@@ -40,7 +44,7 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 
 ### Prerequisites
 
-Ruby 4.0.x, Node.js 22.13 or later, and pnpm 12 (pnpm 12 refuses to run on older Node). Docker only to run the PostgreSQL test suite locally.
+Ruby 4.0.x, Node.js 22.13 or later, and pnpm 12 (pnpm 12 refuses to run on older Node). The API needs Node too: it runs the plans' CQL with `node api/cql/dist/run.cjs`. Docker only to run the PostgreSQL test suite locally, or the CQL translator when changing the CQL.
 
 ```bash
 ruby --version   # 4.0.x

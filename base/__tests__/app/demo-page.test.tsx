@@ -98,15 +98,25 @@ describe('DemoPage', () => {
     expect(log.textContent).toContain('opening the request')
   })
 
-  it('draws the Today skeleton under the log for the walkthrough', async () => {
+  it('draws the request skeleton under the log for the walkthrough, which plays on that page', async () => {
     mockSearch = 'tour=1'
     window.sessionStorage.clear()
 
     const { container } = render(<DemoPage />)
 
-    expect(container.querySelector('[data-screen="today"]')).toBeTruthy()
-    expect(mockPrefetch).toHaveBeenCalledWith('/dashboard', { kind: 'full' })
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard', expect.any(Function)))
+    expect(container.querySelector('[data-screen="request"]')).toBeTruthy()
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function)))
+    window.sessionStorage.clear()
+  })
+
+  it('plays the walkthrough as the medical assistant even from ?as=clinician', async () => {
+    mockSearch = 'as=clinician&tour=1'
+    window.sessionStorage.clear()
+
+    render(<DemoPage />)
+
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function)))
+    window.sessionStorage.clear()
   })
 
   it('stops waking the API when the visitor leaves', async () => {
@@ -129,13 +139,13 @@ describe('DemoPage', () => {
     await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('clinician', undefined, expect.any(Function)))
   })
 
-  it('starts the walkthrough and lands on Today for /demo?tour=1', async () => {
+  it('starts the walkthrough on the featured request for /demo?tour=1', async () => {
     mockSearch = 'tour=1'
     window.sessionStorage.clear()
 
     render(<DemoPage />)
 
-    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', '/dashboard', expect.any(Function)))
+    await waitFor(() => expect(mockEnterDemo).toHaveBeenCalledWith('staff', undefined, expect.any(Function)))
     expect(JSON.parse(window.sessionStorage.getItem('nora-demo-tour') ?? 'null')).toEqual({ step: 0, playing: true })
     window.sessionStorage.clear()
   })

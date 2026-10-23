@@ -11,7 +11,7 @@ import { DemoStage, type DemoScreen } from '@/components/demo/demo-stage';
 import { WakeLog, formatSeconds, type WakeLine } from '@/components/demo/wake-log';
 import { apiAnsweredAgo, wakeApi } from '@/lib/api/health';
 import { preloadRequest, preloadToday } from '@/lib/api/preload';
-import { readTour, startTour } from '@/lib/demo-tour';
+import { startTour } from '@/lib/demo-tour';
 import type { DemoRole } from '@/types';
 
 /** How long before we explain that the API may be waking from idle. */
@@ -47,11 +47,11 @@ function preloadFor(path: string): void {
 function DemoContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const role: DemoRole = params.get('as') === 'clinician' ? 'clinician' : 'staff';
-  // /demo?tour=1 starts the guided walkthrough; a walkthrough already under
-  // way passes through here when it changes account.
+  // /demo?tour=1 starts the guided walkthrough, which plays on the featured
+  // request as the medical assistant, so it always opens as staff.
   const wantsTour = params.get('tour') === '1';
-  const [screen] = useState<DemoScreen>(() => (role === 'staff' && !wantsTour && !readTour() ? 'request' : 'today'));
+  const role: DemoRole = params.get('as') === 'clinician' && !wantsTour ? 'clinician' : 'staff';
+  const [screen] = useState<DemoScreen>(() => (role === 'staff' ? 'request' : 'today'));
   const { user, loading, enterDemo } = useAuth();
   const [opening, setOpening] = useState(false);
   const [slow, setSlow] = useState(false);
@@ -111,8 +111,7 @@ function DemoContent() {
 
       const signIn = add({ tone: 'step', text: 'POST /api/v1/auth/demo', pendingSince: Date.now() });
       if (wantsTour) startTour();
-      // The walkthrough decides where to go next, so land it on Today.
-      await enterDemo(role, readTour() ? '/dashboard' : undefined, async path => {
+      await enterDemo(role, undefined, async path => {
         settle(signIn, { tone: 'done', text: `signed in as the practice's ${ROLE_LABELS[role]}` });
         add({ tone: 'step', text: path === '/dashboard' ? 'opening Today' : 'opening the request' });
         // Go now rather than when the data is in: the screen's skeleton is the

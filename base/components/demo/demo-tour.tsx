@@ -6,13 +6,30 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 import { getPriorAuthorizations } from '@/lib/api';
-import { TOUR_STEPS, readTour, writeTour, type TourPlace, type TourStep } from '@/lib/demo-tour';
+import { TOUR_REQUEST_STATUS, TOUR_ROLE, TOUR_STEPS, readTour, writeTour, type TourPlace, type TourStep } from '@/lib/demo-tour';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const WAIT_FOR_TARGET_MS = 10_000;
 /** Room between the target and the spotlight ring. */
 const RING_GAP = 8;
+/** How long the spotlight takes to glide from one target to the next. */
+const GLIDE_MS = 550;
+
+interface Box {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const mix = (from: Box, to: Box, t: number): Box => ({
+  x: from.x + (to.x - from.x) * t,
+  y: from.y + (to.y - from.y) * t,
+  width: from.width + (to.width - from.width) * t,
+  height: from.height + (to.height - from.height) * t,
+});
 
 /** True while the target, or anything inside it, is still loading its data. */
 function isBusy(target: HTMLElement): boolean {
@@ -20,10 +37,10 @@ function isBusy(target: HTMLElement): boolean {
 }
 
 /**
- * Plays the guided walkthrough over the workspace: moves to each step's page,
- * spotlights one element, and shows a caption with play, pause, back, and
- * next. Renders nothing unless a walkthrough is in progress in the demo
- * practice.
+ * Plays the guided walkthrough over the request page: spotlights one panel
+ * per step, gliding from each to the next, and shows a caption with play,
+ * pause, back, and next. Renders nothing unless a walkthrough is in progress
+ * in the demo practice.
  */
 export function DemoTour() {
   const { user } = useAuth();
@@ -33,7 +50,9 @@ export function DemoTour() {
   const [ready, setReady] = useState(false);
   const [placed, setPlaced] = useState(false);
   const ring = useRef<HTMLDivElement>(null);
-  const paths = useRef<Record<string, string | null>>({});
+  /** Where the ring was last drawn, so the next step glides from there. */
+  const drawn = useRef<Box | null>(null);
+  const requestPath = useRef<string | null | undefined>(undefined);
 
   // Storage is only readable in the browser, after hydration.
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -42,7 +61,10 @@ export function DemoTour() {
   const update = useCallback((next: TourPlace | null) => {
     writeTour(next);
     setReady(false);
-    setPlaced(false);
+    if (!next) {
+      setPlaced(false);
+      drawn.current = null;
+    }
     setPlace(next);
   }, []);
 
@@ -63,33 +85,27 @@ export function DemoTour() {
     [leave, place, step, update]
   );
 
-  // Get to the right account and page for the step, then find its target.
+  // Every step plays on the same page: the request waiting for clarification,
+  // as the medical assistant. Get there once, then find each step's target.
   useEffect(() => {
     if (!step || !inDemo || !user) return;
     let cancelled = false;
     let poll: number | undefined;
 
     const arrive = async () => {
-      if (user.role !== step.role) {
-        router.push(`/demo?as=${step.role}`);
+      if (user.role !== TOUR_ROLE) {
+        router.push(`/demo?as=${TOUR_ROLE}`);
         return;
       }
-
-      let path: string | null;
-      if ('path' in step.page) {
-        path = step.page.path;
-      } else {
-        const status = step.page.status;
-        if (!(status in paths.current)) {
-          const found = await getPriorAuthorizations({ status }).catch(() => null);
-          const id = found?.prior_authorizations[0]?.id;
-          paths.current[status] = id ? `/dashboard/prior-authorizations/${id}` : null;
-        }
-        path = paths.current[status];
+      if (requestPath.current === undefined) {
+        const found = await getPriorAuthorizations({ status: TOUR_REQUEST_STATUS }).catch(() => null);
+        const id = found?.prior_authorizations[0]?.id;
+        requestPath.current = id ? `/dashboard/prior-authorizations/${id}` : null;
       }
       if (cancelled) return;
-      // Another visitor may have moved the request on. Skip what cannot be shown.
-      if (path === null) return go(place!.step + 1);
+      const path = requestPath.current;
+      // Another visitor may have moved the request on. Nothing to show then.
+      if (path === null) return update(null);
       if (pathname !== path) return router.push(path);
 
       const started = Date.now();
@@ -134,20 +150,28 @@ export function DemoTour() {
   }, [place?.step, inDemo, user?.role, pathname]);
 
   // Keep the spotlight on the target every frame, as the page scrolls and
-  // settles. Written straight to the element as a transform: a React render
-  // per frame would be wasted work, and animating top/left made the ring
-  // trail behind its target and shift the layout.
+  // settles. On a new step it glides from where it was drawn to the new
+  // target's live position, so it arrives even while the page is scrolling
+  // there. Written straight to the element as a transform: a React render per
+  // frame would be wasted work, and animating top/left shifts the layout.
   useEffect(() => {
     if (!ready || !step) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const from = drawn.current;
+    const started = performance.now();
     let frame = 0;
-    const follow = () => {
+    const follow = (now: number) => {
       const target = document.querySelector<HTMLElement>(step.target);
       const el = ring.current;
       if (target && el) {
         const rect = target.getBoundingClientRect();
-        el.style.transform = `translate3d(${rect.left - RING_GAP}px, ${rect.top - RING_GAP}px, 0)`;
-        el.style.width = `${rect.width + 2 * RING_GAP}px`;
-        el.style.height = `${rect.height + 2 * RING_GAP}px`;
+        const goal = { x: rect.left - RING_GAP, y: rect.top - RING_GAP, width: rect.width + 2 * RING_GAP, height: rect.height + 2 * RING_GAP };
+        const progress = from && !reduce ? Math.min(1, (now - started) / GLIDE_MS) : 1;
+        const box = from ? mix(from, goal, easeOut(progress)) : goal;
+        el.style.transform = `translate3d(${box.x}px, ${box.y}px, 0)`;
+        el.style.width = `${box.width}px`;
+        el.style.height = `${box.height}px`;
+        drawn.current = box;
         setPlaced(true);
       }
       frame = window.requestAnimationFrame(follow);
@@ -167,21 +191,25 @@ export function DemoTour() {
 
   if (finished) {
     return (
-      <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 p-5" role="dialog" aria-modal="true" aria-labelledby="tour-end">
+      // Keyed apart from the ring: React would otherwise reuse the ring's
+      // element here, along with the size and position written onto it.
+      <div key="tour-end" className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 p-5" role="dialog" aria-modal="true" aria-labelledby="tour-end">
         <div className="w-full max-w-md rounded-tile bg-white p-7 text-center">
-          <h2 id="tour-end" className="text-[1.75rem] leading-tight">That is the whole loop.</h2>
+          <h2 id="tour-end" className="text-[1.75rem] leading-tight">That is the loop, up to the clinician.</h2>
           <p className="mt-3 text-[0.9375rem] leading-relaxed text-body">
-            Chart to criteria, quotes a person verifies, gaps turned into tasks, a clinician&apos;s approval, and a packet. The
-            practice is yours to explore now. Every patient in it is invented.
+            Chart to criteria, quotes a person verifies, gaps turned into tasks. The rest is yours to explore: switch to the
+            clinician to approve a packet, or open a request the payer has already decided. Every patient here is invented.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             <Button onClick={() => update(null)}>Explore it yourself</Button>
             <Button variant="secondary" onClick={() => update({ step: 0, playing: true })}>Watch again</Button>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            You are signed in as the clinician.{' '}
-            <Link href="/demo?as=staff" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
-              Switch to the medical assistant
+          <p className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm">
+            <Link href="/demo?as=clinician" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
+              Switch to the clinician
+            </Link>
+            <Link href="/dashboard/prior-authorizations?status=approved_by_payer" className="font-medium text-blue-deep hover:underline" onClick={() => update(null)}>
+              See a decided request
             </Link>
           </p>
         </div>
@@ -193,8 +221,9 @@ export function DemoTour() {
 
   return (
     <>
-      {ready && (
+      {(ready || placed) && (
         <div
+          key="tour-ring"
           ref={ring}
           aria-hidden
           className={cn(
@@ -213,7 +242,7 @@ export function DemoTour() {
         <div className="rounded-tile bg-ink p-5 text-white shadow-[0_24px_60px_-20px_rgba(18,18,18,0.6)]">
           <div className="flex items-start justify-between gap-4">
             <p className="text-xs font-medium tracking-[0.04em] text-white/60 uppercase">
-              Walkthrough · {place.step + 1} of {TOUR_STEPS.length} · {step.role === 'staff' ? 'Medical assistant' : 'Clinician'}
+              Walkthrough · {place.step + 1} of {TOUR_STEPS.length} · Medical assistant
             </p>
             <button type="button" onClick={() => { leave(step); update(null); }} className="-m-1 rounded-full p-1 text-white/70 hover:text-white" aria-label="End the walkthrough">
               <X className="size-4" aria-hidden />

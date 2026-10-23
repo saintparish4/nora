@@ -106,6 +106,12 @@ class PriorAuthorization < ApplicationRecord
     latest_approval.present? && latest_approval.content_digest == content_digest
   end
 
+  # Everything as_api_json reads, for any query that returns requests to the
+  # client. Preloading it keeps a list at a fixed number of queries however
+  # many requests it holds.
+  API_INCLUDES = [ :patient, :requirements, :requested_by, :assigned_to, { policy_template: :payer },
+                   { patient_coverage: { insurance_plan: :payer } } ].freeze
+
   def as_api_json(detail: false)
     json = {
       id: id,

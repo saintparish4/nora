@@ -82,8 +82,8 @@ export default function Home() {
               <Link href="/demo" className={`${secondaryPill} h-12 px-6 text-[1.0625rem]`}>Explore it yourself</Link>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              No sign-up. A two-minute walkthrough plays in a practice with synthetic patients, first as the medical
-              assistant, then as the clinician. Or{' '}
+              No sign-up. A 90-second walkthrough of one request plays in a practice with synthetic patients, as the
+              medical assistant. Or{' '}
               <a href={SOURCE_URL} className="font-medium text-blue-deep hover:underline">read the source</a>.
             </p>
           </div>

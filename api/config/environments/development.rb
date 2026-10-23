@@ -64,11 +64,13 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  # Highlight code that triggered database queries in logs.
-  config.active_record.verbose_query_logs = true
-
-  # Append comments with runtime information tags to SQL queries in logs.
-  config.active_record.query_log_tags_enabled = true
+  # Requests, their parameters and timings by default; the "Completed" line
+  # still counts queries and database time. SQL_LOG=1 adds every query, the
+  # line of code that ran it, and runtime tags (make dev SQL_LOG=1).
+  sql_log = ENV["SQL_LOG"].present?
+  config.log_level = sql_log ? :debug : :info
+  config.active_record.verbose_query_logs = sql_log
+  config.active_record.query_log_tags_enabled = sql_log
 
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true

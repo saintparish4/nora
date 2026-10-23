@@ -20,8 +20,7 @@ module Api
           patient: patient.as_api_json,
           coverages: patient.coverages.includes(insurance_plan: :payer).map(&:as_api_json),
           chart_documents: patient.chart_documents.includes(:uploaded_by).order(occurred_on: :desc, id: :desc).map(&:as_api_json),
-          prior_authorizations: patient.prior_authorizations
-                                       .includes(:requirements, :requested_by, :assigned_to, :policy_template, patient_coverage: { insurance_plan: :payer })
+          prior_authorizations: patient.prior_authorizations.includes(*PriorAuthorization::API_INCLUDES)
                                        .order(created_at: :desc).map(&:as_api_json)
         }
       end

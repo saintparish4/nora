@@ -1,12 +1,9 @@
 module Api
   module V1
     class PriorAuthorizationsController < ApplicationController
-      LIST_INCLUDES = [ :patient, :requirements, :requested_by, :assigned_to, :policy_template,
-                        { patient_coverage: { insurance_plan: :payer } } ].freeze
-
       # GET /api/v1/prior_authorizations?status=&assigned_to_id=&patient_id=&open=true
       def index
-        scope = current_organization.prior_authorizations.includes(*LIST_INCLUDES).order(updated_at: :desc)
+        scope = current_organization.prior_authorizations.includes(*PriorAuthorization::API_INCLUDES).order(updated_at: :desc)
         scope = scope.where(status: Array(params[:status])) if params[:status].present?
         scope = scope.where(assigned_to_id: params[:assigned_to_id]) if params[:assigned_to_id].present?
         scope = scope.where(patient_id: params[:patient_id]) if params[:patient_id].present?
@@ -102,7 +99,8 @@ module Api
 
       # GET /api/v1/prior_authorizations/:id/events
       def events
-        pa = find_pa
+        # Only the id is needed to scope the events; skip the request's preloads.
+        pa = current_organization.prior_authorizations.find(params[:id])
         events = pa.workflow_events.includes(:actor).order(:created_at, :id)
         log_phi_access("PriorAuthorization", pa.id, :view)
         render json: { events: events.map(&:as_api_json) }
@@ -111,7 +109,7 @@ module Api
       private
 
       def find_pa
-        current_organization.prior_authorizations.includes(*LIST_INCLUDES).find(params[:id])
+        current_organization.prior_authorizations.includes(*PriorAuthorization::API_INCLUDES).find(params[:id])
       end
     end
   end

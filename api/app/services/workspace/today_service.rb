@@ -28,28 +28,29 @@ module Workspace
 
     private
 
+    # The groups, in the order a person should deal with them. Each request
+    # appears once, under the first group it matches.
+    ATTENTION_GROUPS = [
+      [ "extraction_failed", "Evidence extraction failed", ->(_user) { "Retry extraction" },
+        ->(pa) { pa.extraction_status == "failed" && PriorAuthorization::PREPARING.include?(pa.status) } ],
+      [ "needs_clarification", "Documentation missing or unclear", ->(_user) { "Review" }, ->(pa) { pa.status == "needs_clarification" } ],
+      [ "ready_for_review", "Ready for approval", ->(user) { user.approver? ? "Approve" : "Awaiting clinician approval" },
+        ->(pa) { pa.status == "ready_for_review" } ],
+      [ "ready_to_submit", "Approved, not yet submitted", ->(_user) { "Download and submit" }, ->(pa) { pa.status == "approved" } ],
+      [ "denied", "Denied by payer", ->(_user) { "Appeal or close" }, ->(pa) { pa.status == "denied" } ]
+    ].freeze
+
+    # One query for every group, with everything as_api_json reads preloaded,
+    # so the list costs the same number of queries however long it is.
     def needs_attention(pas)
-      items = []
-      base = pas.includes(:patient, :requirements, :requested_by, :assigned_to, :patient_coverage, :policy_template, :approvals)
-                .order(updated_at: :desc)
+      candidates = pas.includes(*PriorAuthorization::API_INCLUDES)
+                      .where(status: %w[needs_clarification ready_for_review approved denied])
+                      .or(pas.where(extraction_status: "failed", status: PriorAuthorization::PREPARING))
+                      .order(updated_at: :desc).to_a
 
-      base.where(extraction_status: "failed").where(status: PriorAuthorization::PREPARING).each do |pa|
-        items << item(pa, "extraction_failed", "Evidence extraction failed", "Retry extraction")
+      items = ATTENTION_GROUPS.flat_map do |kind, reason, action, matches|
+        candidates.select(&matches).map { |pa| item(pa, kind, reason, action.call(@user)) }
       end
-      base.where(status: "needs_clarification").each do |pa|
-        items << item(pa, "needs_clarification", "Documentation missing or unclear", "Review")
-      end
-      base.where(status: "ready_for_review").each do |pa|
-        action = @user.approver? ? "Approve" : "Awaiting clinician approval"
-        items << item(pa, "ready_for_review", "Ready for approval", action)
-      end
-      base.where(status: "approved").each do |pa|
-        items << item(pa, "ready_to_submit", "Approved, not yet submitted", "Download and submit")
-      end
-      base.where(status: "denied").each do |pa|
-        items << item(pa, "denied", "Denied by payer", "Appeal or close")
-      end
-
       items.uniq { |i| i[:prior_authorization][:id] }.first(ATTENTION_LIMIT)
     end
 

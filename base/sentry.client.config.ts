@@ -2,12 +2,11 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { SENTRY_DATA_COLLECTION } from "@/lib/sentry-data-collection";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   tracesSampleRate: 0.1,
-
-  // Healthcare app: do not send PII by default.
-  sendDefaultPii: false,
+  dataCollection: SENTRY_DATA_COLLECTION,
 });

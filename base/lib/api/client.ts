@@ -89,11 +89,14 @@ export async function authFetch(
 
   const send = async (csrf: string | null): Promise<Response> => {
     // A FormData body needs the browser to set a multipart boundary, so it
-    // must not be given a JSON Content-Type.
+    // must not be given a JSON Content-Type. A request with no body gets none
+    // at all: on a cross-origin GET that header makes the browser send a CORS
+    // preflight first, an extra round trip for every new URL.
     const isFormData =
       typeof FormData !== "undefined" && fetchOptions.body instanceof FormData;
+    const isJson = fetchOptions.body != null && !isFormData;
     const headers: Record<string, string> = {
-      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(isJson ? { "Content-Type": "application/json" } : {}),
       ...toHeaderRecord(fetchOptions.headers),
     };
     if (csrf) headers["X-CSRF-Token"] = csrf;

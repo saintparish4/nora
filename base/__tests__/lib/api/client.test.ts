@@ -25,12 +25,22 @@ describe('authFetch', () => {
     return options?.headers as Record<string, string>
   }
 
-  it('includes Content-Type header', async () => {
+  it('sends no Content-Type without a body, so a cross-origin GET needs no preflight', async () => {
     mockFetch.mockResolvedValueOnce(mockResponse({ ok: true }))
 
     await authFetch('/api/v1/test')
 
-    expect(headersOf(0)['Content-Type']).toBe('application/json')
+    expect(headersOf(0)['Content-Type']).toBeUndefined()
+  })
+
+  it('marks a JSON body as JSON', async () => {
+    mockFetch
+      .mockResolvedValueOnce(mockResponse({ csrf_token: 'token-1' }))
+      .mockResolvedValueOnce(mockResponse({ ok: true }))
+
+    await authFetch('/api/v1/test', { method: 'POST', body: JSON.stringify({ a: 1 }) })
+
+    expect(headersOf(1)['Content-Type']).toBe('application/json')
   })
 
   it('sends the session cookie rather than a bearer token', async () => {

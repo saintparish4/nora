@@ -2,7 +2,7 @@ module RequestForm
   # The request form for one prior authorization, as staff fill it on
   # CoverMyMeds: the administrative fields from the patient's FHIR chart, then
   # the plan's clinical questions, each answered with its source or handed to
-  # a person.
+  # a person, and those answers as a DTR QuestionnaireResponse.
   class Builder
     def self.call(...) = new(...).call
 
@@ -24,6 +24,13 @@ module RequestForm
 
     private
 
+    # The coverage and the order the answers are for, as DTR links them.
+    def context(chart)
+      coverage = chart.coverages.first
+      order = chart.medication_requests.find { |rx| AdminFields.prescribes?(rx, @pa.item_name) }
+      [ coverage && "Coverage/#{coverage['id']}", order && "MedicationRequest/#{order['id']}" ].compact
+    end
+
     def questions(chart)
       payer = @pa.policy_template.payer&.name
       set = QuestionSet.for(payer: payer, item: @pa.item_name)
@@ -32,7 +39,11 @@ module RequestForm
       end
 
       answers = ClinicalAnswers.call(@pa, chart: chart, question_set: set)
-      { available: true, set: set.as_api_json, items: answers.map(&:to_h) }
+      response = QuestionnaireResponseBuilder.call(set: set, answers: answers, patient_id: chart.patient_id, context: context(chart))
+      { available: true, editable: @pa.editable?, set: set.as_api_json, items: answers.map(&:to_h), questionnaire_response: response }
+    rescue Cql::Error => e
+      Rails.logger.error("[request_form] #{e.message}")
+      { available: false, reason: "Nora could not work out the plan's questions just now. Answer them from the requirements." }
     end
   end
 end

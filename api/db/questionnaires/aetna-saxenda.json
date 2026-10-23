@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "aetna-saxenda",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Saxenda for weight loss (Aetna)</p><ol><li>Is the patient 18 years of age or older?</li><li>Has the patient participated in a comprehensive weight management program (behavioral modification, reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months before drug therapy?</li><li>What was the patient&#39;s baseline BMI, before any weight-loss drug?</li><li>If baseline BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example hypertension, type 2 diabetes, or dyslipidemia)?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/aetna-saxenda",
   "version": "derived-2026-10-23",
   "name": "AetnaSaxenda",
@@ -37,6 +46,10 @@
           "valueString": "Saxenda PA with Limit (Aetna Pharmacy Clinical Policy Bulletin)"
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraAetnaSaxenda"
     }
   ],
   "item": [
@@ -62,6 +75,13 @@
               "valueInteger": 18
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraAetnaSaxenda.\"age\""
+          }
         }
       ],
       "answerOption": [
@@ -107,6 +127,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraAetnaSaxenda.\"program\""
+          }
         }
       ],
       "answerOption": [
@@ -148,6 +175,13 @@
               "valueInteger": 3
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraAetnaSaxenda.\"bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -200,6 +234,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraAetnaSaxenda.\"comorbidity\""
+          }
         }
       ],
       "answerOption": [

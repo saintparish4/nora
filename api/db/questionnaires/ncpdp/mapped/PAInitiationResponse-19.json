@@ -1,0 +1,210 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-qs103",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "QS103"
+    }
+  ],
+  "title": "Crestor PA Form",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Please provide all information requested. Failure to complete this form in its entirety may result in delayed processing or an adverse determination for insufficient information.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": false
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "Can your patient be switched to a preferred medication with a lower cost? Available Formulary Alternatives: atorvastatin, fluvastatin, lovastatin, pravastatin, rosuvastatin, simvastatin, Vytorin.",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q1",
+            "code": "Q1C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q1",
+            "code": "Q1C2",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q2",
+      "text": "Is the requested drug being used for an FDA-Approved indication or an indication supported in the compendia of current literature?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q2",
+            "code": "Q2C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q2",
+            "code": "Q2C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q1",
+            "code": "Q1C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q3",
+      "text": "Does the prescribed dose and quantity fall within the FDA approved labeling or within dosing guidelines found in the compendia of current literature?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q3",
+            "code": "Q3C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q3",
+            "code": "Q3C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q2",
+            "code": "Q2C1"
+          }
+        },
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q2",
+            "code": "Q2C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q4",
+      "text": "Has the patient tried and had an inadequate treatment response or intolerance to the required number of suggested formulary alternatives: Drug Name, Trial Year, Reason for Failure? Required Formulary Alternatives 3 in a class with 3 or more alternatives: atorvastatin, fluvastatin, lovastatin, pravastatin,rosuvastatin, simvastatin, Vytorin.",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q4",
+            "code": "Q4C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q4",
+            "code": "Q4C2",
+            "display": "No"
+          }
+        }
+      ],
+      "item": [
+        {
+          "linkId": "Q4.Q4C1.text",
+          "text": "Please specify",
+          "type": "text",
+          "required": true,
+          "enableWhen": [
+            {
+              "question": "Q4",
+              "operator": "=",
+              "answerCoding": {
+                "system": "urn:ncpdp:script:question-set:QS103:Q4",
+                "code": "Q4C1"
+              }
+            }
+          ]
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q3",
+            "code": "Q3C1"
+          }
+        },
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q3",
+            "code": "Q3C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q5",
+      "text": "Does the patient have a contraindication to all the alternatives?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q5",
+            "code": "Q5C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q5",
+            "code": "Q5C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS103:Q4",
+            "code": "Q4C2"
+          }
+        }
+      ]
+    }
+  ]
+}

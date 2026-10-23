@@ -1,0 +1,212 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-qs105",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "QS105"
+    }
+  ],
+  "title": "Tacrolimus PA Form",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Please provide all information requested. Failure to complete this form in its entirety may result in delayed processing or an adverse determination for insufficient information.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": true
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "What is the indication for the prescribed medication?",
+      "required": true,
+      "code": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "code": "urn:oid:2.16.840.1.113883.10.20.22.4.19",
+          "display": "INDICATION"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "linkId": "Q2",
+      "text": "Is the patient 16 years of age or older?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q2",
+            "code": "Q2C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q2",
+            "code": "Q2C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "Q3",
+      "text": "Is tacrolimus being prescribed for short-term or noncontinuous chronic use for moderate to severe atopic dermatitis (eczema)?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q3",
+            "code": "Q3C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q3",
+            "code": "Q3C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q2",
+            "code": "Q2C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q4",
+      "text": "Has the patient experienced an inadequate treatment response, intolerance, or contraindication to at least one medium or higher potency topical steroid?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q4",
+            "code": "Q4C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q4",
+            "code": "Q4C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q3",
+            "code": "Q3C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q5",
+      "text": "Will tacrolimus be used on the face, body skin folds, genital area, armpit, or around the eyes?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q5",
+            "code": "Q5C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q5",
+            "code": "Q5C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q4",
+            "code": "Q4C1"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q4",
+            "code": "Q4C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q6",
+      "text": "Has the member been advised that tacrolimus should only be used to treat the immediate problem and then should be stopped when the condition improves?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q6",
+            "code": "Q6C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q6",
+            "code": "Q6C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q5",
+            "code": "Q5C1"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS105:Q5",
+            "code": "Q5C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    }
+  ]
+}

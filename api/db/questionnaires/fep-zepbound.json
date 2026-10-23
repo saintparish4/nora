@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "fep-zepbound",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Weight Loss Medications Prior Approval Request: Zepbound (FEP)</p><ol><li>Is this request for brand or generic?</li><li>1. Standard/Basic Option Patient: Has the patient tried and failed Saxenda and Wegovy? Please select answer below:</li><li>2. Standard/Basic Option Patient Would you like to switch to a preferred medication? The preferred medications are Saxenda and Wegovy. Please select answer below:</li><li>3. Blue Focus Patient: This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. DOCUMENTATION IS REQUIRED: Please specify medical record page number(s).</li><li>4. Blue Focus Patient: Would you like to switch to a preferred medication? The preferred medication is generic Saxenda (liraglutide). Please select answer below:</li><li>5. Will the patient need more than 12 single-dose pens every 84 days?</li><li>6. What is the patient&#39;s diagnosis?</li><li>7. Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?</li><li>8. Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.</li><li>9. Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?</li><li>10. Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:</li><li>a. What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:</li><li>ii. If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:</li><li>b. Does the patient have an intolerance or contraindication or have they had an inadequate treatment response to at least TWO oral medications for weight management? Oral medications for weight management include: benzphetamine, diethylpropion, phentermine, Qsymia, etc.</li><li>a. Has the patient lost at least 5 percent of their baseline body weight?</li><li>* If NO, has the patient continued to maintain their initial 5 percent weight loss?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/fep-zepbound",
   "version": "2026-01-01",
   "name": "FepZepbound",
@@ -41,6 +50,10 @@
           "valueString": "dda98de411711499e3c1927141ae3dd984d31d36f7e0191b105a98ec644a76bc"
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraFepZepbound"
     }
   ],
   "item": [
@@ -61,6 +74,13 @@
               "valueCode": "age_group"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"age-group\""
+          }
         }
       ],
       "answerOption": [
@@ -97,6 +117,13 @@
               "valueCode": "plan_option"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"plan-option\""
+          }
         }
       ],
       "answerOption": [
@@ -134,6 +161,13 @@
               "valueCode": "brand_or_generic"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"brand-generic\""
+          }
         }
       ],
       "answerOption": [
@@ -172,6 +206,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"tried-saxenda-wegovy\""
+          }
         }
       ],
       "answerOption": [
@@ -234,6 +275,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"switch-preferred\""
+          }
         }
       ],
       "answerOption": [
@@ -303,6 +351,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"focus-nonformulary\""
+          }
         }
       ],
       "answerOption": [
@@ -351,6 +406,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"focus-switch-generic\""
+          }
         }
       ],
       "answerOption": [
@@ -407,6 +469,13 @@
               "valueInteger": 84
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"pens-over-limit\""
+          }
         }
       ],
       "answerOption": [
@@ -445,6 +514,13 @@
               "valueCode": "diagnosis"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"diagnosis\""
+          }
         }
       ],
       "answerOption": [
@@ -512,6 +588,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"program\""
+          }
         }
       ],
       "answerOption": [
@@ -558,6 +641,13 @@
               "valueCode": "no-glp1"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"glp1\""
+          }
         }
       ],
       "answerOption": [
@@ -611,6 +701,13 @@
               "valueCode": "no"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"pa-combination\""
+          }
         }
       ],
       "answerOption": [
@@ -649,6 +746,13 @@
               "valueCode": "continuation"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"continuation\""
+          }
         }
       ],
       "answerOption": [
@@ -687,6 +791,13 @@
               "valueCode": "bmi_range"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"initiation-bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -743,6 +854,13 @@
               "valueCode": "comorbidities"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"initiation-comorbidity\""
+          }
         }
       ],
       "answerOption": [
@@ -876,6 +994,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"initiation-oral-trials\""
+          }
         }
       ],
       "answerOption": [
@@ -924,6 +1049,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"continuation-loss\""
+          }
         }
       ],
       "answerOption": [
@@ -972,6 +1104,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepZepbound.\"continuation-maintained\""
+          }
         }
       ],
       "answerOption": [

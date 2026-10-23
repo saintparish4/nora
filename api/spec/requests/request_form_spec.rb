@@ -44,4 +44,33 @@ RSpec.describe 'GET /api/v1/prior_authorizations/:id/request_form', type: :reque
     get "/api/v1/prior_authorizations/#{pa.id}/request_form", headers: auth_headers(create(:user))
     expect(response).to have_http_status(:not_found)
   end
+
+  it "keeps the fields when the plan's questions cannot be worked out" do
+    organization = seed_demo_practice
+    staff = organization.users.find_by!(email: 'ma@nora.com')
+    allow(RequestForm::Cql).to receive(:call).and_raise(RequestForm::Cql::Error, 'CQL did not run: Node.js is not installed')
+
+    get "/api/v1/prior_authorizations/#{Demo::Practice.featured_request.id}/request_form", headers: auth_headers(staff)
+
+    form = parsed_body['request_form']
+    expect(form['available']).to be(true)
+    expect(form['questions']).to eq('available' => false, 'reason' => "Nora could not work out the plan's questions just now. Answer them from the requirements.")
+  end
+
+  it "records the prescriber's office's answer and returns the form as it now is" do
+    organization = seed_demo_practice
+    staff = organization.users.find_by!(email: 'ma@nora.com')
+    featured = Demo::Practice.featured_request
+
+    post "/api/v1/prior_authorizations/#{featured.id}/request_form_answer", params: { link_id: 'other-glp1', codes: [ 'no' ] },
+                                                                           headers: auth_headers(staff)
+
+    item = parsed_body.dig('request_form', 'questions', 'items').find { |i| i['link_id'] == 'other-glp1' }
+    expect(item).to include('status' => 'answered', 'origin' => 'manual')
+    expect(PhiAccessLog.where(resource_id: featured.id.to_s, action: 'update')).to exist
+
+    post "/api/v1/prior_authorizations/#{featured.id}/request_form_answer", params: { link_id: 'other-glp1', codes: [ 'perhaps' ] },
+                                                                           headers: auth_headers(staff)
+    expect(response).to have_http_status(:unprocessable_content)
+  end
 end

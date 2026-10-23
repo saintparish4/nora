@@ -4,7 +4,7 @@ class WorkflowEvent < ApplicationRecord
   EVENT_TYPES = %w[
     created status_changed extraction_started extraction_succeeded extraction_failed
     evidence_added evidence_verified evidence_rejected requirement_reviewed
-    final_check asked_prescriber assigned packet_downloaded task_created task_completed
+    final_check asked_prescriber assigned packet_downloaded task_created task_completed form_answer_recorded
     approved approval_invalidated
   ].freeze
   # approved and approval_invalidated belong to the old clinician-approval flow:

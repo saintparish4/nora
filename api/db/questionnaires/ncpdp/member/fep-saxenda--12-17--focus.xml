@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Open>
+  <PACaseID>NORA-DEMO-0001</PACaseID>
+  <DeadlineForReply>
+    <DateTime>2026-10-26T23:59:59</DateTime>
+  </DeadlineForReply>
+  <QuestionSet>
+    <Header>
+      <QuestionSetID>fep-saxenda</QuestionSetID>
+      <QuestionSetTitle>Saxenda Prior Approval Request (FEP)</QuestionSetTitle>
+      <QuestionSetDescription>SAXENDA PRIOR APPROVAL REQUEST, revised 2026-01-12: the plan's own questions, word for word.</QuestionSetDescription>
+      <AttachmentRequired>false</AttachmentRequired>
+    </Header>
+    <Question>
+      <QuestionID>Q1</QuestionID>
+      <SequenceNumber>1</SequenceNumber>
+      <QuestionText>Is this request for brand or generic?</QuestionText>
+      <DefaultNextQuestionID>Q2</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q1C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Brand</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q1C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Generic</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q2</QuestionID>
+      <SequenceNumber>2</SequenceNumber>
+      <QuestionText>What is the patient's diagnosis?</QuestionText>
+      <DefaultNextQuestionID>Q3</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q2C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q2C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Obesity, used for chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q2C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Elevated BMI, used for chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q2C4</ChoiceID>
+            <SequenceNumber>4</SequenceNumber>
+            <ChoiceText>None of the above</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q3</QuestionID>
+      <SequenceNumber>3</SequenceNumber>
+      <QuestionText>How many pre-filled pens will the patient need for 90 days?</QuestionText>
+      <DefaultNextQuestionID>Q4</DefaultNextQuestionID>
+      <QuestionType>
+        <Numeric>
+          <IsNumeric>true</IsNumeric>
+        </Numeric>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q4</QuestionID>
+      <SequenceNumber>4</SequenceNumber>
+      <QuestionText>Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?</QuestionText>
+      <DefaultNextQuestionID>Q5</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q4C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q4C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q5</QuestionID>
+      <SequenceNumber>5</SequenceNumber>
+      <QuestionText>Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.</QuestionText>
+      <DefaultNextQuestionID>Q6</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q5C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>No, the patient is not using another GLP-1</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q5C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Yes, this is a change in therapy from another GLP-1 (specify medication)</ChoiceText>
+            <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q5C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Yes, this is a request for an additional GLP-1 (specify medication)</ChoiceText>
+            <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q6</QuestionID>
+      <SequenceNumber>6</SequenceNumber>
+      <QuestionText>Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?</QuestionText>
+      <DefaultNextQuestionID>Q7</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q6C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q6C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q7</QuestionID>
+      <SequenceNumber>7</SequenceNumber>
+      <QuestionText>This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below:</QuestionText>
+      <DefaultNextQuestionID>Q8</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q7C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Please specify the formulary alternative medication(s) and medical record page number(s)</ChoiceText>
+            <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q7C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>The patient has not tried and failed any formulary alternatives.</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q8</QuestionID>
+      <SequenceNumber>8</SequenceNumber>
+      <QuestionText>Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide).</QuestionText>
+      <DefaultNextQuestionID>Q9</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q8C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q8C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q9</QuestionID>
+      <SequenceNumber>9</SequenceNumber>
+      <QuestionText>Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:</QuestionText>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q9C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>NO – this is INITIATION of therapy</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q10</NextQuestionID>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q9C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>YES – this is a PA renewal for CONTINUATION of therapy</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q11</NextQuestionID>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q10</QuestionID>
+      <SequenceNumber>10</SequenceNumber>
+      <QuestionText>Age 12-17: What is the patient's body mass index (BMI) percentile for their age? Please select answer below:</QuestionText>
+      <DefaultNextQuestionID>END</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q10C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Less than 95th percentile</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Greater than or equal to 95th percentile</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q11</QuestionID>
+      <SequenceNumber>11</SequenceNumber>
+      <QuestionText>Age 12-17: Has the patient maintained clinically significant weight loss?</QuestionText>
+      <DefaultNextQuestionID>END</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q11C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q11C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+  </QuestionSet>
+</Open>

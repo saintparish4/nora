@@ -147,3 +147,31 @@ namespace :eval do
     RequestFormEval::Runner.new(only: ENV["CASES"]&.split(",")).call
   end
 end
+
+namespace :eval do
+  namespace :request_form do
+    desc "Write the blind labelling packet and answer sheet (evals/request_form/labeling)"
+    task packet: :environment do
+      require Rails.root.join("evals/request_form/labeling")
+      RequestFormEval::Packet.new.call
+    end
+
+    desc "Cohen's kappa between the filled answer sheets in labeling/labels and the eval's labels"
+    task agreement: :environment do
+      require Rails.root.join("evals/request_form/labeling")
+      RequestFormEval::Agreement.new.call
+    end
+  end
+end
+
+namespace :eval do
+  namespace :request_form do
+    desc "Score the timed-task sessions in evals/request_form/timed (TEMPLATES=1 writes blank sheets)"
+    task timed: :environment do
+      require Rails.root.join("evals/request_form/timed_task")
+      next RequestFormEval::TimedTask.write_templates if ENV["TEMPLATES"] == "1"
+
+      RequestFormEval::TimedTask.new.call
+    end
+  end
+end

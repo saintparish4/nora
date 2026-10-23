@@ -1,6 +1,15 @@
 {
   "resourceType": "Questionnaire",
   "id": "fep-wegovy",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-dtr/StructureDefinition/dtr-std-questionnaire"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Wegovy Prior Approval Request (FEP)</p><ol><li>Is this request for brand or generic?</li><li>Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days?</li><li>Tablets: Will the patient need more than 90 tablets every 90 days?</li><li>1. What is the patient&#39;s diagnosis?</li><li>2. Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?</li><li>3. Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.</li><li>4. Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?</li><li>6. Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound?</li><li>7. a. This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below:</li><li>5. Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:</li><li>a. Age 12-17: What is the patient&#39;s body mass index (BMI) percentile for their age? Please select answer below:</li><li>b. i. Age 18 or older: What is the patient&#39;s body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:</li><li>ii. If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:</li><li>a. Age 12-17: Has the patient maintained clinically significant weight loss?</li><li>b. Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight?</li><li>* If NO, has the patient continued to maintain their initial 5 percent weight loss?</li></ol></div>"
+  },
   "url": "https://nora.example/fhir/Questionnaire/fep-wegovy",
   "version": "2026-09-18",
   "name": "FepWegovy",
@@ -45,6 +54,10 @@
           "valueString": "Page 3, for MASH, is left out: Nora covers weight management only."
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraFepWegovy"
     }
   ],
   "item": [
@@ -65,6 +78,13 @@
               "valueCode": "age_group"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"age-group\""
+          }
         }
       ],
       "answerOption": [
@@ -101,6 +121,13 @@
               "valueCode": "plan_option"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"plan-option\""
+          }
         }
       ],
       "answerOption": [
@@ -138,6 +165,13 @@
               "valueCode": "brand_or_generic"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"brand-generic\""
+          }
         }
       ],
       "answerOption": [
@@ -174,6 +208,13 @@
               "valueCode": "dosage_form"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"dosage-form\""
+          }
         }
       ],
       "answerOption": [
@@ -219,6 +260,13 @@
               "valueInteger": 84
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"pens-over-limit\""
+          }
         }
       ],
       "answerOption": [
@@ -274,6 +322,13 @@
               "valueInteger": 90
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"tablets-over-limit\""
+          }
         }
       ],
       "answerOption": [
@@ -322,6 +377,13 @@
               "valueCode": "diagnosis"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"diagnosis\""
+          }
         }
       ],
       "answerOption": [
@@ -396,6 +458,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"program\""
+          }
         }
       ],
       "answerOption": [
@@ -442,6 +511,13 @@
               "valueCode": "no-glp1"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"glp1\""
+          }
         }
       ],
       "answerOption": [
@@ -495,6 +571,13 @@
               "valueCode": "no"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"pa-combination\""
+          }
         }
       ],
       "answerOption": [
@@ -537,6 +620,13 @@
               "valueString": "Zepbound"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"change-from-zepbound\""
+          }
         }
       ],
       "answerOption": [
@@ -585,6 +675,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"focus-nonformulary\""
+          }
         }
       ],
       "answerOption": [
@@ -633,6 +730,13 @@
               "valueCode": "continuation"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"continuation\""
+          }
         }
       ],
       "answerOption": [
@@ -671,6 +775,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"initiation-pediatric-bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -728,6 +839,13 @@
               "valueCode": "bmi_range"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"initiation-bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -793,6 +911,13 @@
               "valueCode": "comorbidities"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"initiation-comorbidity\""
+          }
         }
       ],
       "answerOption": [
@@ -918,6 +1043,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"continuation-pediatric\""
+          }
         }
       ],
       "answerOption": [
@@ -975,6 +1107,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"continuation-loss\""
+          }
         }
       ],
       "answerOption": [
@@ -1032,6 +1171,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql",
+            "expression": "NoraFepWegovy.\"continuation-maintained\""
+          }
         }
       ],
       "answerOption": [

@@ -170,3 +170,18 @@ export async function getRequestForm(id: number): Promise<RequestForm> {
   const data = await readJson<{ request_form: unknown }>(await authFetch(`${BASE}/${id}/request_form`));
   return validateResponse(RequestFormSchema, data.request_form);
 }
+
+/**
+ * Records a person's answer to one of the plan's questions, or clears it when
+ * neither codes nor value is given. Returns the request form as it now is.
+ */
+export async function recordFormAnswer(
+  id: number,
+  answer: { link_id: string; codes?: string[]; value?: string; note?: string }
+): Promise<RequestForm> {
+  const data = await readJson<{ request_form: unknown }>(
+    await authFetch(`${BASE}/${id}/request_form_answer`, post(answer)),
+    'Could not record the answer'
+  );
+  return validateResponse(RequestFormSchema, data.request_form);
+}

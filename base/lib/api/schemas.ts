@@ -326,6 +326,17 @@ const QuoteSourceSchema = z.object({
   ),
 });
 
+/** An answer a person gave: the prescriber's office's reply, or a correction to Nora's. */
+const StaffSourceSchema = z.object({
+  kind: z.literal('staff'),
+  origin: z.enum(['manual', 'override']),
+  recorded_by: z.string().nullish(),
+  recorded_at: z.string().nullish(),
+  note: z.string().nullish(),
+  /** Nora's answer, when this one replaces it. */
+  replaces: z.string().nullish(),
+});
+
 export const FormQuestionSchema = z.object({
   link_id: z.string(),
   prefix: z.string().nullable(),
@@ -334,13 +345,17 @@ export const FormQuestionSchema = z.object({
   /** A chart fact that decides which questions apply; not on the plan's form. */
   hidden: z.boolean(),
   type: z.enum(['choice', 'integer']),
+  /** Several choices may be picked. */
+  repeats: z.boolean(),
   options: z.array(z.object({ code: z.string(), display: z.string() })),
   status: z.enum(['answered', 'ask_prescriber', 'check_chart']),
   answer: z.object({ codes: z.array(z.string()).nullable(), display: z.string() }).nullable(),
-  source: z.union([QuoteSourceSchema, ChartSourceSchema.extend({ kind: z.literal('chart') })]).nullable(),
+  source: z.union([QuoteSourceSchema, StaffSourceSchema, ChartSourceSchema.extend({ kind: z.literal('chart') })]).nullable(),
   reason: z.string().nullable(),
   /** The unanswered questions this one hangs on. */
   depends_on: z.array(z.string()),
+  /** DTR's information origin: Nora's CQL (auto), or a person (manual, override). */
+  origin: z.enum(['auto', 'manual', 'override']).nullable(),
 });
 
 export const QuestionSetSchema = z.object({
@@ -365,7 +380,15 @@ export const RequestFormSchema = z.union([
     fields: z.array(FormFieldSchema),
     questions: z.union([
       z.object({ available: z.literal(false), reason: z.string() }),
-      z.object({ available: z.literal(true), set: QuestionSetSchema, items: z.array(FormQuestionSchema) }),
+      z.object({
+        available: z.literal(true),
+        /** False once submitted: the answers are then on the record. */
+        editable: z.boolean(),
+        set: QuestionSetSchema,
+        items: z.array(FormQuestionSchema),
+        /** The answers as a Da Vinci DTR QuestionnaireResponse. */
+        questionnaire_response: z.record(z.string(), z.unknown()),
+      }),
     ]),
   }),
 ]);

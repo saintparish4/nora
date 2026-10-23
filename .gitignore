@@ -54,3 +54,4 @@ directive/
 # Keep the committed env templates (they must survive the .env* rules above)
 !api/.env.example
 !base/.env.local.example
+/api/cql/node_modules

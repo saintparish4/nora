@@ -52,6 +52,7 @@ class PriorAuthorization < ApplicationRecord
   has_many :approvals, as: :approvable, dependent: :restrict_with_error
   has_many :workflow_events, as: :subject, dependent: :restrict_with_error
   has_many :tasks, as: :subject, dependent: :restrict_with_error
+  has_many :form_answers, dependent: :destroy
 
   attr_accessor :transitioning
 

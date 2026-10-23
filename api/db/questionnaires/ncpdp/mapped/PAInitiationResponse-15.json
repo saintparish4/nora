@@ -1,0 +1,178 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-qs101",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "QS101"
+    }
+  ],
+  "title": "Lovenox PA Form",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Please provide all information requested. Failure to complete this form in its entirety may result in delayed processing or an adverse determination for insufficient information.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": false
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "Is this patient home self-administering?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q1",
+            "code": "Q1C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q1",
+            "code": "Q1C2",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q2",
+      "text": "Is the medication to be used to treat prophylaxis?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q2",
+            "code": "Q2C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q2",
+            "code": "Q2C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q1",
+            "code": "Q1C1"
+          }
+        },
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q1",
+            "code": "Q1C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q3",
+      "text": "When was or will the surgery be done?",
+      "required": true,
+      "type": "date",
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q2",
+            "code": "Q2C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q4",
+      "text": "Is the medication to be used for treatment of DVT?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q4",
+            "code": "Q4C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q4",
+            "code": "Q4C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q2",
+            "code": "Q2C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q5",
+      "text": "What is the patient's weight (in pounds)?",
+      "required": true,
+      "type": "decimal",
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q4",
+            "code": "Q4C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q6",
+      "text": "Describe result of Warfarin use (include INR and date drawn) or reason why patient can't use Warfarin.",
+      "required": true,
+      "type": "text",
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:QS101:Q4",
+            "code": "Q4C2"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "any"
+    }
+  ]
+}

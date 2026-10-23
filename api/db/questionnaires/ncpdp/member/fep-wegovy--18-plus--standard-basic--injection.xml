@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Open>
+  <PACaseID>NORA-DEMO-0001</PACaseID>
+  <DeadlineForReply>
+    <DateTime>2026-10-26T23:59:59</DateTime>
+  </DeadlineForReply>
+  <QuestionSet>
+    <Header>
+      <QuestionSetID>fep-wegovy</QuestionSetID>
+      <QuestionSetTitle>Wegovy Prior Approval Request (FEP)</QuestionSetTitle>
+      <QuestionSetDescription>WEGOVY PRIOR APPROVAL REQUEST, revised 2026-09-18: the plan's own questions, word for word.</QuestionSetDescription>
+      <AttachmentRequired>false</AttachmentRequired>
+    </Header>
+    <Question>
+      <QuestionID>Q1</QuestionID>
+      <SequenceNumber>1</SequenceNumber>
+      <QuestionText>Is this request for brand or generic?</QuestionText>
+      <DefaultNextQuestionID>Q2</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q1C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Brand</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q1C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Generic</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q2</QuestionID>
+      <SequenceNumber>2</SequenceNumber>
+      <QuestionText>Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days?</QuestionText>
+      <DefaultNextQuestionID>Q3</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q2C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q2C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q3</QuestionID>
+      <SequenceNumber>3</SequenceNumber>
+      <QuestionText>What is the patient's diagnosis?</QuestionText>
+      <DefaultNextQuestionID>Q4</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q3C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q3C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Elevated BMI, used for chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q3C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Obesity, used for chronic weight management</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q3C4</ChoiceID>
+            <SequenceNumber>4</SequenceNumber>
+            <ChoiceText>Major adverse cardiovascular risk reduction associated with established CV disease and either obesity or being overweight (chronic weight management)</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q3C5</ChoiceID>
+            <SequenceNumber>5</SequenceNumber>
+            <ChoiceText>Noncirrhotic metabolic dysfunction-associated steatohepatitis (MASH)</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q3C6</ChoiceID>
+            <SequenceNumber>6</SequenceNumber>
+            <ChoiceText>None of the above</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q4</QuestionID>
+      <SequenceNumber>4</SequenceNumber>
+      <QuestionText>Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?</QuestionText>
+      <DefaultNextQuestionID>Q5</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q4C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q4C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q5</QuestionID>
+      <SequenceNumber>5</SequenceNumber>
+      <QuestionText>Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.</QuestionText>
+      <DefaultNextQuestionID>Q6</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q5C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>No, the patient is not using another GLP-1</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q5C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Yes, this is a change in therapy from another GLP-1 (specify medication)</ChoiceText>
+            <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q5C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Yes, this is a request for an additional GLP-1 (specify medication)</ChoiceText>
+            <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q6</QuestionID>
+      <SequenceNumber>6</SequenceNumber>
+      <QuestionText>Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?</QuestionText>
+      <DefaultNextQuestionID>Q7</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q6C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q6C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q7</QuestionID>
+      <SequenceNumber>7</SequenceNumber>
+      <QuestionText>Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound?</QuestionText>
+      <DefaultNextQuestionID>Q8</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q7C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q7C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q8</QuestionID>
+      <SequenceNumber>8</SequenceNumber>
+      <QuestionText>Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:</QuestionText>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q8C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>NO – this is INITIATION of therapy</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q9</NextQuestionID>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q8C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>YES – this is a PA renewal for CONTINUATION of therapy</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q11</NextQuestionID>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q9</QuestionID>
+      <SequenceNumber>9</SequenceNumber>
+      <QuestionText>Age 18 or older: What is the patient's body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:</QuestionText>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q9C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Less than 27 kg/m2</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>END</NextQuestionID>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q9C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Between 27 kg/m2 and 29.9 kg/m2</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q10</NextQuestionID>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q9C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Greater than or equal to 30kg/m2</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>END</NextQuestionID>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q10</QuestionID>
+      <SequenceNumber>10</SequenceNumber>
+      <QuestionText>If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:</QuestionText>
+      <DefaultNextQuestionID>END</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>true</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q10C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Type 2 diabetes mellitus</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>Dyslipidemia</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C3</ChoiceID>
+            <SequenceNumber>3</SequenceNumber>
+            <ChoiceText>Hypertension</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C4</ChoiceID>
+            <SequenceNumber>4</SequenceNumber>
+            <ChoiceText>Congenital heart disease</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C5</ChoiceID>
+            <SequenceNumber>5</SequenceNumber>
+            <ChoiceText>Cerebrovascular disease</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C6</ChoiceID>
+            <SequenceNumber>6</SequenceNumber>
+            <ChoiceText>Peripheral artery disease (PAD)</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C7</ChoiceID>
+            <SequenceNumber>7</SequenceNumber>
+            <ChoiceText>Coronary heart disease</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C8</ChoiceID>
+            <SequenceNumber>8</SequenceNumber>
+            <ChoiceText>Acute coronary syndrome (ACS)</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C9</ChoiceID>
+            <SequenceNumber>9</SequenceNumber>
+            <ChoiceText>Myocardial infarction (MI)</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C10</ChoiceID>
+            <SequenceNumber>10</SequenceNumber>
+            <ChoiceText>Unstable angina</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C11</ChoiceID>
+            <SequenceNumber>11</SequenceNumber>
+            <ChoiceText>Coronary or other arterial revascularization</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C12</ChoiceID>
+            <SequenceNumber>12</SequenceNumber>
+            <ChoiceText>Prior percutaneous coronary intervention/coronary bypass surgery</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q10C13</ChoiceID>
+            <SequenceNumber>13</SequenceNumber>
+            <ChoiceText>None of the above</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q11</QuestionID>
+      <SequenceNumber>11</SequenceNumber>
+      <QuestionText>Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight?</QuestionText>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q11C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>END</NextQuestionID>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q11C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+            <NextQuestionID>Q12</NextQuestionID>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+    <Question>
+      <QuestionID>Q12</QuestionID>
+      <SequenceNumber>12</SequenceNumber>
+      <QuestionText>If NO, has the patient continued to maintain their initial 5 percent weight loss?</QuestionText>
+      <DefaultNextQuestionID>END</DefaultNextQuestionID>
+      <QuestionType>
+        <Select>
+          <SelectMultiple>false</SelectMultiple>
+          <Choice>
+            <ChoiceID>Q12C1</ChoiceID>
+            <SequenceNumber>1</SequenceNumber>
+            <ChoiceText>Yes</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+          <Choice>
+            <ChoiceID>Q12C2</ChoiceID>
+            <SequenceNumber>2</SequenceNumber>
+            <ChoiceText>No</ChoiceText>
+            <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+          </Choice>
+        </Select>
+      </QuestionType>
+    </Question>
+  </QuestionSet>
+</Open>

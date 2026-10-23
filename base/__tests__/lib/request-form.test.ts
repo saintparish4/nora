@@ -10,12 +10,14 @@ const question = (overrides: Partial<FormQuestion>): FormQuestion => ({
   plain: 'In plain words.',
   hidden: false,
   type: 'choice',
+  repeats: false,
   options: [],
   status: 'answered',
   answer: null,
   source: null,
   reason: null,
   depends_on: [],
+  origin: null,
   ...overrides,
 })
 

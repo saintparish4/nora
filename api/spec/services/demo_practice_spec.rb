@@ -160,6 +160,8 @@ RSpec.describe 'Demo practice' do
       create(:patient_coverage, patient: visitor_patient)
       create(:chart_document, patient: visitor_patient, uploaded_by: staff)
       create(:user, :admin, organization: organization, email: 'visitor@example.com')
+      RequestForm::RecordAnswer.call(Demo::Practice.featured_request, actor: staff, link_id: 'other-glp1', codes: [ 'no' ],
+                                                                      source: Fhir::BundleSource.new(dir: Fhir::DEMO_BUNDLES))
       Authorizations::ManualTransitionService.call(Demo::Practice.featured_request, actor: staff, to: 'cancelled')
       staff.update!(first_name: 'Changed')
 
@@ -171,6 +173,7 @@ RSpec.describe 'Demo practice' do
       expect(organization.prior_authorizations.pluck(:status))
         .to match_array(%w[approved_by_payer needs_clarification ready_for_review gathering])
       expect(Demo::Practice.featured_request.status).to eq('needs_clarification')
+      expect(FormAnswer.joins(:prior_authorization).where(prior_authorizations: { organization_id: organization.id })).to be_empty
     end
 
     it 'leaves every other practice exactly as it was' do

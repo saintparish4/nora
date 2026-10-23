@@ -25,6 +25,10 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
+# Node runs the plans' question-set CQL (cql/dist/run.cjs, the engine bundled
+# into one file). Only the binary is copied into the final image.
+FROM docker.io/library/node:22-slim AS node
+
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
@@ -54,6 +58,7 @@ FROM base
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \

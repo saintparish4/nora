@@ -1,0 +1,13 @@
+{
+  "name": "nora-cql",
+  "private": true,
+  "description": "Runs Nora's CQL (ELM) against a patient's FHIR data. Called by RequestForm::Cql.",
+  "type": "module",
+  "dependencies": {
+    "cql-exec-fhir": "2.2.0",
+    "cql-execution": "3.3.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  }
+}

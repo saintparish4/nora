@@ -45,4 +45,41 @@ describe('Request form for CoverMyMeds', () => {
     field('member_id').find('button').click();
     cy.get('@copy').should('have.been.calledWith', 'U90114572');
   });
+
+  describe('answers from people', () => {
+    beforeEach(() => cy.resetDemo());
+
+    it("records the prescriber's office's answer, which then decides what else applies (Jane Rivera)", () => {
+      openForm('Jane Rivera', 'Jane Rivera · Wegovy');
+      question('comorbidity').should('contain', 'Only if the plan asks it');
+
+      question('bmi').within(() => {
+        cy.contains('button', "Record the office's answer").click();
+        cy.contains('label', 'Between 27 kg/m2 and 29.9 kg/m2').click();
+        cy.get('input[aria-label="Note"]').type('Office replied by fax: 29.1 before Saxenda');
+        cy.contains('button', 'Save answer').click();
+      });
+
+      question('bmi').should('have.attr', 'data-status', 'answered').and('contain', 'Entered by staff').and('contain', 'Entered by Jordan Blake')
+        .and('contain', 'Office replied by fax');
+      question('comorbidity').should('not.contain', 'Only if the plan asks it');
+    });
+
+    it("corrects Nora's answer, and can go back to it (Tom Okafor)", () => {
+      openForm('Tom Okafor', 'Tom Okafor · Saxenda');
+      question('pens-90-days').within(() => {
+        cy.contains('button', 'Change answer').click();
+        cy.get('input[aria-label="Answer"]').clear().type('18');
+        cy.contains('button', 'Save answer').click();
+      });
+      question('pens-90-days').should('contain', 'Changed by staff').and('contain', 'Nora had “15”');
+
+      question('pens-90-days').within(() => {
+        cy.contains('button', 'Change answer').click();
+        cy.contains('button', "Go back to Nora's answer").click();
+      });
+      question('pens-90-days').should('contain', 'From the chart').and('not.contain', 'Changed by staff');
+    });
+  });
 });
+

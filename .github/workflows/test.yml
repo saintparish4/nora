@@ -26,6 +26,12 @@ jobs:
           working-directory: ./api
           bundler-cache: true
 
+      # Nora runs the plans' question-set CQL with Node (api/cql/dist/run.cjs).
+      - name: Set up Node.js for CQL
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
       - name: Run RuboCop
         working-directory: ./api
         run: bundle exec rubocop -f github
@@ -88,6 +94,12 @@ jobs:
         with:
           working-directory: ./api
           bundler-cache: true
+
+      # Nora runs the plans' question-set CQL with Node (api/cql/dist/run.cjs).
+      - name: Set up Node.js for CQL
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
 
       - name: Set up database
         working-directory: ./api
@@ -158,6 +170,12 @@ jobs:
         with:
           working-directory: ./api
           bundler-cache: true
+
+      # Nora runs the plans' question-set CQL with Node (api/cql/dist/run.cjs).
+      - name: Set up Node.js for CQL
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v6

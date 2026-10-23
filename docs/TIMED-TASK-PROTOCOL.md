@@ -93,6 +93,8 @@ Score against the answer key with the eval's rules:
   - a guess where the key is ASK, which is the costly error;
   - ASK where the chart had the answer, which is the safe miss.
 
+The tooling is in `api/evals/request_form/`. `timed/` holds the session and entry templates, and `bin/rails eval:request_form:timed` writes each person's results. `labeling/` holds the blind packet and answer sheet, and `bin/rails eval:request_form:agreement` gives Cohen's kappa and lists every disagreement.
+
 ## Analysis
 
 Descriptive only.

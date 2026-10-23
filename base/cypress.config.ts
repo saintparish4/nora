@@ -6,7 +6,7 @@ const apiDir = path.resolve(__dirname, '../api');
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:3005',
+    baseUrl: process.env.CYPRESS_BASE_URL ?? 'http://localhost:3005',
     specPattern: 'cypress/e2e/**/*.cy.ts',
     supportFile: 'cypress/support/e2e.ts',
     viewportWidth: 1440,

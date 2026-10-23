@@ -97,7 +97,7 @@ Nora uses synthetic data only. It is a portfolio project, not a product in use w
 
 ```bash
 make test        # RSpec + Jest
-make test-e2e    # Cypress against the real API and console (ports 3005 and 3006 free)
+make test-e2e    # Cypress against the real API and console, on ports 3105/3106
 make lint        # RuboCop + ESLint
 cd api && bundle exec brakeman --no-pager   # security scan, as CI runs it
 ```

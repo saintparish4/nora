@@ -68,7 +68,7 @@ make test-frontend
 
 **Backend:** RSpec in `api/spec/` (requests, models, services, controllers).  
 **Frontend:** Jest in `base/` (e.g. `__tests__/`). Use `pnpm test:watch` for watch mode, `pnpm test:coverage` for coverage.  
-**Console end to end:** `make test-e2e` (or `cd base && pnpm e2e`, `pnpm e2e:open` for the runner) seeds a demo practice into `api/storage/e2e.sqlite3`, builds the console, boots both servers, and runs Cypress (`base/cypress/e2e/`). `E2E=true` is what moves the API onto that file and lifts its rate limits; neither applies in production. Specs that change a request call `cy.resetDemo()` first and find requests by patient name, because ids change on every reset. Logs and failure screenshots land in `base/cypress/logs` and `base/cypress/screenshots`.
+**Console end to end:** `make test-e2e` (or `cd base && pnpm e2e`, `pnpm e2e:open` for the runner) seeds a demo practice into `api/storage/e2e.sqlite3`, builds the console, boots both servers on their own ports (console 3105, API 3106, so `make dev` can keep running), and runs Cypress (`base/cypress/e2e/`). `E2E=true` is what moves the API onto that file and lifts its rate limits; neither applies in production. Specs that change a request call `cy.resetDemo()` first and find requests by patient name, because ids change on every reset. Logs and failure screenshots land in `base/cypress/logs` and `base/cypress/screenshots`.
 
 ## Code Quality
 

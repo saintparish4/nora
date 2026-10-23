@@ -20,7 +20,7 @@ help:
 	@echo "  make db-migrate   - Run database migrations"
 	@echo "  make db-seed      - Seed database"
 	@echo "  make test-backend-postgres - RSpec against PostgreSQL (needs docker compose up -d postgres)"
-	@echo "  make test-e2e     - Cypress against the real API and console (ports 3005/3006 free)"
+	@echo "  make test-e2e     - Cypress against the real API and console (own ports, 3105/3106)"
 	@echo "  make clean        - Clean build artifacts and dependencies"
 	@echo "  make lint         - Run frontend (ESLint) and backend (RuboCop) linters"
 	@echo "  make lint-frontend - Run ESLint in base/"
@@ -55,7 +55,8 @@ test-backend:
 test-frontend:
 	cd base && pnpm test
 
-# Cypress against the real stack; needs ports 3005 and 3006 free.
+# Cypress against the real stack, on its own ports (3105/3106), so it can run
+# alongside make dev.
 test-e2e:
 	cd base && pnpm e2e
 

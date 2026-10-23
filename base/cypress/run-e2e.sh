@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Run the Cypress suite against the real stack: the Rails API on :3006 with a
-# freshly seeded demo practice, and a production build of the console on :3005.
+# Run the Cypress suite against the real stack: the Rails API on :3106 with a
+# freshly seeded demo practice, and a production build of the console on :3105.
+# Its own ports, so it can run while `make dev` holds 3005 and 3006.
 #
 #   cypress/run-e2e.sh            headless run (what CI does)
 #   cypress/run-e2e.sh --open     interactive runner
@@ -17,13 +18,14 @@ mkdir -p "$LOG_DIR"
 
 export E2E=true
 export RAILS_ENV=development
-export NEXT_PUBLIC_API_URL=http://localhost:3006
+export NEXT_PUBLIC_API_URL=http://localhost:3106
+export CYPRESS_BASE_URL=http://localhost:3105
 # Rails' db tasks in development also act on the test database; leave it alone.
 export SKIP_TEST_DATABASE=true
 
-for port in 3005 3006; do
+for port in 3105 3106; do
   if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
-    echo "Port $port is in use. Stop the dev servers first (make dev-stop)." >&2
+    echo "Port $port is in use; another e2e run may still be going." >&2
     exit 1
   fi
 done
@@ -56,13 +58,13 @@ if [[ "${SKIP_BUILD:-}" != "1" ]]; then
   (cd "$BASE_DIR" && pnpm run build) > "$LOG_DIR/build.log" 2>&1
 fi
 
-(cd "$API_DIR" && exec bundle exec rails server -p 3006) > "$LOG_DIR/api.log" 2>&1 &
+(cd "$API_DIR" && exec bundle exec rails server -p 3106 -P tmp/pids/e2e.pid) > "$LOG_DIR/api.log" 2>&1 &
 pids+=($!)
-(cd "$BASE_DIR" && exec pnpm exec next start -p 3005) > "$LOG_DIR/web.log" 2>&1 &
+(cd "$BASE_DIR" && exec pnpm exec next start -p 3105) > "$LOG_DIR/web.log" 2>&1 &
 pids+=($!)
 
-wait_for http://localhost:3006/up "The API"
-wait_for http://localhost:3005/login "The console"
+wait_for http://localhost:3106/up "The API"
+wait_for http://localhost:3105/login "The console"
 
 cd "$BASE_DIR"
 if [[ "${1:-}" == "--open" ]]; then

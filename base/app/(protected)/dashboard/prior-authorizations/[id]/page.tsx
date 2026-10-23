@@ -101,7 +101,12 @@ export default function PriorAuthorizationPage() {
             <span>Ordered by {pa.requested_by.name}</span>
           </span>
         }
-        actions={<Button asChild variant="secondary"><Link href={`/dashboard/patients/${pa.patient.id}`}>Patient chart</Link></Button>}
+        actions={
+          <>
+            <Button asChild variant="secondary"><Link href={`/dashboard/patients/${pa.patient.id}`}>Patient chart</Link></Button>
+            <Button asChild data-tour="open-form"><Link href={`/dashboard/prior-authorizations/${pa.id}/form`}>Request form</Link></Button>
+          </>
+        }
       />
 
       <ExtractionBanner pa={pa} documentCount={documents.length} onUpdate={update} />

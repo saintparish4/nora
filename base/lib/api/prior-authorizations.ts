@@ -5,6 +5,7 @@ import {
   PriorAuthorizationDetailSchema,
   PriorAuthorizationSchema,
   QuestionHelpSchema,
+  RequestFormSchema,
   WorkflowEventSchema,
 } from './schemas';
 import type {
@@ -13,6 +14,7 @@ import type {
   PriorAuthorization,
   PriorAuthorizationDetail,
   QuestionHelp,
+  RequestForm,
   RequirementStatus,
   WorkflowEvent,
 } from '@/types';
@@ -161,4 +163,10 @@ export async function askPayerQuestion(id: number, question: string): Promise<Qu
     'Could not get help with that question'
   );
   return validateResponse(QuestionHelpSchema, data.question_help);
+}
+
+/** The CoverMyMeds fields and the plan's questions, filled from the chart, each with its source. */
+export async function getRequestForm(id: number): Promise<RequestForm> {
+  const data = await readJson<{ request_form: unknown }>(await authFetch(`${BASE}/${id}/request_form`));
+  return validateResponse(RequestFormSchema, data.request_form);
 }

@@ -23,4 +23,8 @@ export type {
   Task,
   Today,
   Metrics,
+  FormField,
+  FormQuestion,
+  QuestionSet,
+  RequestForm,
 } from '@/lib/api/schemas';

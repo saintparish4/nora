@@ -4,7 +4,9 @@
  * without rendering anything.
  */
 import type {
+  ChartDocument,
   Evidence,
+  FormQuestion,
   PaStatus,
   PriorAuthorizationDetail,
   Requirement,
@@ -219,4 +221,43 @@ export function describeEvent(eventType: string, payload: Record<string, unknown
     default:
       return eventType.replaceAll('_', ' ');
   }
+}
+
+export const ANSWER_LABELS: Record<FormQuestion['status'], string> = {
+  answered: 'From the chart',
+  ask_prescriber: "Ask the prescriber's office",
+  check_chart: 'Check the chart',
+};
+
+export const ANSWER_TONES: Record<FormQuestion['status'], Tone> = {
+  answered: 'success',
+  ask_prescriber: 'warning',
+  check_chart: 'info',
+};
+
+/**
+ * The questions to send the prescriber's office, as one message staff can
+ * paste into a fax cover or a staff message. Each in the plan's words, with
+ * its number, so the office can answer them in order.
+ */
+export function prescriberMessage(questions: FormQuestion[], context: { patient: string; item: string; payer: string }): string {
+  const asks = questions.filter((q) => q.status === 'ask_prescriber' && !q.hidden);
+  const lines = asks.map((q, i) => `${i + 1}. ${q.prefix ? `(${q.prefix.trim()}) ` : ''}${q.text}`);
+  return [
+    `Prior authorization for ${context.patient}, ${context.item}, ${context.payer}.`,
+    `The plan asks the following, and the chart does not answer ${asks.length === 1 ? 'it' : 'them'}. Please reply with the answer${asks.length === 1 ? '' : 's'} and, where you can, the note that documents ${asks.length === 1 ? 'it' : 'each'}:`,
+    '',
+    ...lines,
+  ].join('\n');
+}
+
+/** The chart notes behind verified evidence: what to attach when the plan asks for chart notes. */
+export function notesToAttach(pa: Pick<PriorAuthorizationDetail, 'requirements'>): Pick<ChartDocument, 'id' | 'title' | 'kind' | 'occurred_on'>[] {
+  const seen = new Map<number, Pick<ChartDocument, 'id' | 'title' | 'kind' | 'occurred_on'>>();
+  for (const requirement of pa.requirements) {
+    for (const e of requirement.evidence) {
+      if (e.verified && !e.rejected && !seen.has(e.document.id)) seen.set(e.document.id, { ...e.document, kind: e.document.kind as ChartDocument['kind'] });
+    }
+  }
+  return [...seen.values()].sort((a, b) => (b.occurred_on ?? '').localeCompare(a.occurred_on ?? ''));
 }

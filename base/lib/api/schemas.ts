@@ -291,6 +291,85 @@ export const MetricsSchema = z.object({
   payer_denied: z.number(),
 });
 
+// The request as staff fill it on CoverMyMeds: administrative fields from
+// the FHIR chart, then the plan's questions. Every value carries its source.
+const ChartSourceSchema = z.object({
+  kind: z.literal('chart').optional(),
+  reference: z.string(),
+  element: z.string(),
+  in_epic: z.string(),
+  detail: z.string().nullish(),
+});
+
+export const FormFieldSchema = z.object({
+  section: z.enum(['patient', 'insurance', 'prescriber', 'medication', 'diagnosis']),
+  key: z.string(),
+  label: z.string(),
+  value: z.string().nullable(),
+  source: ChartSourceSchema.nullable(),
+  /** Where to get it when the chart does not hold it. */
+  missing: z.string().nullable(),
+});
+
+const QuoteSourceSchema = z.object({
+  kind: z.literal('quote'),
+  requirement_id: z.number(),
+  criterion: z.string(),
+  quotes: z.array(
+    z.object({
+      excerpt: z.string(),
+      document: z.string(),
+      occurred_on: z.string().nullish(),
+      verified_by: z.string().nullish(),
+      verified_at: z.string().nullish(),
+    })
+  ),
+});
+
+export const FormQuestionSchema = z.object({
+  link_id: z.string(),
+  prefix: z.string().nullable(),
+  text: z.string(),
+  plain: z.string().nullable(),
+  /** A chart fact that decides which questions apply; not on the plan's form. */
+  hidden: z.boolean(),
+  type: z.enum(['choice', 'integer']),
+  options: z.array(z.object({ code: z.string(), display: z.string() })),
+  status: z.enum(['answered', 'ask_prescriber', 'check_chart']),
+  answer: z.object({ codes: z.array(z.string()).nullable(), display: z.string() }).nullable(),
+  source: z.union([QuoteSourceSchema, ChartSourceSchema.extend({ kind: z.literal('chart') })]).nullable(),
+  reason: z.string().nullable(),
+  /** The unanswered questions this one hangs on. */
+  depends_on: z.array(z.string()),
+});
+
+export const QuestionSetSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  kind: z.enum(['form', 'derived']),
+  publisher: z.string().nullish(),
+  description: z.string().nullish(),
+  source_url: z.string().nullish(),
+  source_title: z.string().nullish(),
+  sha256: z.string().nullish(),
+  note: z.string().nullish(),
+  revised: z.string().nullish(),
+});
+
+export const RequestFormSchema = z.union([
+  z.object({ available: z.literal(false), reason: z.string() }),
+  z.object({
+    available: z.literal(true),
+    chart_source: z.string(),
+    patient_fhir_id: z.string(),
+    fields: z.array(FormFieldSchema),
+    questions: z.union([
+      z.object({ available: z.literal(false), reason: z.string() }),
+      z.object({ available: z.literal(true), set: QuestionSetSchema, items: z.array(FormQuestionSchema) }),
+    ]),
+  }),
+]);
+
 export type Role = z.infer<typeof RoleSchema>;
 export type Metrics = z.infer<typeof MetricsSchema>;
 export type Organization = z.infer<typeof OrganizationSchema>;
@@ -314,3 +393,7 @@ export type Task = z.infer<typeof TaskSchema>;
 export type Today = z.infer<typeof TodaySchema>;
 export type QuestionAnswer = z.infer<typeof QuestionAnswerSchema>;
 export type QuestionHelp = z.infer<typeof QuestionHelpSchema>;
+export type FormField = z.infer<typeof FormFieldSchema>;
+export type FormQuestion = z.infer<typeof FormQuestionSchema>;
+export type QuestionSet = z.infer<typeof QuestionSetSchema>;
+export type RequestForm = z.infer<typeof RequestFormSchema>;

@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_183034) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_200000) do
   create_table "approvals", force: :cascade do |t|
     t.integer "approvable_id", null: false
     t.string "approvable_type", null: false
     t.integer "approved_by_id", null: false
     t.string "content_digest", null: false
     t.datetime "created_at", null: false
+    t.json "submitted_form"
     t.index ["approvable_type", "approvable_id"], name: "index_approvals_on_approvable"
     t.index ["approved_by_id"], name: "index_approvals_on_approved_by_id"
   end
@@ -74,6 +75,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_183034) do
     t.index ["organization_id"], name: "index_chart_documents_on_organization_id"
     t.index ["patient_id"], name: "index_chart_documents_on_patient_id"
     t.index ["uploaded_by_id"], name: "index_chart_documents_on_uploaded_by_id"
+  end
+
+  create_table "form_answers", force: :cascade do |t|
+    t.integer "prior_authorization_id", null: false
+    t.string "link_id", null: false
+    t.json "value", null: false
+    t.string "origin", null: false
+    t.text "note"
+    t.integer "recorded_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prior_authorization_id", "link_id"], name: "index_form_answers_on_prior_authorization_id_and_link_id", unique: true
+    t.index ["prior_authorization_id"], name: "index_form_answers_on_prior_authorization_id"
+    t.index ["recorded_by_id"], name: "index_form_answers_on_recorded_by_id"
   end
 
   create_table "insurance_plans", force: :cascade do |t|
@@ -286,6 +301,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_183034) do
   add_foreign_key "chart_documents", "organizations"
   add_foreign_key "chart_documents", "patients"
   add_foreign_key "chart_documents", "users", column: "uploaded_by_id"
+  add_foreign_key "form_answers", "prior_authorizations"
+  add_foreign_key "form_answers", "users", column: "recorded_by_id"
   add_foreign_key "insurance_plans", "payers"
   add_foreign_key "patient_coverages", "insurance_plans"
   add_foreign_key "patient_coverages", "patients"

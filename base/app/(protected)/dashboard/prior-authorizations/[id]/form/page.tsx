@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { usePriorAuthorization, useRequestForm } from '@/lib/api';
+import { recordFormAnswer, usePriorAuthorization, useRequestForm } from '@/lib/api';
 import { notesToAttach, prescriberMessage } from '@/lib/prior-auth';
 import { formatCalendarDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export default function RequestFormPage() {
   const params = useParams<{ id: string }>();
   const id = Number.isFinite(Number(params.id)) ? Number(params.id) : null;
   const { data: pa, error: paError } = usePriorAuthorization(id);
-  const { data: form, error } = useRequestForm(id);
+  const { data: form, error, mutate } = useRequestForm(id);
 
   if (paError || error) return <ErrorNote error={paError ?? error} />;
   if (!pa || !form) {
@@ -51,6 +51,11 @@ export default function RequestFormPage() {
   }
 
   const questions = form.questions.available ? form.questions.items : [];
+  const record = form.questions.available && form.questions.editable && id
+    ? async (answer: Parameters<typeof recordFormAnswer>[1]) => {
+        await mutate(await recordFormAnswer(id, answer), { revalidate: false });
+      }
+    : undefined;
   const visible = questions.filter((q) => !q.hidden);
   const facts = questions.filter((q) => q.hidden);
   const filled = form.fields.filter((f) => f.value).length;
@@ -80,7 +85,7 @@ export default function RequestFormPage() {
                   </p>
                 )}
                 <div className="space-y-3">
-                  {visible.map((q) => <QuestionCard key={q.link_id} question={q} />)}
+                  {visible.map((q) => <QuestionCard key={q.link_id} question={q} onRecord={record} />)}
                 </div>
               </>
             ) : (

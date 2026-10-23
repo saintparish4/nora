@@ -5,8 +5,9 @@ import { Check, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { formatCalendarDate, formatDateTime } from '@/lib/format';
-import { ANSWER_LABELS, ANSWER_TONES } from '@/lib/prior-auth';
+import { ANSWER_LABELS, ANSWER_TONES, ORIGIN_LABELS, ORIGIN_TONES } from '@/lib/prior-auth';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, Panel } from '@/components/workspace/page-header';
 import { Notice } from '@/components/workspace/notice';
 import { Pill } from '@/components/workspace/status-pill';
@@ -144,6 +145,16 @@ function QuestionSource({ question }: { question: FormQuestion }) {
   const source = question.source;
   if (!source) return null;
   if (source.kind === 'chart') return <SourceLine inEpic={source.in_epic} element={source.element} detail={source.detail} />;
+  if (source.kind === 'staff') {
+    return (
+      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+        <span className="font-medium text-body">{source.origin === 'override' ? 'Changed' : 'Entered'} by {source.recorded_by ?? 'staff'}</span>
+        {source.recorded_at ? `, ${formatDateTime(source.recorded_at)}` : ''}
+        {source.replaces ? ` · Nora had “${source.replaces}”` : ''}
+        {source.note && <span className="mt-0.5 block text-body">{source.note}</span>}
+      </p>
+    );
+  }
   return (
     <div className="mt-3 space-y-2">
       {source.quotes.map((quote, i) => (
@@ -161,8 +172,76 @@ function QuestionSource({ question }: { question: FormQuestion }) {
   );
 }
 
+export type RecordAnswer = (answer: { link_id: string; codes?: string[]; value?: string; note?: string }) => Promise<void>;
+
+/**
+ * Where staff record what the prescriber's office answered, or correct
+ * Nora's answer. Saved on the request, marked as theirs, and kept with the
+ * final check.
+ */
+function AnswerEditor({ question, onRecord, onDone }: { question: FormQuestion; onRecord: RecordAnswer; onDone: () => void }) {
+  const multiple = question.repeats;
+  const [codes, setCodes] = useState<string[]>(question.answer?.codes ?? []);
+  const [value, setValue] = useState(question.type === 'integer' ? question.answer?.display ?? '' : '');
+  const [note, setNote] = useState(question.source?.kind === 'staff' ? question.source.note ?? '' : '');
+  const [busy, setBusy] = useState(false);
+
+  const toggle = (code: string) =>
+    setCodes((current) => (multiple ? (current.includes(code) ? current.filter((c) => c !== code) : [...current, code]) : [code]));
+
+  const save = async (clear = false) => {
+    setBusy(true);
+    try {
+      await onRecord(clear ? { link_id: question.link_id } : { link_id: question.link_id, codes, value: value || undefined, note: note || undefined });
+      onDone();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not record the answer');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-3 rounded-xl border border-input bg-white p-3" data-answer-editor>
+      {question.type === 'integer' ? (
+        <Input type="number" min={0} inputMode="numeric" aria-label="Answer" value={value} onChange={(e) => setValue(e.target.value)} className="w-32" />
+      ) : (
+        <fieldset className="space-y-1.5">
+          <legend className="sr-only">Answer</legend>
+          {question.options.map((option) => (
+            <label key={option.code} className="flex items-start gap-2.5 text-sm text-ink">
+              <input
+                type={multiple ? 'checkbox' : 'radio'}
+                name={`answer-${question.link_id}`}
+                className="mt-1 size-4 accent-[#171717]"
+                checked={codes.includes(option.code)}
+                onChange={() => toggle(option.code)}
+              />
+              {option.display}
+            </label>
+          ))}
+        </fieldset>
+      )}
+      <Input className="mt-3" placeholder="Where the answer came from (optional), e.g. office replied by fax" value={note} onChange={(e) => setNote(e.target.value)} aria-label="Note" />
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button size="sm" disabled={busy || (question.type === 'integer' ? !value : codes.length === 0)} onClick={() => save()}>Save answer</Button>
+        {question.source?.kind === 'staff' && (
+          <Button size="sm" variant="outline" disabled={busy} onClick={() => save(true)}>
+            {question.origin === 'override' ? "Go back to Nora's answer" : 'Clear'}
+          </Button>
+        )}
+        <Button size="sm" variant="ghost" disabled={busy} onClick={onDone}>Cancel</Button>
+      </div>
+    </div>
+  );
+}
+
 /** One of the plan's questions: Nora's answer with its source, or why a person has to answer it. */
-export function QuestionCard({ question }: { question: FormQuestion }) {
+export function QuestionCard({ question, onRecord }: { question: FormQuestion; onRecord?: RecordAnswer }) {
+  const [editing, setEditing] = useState(false);
+  const pill = question.origin && question.origin !== 'auto'
+    ? <Pill tone={ORIGIN_TONES[question.origin]}>{ORIGIN_LABELS[question.origin]}</Pill>
+    : <Pill tone={ANSWER_TONES[question.status]}>{ANSWER_LABELS[question.status]}</Pill>;
   return (
     <Card className="px-4 py-4" data-question={question.link_id} data-status={question.status}>
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -170,15 +249,17 @@ export function QuestionCard({ question }: { question: FormQuestion }) {
           {question.prefix && <span className="mr-1 font-medium tabular-nums text-muted-foreground">{question.prefix}</span>}
           {question.text}
         </p>
-        <Pill tone={ANSWER_TONES[question.status]}>{ANSWER_LABELS[question.status]}</Pill>
+        {pill}
       </div>
       {question.depends_on.length > 0 && (
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
           Only if the plan asks it: it depends on {question.depends_on.map((d) => `“${d}”`).join(' and ')}, which the chart does not answer.
         </p>
       )}
-      <Choices question={question} />
-      {question.status === 'answered' ? (
+      {!editing && <Choices question={question} />}
+      {editing && onRecord ? (
+        <AnswerEditor question={question} onRecord={onRecord} onDone={() => setEditing(false)} />
+      ) : question.status === 'answered' ? (
         <div className="mt-2 flex items-start gap-2">
           <div className="min-w-0 flex-1"><QuestionSource question={question} /></div>
           {question.answer && <CopyButton value={question.answer.display} label="answer" />}
@@ -188,6 +269,11 @@ export function QuestionCard({ question }: { question: FormQuestion }) {
           {question.plain && <p><span className="font-medium">In plain words:</span> {question.plain}</p>}
           {question.reason && <p className={question.plain ? 'mt-1.5' : undefined}>{question.reason}</p>}
         </Notice>
+      )}
+      {onRecord && !editing && (
+        <Button size="sm" variant={question.status === 'answered' ? 'ghost' : 'outline'} className="mt-3" onClick={() => setEditing(true)}>
+          {question.status === 'answered' ? 'Change answer' : "Record the office's answer"}
+        </Button>
       )}
       {question.status === 'answered' && question.plain && (
         <details className="mt-2 text-xs text-muted-foreground">

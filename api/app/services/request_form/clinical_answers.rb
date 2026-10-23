@@ -10,8 +10,12 @@ module RequestForm
   # says why: "ask the prescriber's office", or, for an administrative gap,
   # where in the chart to look. Nora never answers a question its CQL cannot
   # source.
+  #
+  # A person's answer (FormAnswer) takes the place of Nora's: "manual" where
+  # Nora had none, "override" where it replaces one. Every answer carries its
+  # origin, as DTR records it: auto, manual or override.
   class ClinicalAnswers
-    Answer = Data.define(:link_id, :prefix, :text, :plain, :hidden, :type, :options, :status, :answer, :source, :reason, :depends_on)
+    Answer = Data.define(:link_id, :prefix, :text, :plain, :hidden, :type, :repeats, :options, :status, :answer, :source, :reason, :depends_on, :origin)
 
     ANSWERED = "answered".freeze
     ASK = "ask_prescriber".freeze
@@ -38,12 +42,15 @@ module RequestForm
     #   criterion position; read from the request when nil. The evaluation
     #   (evals/request_form) passes its labelled cases' own.
     # @param as_of [Date, nil] the day the request was opened.
-    def initialize(prior_authorization, chart:, question_set:, requirements: nil, as_of: nil)
+    # @param staff [Hash{String => FormAnswer}, nil] people's answers by
+    #   question; read from the request when nil, none when it has none.
+    def initialize(prior_authorization, chart:, question_set:, requirements: nil, as_of: nil, staff: nil)
       @pa = prior_authorization
       @chart = chart
       @set = question_set
       @requirements = requirements
       @as_of = as_of || (prior_authorization.created_at || Time.current).to_date
+      @staff = staff || (prior_authorization.respond_to?(:form_answers) ? prior_authorization.form_answers.includes(:recorded_by).index_by(&:link_id) : {})
     end
 
     # @return [Array<Answer>] the questions that apply, in form order; a question
@@ -57,11 +64,11 @@ module RequestForm
         state = enabled_state(item, results, enabled)
         next if state == false
 
-        status, value, source, reason = results.fetch(item.link_id)
+        status, value, source, reason, origin = results.fetch(item.link_id)
         Answer.new(
           link_id: item.link_id, prefix: item.prefix, text: item.text, plain: item.plain, hidden: item.hidden, type: item.type,
-          options: item.options, status: status, answer: value, source: source, reason: reason,
-          depends_on: state.nil? ? unresolved(item, results) : []
+          repeats: item.repeats, options: item.options, status: status, answer: value, source: source, reason: reason,
+          depends_on: state.nil? ? unresolved(item, results) : [], origin: origin
         )
       end
     end
@@ -109,13 +116,23 @@ module RequestForm
     end
 
     def answer(item)
+      auto = auto_answer(item)
+      staff = @staff[item.link_id] or return auto
+
+      value = item.type == "integer" ? staff.value["value"] : staff.codes
+      source = { kind: "staff", origin: staff.origin, recorded_by: staff.recorded_by&.full_name, recorded_at: staff.updated_at, note: staff.note,
+                 replaces: staff.origin == "override" ? auto[1]&.dig(:display) : nil }
+      [ ANSWERED, display(item, value), source, nil, staff.origin ]
+    end
+
+    def auto_answer(item)
       value = @cql[item.link_id]
       read = Array(@cql["#{item.link_id} Source"]).map { |ref| find(ref) }.compact
       return missing(item, read) if value.nil? || value == []
 
       kind = item.rule[:from]
       source = kind.start_with?("criterion") ? quote_source(requirements.fetch(item.rule[:criterion])) : chart_source(kind, read)
-      [ ANSWERED, display(item, value), source, nil ]
+      [ ANSWERED, display(item, value), source, nil, "auto" ]
     end
 
     def display(item, value)

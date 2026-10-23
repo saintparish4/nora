@@ -206,6 +206,11 @@ export function describeEvent(eventType: string, payload: Record<string, unknown
       return 'Final check done; submitted under the prescriber\'s name';
     case 'asked_prescriber':
       return 'Asked the prescriber\'s office';
+    case 'form_answer_recorded':
+      if (payload.cleared) return `Cleared the answer to a plan question (${payload.link_id})`;
+      return payload.origin === 'override'
+        ? `Changed Nora's answer to a plan question (${payload.link_id})`
+        : `Entered an answer to a plan question (${payload.link_id})`;
     case 'approved':
       return 'Approved (earlier workflow)';
     case 'approval_invalidated':
@@ -261,3 +266,16 @@ export function notesToAttach(pa: Pick<PriorAuthorizationDetail, 'requirements'>
   }
   return [...seen.values()].sort((a, b) => (b.occurred_on ?? '').localeCompare(a.occurred_on ?? ''));
 }
+
+/** Who answered: Nora's chart reading, or a person (DTR's information origin). */
+export const ORIGIN_LABELS: Record<NonNullable<FormQuestion['origin']>, string> = {
+  auto: 'From the chart',
+  manual: 'Entered by staff',
+  override: 'Changed by staff',
+};
+
+export const ORIGIN_TONES: Record<NonNullable<FormQuestion['origin']>, Tone> = {
+  auto: 'success',
+  manual: 'info',
+  override: 'accent',
+};

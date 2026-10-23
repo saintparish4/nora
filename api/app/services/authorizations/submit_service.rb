@@ -4,6 +4,10 @@ module Authorizations
   # records exactly what went out (a content digest), who submitted it, and
   # the prescriber it was submitted on behalf of. No clinician sign-off is
   # needed; every requirement must be met or marked not applicable.
+  #
+  # The final check also keeps the request form as it stood: the fields and
+  # the plan's questions as a QuestionnaireResponse, each answer with its
+  # origin. That is the record of what staff entered on CoverMyMeds.
   class SubmitService
     def self.call(...) = new(...).call
 
@@ -22,9 +26,11 @@ module Authorizations
 
       Approval.transaction do
         digest = @pa.content_digest
-        Approval.create!(approvable: @pa, approved_by: @actor, content_digest: digest)
+        form = submitted_form
+        Approval.create!(approvable: @pa, approved_by: @actor, content_digest: digest, submitted_form: form)
         WorkflowEvent.record!(subject: @pa, event_type: "final_check", actor: @actor,
-                              payload: { content_digest: digest, on_behalf_of_id: @pa.requested_by_id })
+                              payload: { content_digest: digest, on_behalf_of_id: @pa.requested_by_id,
+                                         form_digest: form && Digest::SHA256.hexdigest(JSON.generate(form)) })
         attributes = {}
         attributes[:payer_reference] = @payer_reference if @payer_reference.present?
         attributes[:prep_minutes_reported] = @prep_minutes if @prep_minutes.present?
@@ -32,6 +38,18 @@ module Authorizations
       end
     rescue ActiveRecord::RecordInvalid => e
       raise Error, e.record.errors.full_messages.to_sentence
+    end
+
+    private
+
+    # nil when the chart cannot be read: the request still goes, and the
+    # record says the form was not captured.
+    def submitted_form
+      form = RequestForm::Builder.call(@pa)
+      return nil unless form[:available]
+
+      { fields: form[:fields].map { |f| f.slice(:section, :key, :label, :value) },
+        questionnaire_response: form.dig(:questions, :questionnaire_response) }.as_json
     end
   end
 end

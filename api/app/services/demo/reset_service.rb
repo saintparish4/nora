@@ -34,6 +34,7 @@ module Demo
 
       AuthorizationEvidence.where(authorization_requirement_id: requirements.select(:id)).delete_all
       requirements.delete_all
+      FormAnswer.where(prior_authorization_id: requests.select(:id)).delete_all
       Approval.where(approvable_type: "PriorAuthorization", approvable_id: requests.select(:id)).delete_all
       WorkflowEvent.where(organization_id: organization.id).delete_all
       Task.where(organization_id: organization.id).delete_all

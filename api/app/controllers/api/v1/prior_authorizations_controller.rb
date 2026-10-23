@@ -105,11 +105,24 @@ module Api
       # GET /api/v1/prior_authorizations/:id/request_form
       #
       # What staff enter on CoverMyMeds, filled from the patient's chart over
-      # FHIR, each value with its source. Reads only; nothing is stored.
+      # FHIR, each value with its source. Reads only.
       def request_form
         pa = find_pa
         log_phi_access("PriorAuthorization", pa.id, :view)
         render json: { request_form: RequestForm::Builder.call(pa) }
+      end
+
+      # POST /api/v1/prior_authorizations/:id/request_form_answer
+      #
+      # Records a person's answer to one of the plan's questions (the
+      # prescriber's office's reply, or a correction to Nora's), or clears it
+      # when codes and value are empty. Returns the request form as it now is.
+      def request_form_answer
+        pa = find_pa
+        RequestForm::RecordAnswer.call(pa, actor: current_user, link_id: params.require(:link_id),
+                                           codes: params[:codes], value: params[:value], note: params[:note])
+        log_phi_access("PriorAuthorization", pa.id, :update)
+        render json: { request_form: RequestForm::Builder.call(pa.reload) }
       end
 
       # GET /api/v1/prior_authorizations/:id/events

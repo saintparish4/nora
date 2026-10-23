@@ -29,6 +29,18 @@ namespace :fhir do
     abort "FHIR validation failed" unless ok
   end
 
+  desc "Make a key pair for SMART Backend Services: tmp/smart_private_key.pem, and print the public JWK Set to register"
+  task smart_key: :environment do
+    path = Rails.root.join("tmp/smart_private_key.pem")
+    abort "#{path} exists; delete it to make a new one" if path.exist?
+
+    key = OpenSSL::PKey::RSA.new(2048)
+    path.write(key.to_pem)
+    path.chmod(0o600)
+    puts "Wrote #{path.relative_path_from(Rails.root)}. Set FHIR_PRIVATE_KEY_PATH to it. Register this JWK Set with the server:"
+    puts JSON.pretty_generate(Fhir::SmartBackendAuth.jwks(key))
+  end
+
   desc "Load db/fhir/demo/*.json into a FHIR server (FHIR_BASE_URL, default http://localhost:8080/fhir)"
   task :load do
     require "net/http"

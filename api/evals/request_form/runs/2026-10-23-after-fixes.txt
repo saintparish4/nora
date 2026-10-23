@@ -1,0 +1,40 @@
+case                                     fields  questions problems
+tom-fep-saxenda                           29/29      11/11 
+tom-blue-focus                            29/29      12/12 
+tom-option-not-named                      29/29      13/13 
+tom-older-prescription                    29/29      13/13 
+tom-switched-from-zepbound                29/29      11/11 
+tom-old-coverage-first                    29/29      11/11 
+marcus-aetna-zepbound                     29/29        4/4 
+marcus-member-id-only-as-subscriber       29/29        4/4 
+marcus-fep-zepbound                       29/29      14/14 
+marcus-fep-no-comorbidity-listed          29/29      14/14 
+jane-cigna-wegovy                         29/29        6/6 
+jane-age-16-fep-wegovy                    29/29      12/12 
+elena-uhc-wegovy                          29/29        4/4 
+elena-uhc-newer-bmi                       29/29        5/5 
+elena-fep-wegovy-generic-name             29/29      12/12 
+priya-cigna-wegovy-no-order               29/29        6/6 
+synthea-andy-fep-wegovy                   29/29      12/13 initiation-comorbidity: safe_miss ("ask_prescriber", label ["myocardial-infarction-mi", "coronary-heart-disease"])
+synthea-angele-fep-focus-zepbound         29/29      14/14 
+synthea-anton-uhc-wegovy                  29/29        5/5 
+synthea-bernard-aetna-baseline-bmi        29/29        3/3 
+
+{
+  "cases": 20,
+  "fields": 580,
+  "field_outcomes": {
+    "correct": 537,
+    "correct_empty": 43
+  },
+  "field_exact_match": 1.0,
+  "questions": 187,
+  "answer_outcomes": {
+    "correct": 140,
+    "correct_dont_know": 46,
+    "safe_miss": 1
+  },
+  "answer_accuracy": 0.993,
+  "correct_dont_know": 1.0,
+  "harmful": 0
+}

@@ -1,0 +1,615 @@
+# Labelled cases for the request-form eval. See README.md and LABELING.md.
+#
+# A case is one request: a patient's FHIR chart (the demo bundles in
+# db/fhir/demo, or a Synthea patient in patients/), optionally changed by
+# `mutate`, a payer and drug (which picks the question set), the state of each
+# policy requirement, and the labels: what a careful staff member would enter.
+#
+# fields:   CoverMyMeds field => value (the prescriber's phone and address are
+#           prescriber_phone and prescriber_address), or null when the chart does not hold it.
+#           `patients` gives each chart's fields once; a case lists only changes.
+# answers:  question linkId => the answer code (a list for a multi-select, a
+#           string for a number), or `ask` / `check` when the right move is to
+#           ask the prescriber's office or look elsewhere in the chart. Any
+#           question not listed should not be shown.
+# requirements: criterion position => met | pending | missing, or a hash with
+#           status and quote (the verified text, when the answer is read from it).
+
+prescriber: &prescriber
+  name: Avery Chen, MD
+  npi: "1987654328"
+  prescriber_phone: 614-555-0142
+  fax: 614-555-0143
+  prescriber_address: 4100 Riverside Drive, Suite 200, Columbus, OH 43221
+
+patients:
+  demo-1001:
+    <<: *prescriber
+    first_name: Jane
+    last_name: Rivera
+    date_of_birth: 03/14/1984
+    sex: Female
+    address: 88 Maple Avenue
+    city: Columbus
+    state: OH
+    zip: "43215"
+    phone: 614-555-0181
+    plan: Cigna · Open Access Plus
+    member_id: U90114572
+    group: "3341270"
+    rx_bin: null
+    rx_pcn: null
+    rx_group: null
+    rx_member_id: null
+    drug: Wegovy 0.25 mg/0.5 mL auto-injector
+    rxnorm: "2553506"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.
+    primary: E66.811 Obesity, class 1
+    bmi_code: Z68.34 BMI 34.0-34.9, adult
+    other: R73.03 Prediabetes
+  demo-1002:
+    <<: *prescriber
+    first_name: Marcus
+    last_name: Bell
+    date_of_birth: 11/02/1971
+    sex: Male
+    address: 1520 Oakwood Lane
+    city: Dublin
+    state: OH
+    zip: "43017"
+    phone: 614-555-0196
+    plan: Aetna · Open Access Managed Choice
+    member_id: W228841093
+    group: "0884102"
+    rx_bin: "999102"
+    rx_pcn: DEMOAET
+    rx_group: RXAET01
+    rx_member_id: W228841093
+    drug: Zepbound 2.5 mg/0.5 mL auto-injector
+    rxnorm: "2669706"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed.
+    primary: E66.3 Overweight
+    bmi_code: Z68.28 BMI 28.0-28.9, adult
+    other: I10 Essential hypertension; E11.9 Type 2 diabetes mellitus without complications
+  demo-1003:
+    first_name: Priya
+    last_name: Nair
+    date_of_birth: 06/21/1990
+    sex: Female
+    address: 302 Birch Street
+    city: Westerville
+    state: OH
+    zip: "43081"
+    phone: 614-555-0127
+    plan: Cigna · Open Access Plus
+    member_id: U55120394
+    group: "3341270"
+    rx_bin: null
+    rx_pcn: null
+    rx_group: RXCIG22
+    rx_member_id: null
+    # No prescription in the chart, so no prescriber to read either.
+    name: null
+    npi: null
+    prescriber_phone: null
+    fax: null
+    prescriber_address: null
+    drug: null
+    rxnorm: null
+    quantity: null
+    days_supply: null
+    directions: null
+    primary: E66.9 Obesity, unspecified
+    bmi_code: Z68.31 BMI 31.0-31.9, adult
+    other: null
+  demo-1004:
+    <<: *prescriber
+    first_name: Tom
+    last_name: Okafor
+    date_of_birth: 01/09/1978
+    sex: Male
+    address: 77 Cedar Court
+    city: Grove City
+    state: OH
+    zip: "43123"
+    phone: 614-555-0158
+    plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Standard
+    member_id: R70331862
+    group: "65"
+    rx_bin: "999104"
+    rx_pcn: DEMOFEP
+    rx_group: RXFEP65
+    rx_member_id: R70331862
+    drug: Saxenda 18 mg/3 mL pen injector
+    rxnorm: "1598268"
+    quantity: 5 pen
+    days_supply: "30"
+    directions: Inject 0.6 mg under the skin once daily for 1 week, then increase by 0.6 mg weekly to 3 mg daily.
+    primary: E66.812 Obesity, class 2
+    bmi_code: Z68.36 BMI 36.0-36.9, adult
+    other: G47.33 Obstructive sleep apnea
+  demo-1005:
+    <<: *prescriber
+    first_name: Elena
+    last_name: Petrov
+    date_of_birth: 09/30/1966
+    sex: Female
+    address: 940 Willow Road
+    city: Hilliard
+    state: OH
+    zip: "43026"
+    phone: 614-555-0164
+    plan: UnitedHealthcare · Navigate
+    member_id: UHC900287710
+    group: "771204"
+    rx_bin: "999101"
+    rx_pcn: DEMOUHC
+    rx_group: RXUHC77
+    rx_member_id: UHC900287710
+    drug: Wegovy 0.25 mg/0.5 mL auto-injector
+    rxnorm: "2553506"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject 0.25 mg under the skin once weekly for 4 weeks, then increase as directed.
+    primary: E66.812 Obesity, class 2
+    bmi_code: Z68.38 BMI 38.0-38.9, adult
+    other: I10 Essential hypertension; E78.5 Hyperlipidemia, unspecified
+  # Synthea charts: no ICD-10 problem list (diagnoses are SNOMED encounter
+  # diagnoses), so the diagnosis fields stay empty: turning SNOMED into ICD-10
+  # is coding, not lookup.
+  95b2a614-5575-9715-f94a-72e6d71b00b3:
+    <<: *prescriber
+    first_name: Andy346
+    last_name: Rogahn59
+    date_of_birth: 11/24/1958
+    sex: Male
+    address: 499 Maggio Route Apt 63
+    city: Columbus
+    state: OH
+    zip: "43085"
+    phone: 555-786-6751
+    plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Standard
+    member_id: SYN900000
+    group: "65"
+    rx_bin: "999104"
+    rx_pcn: DEMOFEP
+    rx_group: RXFEP65
+    rx_member_id: null
+    drug: Wegovy 0.25 mg/0.5 mL auto-injector
+    rxnorm: "2553506"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject under the skin once weekly.
+    primary: null
+    bmi_code: null
+    other: null
+  99b810dd-554d-266d-a019-0c26ed17afd8:
+    <<: *prescriber
+    first_name: Angele108
+    last_name: Dickinson688
+    date_of_birth: 03/15/1976
+    sex: Female
+    address: 413 Gleason Trail Unit 38
+    city: Columbus
+    state: OH
+    zip: "43206"
+    phone: 555-426-4315
+    plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Focus
+    member_id: SYN900001
+    group: "131"
+    rx_bin: null
+    rx_pcn: null
+    rx_group: null
+    rx_member_id: null
+    drug: Zepbound 2.5 mg/0.5 mL auto-injector
+    rxnorm: "2669706"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject under the skin once weekly.
+    primary: null
+    bmi_code: null
+    other: null
+  196c3e28-8b84-cf0e-ceb7-94b1ec0c3a1b:
+    <<: *prescriber
+    first_name: Anton902
+    last_name: Ward668
+    date_of_birth: 03/19/1989
+    sex: Male
+    address: 107 Dietrich Harbor Suite 62
+    city: Columbus
+    state: OH
+    zip: "43065"
+    phone: 555-347-3022
+    plan: UnitedHealthcare · Choice Plus
+    member_id: SYN900002
+    group: "902211"
+    rx_bin: "999101"
+    rx_pcn: DEMOUHC
+    rx_group: RXUHC12
+    rx_member_id: null
+    drug: Wegovy 0.25 mg/0.5 mL auto-injector
+    rxnorm: "2553506"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject under the skin once weekly.
+    primary: null
+    bmi_code: null
+    other: null
+  b73da39a-4f02-c01a-96d0-414ce0f269c0:
+    <<: *prescriber
+    first_name: Bernard308
+    last_name: Harris789
+    date_of_birth: 03/05/1980
+    sex: Male
+    address: 233 Carroll Club
+    city: Columbus
+    state: OH
+    zip: "43240"
+    phone: 555-837-3414
+    plan: Aetna · Choice POS II
+    member_id: SYN900003
+    group: "0550120"
+    rx_bin: "999102"
+    rx_pcn: DEMOAET
+    rx_group: null
+    rx_member_id: null
+    drug: Zepbound 2.5 mg/0.5 mL auto-injector
+    rxnorm: "2669706"
+    quantity: 4 pen
+    days_supply: "28"
+    directions: Inject under the skin once weekly.
+    primary: null
+    bmi_code: null
+    other: null
+
+fep_coverage: &fep_standard
+  - { set: Coverage/demo-1002-coverage, path: class.1.name, value: FEP Blue Standard }
+  - { set: Coverage/demo-1002-coverage, path: payor.0.display, value: Blue Cross Blue Shield Federal Employee Program }
+
+cases:
+  - id: tom-fep-saxenda
+    note: The seeded featured-for-submission request. Every requirement verified.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    requirements: { 1: met, 2: { status: met, quote: "BMI 36.5 kg/m2 today." }, 3: met, 4: met, 5: met, 6: met }
+    answers: &tom_answers
+      age-group: 18-plus
+      plan-option: standard-basic
+      brand-generic: brand
+      diagnosis: obesity
+      pens-90-days: "15"
+      program: "yes"
+      glp1: no-glp1
+      pa-combination: "no"
+      change-from-zepbound: "no"
+      continuation: initiation
+      initiation-bmi: 30-plus
+
+  - id: tom-blue-focus
+    note: The same patient on Blue Focus, where Saxenda is non-formulary.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    mutate:
+      - { set: Coverage/demo-1004-coverage, path: class.1.name, value: FEP Blue Focus }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    fields: { plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Focus }
+    answers:
+      <<: *tom_answers
+      plan-option: focus
+      change-from-zepbound: null
+      focus-nonformulary: ask
+      focus-switch-generic: ask
+
+  - id: tom-option-not-named
+    note: The coverage record does not say Standard, Basic or Focus; the card does.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    mutate:
+      - { set: Coverage/demo-1004-coverage, path: class.1.name, value: Service Benefit Plan }
+      - { set: Coverage/demo-1004-coverage, path: class.1.value, value: sbp }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    fields: { plan: Blue Cross Blue Shield Federal Employee Program · Service Benefit Plan }
+    answers:
+      <<: *tom_answers
+      plan-option: check
+      focus-nonformulary: ask
+      focus-switch-generic: ask
+
+  - id: tom-older-prescription
+    note: Saxenda first written seven months before the request, so it may be a renewal.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    mutate:
+      - { set: MedicationRequest/demo-1004-rx, path: authoredOn, value: "2026-03-01" }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    answers:
+      <<: *tom_answers
+      continuation: ask
+      continuation-loss: ask
+      continuation-maintained: ask
+
+  - id: tom-switched-from-zepbound
+    note: A stopped Zepbound order in the chart; the form asks whether this is a change from Zepbound.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    mutate:
+      - add:
+          resourceType: MedicationRequest
+          id: demo-1004-zepbound
+          status: stopped
+          intent: order
+          subject: { reference: Patient/demo-1004 }
+          authoredOn: "2026-05-04"
+          medicationCodeableConcept: { coding: [ { system: http://www.nlm.nih.gov/research/umls/rxnorm, code: "2669706" } ], text: Zepbound 2.5 mg/0.5 mL auto-injector }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    answers:
+      <<: *tom_answers
+      change-from-zepbound: "yes"
+
+  - id: tom-old-coverage-first
+    note: A cancelled earlier coverage sits in the chart beside the active one.
+    patient: demo-1004
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Saxenda
+    mutate:
+      - add:
+          resourceType: Coverage
+          id: demo-1004-old-coverage
+          status: cancelled
+          beneficiary: { reference: Patient/demo-1004 }
+          subscriberId: OLD555
+          payor: [ { display: Aetna } ]
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    answers: *tom_answers
+
+  - id: marcus-aetna-zepbound
+    note: The seeded request still gathering evidence; nothing verified yet.
+    patient: demo-1002
+    payer: Aetna
+    item: Zepbound
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending }
+    answers: &marcus_aetna
+      age: "yes"
+      program: ask
+      bmi: ask
+      comorbidity: ask
+
+  - id: marcus-member-id-only-as-subscriber
+    note: The coverage has no member identifier, only subscriberId.
+    patient: demo-1002
+    payer: Aetna
+    item: Zepbound
+    mutate:
+      - { unset: Coverage/demo-1002-coverage, path: identifier }
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending }
+    answers: *marcus_aetna
+
+  - id: marcus-fep-zepbound
+    note: BMI 28.4 with hypertension and type 2 diabetes on the problem list, on the FEP form.
+    patient: demo-1002
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Zepbound
+    mutate: *fep_standard
+    fields: { plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Standard }
+    requirements: { 1: met, 2: met, 3: met, 4: pending, 5: met, 6: met, 7: met, 8: pending }
+    answers: &marcus_fep
+      age-group: 18-plus
+      plan-option: standard-basic
+      brand-generic: brand
+      tried-saxenda-wegovy: ask
+      switch-preferred: ask
+      pens-over-limit: "no"
+      diagnosis: elevated-bmi
+      program: "yes"
+      glp1: no-glp1
+      pa-combination: "no"
+      continuation: initiation
+      initiation-bmi: 27-29.9
+      initiation-comorbidity: [ type-2-diabetes-mellitus, hypertension ]
+      initiation-oral-trials: ask
+
+  - id: marcus-fep-no-comorbidity-listed
+    note: The same, with the two conditions gone from the problem list. "None of the above" is the office's call.
+    patient: demo-1002
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Zepbound
+    mutate:
+      - { set: Coverage/demo-1002-coverage, path: class.1.name, value: FEP Blue Standard }
+      - { set: Coverage/demo-1002-coverage, path: payor.0.display, value: Blue Cross Blue Shield Federal Employee Program }
+      - { delete: Condition/demo-1002-condition-3 }
+      - { delete: Condition/demo-1002-condition-4 }
+    fields: { plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Standard, other: null }
+    requirements: { 1: met, 2: met, 3: met, 4: pending, 5: met, 6: met, 7: met, 8: pending }
+    answers:
+      <<: *marcus_fep
+      initiation-comorbidity: ask
+
+  - id: jane-cigna-wegovy
+    note: The seeded featured request, waiting on clarification.
+    patient: demo-1001
+    payer: Cigna
+    item: Wegovy
+    requirements: { 1: met, 2: met, 3: missing, 4: pending, 5: met, 6: missing }
+    answers:
+      age: "yes"
+      behavioral-trial: "yes"
+      bmi: ask
+      comorbidity: ask
+      with-lifestyle: "yes"
+      other-glp1: ask
+
+  - id: jane-age-16-fep-wegovy
+    note: A 16-year-old on FEP Blue Basic; the form's pediatric branch.
+    patient: demo-1001
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Wegovy
+    mutate:
+      - { set: Patient/demo-1001, path: birthDate, value: "2010-05-01" }
+      - { set: Coverage/demo-1001-coverage, path: class.1.name, value: FEP Blue Basic }
+      - { set: Coverage/demo-1001-coverage, path: payor.0.display, value: Blue Cross Blue Shield Federal Employee Program }
+    fields: { date_of_birth: 05/01/2010, plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Basic }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    answers:
+      age-group: 12-17
+      plan-option: standard-basic
+      brand-generic: brand
+      dosage-form: injection
+      pens-over-limit: "no"
+      diagnosis: obesity
+      program: "yes"
+      glp1: no-glp1
+      pa-combination: "no"
+      change-from-zepbound: "no"
+      continuation: initiation
+      initiation-pediatric-bmi: ask
+
+  - id: elena-uhc-wegovy
+    note: The seeded request the payer approved. Every requirement verified.
+    patient: demo-1005
+    payer: UnitedHealthcare
+    item: Wegovy
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met }
+    answers:
+      indication: "yes"
+      age: "yes"
+      adjunct: "yes"
+      bmi: 30-plus
+
+  - id: elena-uhc-newer-bmi
+    note: A newer BMI of 28.9 in Vitals; the comorbidity question now applies.
+    patient: demo-1005
+    payer: UnitedHealthcare
+    item: Wegovy
+    mutate:
+      - add:
+          resourceType: Observation
+          id: demo-1005-bmi-2
+          status: final
+          code: { coding: [ { system: http://loinc.org, code: 39156-5 } ] }
+          subject: { reference: Patient/demo-1005 }
+          effectiveDateTime: "2026-10-10"
+          valueQuantity: { value: 28.9, unit: kg/m2 }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met }
+    answers:
+      indication: "yes"
+      age: "yes"
+      adjunct: "yes"
+      bmi: 27-29.9
+      comorbidity: "yes"
+
+  - id: elena-fep-wegovy-generic-name
+    note: The order is written with the generic name but carries Wegovy's branded RxNorm code.
+    patient: demo-1005
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Wegovy
+    mutate:
+      - { set: MedicationRequest/demo-1005-rx, path: medicationCodeableConcept.text, value: semaglutide 0.25 mg/0.5 mL auto-injector }
+      - { set: Coverage/demo-1005-coverage, path: class.1.name, value: FEP Blue Standard }
+      - { set: Coverage/demo-1005-coverage, path: payor.0.display, value: Blue Cross Blue Shield Federal Employee Program }
+    fields: { drug: semaglutide 0.25 mg/0.5 mL auto-injector, plan: Blue Cross Blue Shield Federal Employee Program · FEP Blue Standard }
+    requirements: { 1: met, 2: met, 3: met, 4: met, 5: met, 6: met }
+    answers:
+      age-group: 18-plus
+      plan-option: standard-basic
+      brand-generic: brand
+      dosage-form: injection
+      pens-over-limit: "no"
+      diagnosis: obesity
+      program: "yes"
+      glp1: no-glp1
+      pa-combination: "no"
+      change-from-zepbound: "no"
+      continuation: initiation
+      initiation-bmi: 30-plus
+
+  - id: priya-cigna-wegovy-no-order
+    note: No prescription in the chart yet.
+    patient: demo-1003
+    payer: Cigna
+    item: Wegovy
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending, 5: pending, 6: pending }
+    answers:
+      age: "yes"
+      behavioral-trial: ask
+      bmi: ask
+      comorbidity: ask
+      with-lifestyle: ask
+      other-glp1: ask
+
+  - id: synthea-andy-fep-wegovy
+    note: >-
+      Synthea patient. MI and ischemic heart disease are recorded as SNOMED encounter diagnoses, so a person
+      reading Encounters would answer the comorbidity question; Nora reads only the ICD-10 problem list.
+    patient: 95b2a614-5575-9715-f94a-72e6d71b00b3
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Wegovy
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending, 5: pending, 6: pending }
+    answers:
+      age-group: 18-plus
+      plan-option: standard-basic
+      brand-generic: brand
+      dosage-form: injection
+      pens-over-limit: "no"
+      diagnosis: ask
+      program: ask
+      glp1: ask
+      pa-combination: ask
+      change-from-zepbound: "no"
+      continuation: initiation
+      initiation-bmi: 27-29.9
+      initiation-comorbidity: [ myocardial-infarction-mi, coronary-heart-disease ]
+
+  - id: synthea-angele-fep-focus-zepbound
+    note: Synthea patient on Blue Focus with no pharmacy IDs on the coverage.
+    patient: 99b810dd-554d-266d-a019-0c26ed17afd8
+    payer: Blue Cross Blue Shield Federal Employee Program
+    item: Zepbound
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending, 5: pending, 6: pending, 7: pending, 8: pending }
+    answers:
+      age-group: 18-plus
+      plan-option: focus
+      brand-generic: brand
+      focus-nonformulary: ask
+      focus-switch-generic: ask
+      pens-over-limit: "no"
+      diagnosis: ask
+      program: ask
+      glp1: ask
+      pa-combination: ask
+      continuation: initiation
+      initiation-bmi: 27-29.9
+      initiation-comorbidity: ask
+      initiation-oral-trials: ask
+
+  - id: synthea-anton-uhc-wegovy
+    note: Synthea patient, BMI 29.5 with prediabetes only.
+    patient: 196c3e28-8b84-cf0e-ceb7-94b1ec0c3a1b
+    payer: UnitedHealthcare
+    item: Wegovy
+    requirements: { 1: pending, 2: pending, 3: pending, 4: pending, 5: pending }
+    answers:
+      indication: ask
+      age: "yes"
+      adjunct: ask
+      bmi: 27-29.9
+      comorbidity: ask
+
+  - id: synthea-bernard-aetna-baseline-bmi
+    note: BMI has fallen from 30.46 to 28.12; Aetna asks for the baseline, which a person verified.
+    patient: b73da39a-4f02-c01a-96d0-414ce0f269c0
+    payer: Aetna
+    item: Zepbound
+    requirements: { 1: met, 2: pending, 3: { status: met, quote: "BMI 30.46 kg/m2 on 06/05/2024, before any weight-loss medication." }, 4: pending }
+    answers:
+      age: "yes"
+      program: ask
+      bmi: 30-plus

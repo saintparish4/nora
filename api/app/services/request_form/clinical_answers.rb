@@ -30,11 +30,16 @@ module RequestForm
 
     def self.call(...) = new(...).call
 
-    def initialize(prior_authorization, chart:, question_set:)
+    # @param requirements [Hash{Integer => AuthorizationRequirement}, nil] by
+    #   criterion position; read from the request when nil. The evaluation
+    #   (evals/request_form) passes its labelled cases' own.
+    # @param as_of [Date, nil] the day the request was opened.
+    def initialize(prior_authorization, chart:, question_set:, requirements: nil, as_of: nil)
       @pa = prior_authorization
       @chart = chart
       @set = question_set
-      @as_of = (prior_authorization.created_at || Time.current).to_date
+      @requirements = requirements
+      @as_of = as_of || (prior_authorization.created_at || Time.current).to_date
     end
 
     # @return [Array<Answer>] the questions that apply, in form order; a question
@@ -66,9 +71,12 @@ module RequestForm
         parent_state = parent ? enabled_state(parent, results, memo) : true
         status, value = results[cond[:question]]
         next false if parent_state == false
-        next nil if status != ANSWERED || parent_state.nil?
+        next nil if status != ANSWERED
+        # A known answer that does not match turns the question off, even when
+        # the parent itself hangs on an unanswered question.
+        next false unless Array(value[:codes]).include?(cond[:code])
 
-        Array(value[:codes]).include?(cond[:code])
+        parent_state.nil? ? nil : true
       end.then { |states| states.include?(false) ? false : (states.include?(nil) ? nil : true) }
     end
 
@@ -150,7 +158,10 @@ module RequestForm
       rx = prescription or return no_prescription
       text = rx.dig("medicationCodeableConcept", "text").to_s
       source = rx_source(rx, "MedicationRequest.medicationCodeableConcept", text)
-      if text.downcase.include?(@pa.item_name.downcase) then coded("brand", "Brand", source)
+      code = rx.dig("medicationCodeableConcept", "coding").to_a.find { |c| AdminFields::RXNORM.fetch(@pa.item_name, []).include?(c["code"]) }
+      branded = code.present?
+      source[:detail] = "#{text} (RxNorm #{code['code']}, a #{@pa.item_name} product)" if branded
+      if branded || text.downcase.include?(@pa.item_name.downcase) then coded("brand", "Brand", source)
       elsif text.downcase.include?(GENERIC.fetch(@pa.item_name, "?")) then coded("generic", "Generic", source)
       else check("The prescription does not name the drug as brand or generic. Check the order.")
       end

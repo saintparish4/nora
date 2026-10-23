@@ -135,3 +135,15 @@ namespace :eval do
     end
   end
 end
+
+# The request-form eval. See evals/request_form/README.md.
+#
+#   bin/rails eval:request_form                 score every case
+#   bin/rails eval:request_form CASES=id,id     some of them
+namespace :eval do
+  desc "Score the request form's fields and question answers against labelled cases"
+  task request_form: :environment do
+    require Rails.root.join("evals/request_form/harness")
+    RequestFormEval::Runner.new(only: ENV["CASES"]&.split(",")).call
+  end
+end

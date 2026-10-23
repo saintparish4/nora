@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   # database. The demo page polls it while the free Render instance wakes up.
   get "up", to: "rails/health#show", as: :rails_health_check
 
+  # Nora's public key, when it reads a FHIR server as a SMART Backend Services client.
+  get ".well-known/jwks.json", to: "jwks#show", as: :jwks
+
   # All API routes under /api/v1 namespace
   namespace :api do
     namespace :v1 do

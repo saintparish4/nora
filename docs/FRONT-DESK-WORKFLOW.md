@@ -153,10 +153,20 @@ Only one of the four payers publishes questions written for these drugs:
 
 | Payer (PBM) | What exists publicly | How Nora models it |
 |---|---|---|
-| BCBS FEP (CVS Caremark) | A Wegovy form (revised 9/18/2026) and a Zepbound form (revised 1/1/2026), each with numbered, typed, branching questions | **The real question sets**, verbatim, as FHIR Questionnaires: answer types, options and branching (`enableWhen`) from the forms |
-| UnitedHealthcare (Optum Rx) | A general drug form only; the plan-specific questions come through ePA, behind login | The general form's questions, verbatim, **plus** questions derived from UHC's criteria (2026 P 1114-23), each labelled "derived from criteria, not the plan's own wording" |
-| Aetna (CVS Caremark) | A general form (GR-68988) only; Caremark's Wegovy and Zepbound criteria documents | Same approach, from Caremark 4774-C and 6947-C |
-| Cigna (Express Scripts) | A general form only; Cigna is moving to ePA only | Same approach, from Cigna IP0814 and IP0816 |
+| BCBS FEP (CVS Caremark) | Wegovy (revised 9/18/2026), Zepbound (1/1/2026) and Saxenda (1/12/2026) forms, each with numbered, typed, branching questions | **The real question sets**, word for word, as FHIR Questionnaires: answer types, options and branching (`enableWhen`) from the forms, with each PDF's revision date and SHA-256. Wegovy's MASH page is left out |
+| UnitedHealthcare (Optum Rx) | A general drug form only; the plan-specific questions come through ePA, behind login | One question per criterion of UHC's policy (2026 P 1114-23), marked "derived: the wording is Nora's, not the plan's" |
+| Aetna (CVS Caremark) | A general form (GR-68988) only | The same, from Aetna's bulletins for each drug |
+| Cigna (Express Scripts) | A general form only; Cigna is moving to ePA only | The same, from Cigna IP0813, IP0814 and IP0816 |
+
+The general forms were left out: their questions ("medications tried", "diagnosis") are free text, which the derived questions and the administrative fields already cover.
+
+As built (`api/db/questionnaires`), each question names how Nora answers it:
+
+- **Structured chart data:** age from the date of birth; the FEP plan option from the coverage; pens and quantity limits from the prescription; diagnosis and comorbidities from the ICD-10 problem list; BMI from Vitals; whether this is a new start from the prescription history.
+- **A quote a person verified** against the matching requirement.
+- **Always the prescriber's office:** for example step therapy, renewal weight loss, or a pediatric BMI percentile.
+
+Anything unsourced is "ask the prescriber's office", with a plain-language explanation. Nora never reads "None of the above" into a problem list.
 
 What the real forms add that the criteria library didn't have:
 
@@ -177,9 +187,11 @@ What the real forms add that the criteria library didn't have:
 
 ## Added
 
-- **A CoverMyMeds-style screen**: demographics, insurance, prescriber,
-  medication, diagnosis, then the plan's questions, each value with a copy
-  button and its source.
+- **A CoverMyMeds-style screen** (the request page's "Request form"):
+  demographics, insurance, prescriber, medication, diagnosis, then the plan's
+  questions, each value with a copy button and its source. The questions for
+  the prescriber's office are collected into one message to paste, and the
+  chart notes behind verified quotes are listed to attach.
 - **Administrative fields with provenance**, filled by mapping, never by a
   model.
 - **Plain-language explanations** for each clinical question, written once per
@@ -204,5 +216,13 @@ says what it couldn't do; the language model is optional.
   prior-drug outcomes are actually recorded. The sandbox and Synthea show the
   shapes, not the gaps.
 - **The time saved.** The keystroke-level estimates are lower bounds. Only the
-  timed task with former coworkers, or real use, measures it.
+  timed task with former coworkers ([protocol](TIMED-TASK-PROTOCOL.md)), or
+  real use, measures it.
+- **Independent labels.** The request-form eval (20 cases, 0 harmful answers
+  after fixing the two bugs it found) is labelled by the code's author. The
+  protocol collects labels from people who have done the work.
+- **Epic itself.** Nora's FHIR client passed Inferno's SMART Backend Services
+  client tests and reads a HAPI server identically to the bundles. It has not
+  read Epic's sandbox. That needs an app registered in Epic's developer
+  portal, with its client ID and key.
 - **Approval rates.** No real submissions, so no payer outcomes.

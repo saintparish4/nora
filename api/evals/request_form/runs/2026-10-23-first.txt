@@ -1,0 +1,44 @@
+case                                     fields  questions problems
+tom-fep-saxenda                           29/29      11/11 
+tom-blue-focus                            29/29      12/12 
+tom-option-not-named                      29/29      10/13 plan-option: answered_without_source (["standard-basic"], label "check"); focus-nonformulary: not_shown (nil, label "ask"); focus-switch-generic: not_shown (nil, label "ask")
+tom-older-prescription                    29/29      13/14 initiation-comorbidity: shown_wrongly ("ask_prescriber", label nil)
+tom-switched-from-zepbound                29/29      11/11 
+tom-old-coverage-first                    29/29      11/11 
+marcus-aetna-zepbound                     29/29        4/4 
+marcus-member-id-only-as-subscriber       29/29        4/4 
+marcus-fep-zepbound                       29/29      14/14 
+marcus-fep-no-comorbidity-listed          29/29      14/14 
+jane-cigna-wegovy                         29/29        6/6 
+jane-age-16-fep-wegovy                    29/29      12/12 
+elena-uhc-wegovy                          29/29        4/4 
+elena-uhc-newer-bmi                       29/29        5/5 
+elena-fep-wegovy-generic-name             29/29      11/12 brand-generic: wrong (["generic"], label "brand")
+priya-cigna-wegovy-no-order               29/29        6/6 
+synthea-andy-fep-wegovy                   29/29      11/13 initiation-bmi: safe_miss ("ask_prescriber", label "27-29.9"); initiation-comorbidity: safe_miss ("ask_prescriber", label ["myocardial-infarction-mi", "coronary-heart-disease"])
+synthea-angele-fep-focus-zepbound         29/29      13/14 initiation-bmi: safe_miss ("ask_prescriber", label "27-29.9")
+synthea-anton-uhc-wegovy                  29/29        4/5 bmi: safe_miss ("ask_prescriber", label "27-29.9")
+synthea-bernard-aetna-baseline-bmi        29/29        3/3 
+
+{
+  "cases": 20,
+  "fields": 580,
+  "field_outcomes": {
+    "correct": 537,
+    "correct_empty": 43
+  },
+  "field_exact_match": 1.0,
+  "questions": 188,
+  "answer_outcomes": {
+    "correct": 136,
+    "correct_dont_know": 43,
+    "answered_without_source": 1,
+    "not_shown": 2,
+    "shown_wrongly": 1,
+    "wrong": 1,
+    "safe_miss": 4
+  },
+  "answer_accuracy": 0.965,
+  "correct_dont_know": 0.977,
+  "harmful": 2
+}

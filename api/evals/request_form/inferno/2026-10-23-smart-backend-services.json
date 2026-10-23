@@ -1,0 +1,32 @@
+{
+  "suite": "smart_client_stu2_2 (SMART App Launch STU2.2 Client)",
+  "client_type": "SMART Backend Services Confidential Asymmetric Client",
+  "instance": "https://inferno.healthit.gov/suites (hosted, demonstration only; sessions are deleted after a month)",
+  "session": "https://inferno.healthit.gov/suites/smart_client_stu2_2/3eZG4L27CM2",
+  "run_on": "2026-10-23",
+  "registration": [
+    {
+      "test": "smart_client_registration_bsca_verification",
+      "result": "pass",
+      "message": "Providing the JWK Set directly is strongly discouraged."
+    }
+  ],
+  "access": [
+    {
+      "test": "smart_client_access_bsca_interaction",
+      "result": "pass"
+    },
+    {
+      "test": "smart_client_access",
+      "result": "pass"
+    },
+    {
+      "test": "smart_client_token_request_bsca_verification",
+      "result": "pass"
+    },
+    {
+      "test": "smart_client_token_use_verification",
+      "result": "pass"
+    }
+  ]
+}

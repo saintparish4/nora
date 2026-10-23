@@ -93,6 +93,7 @@ Copy the templates and fill in what you need: `api/.env.example` and `base/.env.
 - `DEMO_PRACTICE` (API): `true` seeds the demo practice in production and enables `/demo`. Always on outside production; the deployed API rebuilds the practice on every boot.
 - `AI_PHI_BAA_CONFIRMED` (API): production refuses to send a real practice's chart text to a model unless this is `true`. The synthetic demo practice is exempt.
 - `DATABASE_URL` (API): a `postgres://` URL switches from SQLite to PostgreSQL.
+- `FHIR_BASE_URL`, `FHIR_BEARER_TOKEN` (API): optional. Nora reads each patient's structured chart (demographics, coverage with BIN/PCN, prescription, prescriber, diagnoses, BMI) over FHIR R4. Unset, it reads the demo practice's bundles in `api/db/fhir/demo`. To use a real server: `docker run -p 8090:8080 hapiproject/hapi:latest`, then `FHIR_BASE_URL=http://localhost:8090/fhir bin/rails fhir:load`.
 
 Nora uses synthetic data only. It is a portfolio project, not a product in use with patients.
 

@@ -1,0 +1,605 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "https://nora.example/fhir/Practitioner/demo-avery-chen",
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "demo-avery-chen",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1987654328"
+          }
+        ],
+        "name": [
+          {
+            "family": "Chen",
+            "given": [
+              "Avery"
+            ],
+            "prefix": [
+              "Dr."
+            ],
+            "suffix": [
+              "MD"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "614-555-0142",
+            "use": "work"
+          },
+          {
+            "system": "fax",
+            "value": "614-555-0143",
+            "use": "work"
+          }
+        ],
+        "address": [
+          {
+            "use": "work",
+            "line": [
+              "4100 Riverside Drive, Suite 200"
+            ],
+            "city": "Columbus",
+            "state": "OH",
+            "postalCode": "43221",
+            "country": "US"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Practitioner/demo-avery-chen"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Organization/demo-payer-aetna",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "demo-payer-aetna",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                "code": "pay",
+                "display": "Payer"
+              }
+            ]
+          }
+        ],
+        "name": "Aetna"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Organization/demo-payer-aetna"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Patient/demo-1002",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "demo-1002",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://nora.example/fhir/mrn",
+            "value": "DEMO-1002"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Bell",
+            "given": [
+              "Marcus"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "614-555-0196",
+            "use": "home"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1971-11-02",
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "1520 Oakwood Lane"
+            ],
+            "city": "Dublin",
+            "state": "OH",
+            "postalCode": "43017",
+            "country": "US"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/demo-1002"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Coverage/demo-1002-coverage",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "demo-1002-coverage",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-coverage"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MB"
+                }
+              ]
+            },
+            "system": "https://nora.example/fhir/member-id",
+            "value": "W228841093"
+          }
+        ],
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "https://nahdo.org/sopt",
+              "code": "5",
+              "display": "PRIVATE HEALTH INSURANCE"
+            }
+          ]
+        },
+        "subscriberId": "W228841093",
+        "beneficiary": {
+          "reference": "Patient/demo-1002"
+        },
+        "relationship": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/subscriber-relationship",
+              "code": "self"
+            }
+          ]
+        },
+        "payor": [
+          {
+            "reference": "Organization/demo-payer-aetna",
+            "display": "Aetna"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "group"
+                }
+              ]
+            },
+            "value": "0884102"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "plan"
+                }
+              ]
+            },
+            "value": "open-access-managed-choice",
+            "name": "Open Access Managed Choice"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "rxbin"
+                }
+              ]
+            },
+            "value": "999102"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "rxpcn"
+                }
+              ]
+            },
+            "value": "DEMOAET"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "rxgroup"
+                }
+              ]
+            },
+            "value": "RXAET01"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                  "code": "rxid"
+                }
+              ]
+            },
+            "value": "W228841093"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/demo-1002-coverage"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/MedicationRequest/demo-1002-rx",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "demo-1002-rx",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+          ]
+        },
+        "status": "active",
+        "intent": "order",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                "code": "community"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "2669706"
+            }
+          ],
+          "text": "Zepbound 2.5 mg/0.5 mL auto-injector"
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        },
+        "authoredOn": "2026-07-30",
+        "requester": {
+          "reference": "Practitioner/demo-avery-chen"
+        },
+        "dosageInstruction": [
+          {
+            "text": "Inject 2.5 mg under the skin once weekly for 4 weeks, then increase as directed."
+          }
+        ],
+        "dispenseRequest": {
+          "quantity": {
+            "value": 4,
+            "unit": "pen"
+          },
+          "expectedSupplyDuration": {
+            "value": 28,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          }
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/demo-1002-rx"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/demo-1002-condition-1",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "demo-1002-condition-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "E66.3"
+            }
+          ],
+          "text": "Overweight"
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/demo-1002-condition-1"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/demo-1002-condition-2",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "demo-1002-condition-2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "Z68.28"
+            }
+          ],
+          "text": "BMI 28.0-28.9, adult"
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/demo-1002-condition-2"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/demo-1002-condition-3",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "demo-1002-condition-3",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "I10"
+            }
+          ],
+          "text": "Essential hypertension"
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/demo-1002-condition-3"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/demo-1002-condition-4",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "demo-1002-condition-4",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "E11.9"
+            }
+          ],
+          "text": "Type 2 diabetes mellitus without complications"
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/demo-1002-condition-4"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Observation/demo-1002-bmi-1",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "demo-1002-bmi-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-bmi"
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "39156-5",
+              "display": "Body mass index (BMI) [Ratio]"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/demo-1002"
+        },
+        "effectiveDateTime": "2026-07-30",
+        "valueQuantity": {
+          "value": 28.4,
+          "unit": "kg/m2",
+          "system": "http://unitsofmeasure.org",
+          "code": "kg/m2"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/demo-1002-bmi-1"
+      }
+    }
+  ]
+}

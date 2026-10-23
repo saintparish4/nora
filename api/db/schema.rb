@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_181339) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_183034) do
   create_table "approvals", force: :cascade do |t|
     t.integer "approvable_id", null: false
     t.string "approvable_type", null: false
@@ -117,6 +117,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_181339) do
     t.integer "organization_id", null: false
     t.string "sex"
     t.datetime "updated_at", null: false
+    t.string "fhir_id"
+    t.index ["organization_id", "fhir_id"], name: "index_patients_on_organization_id_and_fhir_id", unique: true
     t.index ["organization_id", "last_name", "first_name"], name: "index_patients_on_organization_id_and_last_name_and_first_name"
     t.index ["organization_id", "mrn"], name: "index_patients_on_organization_id_and_mrn", unique: true, where: "mrn IS NOT NULL"
     t.index ["organization_id"], name: "index_patients_on_organization_id"

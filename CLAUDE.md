@@ -37,8 +37,8 @@ make setup
 make dev
 ```
 
-- **Backend:** http://localhost:3001  
-- **Frontend:** http://localhost:3000  
+- **Backend:** http://localhost:3006  
+- **Frontend:** http://localhost:3005  
 
 Run backend or frontend alone:
 
@@ -101,7 +101,7 @@ make help          # List all targets
 make install       # Install deps (base: pnpm, api: bundle)
 make setup         # install + api db:create db:migrate db:seed
 make dev           # Start API + Next.js dev servers
-make dev-stop      # Kill processes on 3000 and 3001
+make dev-stop      # Kill processes on 3005 and 3006
 make test          # Run backend + frontend tests
 make test-backend  # RSpec only
 make test-frontend # Jest only

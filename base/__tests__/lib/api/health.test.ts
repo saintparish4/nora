@@ -21,7 +21,7 @@ describe('probeApi', () => {
 
     expect(await probeApi()).toEqual({ ok: true, status: 200 })
     const [url, init] = mockFetch.mock.calls[0]
-    expect(url).toBe('http://localhost:3001/up')
+    expect(url).toBe('http://localhost:3006/up')
     expect((init as RequestInit).credentials).toBeUndefined()
   })
 

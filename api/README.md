@@ -9,7 +9,7 @@ model, services, routes, and the rules they enforce.
 ```bash
 bundle install
 bin/rails db:create db:migrate db:seed
-bin/rails server -p 3001
+bin/rails server -p 3006
 ```
 
 Copy `.env.example` to `.env`. Only `SECRET_KEY_BASE` is required locally.

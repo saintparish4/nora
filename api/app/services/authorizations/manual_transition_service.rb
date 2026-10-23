@@ -1,6 +1,7 @@
 module Authorizations
-  # Status changes a person makes from the console once the packet leaves the
-  # practice: submitted, payer decisions, appeals, cancellation, closing.
+  # Status changes a person makes from the console once the request has left
+  # the practice: payer decisions, appeals, cancellation, closing. Submitting
+  # goes through SubmitService.
   class ManualTransitionService
     def self.call(...) = new(...).call
 
@@ -14,9 +15,6 @@ module Authorizations
 
     def call
       raise Error, "That status is set by Nora, not by hand." unless PriorAuthorization::MANUAL_TARGETS.include?(@to)
-      if @to == "submitted" && !@pa.approval_current?
-        raise Error, "The packet has changed since it was approved. Approve it again before submitting."
-      end
 
       attributes = {}
       attributes[:payer_reference] = @payer_reference if @payer_reference.present?

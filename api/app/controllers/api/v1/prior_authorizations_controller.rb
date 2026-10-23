@@ -71,9 +71,14 @@ module Api
         render json: { question_help: result }
       end
 
-      # POST /api/v1/prior_authorizations/:id/approve
-      def approve
-        pa = Authorizations::ApproveService.call(find_pa, actor: current_user)
+      # POST /api/v1/prior_authorizations/:id/submit  { payer_reference, prep_minutes_reported }
+      #
+      # The staff member's final check, recorded, and the move to submitted.
+      def submit
+        pa = Authorizations::SubmitService.call(
+          find_pa, actor: current_user,
+          payer_reference: params[:payer_reference], prep_minutes_reported: params[:prep_minutes_reported]
+        )
         log_phi_access("PriorAuthorization", pa.id, :update)
         render json: { prior_authorization: pa.reload.as_api_json(detail: true) }
       end

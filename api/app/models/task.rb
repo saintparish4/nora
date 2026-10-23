@@ -28,6 +28,7 @@ class Task < ApplicationRecord
       due_on: due_on,
       overdue: overdue?,
       completed_at: completed_at,
+      asked_prescriber_at: asked_prescriber_at,
       assignee: assignee&.as_member_json,
       subject: { type: subject_type, id: subject_id },
       created_at: created_at

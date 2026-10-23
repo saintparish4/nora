@@ -45,7 +45,7 @@ Rails.application.routes.draw do
         member do
           post :extract
           post :question_help
-          post :approve
+          post :submit
           post :transition
           get :packet
           get :events
@@ -55,7 +55,9 @@ Rails.application.routes.draw do
         member { post :evidence, action: :add_evidence }
       end
       resources :authorization_evidence, only: [ :update ]
-      resources :tasks, only: [ :index, :update ]
+      resources :tasks, only: [ :index, :update ] do
+        post :ask_prescriber, on: :member
+      end
     end
   end
 end

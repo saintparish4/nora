@@ -1,7 +1,6 @@
 class User < ApplicationRecord
     ROLES = %w[staff clinician admin].freeze
     # Roles allowed to approve a packet on the practice's behalf.
-    APPROVER_ROLES = %w[clinician admin].freeze
 
     has_secure_password
     belongs_to :organization
@@ -19,9 +18,6 @@ class User < ApplicationRecord
         [ first_name, last_name ].compact_blank.join(" ").presence || email
     end
 
-    def approver?
-        APPROVER_ROLES.include?(role)
-    end
 
     def admin?
         role == "admin"

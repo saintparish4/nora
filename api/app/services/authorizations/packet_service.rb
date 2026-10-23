@@ -5,7 +5,7 @@ require "prawn"
 Prawn::Fonts::AFM.hide_m17n_warning = true
 
 module Authorizations
-  # Renders an approved prior authorization as a PDF packet: cover sheet,
+  # Renders a submitted prior authorization as a PDF packet: cover sheet,
   # requirement checklist, cited excerpts, and the list of source documents.
   class PacketService
     def self.call(...) = new(...).call
@@ -15,7 +15,7 @@ module Authorizations
     end
 
     def call
-      raise Error, "Only an approved packet can be downloaded." unless packet_available?
+      raise Error, "A packet exists once the final check is done and the request is submitted." unless packet_available?
 
       approval = @pa.latest_approval
       patient = @pa.patient
@@ -35,7 +35,8 @@ module Authorizations
       field(pdf, "Requesting clinician", @pa.requested_by.full_name)
       field(pdf, "Practice", @pa.organization.name + (@pa.organization.npi.present? ? ", NPI #{@pa.organization.npi}" : ""))
       field(pdf, "Policy", "#{@pa.policy_template.title}#{@pa.policy_template.generic? ? ' (generic criteria)' : ''}")
-      field(pdf, "Approved by", "#{approval.approved_by.full_name} on #{approval.created_at.in_time_zone(@pa.organization.timezone).strftime('%m/%d/%Y %H:%M %Z')}")
+      field(pdf, "Final check", "#{approval.approved_by.full_name} on #{approval.created_at.in_time_zone(@pa.organization.timezone).strftime('%m/%d/%Y %H:%M %Z')}")
+      field(pdf, "Submitted on behalf of", @pa.requested_by.full_name)
       pdf.move_down 16
 
       write pdf, "Criteria and supporting documentation", size: 13, style: :bold

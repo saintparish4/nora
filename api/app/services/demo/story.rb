@@ -25,7 +25,7 @@ module Demo
     end
 
     # @param staff [User] opens the request and reviews the evidence
-    # @param clinician [User] ordered the item and approves the packet
+    # @param clinician [User] prescribed the item; staff submit on their behalf
     def initialize(patient:, item_name:, staff:, clinician:, starts_at:)
       @patient = patient
       @staff = staff
@@ -63,7 +63,7 @@ module Demo
     end
 
     # Staff reject the excerpts containing any of `rejecting` and mark the
-    # requirement missing, which opens a task for the ordering clinician.
+    # requirement missing, which opens a task for staff to find the documentation.
     def missing(position, note:, rejecting: [])
       review_evidence(position, rejecting: rejecting, verify_rest: false)
       decide(position, "missing", note: note)
@@ -79,8 +79,15 @@ module Demo
       step { Authorizations::AddEvidenceService.call(requirement(position), actor: @staff, document: chart_document, quote: quote) }
     end
 
-    def approve
-      step { Authorizations::ApproveService.call(pa, actor: @clinician) }
+    # Staff ask the prescriber's office about the open task for a requirement.
+    def ask_prescriber(position)
+      task = Task.open.find_by!(source: requirement(position))
+      step { Tasks::AskPrescriberService.call(task, actor: @staff) }
+    end
+
+    # The staff member's final check and submission, under the prescriber's name.
+    def submit(**details)
+      step { Authorizations::SubmitService.call(pa, actor: @staff, **details) }
     end
 
     def move_to(status, **details)

@@ -7,12 +7,6 @@ RSpec.describe 'Workflow models' do
     it 'accepts only known roles' do
       expect(build(:user, role: 'owner')).not_to be_valid
     end
-
-    it 'lets clinicians and admins approve, not staff' do
-      expect(build(:user, :clinician)).to be_approver
-      expect(build(:user, :admin)).to be_approver
-      expect(build(:user)).not_to be_approver
-    end
   end
 
   describe Organization do

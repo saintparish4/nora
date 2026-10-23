@@ -9,11 +9,15 @@ class PriorAuthorization < ApplicationRecord
     payer_pending approved_by_payer denied appealed cancelled closed
   ].freeze
 
+  # Staff own a request from start to finish; no clinician sign-off is needed.
+  # "ready_for_review" means ready to submit: every requirement is met or not
+  # applicable, waiting only for the staff member's final check. "approved"
+  # is left from the old clinician-approval flow and is no longer entered.
   TRANSITIONS = {
     "draft" => %w[gathering cancelled],
     "gathering" => %w[needs_clarification ready_for_review cancelled],
     "needs_clarification" => %w[gathering ready_for_review cancelled],
-    "ready_for_review" => %w[approved gathering needs_clarification cancelled],
+    "ready_for_review" => %w[submitted gathering needs_clarification cancelled],
     "approved" => %w[submitted ready_for_review gathering needs_clarification cancelled],
     "submitted" => %w[payer_pending approved_by_payer denied cancelled],
     "payer_pending" => %w[approved_by_payer denied cancelled],
@@ -24,13 +28,13 @@ class PriorAuthorization < ApplicationRecord
     "closed" => []
   }.freeze
 
-  # Before a person signs off: evidence and requirements may still change.
+  # Before submission: evidence and requirements may still change.
   PREPARING = %w[draft gathering needs_clarification ready_for_review].freeze
-  # Evidence edits are allowed here; an edit to an approved PA voids approval.
   EDITABLE = (PREPARING + %w[approved]).freeze
-  # Statuses a person moves to by hand from the console. The rest are reached
-  # by the review and approval services.
-  MANUAL_TARGETS = %w[submitted payer_pending approved_by_payer denied appealed cancelled closed].freeze
+  # Statuses a person moves to by hand from the console once the request has
+  # left the practice. Submission itself goes through SubmitService, which
+  # records the final check.
+  MANUAL_TARGETS = %w[payer_pending approved_by_payer denied appealed cancelled closed].freeze
   TERMINAL = %w[closed].freeze
 
   EXTRACTION_STATUSES = %w[idle running succeeded failed].freeze
@@ -136,13 +140,17 @@ class PriorAuthorization < ApplicationRecord
     }
     return json unless detail
 
-    approval = latest_approval
+    check = latest_approval
     json.merge(
       requirements: requirements.includes(:policy_criterion, :reviewed_by, evidence: [ :chart_document, :verified_by ]).map(&:as_api_json),
-      approval: approval && {
-        approved_by: approval.approved_by.as_member_json,
-        approved_at: approval.created_at,
-        current: approval.content_digest == content_digest
+      # The staff member's final check before submission (an Approval row):
+      # who checked, the prescriber it went out under, and whether the request
+      # still matches what was checked.
+      final_check: check && {
+        checked_by: check.approved_by.as_member_json,
+        checked_at: check.created_at,
+        on_behalf_of: requested_by.as_member_json,
+        current: check.content_digest == content_digest
       },
       allowed_transitions: TRANSITIONS.fetch(status, []) & MANUAL_TARGETS
     )

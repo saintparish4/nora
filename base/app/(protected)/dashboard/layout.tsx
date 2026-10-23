@@ -17,7 +17,9 @@ export default function DashboardLayout({
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <DemoBanner />
         <DashboardNav />
-        <main id="main-content" className="mx-auto w-full max-w-[1200px] flex-1 px-5 pt-8 sm:px-8 sm:pt-10">
+        {/* At least a screen tall, so a short loading skeleton never pulls the
+            footer into view only for the content to push it out again. */}
+        <main id="main-content" className="mx-auto min-h-screen w-full max-w-[1200px] flex-1 px-5 pt-8 sm:px-8 sm:pt-10">
           <AccountCache>{children}</AccountCache>
         </main>
         <SiteFooter />

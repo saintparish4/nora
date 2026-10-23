@@ -33,7 +33,7 @@ export function DocumentViewer({
 
   return (
     <Dialog open={documentId !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl w-[calc(100vw-2rem)]">
+      <DialogContent className="max-w-3xl w-[calc(100vw-2rem)]" aria-busy={!data && !error}>
         <DialogHeader>
           <DialogTitle>{data?.title ?? 'Document'}</DialogTitle>
           <DialogDescription>

@@ -42,6 +42,7 @@ import { RequirementPanel } from '@/components/workspace/requirement-panel';
 import { QuestionHelp } from '@/components/workspace/question-help';
 import { DocumentViewer } from '@/components/workspace/document-viewer';
 import { TaskList } from '@/components/workspace/task-list';
+import { Skeleton } from '@/components/ui/skeleton';
 import { RequestSkeleton } from '@/components/workspace/screen-skeletons';
 
 export default function PriorAuthorizationPage() {
@@ -167,14 +168,16 @@ export default function PriorAuthorizationPage() {
           <ApprovalPanel pa={pa} role={user?.role} onUpdate={update} />
           <StatusPanel pa={pa} onUpdate={update} />
           <AssignmentPanel pa={pa} onUpdate={update} />
-          <Panel title="Follow-up tasks" tour="tasks">
-            {tasks && tasks.tasks.length > 0 ? (
+          <Panel title="Follow-up tasks" tour="tasks" busy={!tasks}>
+            {!tasks ? (
+              <Skeleton className="h-16 rounded-2xl" />
+            ) : tasks.tasks.length > 0 ? (
               <TaskList tasks={tasks.tasks} onChange={() => mutateTasks()} />
             ) : (
               <p className="text-sm text-muted-foreground">No open tasks.</p>
             )}
           </Panel>
-          <Timeline events={events ?? []} />
+          <Timeline events={events} />
         </div>
       </div>
 
@@ -189,8 +192,17 @@ export default function PriorAuthorizationPage() {
 
 const TIMELINE_PREVIEW = 8;
 
-function Timeline({ events }: { events: WorkflowEvent[] }) {
+function Timeline({ events }: { events: WorkflowEvent[] | undefined }) {
   const [expanded, setExpanded] = useState(false);
+  if (!events) {
+    return (
+      <Panel title="Timeline" tour="timeline" busy>
+        <div className="space-y-4">
+          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-9 rounded-xl" />)}
+        </div>
+      </Panel>
+    );
+  }
   const newestFirst = events.slice().reverse();
   const shown = expanded ? newestFirst : newestFirst.slice(0, TIMELINE_PREVIEW);
 

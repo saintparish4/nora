@@ -45,6 +45,10 @@
           "valueString": "Page 3, for MASH, is left out: Nora covers weight management only."
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraFepWegovy"
     }
   ],
   "item": [
@@ -65,6 +69,13 @@
               "valueCode": "age_group"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"age-group\""
+          }
         }
       ],
       "answerOption": [
@@ -101,6 +112,13 @@
               "valueCode": "plan_option"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"plan-option\""
+          }
         }
       ],
       "answerOption": [
@@ -138,6 +156,13 @@
               "valueCode": "brand_or_generic"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"brand-generic\""
+          }
         }
       ],
       "answerOption": [
@@ -174,6 +199,13 @@
               "valueCode": "dosage_form"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"dosage-form\""
+          }
         }
       ],
       "answerOption": [
@@ -219,6 +251,13 @@
               "valueInteger": 84
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"pens-over-limit\""
+          }
         }
       ],
       "answerOption": [
@@ -274,6 +313,13 @@
               "valueInteger": 90
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"tablets-over-limit\""
+          }
         }
       ],
       "answerOption": [
@@ -322,6 +368,13 @@
               "valueCode": "diagnosis"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"diagnosis\""
+          }
         }
       ],
       "answerOption": [
@@ -396,6 +449,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"program\""
+          }
         }
       ],
       "answerOption": [
@@ -442,6 +502,13 @@
               "valueCode": "no-glp1"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"glp1\""
+          }
         }
       ],
       "answerOption": [
@@ -495,6 +562,13 @@
               "valueCode": "no"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"pa-combination\""
+          }
         }
       ],
       "answerOption": [
@@ -537,6 +611,13 @@
               "valueString": "Zepbound"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"change-from-zepbound\""
+          }
         }
       ],
       "answerOption": [
@@ -585,6 +666,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"focus-nonformulary\""
+          }
         }
       ],
       "answerOption": [
@@ -633,6 +721,13 @@
               "valueCode": "continuation"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"continuation\""
+          }
         }
       ],
       "answerOption": [
@@ -671,6 +766,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"initiation-pediatric-bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -728,6 +830,13 @@
               "valueCode": "bmi_range"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"initiation-bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -793,6 +902,13 @@
               "valueCode": "comorbidities"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"initiation-comorbidity\""
+          }
         }
       ],
       "answerOption": [
@@ -918,6 +1034,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"continuation-pediatric\""
+          }
         }
       ],
       "answerOption": [
@@ -975,6 +1098,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"continuation-loss\""
+          }
         }
       ],
       "answerOption": [
@@ -1032,6 +1162,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraFepWegovy.\"continuation-maintained\""
+          }
         }
       ],
       "answerOption": [

@@ -33,6 +33,9 @@ module RequestForm
 
       answers = ClinicalAnswers.call(@pa, chart: chart, question_set: set)
       { available: true, set: set.as_api_json, items: answers.map(&:to_h) }
+    rescue Cql::Error => e
+      Rails.logger.error("[request_form] #{e.message}")
+      { available: false, reason: "Nora could not work out the plan's questions just now. Answer them from the requirements." }
     end
   end
 end

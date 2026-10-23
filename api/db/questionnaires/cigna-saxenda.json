@@ -37,6 +37,10 @@
           "valueString": "Coverage policy IP0813, effective 09/01/2026"
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraCignaSaxenda"
     }
   ],
   "item": [
@@ -62,6 +66,13 @@
               "valueInteger": 18
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"age\""
+          }
         }
       ],
       "answerOption": [
@@ -107,6 +118,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"behavioral-trial\""
+          }
         }
       ],
       "answerOption": [
@@ -148,6 +166,13 @@
               "valueInteger": 3
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -200,6 +225,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"comorbidity\""
+          }
         }
       ],
       "answerOption": [
@@ -255,6 +287,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"with-lifestyle\""
+          }
         }
       ],
       "answerOption": [
@@ -300,6 +339,13 @@
               "valueCode": "no"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"other-glp1\""
+          }
         }
       ],
       "answerOption": [
@@ -337,6 +383,13 @@
               "valueCode": "ask"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraCignaSaxenda.\"generic-liraglutide\""
+          }
         }
       ],
       "answerOption": [

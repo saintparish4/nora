@@ -55,4 +55,34 @@ RSpec.describe RequestForm::QuestionSet do
     visible = sets.flat_map(&:items).reject(&:hidden)
     expect(visible.map(&:plain)).to all(be_present)
   end
+
+  describe 'its CQL' do
+    let(:elm) { RequestForm::Cql.elm }
+
+    it 'answers every question with a named expression, and names the resources each one read' do
+      sets.each do |set|
+        defines = elm.fetch(set.library).dig('library', 'statements', 'def').map { |d| d['name'] }
+        set.items.each do |item|
+          expect(item.expression).to eq(%(#{set.library}."#{item.link_id}"))
+          expect(defines).to include(item.link_id, "#{item.link_id} Source")
+        end
+      end
+    end
+
+    it 'runs from a bundle built from the current runner and engine versions' do
+      expect(RequestForm::Cql::RUNNER.read.lines.first).to include(QuestionnaireBuild.runner_digest), 'run bin/rails questionnaires:runner'
+    end
+
+    it 'is compiled from the CQL in cql/src, and that CQL is current with definitions.rb' do
+      RequestForm::Cql::LIBRARIES.glob('*.json').each do |path|
+        library = JSON.parse(path.read)
+        cql = Base64.decode64(library['content'].find { |c| c['contentType'] == 'text/cql' }['data'])
+        expect(cql).to eq(Rails.root.join('cql/src', "#{library['name']}.cql").read), "#{path.basename} is stale: run bin/rails questionnaires:elm"
+      end
+      QuestionnaireBuild.definitions.each do |definition|
+        expect(Rails.root.join('cql/src', "#{QuestionnaireBuild.library_name(definition)}.cql").read)
+          .to eq(QuestionnaireBuild.cql(definition)), 'run bin/rails questionnaires:build, then questionnaires:elm'
+      end
+    end
+  end
 end

@@ -43,3 +43,6 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Only cql/dist/run.cjs is needed at runtime.
+/cql/node_modules

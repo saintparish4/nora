@@ -2,11 +2,14 @@ module RequestForm
   # The plan's clinical questions for one request, each either answered from
   # the chart with its source, or explained and handed to a person.
   #
-  # Nora answers a question only from structured chart data (FHIR) or from a
-  # chart quote a person verified against a requirement. Anything else is
-  # "ask the prescriber's office", or, for an administrative gap, where in the
-  # chart to look. It never answers a clinical question it cannot source, and
-  # it never infers "none" from a problem list that does not mention something.
+  # Every answer is a named CQL expression in the question set's library
+  # (cql/src), run over the patient's US Core data and the evidence a person
+  # verified (RequestForm::Cql), as a Da Vinci DTR client fills in a
+  # Questionnaire. This class only decides which questions apply, cites the
+  # resources each expression read, and, when an expression returns nothing,
+  # says why: "ask the prescriber's office", or, for an administrative gap,
+  # where in the chart to look. Nora never answers a question its CQL cannot
+  # source.
   class ClinicalAnswers
     Answer = Data.define(:link_id, :prefix, :text, :plain, :hidden, :type, :options, :status, :answer, :source, :reason, :depends_on)
 
@@ -15,17 +18,18 @@ module RequestForm
     CHECK = "check_chart".freeze
 
     GENERIC = { "Wegovy" => "semaglutide", "Zepbound" => "tirzepatide", "Saxenda" => "liraglutide" }.freeze
-    ICD10 = AdminFields::ICD10
     EPIC = AdminFields::EPIC
+    REQUIREMENT_SYSTEM = "https://nora.example/fhir/CodeSystem/requirement".freeze
 
-    # ICD-10-CM prefixes for the FEP form's comorbidity and cardiovascular list.
-    COMORBIDITY_CODES = {
-      "type-2-diabetes-mellitus" => %w[E11], "dyslipidemia" => %w[E78], "hypertension" => %w[I10 I11 I12 I13 I15 I16],
-      "congenital-heart-disease" => %w[Q20 Q21 Q22 Q23 Q24 Q25 Q26], "cerebrovascular-disease" => %w[I6],
-      "peripheral-artery-disease-pad" => %w[I70.2 I73.9], "coronary-heart-disease" => %w[I25], "acute-coronary-syndrome-acs" => %w[I24],
-      "myocardial-infarction-mi" => %w[I21 I22 I25.2], "unstable-angina" => %w[I20.0],
-      "coronary-or-other-arterial-revascularization" => %w[Z95.5 Z95.82 Z98.61],
-      "prior-percutaneous-coronary-intervention-coronary-bypass-surgery" => %w[Z95.1 Z95.5 Z98.61]
+    # Where each kind of answer is read, for the source line.
+    READS = {
+      "age_group" => [ "Patient.birthDate", :patient ], "age_at_least" => [ "Patient.birthDate", :patient ],
+      "plan_option" => [ "Coverage.class (plan)", :coverage ], "dosage_form" => [ "MedicationRequest.medicationCodeableConcept", :order ],
+      "brand_or_generic" => [ "MedicationRequest.medicationCodeableConcept", :order ],
+      "quantity_over" => [ "MedicationRequest.dispenseRequest", :order ], "pens_for" => [ "MedicationRequest.dispenseRequest", :order ],
+      "diagnosis" => [ "Condition.code (ICD-10-CM)", :problems ], "comorbidities" => [ "Condition.code (ICD-10-CM)", :problems ],
+      "bmi_range" => [ "Observation.valueQuantity (BMI, LOINC 39156-5)", :vitals ],
+      "continuation" => [ "MedicationRequest.authoredOn", :order ], "prior_prescription" => [ "MedicationRequest (all)", :order ]
     }.freeze
 
     def self.call(...) = new(...).call
@@ -44,7 +48,9 @@ module RequestForm
 
     # @return [Array<Answer>] the questions that apply, in form order; a question
     #   that depends on an unanswered one is kept, with depends_on set.
+    # @raise [Cql::Error] when the CQL cannot run
     def call
+      @cql = Cql.call(library: @set.library, resources: resources, as_of: @as_of)
       results = @set.items.to_h { |item| [ item.link_id, answer(item) ] }
       enabled = {}
       @set.items.filter_map do |item|
@@ -61,6 +67,20 @@ module RequestForm
     end
 
     private
+
+    # What the CQL reads: the patient's US Core resources, and an Observation
+    # for each piece of evidence a person verified on a met requirement.
+    def resources
+      @resources ||= @chart.resources + requirements.flat_map do |position, requirement|
+        next [] unless requirement.status == "met"
+
+        requirement.verified_evidence.each_with_index.map do |evidence, i|
+          { "resourceType" => "Observation", "id" => "requirement-#{position}-evidence-#{i + 1}", "status" => "final",
+            "code" => { "coding" => [ { "system" => REQUIREMENT_SYSTEM, "code" => "criterion-#{position}" } ] },
+            "subject" => { "reference" => "Patient/#{@chart.patient_id}" }, "valueString" => evidence.excerpt }
+        end
+      end
+    end
 
     # true, false, or nil when it turns on a question nobody has answered.
     def enabled_state(item, results, memo)
@@ -89,27 +109,84 @@ module RequestForm
     end
 
     def answer(item)
-      rule = item.rule
-      case rule[:from]
-      when "age_group" then age_group
-      when "age_at_least" then age_at_least(rule[:age])
-      when "plan_option" then plan_option
-      when "dosage_form" then dosage_form
-      when "brand_or_generic" then brand_or_generic
-      when "quantity_over" then quantity_over(item, rule[:limitQuantity], rule[:limitDays])
-      when "pens_for" then pens_for(rule[:days])
-      when "diagnosis" then diagnosis(item)
-      when "bmi_range" then bmi_range(item)
-      when "comorbidities" then comorbidities(item)
-      when "criterion" then criterion(item, rule[:criterion], rule[:whenMet])
-      when "criterion_bmi" then criterion_bmi(item, rule[:criterion])
-      when "continuation" then continuation(item)
-      when "prior_prescription" then prior_prescription(item, rule[:drug])
+      value = @cql[item.link_id]
+      read = Array(@cql["#{item.link_id} Source"]).map { |ref| find(ref) }.compact
+      return missing(item, read) if value.nil? || value == []
+
+      kind = item.rule[:from]
+      source = kind.start_with?("criterion") ? quote_source(requirements.fetch(item.rule[:criterion])) : chart_source(kind, read)
+      [ ANSWERED, display(item, value), source, nil ]
+    end
+
+    def display(item, value)
+      return { codes: nil, display: value.to_s } if item.type == "integer"
+
+      codes = Array(value).map(&:to_s)
+      { codes: codes, display: codes.map { |code| item.options.find { |o| o[:code] == code }&.dig(:display) || code }.join("; ") }
+    end
+
+    # Why there is no answer, by where the answer would have come from.
+    def missing(item, read)
+      case item.rule[:from]
+      when "age_group", "age_at_least" then check(@chart.patient&.dig("birthDate") ? "The patient is under 12; this form covers ages 12 and up." : "No date of birth in the chart.")
+      when "plan_option" then check("The coverage record does not name the FEP option (Standard, Basic, or Focus). Check the card scan in Coverages.")
+      when "dosage_form", "brand_or_generic", "quantity_over", "pens_for"
+        check(prescription ? "The prescription does not say. Check the order." : "No active prescription for #{@pa.item_name} in the chart. Check the order.")
+      when "diagnosis" then ask("No obesity or overweight diagnosis (E66) that matches this form's choices is on the problem list. Ask the prescriber's office which diagnosis to use.")
+      when "bmi_range" then ask("No BMI in Vitals. Ask the prescriber's office for the patient's current BMI.")
+      when "comorbidities"
+        ask("None of the listed conditions is on the problem list. Only the prescriber's office can confirm \"None of the above\": a problem list can be incomplete.")
+      when "continuation" then continuation_gap
+      when "criterion", "criterion_bmi" then requirement_gap(item)
       else ask("Nora cannot read this from the chart. Only the prescriber's office can answer it.")
       end
     end
 
-    # --- From structured chart data -----------------------------------------
+    def continuation_gap
+      history = @chart.medication_history.select { |rx| AdminFields.prescribes?(rx, @pa.item_name) }
+      written = history.filter_map { |rx| rx["authoredOn"]&.then { |d| Date.iso8601(d[0, 10]) } }.min
+      return check("No prescription for #{@pa.item_name} in the chart. Check the order.") unless written
+
+      ask("The chart has a #{@pa.item_name} prescription from #{written.strftime('%m/%d/%Y')}. Whether the patient has taken it " \
+          "continuously for 4 months is not in the chart's structured data: check the last visit note, or ask the prescriber's office.")
+    end
+
+    def requirement_gap(item)
+      requirement = requirements[item.rule[:criterion]] or return ask("Nothing on this request checks this. Ask the prescriber's office.")
+      return ask("The verified quote for this does not state a BMI number. Ask the prescriber's office for the baseline BMI.") if requirement.status == "met"
+
+      not_met(requirement)
+    end
+
+    def find(ref) = resources.find { |r| r["resourceType"] == ref["resourceType"] && r["id"] == ref["id"] }
+
+    def chart_source(kind, read)
+      element, epic = READS.fetch(kind) { [ "the chart", :patient ] }
+      if read.empty?
+        # Only an answer drawn from an absence, such as "no earlier Zepbound
+        # order": the source is the search that found nothing.
+        return { kind: "chart", reference: "MedicationRequest?patient=#{@chart.patient_id}", element: element, in_epic: EPIC.fetch(epic),
+                 detail: "No matching prescription in the chart's medication history" }
+      end
+
+      { kind: "chart", reference: read.map { |r| "#{r['resourceType']}/#{r['id']}" }.join(", "), element: element, in_epic: EPIC.fetch(epic),
+        detail: read.map { |r| detail(r) }.compact.join("; ").presence }
+    end
+
+    def detail(resource)
+      case resource["resourceType"]
+      when "Patient" then age&.then { |years| "Age #{years}" }
+      when "Coverage" then resource["class"].to_a.find { |c| c.dig("type", "coding", 0, "code") == "plan" }&.then { |c| c["name"] || c["value"] }
+      when "MedicationRequest"
+        quantity = resource.dig("dispenseRequest", "quantity", "value")
+        days = resource.dig("dispenseRequest", "expectedSupplyDuration", "value")
+        unit = resource.dig("dispenseRequest", "quantity", "unit")
+        [ resource.dig("medicationCodeableConcept", "text"), quantity && days && "#{[ number(quantity), unit ].compact.join(' ')} per #{number(days)} days",
+          resource["authoredOn"] && "written #{us_date(resource['authoredOn'])}" ].compact.join(", ")
+      when "Condition" then [ resource.dig("code", "coding")&.find { |c| c["system"] == AdminFields::ICD10 }&.dig("code"), resource.dig("code", "text") ].compact.join(" ")
+      when "Observation" then "BMI #{number(resource.dig('valueQuantity', 'value'))} on #{us_date(resource['effectiveDateTime'])}"
+      end
+    end
 
     def age
       dob = @chart.patient&.dig("birthDate") or return
@@ -117,175 +194,12 @@ module RequestForm
       @as_of.year - born.year - (@as_of.strftime("%m%d") < born.strftime("%m%d") ? 1 : 0)
     end
 
-    def patient_source(detail)
-      chart_source("Patient/#{@chart.patient['id']}", "Patient.birthDate", :patient, detail)
-    end
-
-    def age_group
-      years = age or return check("No date of birth in the chart.")
-      return check("The patient is #{years}; this form covers ages 12 and up.") if years < 12
-
-      coded(years >= 18 ? "18-plus" : "12-17", years >= 18 ? "Age 18 or older" : "Age 12-17", patient_source("Age #{years}"))
-    end
-
-    def age_at_least(minimum)
-      years = age or return check("No date of birth in the chart.")
-      yes_no(years >= minimum, patient_source("Age #{years}"))
-    end
-
-    def plan_option
-      coverage = @chart.coverages.first or return check("No active coverage in the chart.")
-      plan = Array(coverage["class"]).find { |c| Array(c.dig("type", "coding")).any? { |t| t["code"] == "plan" } }
-      name = [ plan&.dig("name"), plan&.dig("value") ].compact.join(" ")
-      source = chart_source("Coverage/#{coverage['id']}", "Coverage.class (plan)", :coverage, name)
-      if name.match?(/focus/i) then coded("focus", "Blue Focus", source)
-      elsif name.match?(/standard|basic/i) then coded("standard-basic", "Blue Standard or Blue Basic", source)
-      else check("The coverage record does not name the FEP option (Standard, Basic, or Focus). Check the card scan in Coverages.")
-      end
-    end
-
-    def dosage_form
-      rx = prescription or return no_prescription
-      text = rx.dig("medicationCodeableConcept", "text").to_s
-      source = rx_source(rx, "MedicationRequest.medicationCodeableConcept", text)
-      if text.match?(/tablet/i) then coded("tablet", "Tablets", source)
-      elsif text.match?(/inject|pen\b|auto-?injector/i) then coded("injection", "Injection", source)
-      else check("The prescription does not say pen or tablet. Check the order.")
-      end
-    end
-
-    def brand_or_generic
-      rx = prescription or return no_prescription
-      text = rx.dig("medicationCodeableConcept", "text").to_s
-      source = rx_source(rx, "MedicationRequest.medicationCodeableConcept", text)
-      code = rx.dig("medicationCodeableConcept", "coding").to_a.find { |c| AdminFields::RXNORM.fetch(@pa.item_name, []).include?(c["code"]) }
-      branded = code.present?
-      source[:detail] = "#{text} (RxNorm #{code['code']}, a #{@pa.item_name} product)" if branded
-      if branded || text.downcase.include?(@pa.item_name.downcase) then coded("brand", "Brand", source)
-      elsif text.downcase.include?(GENERIC.fetch(@pa.item_name, "?")) then coded("generic", "Generic", source)
-      else check("The prescription does not name the drug as brand or generic. Check the order.")
-      end
-    end
-
-    def supply
-      rx = prescription or return
-      quantity = rx.dig("dispenseRequest", "quantity", "value")
-      days = rx.dig("dispenseRequest", "expectedSupplyDuration", "value")
-      quantity && days.to_f.positive? ? [ rx, quantity.to_f, days.to_f ] : nil
-    end
-
-    def quantity_over(item, limit, per_days)
-      rx, quantity, days = supply
-      return check("The prescription has no quantity or days' supply. Check the order.") unless rx
-
-      scaled = quantity * per_days / days
-      detail = "#{number(quantity)} per #{number(days)} days, #{number(scaled.round(1))} per #{per_days} days"
-      yes_no(scaled > limit, rx_source(rx, "MedicationRequest.dispenseRequest", detail), item)
-    end
-
-    def pens_for(per_days)
-      rx, quantity, days = supply
-      return check("The prescription has no quantity or days' supply. Check the order.") unless rx
-
-      pens = (quantity * per_days / days).ceil
-      source = rx_source(rx, "MedicationRequest.dispenseRequest", "#{number(quantity)} pens per #{number(days)} days")
-      [ ANSWERED, { codes: nil, display: pens.to_s }, source, nil ]
-    end
-
-    def diagnosis(item)
-      condition, code = problem_list.find { |_, c| c.start_with?("E66") }
-      return ask("No obesity or overweight diagnosis (E66) is on the problem list. Ask the prescriber's office which diagnosis to use.") unless condition
-
-      choice = code.start_with?("E66.3") ? "elevated-bmi" : "obesity"
-      option = item.options.find { |o| o[:code] == choice } or return ask("The chart's diagnosis (#{code}) is not one of this form's choices.")
-      source = chart_source("Condition/#{condition['id']}", "Condition.code (ICD-10-CM)", :problems, "#{code} #{condition.dig('code', 'text')}")
-      coded(option[:code], option[:display], source)
-    end
-
-    def latest_bmi
-      @chart.bmi_observations.max_by { |o| o["effectiveDateTime"].to_s }
-    end
-
-    def bmi_range(item)
-      obs = latest_bmi or return ask("No BMI in Vitals. Ask the prescriber's office for the patient's current BMI.")
-      value = obs.dig("valueQuantity", "value").to_f
-      date = obs["effectiveDateTime"]&.then { |d| Date.iso8601(d[0, 10]).strftime("%m/%d/%Y") }
-      source = chart_source("Observation/#{obs['id']}", "Observation.valueQuantity (BMI, LOINC 39156-5)", :vitals, "BMI #{number(value)} on #{date}")
-      range_answer(item, value, source)
-    end
-
-    def comorbidities(item)
-      found = COMORBIDITY_CODES.filter_map do |option, prefixes|
-        hit = problem_list.find { |_, code| prefixes.any? { |p| code.start_with?(p) } }
-        hit && [ option, hit ]
-      end
-      found.select! { |option, _| item.options.any? { |o| o[:code] == option } }
-      if found.empty?
-        return ask("None of the listed conditions is on the problem list. Only the prescriber's office can confirm " \
-                   "\"None of the above\": a problem list can be incomplete.")
-      end
-
-      conditions = found.map(&:last).uniq
-      source = chart_source(conditions.map { |c, _| "Condition/#{c['id']}" }.join(", "), "Condition.code (ICD-10-CM)", :problems,
-                            conditions.map { |c, code| "#{code} #{c.dig('code', 'text')}" }.join("; "))
-      codes = found.map(&:first)
-      display = codes.map { |code| item.options.find { |o| o[:code] == code }[:display] }.join("; ")
-      [ ANSWERED, { codes: codes, display: display }, source, nil ]
-    end
-
-    # Initiation when every prescription for the drug in the chart is under
-    # four months old. Anything older might be a renewal, and whether the
-    # patient took it continuously is not in structured data.
-    def continuation(_item)
-      history = drug_history(@pa.item_name)
-      return check("No prescription for #{@pa.item_name} in the chart. Check the order.") if history.empty?
-
-      first = history.min_by { |rx| rx["authoredOn"].to_s }
-      written = first["authoredOn"] && Date.iso8601(first["authoredOn"][0, 10])
-      return check("The prescription has no date written. Check the order.") unless written
-
-      if written > @as_of - 4.months
-        detail = "First #{@pa.item_name} prescription in the chart written #{written.strftime('%m/%d/%Y')}, under 4 months ago"
-        coded("initiation", "NO – this is INITIATION of therapy", rx_source(first, "MedicationRequest.authoredOn", detail))
-      else
-        ask("The chart has a #{@pa.item_name} prescription from #{written.strftime('%m/%d/%Y')}. Whether the patient has taken it " \
-            "continuously for 4 months is not in the chart's structured data: check the last visit note, or ask the prescriber's office.")
-      end
-    end
-
-    def prior_prescription(item, drug)
-      earlier = drug_history(drug).min_by { |rx| rx["authoredOn"].to_s }
-      if earlier
-        yes_no(true, rx_source(earlier, "MedicationRequest", "#{drug} prescribed #{earlier['authoredOn']}"), item)
-      else
-        source = { kind: "chart", reference: "MedicationRequest?patient=#{@chart.patient_id}", element: "MedicationRequest (all)",
-                   in_epic: EPIC.fetch(:order), detail: "No #{drug} prescription in the chart's medication history" }
-        yes_no(false, source, item)
-      end
-    end
+    def us_date(iso) = iso && Date.iso8601(iso[0, 10]).strftime("%m/%d/%Y")
 
     # --- From verified chart quotes -----------------------------------------
 
     def requirements
       @requirements ||= @pa.requirements.includes(:policy_criterion, evidence: %i[chart_document verified_by]).index_by { |r| r.policy_criterion.position }
-    end
-
-    def criterion(item, position, when_met)
-      requirement = requirements[position] or return ask("Nothing on this request checks this. Ask the prescriber's office.")
-      return not_met(requirement) unless requirement.status == "met"
-
-      option = item.options.find { |o| o[:code] == when_met }
-      [ ANSWERED, { codes: [ when_met ], display: option&.dig(:display) || when_met }, quote_source(requirement), nil ]
-    end
-
-    def criterion_bmi(item, position)
-      requirement = requirements[position] or return ask("Nothing on this request checks this. Ask the prescriber's office.")
-      return not_met(requirement) unless requirement.status == "met"
-
-      value = requirement.verified_evidence.filter_map { |e| e.excerpt[/BMI[^0-9]{0,20}(\d{2}(?:\.\d+)?)/i, 1]&.to_f }.first
-      return ask("The verified quote for this does not state a BMI number. Ask the prescriber's office for the baseline BMI.") unless value
-
-      range_answer(item, value, quote_source(requirement))
     end
 
     def not_met(requirement)
@@ -317,40 +231,9 @@ module RequestForm
       @prescription = @chart.medication_requests.find { |rx| AdminFields.prescribes?(rx, @pa.item_name) }
     end
 
-    def drug_history(drug) = @chart.medication_history.select { |rx| AdminFields.prescribes?(rx, drug) }
-
-    def problem_list
-      @problem_list ||= @chart.conditions.filter_map do |condition|
-        coding = Array(condition.dig("code", "coding")).find { |c| c["system"] == ICD10 }
-        coding && [ condition, coding["code"] ]
-      end
-    end
-
-    def range_answer(item, value, source)
-      code = if value < 27 then "under-27" elsif value < 30 then "27-29.9" else "30-plus" end
-      option = item.options.find { |o| o[:code] == code }
-      coded(code, option&.dig(:display) || code, source)
-    end
-
-    def yes_no(value, source, item = nil)
-      code = value ? "yes" : "no"
-      display = item&.options&.find { |o| o[:code] == code }&.dig(:display) || code.capitalize
-      coded(code, display, source)
-    end
-
-    def coded(code, display, source) = [ ANSWERED, { codes: [ code ], display: display }, source, nil ]
-
     def ask(reason) = [ ASK, nil, nil, reason ]
 
     def check(reason) = [ CHECK, nil, nil, reason ]
-
-    def no_prescription = check("No active prescription for #{@pa.item_name} in the chart. Check the order.")
-
-    def chart_source(reference, element, epic, detail)
-      { kind: "chart", reference: reference, element: element, in_epic: EPIC.fetch(epic), detail: detail }
-    end
-
-    def rx_source(rx, element, detail) = chart_source("MedicationRequest/#{rx['id']}", element, :order, detail)
 
     def number(value) = value.to_f == value.to_i ? value.to_i : value
   end

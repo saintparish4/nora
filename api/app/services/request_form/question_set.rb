@@ -7,7 +7,9 @@ module RequestForm
     EXT = "https://nora.example/fhir/StructureDefinition".freeze
     HIDDEN = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden".freeze
 
-    Item = Data.define(:link_id, :prefix, :text, :type, :repeats, :hidden, :options, :enable_when, :plain, :rule)
+    Item = Data.define(:link_id, :prefix, :text, :type, :repeats, :hidden, :options, :enable_when, :plain, :rule, :expression)
+    INITIAL_EXPRESSION = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression".freeze
+    CQF_LIBRARY = "http://hl7.org/fhir/StructureDefinition/cqf-library".freeze
 
     def self.all = @all ||= DIR.glob("*.json").sort.map { |path| new(JSON.parse(path.read)) }
 
@@ -24,6 +26,11 @@ module RequestForm
     def id = resource["id"]
     def payer = @meta["payer"]
     def item = @meta["item"]
+
+    # The CQL library whose expressions answer the questions, e.g. "NoraFepSaxenda".
+    def library
+      Array(resource["extension"]).find { |e| e["url"] == CQF_LIBRARY }&.dig("valueCanonical")&.split("/")&.last
+    end
 
     # "form": the plan's own published form, word for word. "derived": one
     # question per criterion of its published policy, in Nora's words.
@@ -47,7 +54,8 @@ module RequestForm
         options: Array(i["answerOption"]).map { |o| o["valueCoding"].slice("code", "display").symbolize_keys },
         enable_when: Array(i["enableWhen"]).map { |w| { question: w["question"], code: w.dig("answerCoding", "code") } },
         plain: ext.find { |e| e["url"] == "#{EXT}/plain-language" }&.dig("valueString"),
-        rule: extensions(i, "#{EXT}/answer-rule").symbolize_keys
+        rule: extensions(i, "#{EXT}/answer-rule").symbolize_keys,
+        expression: ext.find { |e| e["url"] == INITIAL_EXPRESSION }&.dig("valueExpression", "expression")
       )
     end
 

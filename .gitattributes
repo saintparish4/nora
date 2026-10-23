@@ -9,3 +9,4 @@ api/bin/* text eol=lf
 *.bat text eol=crlf
 *.ps1 text eol=crlf
 
+api/cql/dist/* linguist-generated=true -diff

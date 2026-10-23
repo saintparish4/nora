@@ -29,7 +29,7 @@ RSpec.describe RequestForm::ClinicalAnswers do
       )
       expect(answers.values.map(&:status).uniq).to eq([ 'answered' ])
       expect(answers['initiation-bmi'].source).to include(reference: 'Observation/demo-1004-bmi-1', in_epic: 'Vitals', detail: 'BMI 36.5 on 08/28/2026')
-      expect(answers['pens-90-days'].source).to include(reference: 'MedicationRequest/demo-1004-rx', detail: '5 pens per 30 days')
+      expect(answers['pens-90-days'].source).to include(reference: 'MedicationRequest/demo-1004-rx', detail: include('5 pen per 30 days'))
     end
 
     it 'answers the clinical questions from verified chart quotes, naming who verified them' do

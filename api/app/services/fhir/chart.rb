@@ -18,6 +18,11 @@ module Fhir
     def conditions = @conditions ||= @source.search("Condition", patient: patient_id, category: "problem-list-item")
     def bmi_observations = @bmi_observations ||= @source.search("Observation", patient: patient_id, code: LOINC_BMI)
 
+    # Everything the question sets' CQL reads, as one list.
+    def resources
+      [ patient, *coverages, *medication_history, *conditions, *bmi_observations ].compact.uniq { |r| [ r["resourceType"], r["id"] ] }
+    end
+
     # "Practitioner/abc" → the Practitioner resource.
     def resolve(reference)
       type, id = reference.to_s.split("/", 2)

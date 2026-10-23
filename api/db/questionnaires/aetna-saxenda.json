@@ -37,6 +37,10 @@
           "valueString": "Saxenda PA with Limit (Aetna Pharmacy Clinical Policy Bulletin)"
         }
       ]
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-library",
+      "valueCanonical": "https://nora.example/fhir/Library/NoraAetnaSaxenda"
     }
   ],
   "item": [
@@ -62,6 +66,13 @@
               "valueInteger": 18
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraAetnaSaxenda.\"age\""
+          }
         }
       ],
       "answerOption": [
@@ -107,6 +118,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraAetnaSaxenda.\"program\""
+          }
         }
       ],
       "answerOption": [
@@ -148,6 +166,13 @@
               "valueInteger": 3
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraAetnaSaxenda.\"bmi\""
+          }
         }
       ],
       "answerOption": [
@@ -200,6 +225,13 @@
               "valueCode": "yes"
             }
           ]
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language": "text/cql-identifier",
+            "expression": "NoraAetnaSaxenda.\"comorbidity\""
+          }
         }
       ],
       "answerOption": [

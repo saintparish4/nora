@@ -49,7 +49,7 @@ export function TaskList({ tasks, onChange }: { tasks: Task[]; onChange: () => v
               {task.status !== 'open' && <Pill tone="neutral">{task.status === 'done' ? 'Done' : 'Dismissed'}</Pill>}
             </p>
             {task.status === 'open' && (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" onClick={() => close(task, 'done')}>Done</Button>
                 {!task.asked_prescriber_at && (
                   <Button size="sm" variant="outline" onClick={() => ask(task)}>Ask the prescriber&apos;s office</Button>

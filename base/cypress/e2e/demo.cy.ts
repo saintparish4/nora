@@ -15,4 +15,20 @@ describe('One-click demo', () => {
     cy.contains('h1', 'Today');
     cy.get('[data-tour="attention"]').should('contain', 'Tom Okafor · Saxenda');
   });
+
+  it('plays the walkthrough a step every few seconds, showing the time left, and holds when paused', () => {
+    cy.visit('/demo?tour=1');
+    const caption = () => cy.get('section[aria-label="Guided walkthrough"]');
+    caption().should('contain', '1 of 9');
+    caption().contains(/Next in \d+s/, { timeout: 15_000 });
+    cy.screenshot('walkthrough-step-1', { capture: 'viewport' });
+    caption().should('contain', '2 of 9', { timeout: 15_000 });
+
+    caption().contains('button', 'Pause').click();
+    caption().should('contain', 'Paused');
+    cy.wait(7_000);
+    caption().should('contain', '2 of 9');
+    caption().find('[aria-label="End the walkthrough"]').click();
+  });
 });
+

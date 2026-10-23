@@ -63,7 +63,7 @@ export default function RequestFormPage() {
     <div>
       {header}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-6">
           {SECTIONS.map((section) => (
             <FieldSection key={section.key} title={section.title} fields={form.fields.filter((f) => f.section === section.key)} />

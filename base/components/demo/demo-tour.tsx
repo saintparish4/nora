@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 import { getPriorAuthorizations } from '@/lib/api';
-import { TOUR_REQUEST_STATUS, TOUR_ROLE, TOUR_STEPS, readTour, writeTour, type TourPlace, type TourStep } from '@/lib/demo-tour';
+import { TOUR_REQUEST_STATUS, TOUR_ROLE, TOUR_STEPS, readTour, stepSeconds, writeTour, type TourPlace, type TourStep } from '@/lib/demo-tour';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +50,11 @@ export function DemoTour() {
   const [ready, setReady] = useState(false);
   const [placed, setPlaced] = useState(false);
   const ring = useRef<HTMLDivElement>(null);
+  /** The current step's countdown bar, filled frame by frame. */
+  const countdown = useRef<HTMLDivElement>(null);
+  /** How long the current step has been shown while playing, in ms. */
+  const elapsed = useRef(0);
+  const remaining = useRef<HTMLSpanElement>(null);
   /** Where the ring was last drawn, so the next step glides from there. */
   const drawn = useRef<Box | null>(null);
   const requestPath = useRef<string | null | undefined>(undefined);
@@ -180,11 +185,31 @@ export function DemoTour() {
     return () => window.cancelAnimationFrame(frame);
   }, [ready, step]);
 
-  // Move on by itself while playing.
+  // A new step starts its countdown from zero.
+  useEffect(() => {
+    elapsed.current = 0;
+    if (countdown.current) countdown.current.style.transform = 'scaleX(0)';
+  }, [place?.step]);
+
+  // Move on by itself while playing. The countdown only runs once the
+  // spotlight has arrived, holds while paused, and resumes where it stopped;
+  // the bar under the caption shows how long is left.
   useEffect(() => {
     if (!ready || !step || !place?.playing) return;
-    const timer = window.setTimeout(() => go(place.step + 1), step.seconds * 1000);
-    return () => window.clearTimeout(timer);
+    const duration = stepSeconds(step) * 1000;
+    let last = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      elapsed.current += now - last;
+      last = now;
+      const progress = Math.min(1, elapsed.current / duration);
+      if (countdown.current) countdown.current.style.transform = `scaleX(${progress})`;
+      if (remaining.current) remaining.current.textContent = `Next in ${Math.ceil((duration - elapsed.current) / 1000)}s`;
+      if (progress >= 1) return go(place.step + 1);
+      frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
   }, [ready, step, place, go]);
 
   if (!place || !inDemo) return null;
@@ -240,6 +265,18 @@ export function DemoTour() {
         className="pointer-events-auto fixed inset-x-0 bottom-0 z-[70] p-3 sm:bottom-5 sm:left-1/2 sm:right-auto sm:w-[34rem] sm:-translate-x-1/2 sm:p-0"
       >
         <div className="rounded-tile bg-ink p-5 text-white shadow-[0_24px_60px_-20px_rgba(18,18,18,0.6)]">
+          {/* One segment per step: done ones full, the current one filling
+              until the walkthrough moves on, the rest empty. */}
+          <div className="mb-4 flex gap-1" aria-hidden>
+            {TOUR_STEPS.map((_, i) => (
+              <div key={i} className="h-1 flex-1 overflow-hidden rounded-full bg-white/15">
+                {i < place.step && <div className="h-full w-full bg-white" />}
+                {i === place.step && (
+                  <div ref={countdown} className="h-full w-full origin-left bg-white" style={{ transform: 'scaleX(0)' }} />
+                )}
+              </div>
+            ))}
+          </div>
           <div className="flex items-start justify-between gap-4">
             <p className="text-xs font-medium tracking-[0.04em] text-white/60 uppercase">
               Walkthrough · {place.step + 1} of {TOUR_STEPS.length} · Medical assistant
@@ -263,9 +300,9 @@ export function DemoTour() {
             <button type="button" onClick={() => go(place.step + 1)} className="flex size-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20" aria-label="Next step" data-tour-control="next">
               <ChevronRight className="size-4" aria-hidden />
             </button>
-            <div className="ml-auto h-1 w-24 overflow-hidden rounded-full bg-white/15" aria-hidden>
-              <div className="h-full rounded-full bg-white" style={{ width: `${((place.step + 1) / TOUR_STEPS.length) * 100}%` }} />
-            </div>
+            {/* Written each frame by the countdown, so React leaves its text alone. */}
+            <span ref={remaining} className={cn('ml-auto text-xs text-white/60 tabular-nums', !place.playing && 'hidden')} aria-hidden />
+            {!place.playing && <span className="ml-auto text-xs text-white/60">Paused</span>}
           </div>
         </div>
       </section>

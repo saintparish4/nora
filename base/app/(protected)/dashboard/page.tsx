@@ -61,7 +61,7 @@ export default function TodayPage() {
         })}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Panel title="Needs attention" tour="attention" busy={isLoading}>
           {isLoading ? (
             // The shape of two requests, so the cards arriving do not push the page down.

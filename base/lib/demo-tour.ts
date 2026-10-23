@@ -1,18 +1,23 @@
 /**
  * The guided walkthrough of the demo practice: its steps, and where it keeps
- * its place. The place lives in sessionStorage because the walkthrough crosses
- * page loads and one change of account (medical assistant to clinician).
+ * its place. It plays on one page, the request /demo opens on (the one
+ * waiting for clarification), as the medical assistant, so the spotlight
+ * glides from panel to panel instead of the visitor being moved between
+ * pages. The place lives in sessionStorage so a reload resumes it.
  *
  * The walkthrough only looks. It selects requirements and opens a document,
  * but never verifies, approves, or changes a request, so it plays the same
- * for every visitor of the shared practice.
+ * for every visitor of the shared practice. Steps select requirements by
+ * position in Cigna's criteria for Wegovy (db/seeds/policy_library.rb), as
+ * the featured request is seeded (db/seeds/demo_requests.rb).
  */
 import type { DemoRole, PaStatus } from '@/types';
 
+/** The account and the request the walkthrough plays on. */
+export const TOUR_ROLE: DemoRole = 'staff';
+export const TOUR_REQUEST_STATUS: PaStatus = 'needs_clarification';
+
 export interface TourStep {
-  role: DemoRole;
-  /** A fixed path, or the request currently in this status. */
-  page: { path: string } | { status: PaStatus };
   /** CSS selector of the element to spotlight. */
   target: string;
   /** Selectors to click, in order, once the page is ready. */
@@ -24,34 +29,23 @@ export interface TourStep {
   seconds: number;
 }
 
+const requirement = (position: number) => `[data-tour="requirements"] li:nth-child(${position}) button`;
+
 export const TOUR_STEPS: TourStep[] = [
   {
-    role: 'staff',
-    page: { path: '/dashboard' },
-    target: '[data-tour="counts"]',
-    title: "You are Jordan, the practice's medical assistant",
-    body: 'Four prior authorization requests are open, each at a different stage. The clinician has already decided what each patient needs. Your job is the paperwork.',
-    seconds: 9,
-  },
-  {
-    role: 'staff',
-    page: { status: 'gathering' },
     target: '[data-tour="requirements"]',
-    title: 'Nora read the chart against the plan',
-    body: "Each line is one of the payer's published criteria. Nora looked through this patient's notes for text that documents each one.",
+    title: "Nora read the chart against the payer's criteria",
+    body: "Jane Rivera's request for Wegovy, checked against Cigna's published policy. Each line is one criterion and what a person decided about it.",
     seconds: 9,
   },
   {
-    role: 'staff',
-    page: { status: 'gathering' },
     target: '[data-tour="evidence"]',
+    before: [requirement(2)],
     title: 'Every excerpt is quoted, not written',
-    body: "This is the chart's own sentence, with its source and date. Jordan verifies or rejects it. Nora never marks a requirement met by itself.",
+    body: "This is the chart's own sentence, with its source and date. Jordan, the medical assistant, verified it. Nora never marks a requirement met by itself.",
     seconds: 10,
   },
   {
-    role: 'staff',
-    page: { status: 'gathering' },
     target: '[role="dialog"]',
     before: ['[data-tour="view-document"]'],
     after: ['[data-tour="dialog-close"]'],
@@ -60,53 +54,35 @@ export const TOUR_STEPS: TourStep[] = [
     seconds: 9,
   },
   {
-    role: 'staff',
-    page: { status: 'needs_clarification' },
     target: '[data-tour="requirement"]',
-    // Criterion 3 of Cigna's criteria, the baseline BMI (db/seeds/demo_requests.rb).
-    before: ['[data-tour="requirements"] li:nth-child(3) button'],
+    before: [requirement(5)],
+    title: 'A person can say no',
+    body: 'Here Nora also offered a sentence about her past diet. This criterion is about how the drug will be used, so Jordan rejected it and kept the line that says she will continue.',
+    seconds: 11,
+  },
+  {
+    target: '[data-tour="requirement"]',
+    before: [requirement(3)],
     title: 'Read the way the payer reads it',
     body: 'Cigna asks for the BMI from before any GLP-1. She took Saxenda in 2025, and the BMI Nora found is from after it, so nobody verified it and the requirement is marked missing.',
     seconds: 12,
   },
   {
-    role: 'staff',
-    page: { status: 'needs_clarification' },
     target: '[data-tour="tasks"]',
     title: 'The gap becomes a task',
     body: 'The ordering clinician is asked to document exactly what is missing. The task closes when the requirement is resolved.',
     seconds: 8,
   },
   {
-    role: 'staff',
-    page: { status: 'ready_for_review' },
     target: '[data-tour="approval"]',
-    title: 'Ready, but not Jordan’s to approve',
-    body: 'Every requirement here is met with verified evidence. Only a clinician can sign off, so the button is locked for the medical assistant.',
-    seconds: 9,
+    title: 'Not Jordan’s to approve',
+    body: 'Requirements are still open, and only a clinician can sign off, so the button is locked. When she approves, Nora pins the exact evidence she saw; any later edit voids it.',
+    seconds: 11,
   },
   {
-    role: 'clinician',
-    page: { path: '/dashboard' },
-    target: '[data-tour="attention"]',
-    title: 'Now you are Dr. Chen, the clinician',
-    body: 'Same practice, different day: the request waiting on her approval, and the documentation tasks Nora opened for her.',
-    seconds: 9,
-  },
-  {
-    role: 'clinician',
-    page: { status: 'ready_for_review' },
-    target: '[data-tour="approval"]',
-    title: 'Approval pins what she read',
-    body: 'When she approves, Nora records exactly which evidence she saw. Any edit afterwards voids the approval and sends the request back to her.',
-    seconds: 10,
-  },
-  {
-    role: 'clinician',
-    page: { status: 'approved_by_payer' },
     target: '[data-tour="timeline"]',
-    title: 'From first read to payer decision',
-    body: 'An approved request becomes a PDF packet. Staff submit it and record the outcome, and every step keeps who did it and when.',
+    title: 'Every step is on the record',
+    body: 'Who did what, and when, from the first read of the chart. An approved request becomes a PDF packet, and the payer’s decision is recorded here too.',
     seconds: 10,
   },
 ];

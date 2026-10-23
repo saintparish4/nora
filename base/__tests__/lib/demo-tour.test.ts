@@ -29,13 +29,20 @@ describe('the demo walkthrough', () => {
     expect(readTour()).toBeNull()
   })
 
-  it('shows the medical assistant first and changes account exactly once', () => {
-    const roles = TOUR_STEPS.map((step) => step.role)
-    const switches = roles.filter((role, i) => i > 0 && role !== roles[i - 1]).length
+  it('spotlights only panels on the request page, so it never changes page', () => {
+    const onRequestPage = /^\[data-tour="(requirements|requirement|evidence|tasks|approval|timeline)"\]$|^\[role="dialog"\]$/
 
-    expect(roles[0]).toBe('staff')
-    expect(roles[roles.length - 1]).toBe('clinician')
-    expect(switches).toBe(1)
+    for (const step of TOUR_STEPS) expect(step.target).toMatch(onRequestPage)
+  })
+
+  it("selects only requirements that Cigna's six criteria have", () => {
+    const positions = TOUR_STEPS.flatMap((step) => step.before ?? [])
+      .map((selector) => selector.match(/li:nth-child\((\d+)\)/)?.[1])
+      .filter((n): n is string => Boolean(n))
+      .map(Number)
+
+    expect(positions.length).toBeGreaterThan(0)
+    for (const position of positions) expect(position).toBeLessThanOrEqual(6)
   })
 
   it('only clicks things that look, never things that change a request', () => {

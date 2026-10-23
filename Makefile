@@ -14,6 +14,7 @@ help:
 	@echo "  make test         - Run all tests (frontend + backend)"
 	@echo "  make dev          - Start development servers"
 	@echo "  make dev-stop     - Stop development servers (frontend:$(FRONTEND_PORT), backend:$(API_PORT))"
+	@echo "  make dev SQL_LOG=1 - Start them with every SQL query in the API log"
 	@echo "  make docker-up    - Start Docker containers"
 	@echo "  make docker-down  - Stop Docker containers"
 	@echo "  make db-reset     - Reset database (drop, create, migrate, seed)"

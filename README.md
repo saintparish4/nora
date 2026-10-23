@@ -62,6 +62,8 @@ make dev
 - Console: http://localhost:3005
 - API: http://localhost:3006
 
+The API logs each request with its timing. `make dev SQL_LOG=1` adds every SQL query and the line of code that ran it.
+
 http://localhost:3005/demo signs you in to the synthetic demo practice as the medical assistant (`/demo?as=clinician` for the clinician, who can approve), and `/demo?tour=1` plays the walkthrough. Or sign in with a seeded account, password `password123`:
 
 | Email | Role |

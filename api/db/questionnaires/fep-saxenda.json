@@ -1,0 +1,975 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "fep-saxenda",
+  "url": "https://nora.example/fhir/Questionnaire/fep-saxenda",
+  "version": "2026-01-12",
+  "name": "FepSaxenda",
+  "title": "Saxenda Prior Approval Request (FEP)",
+  "status": "active",
+  "date": "2026-01-12",
+  "publisher": "CVS Caremark for the BCBS Federal Employee Program",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "SAXENDA PRIOR APPROVAL REQUEST, revised 2026-01-12: the plan's own questions, word for word.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/question-set",
+      "extension": [
+        {
+          "url": "kind",
+          "valueCode": "form"
+        },
+        {
+          "url": "payer",
+          "valueString": "Blue Cross Blue Shield Federal Employee Program"
+        },
+        {
+          "url": "item",
+          "valueString": "Saxenda"
+        },
+        {
+          "url": "source",
+          "valueUri": "https://info.caremark.com/content/dam/enterprise/caremark/microsites/dig/pdfs/pa-fep/fep-form/FEP_Form_Saxenda.pdf"
+        },
+        {
+          "url": "sourceTitle",
+          "valueString": "SAXENDA PRIOR APPROVAL REQUEST"
+        },
+        {
+          "url": "sha256",
+          "valueString": "ab484c8b271cc4af478a68b257fe8541b88ccafc835423318afe7f0911ac1a3d"
+        }
+      ]
+    }
+  ],
+  "item": [
+    {
+      "linkId": "age-group",
+      "text": "Patient age group",
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+          "valueBoolean": true
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "age_group"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "12-17",
+            "display": "Age 12-17"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "18-plus",
+            "display": "Age 18 or older"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "plan-option",
+      "text": "FEP plan option",
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+          "valueBoolean": true
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "plan_option"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-plan-option",
+            "code": "standard-basic",
+            "display": "Blue Standard or Blue Basic"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-plan-option",
+            "code": "focus",
+            "display": "Blue Focus"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "brand-generic",
+      "text": "Is this request for brand or generic?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "From the prescription: is it written for the brand-name drug or the generic?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "brand_or_generic"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-brand-generic",
+            "code": "brand",
+            "display": "Brand"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-brand-generic",
+            "code": "generic",
+            "display": "Generic"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "diagnosis",
+      "prefix": "1.",
+      "text": "What is the patient's diagnosis?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Which reason for the drug the chart's diagnosis matches. Nora reads the obesity or overweight code (E66) on the problem list."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "diagnosis"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-diagnosis",
+            "code": "chronic",
+            "display": "Chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-diagnosis",
+            "code": "obesity",
+            "display": "Obesity, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-diagnosis",
+            "code": "elevated-bmi",
+            "display": "Elevated BMI, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-diagnosis",
+            "code": "none",
+            "display": "None of the above"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "pens-90-days",
+      "prefix": "2.",
+      "text": "How many pre-filled pens will the patient need for 90 days?",
+      "type": "integer",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "From the prescription: how many pens the patient uses in 90 days."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "pens_for"
+            },
+            {
+              "url": "days",
+              "valueInteger": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "program",
+      "prefix": "3.",
+      "text": "Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Has the patient been in a structured weight-loss program (diet and exercise with a coach, dietitian, clinic, or an app like Teladoc)? A suggestion to diet is not a program."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 4
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-program",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-program",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "glp1",
+      "prefix": "4.",
+      "text": "Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "GLP-1 drugs are the weekly or daily weight and diabetes shots (and Rybelsus pills) listed below. The plan wants to know the patient will not be on two at once."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 5
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "no-glp1"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-glp1",
+            "code": "no-glp1",
+            "display": "No, the patient is not using another GLP-1"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-glp1",
+            "code": "change",
+            "display": "Yes, this is a change in therapy from another GLP-1 (specify medication)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-glp1",
+            "code": "additional",
+            "display": "Yes, this is a request for an additional GLP-1 (specify medication)"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "pa-combination",
+      "prefix": "5.",
+      "text": "Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Will the patient also take another weight-loss drug that needs a prior authorization (like phentermine or Qsymia) at the same time?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 6
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "no"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-pa-combination",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-pa-combination",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "change-from-zepbound",
+      "prefix": "6.",
+      "text": "Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Is the patient being moved from Zepbound to this drug? Answered from the prescriptions in the chart."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "prior_prescription"
+            },
+            {
+              "url": "drug",
+              "valueString": "Zepbound"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-change-from-zepbound",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-change-from-zepbound",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "plan-option",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-plan-option",
+            "code": "standard-basic"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "focus-nonformulary",
+      "prefix": "7. a.",
+      "text": "This is a non-formulary medication. Please provide all formulary alternative medication(s) that have been tried and failed. Please answer below:",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Blue Focus does not normally cover this drug. The plan wants drugs it does cover that were tried first and did not work."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-focus-nonformulary",
+            "code": "specified",
+            "display": "Please specify the formulary alternative medication(s) and medical record page number(s)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-focus-nonformulary",
+            "code": "none",
+            "display": "The patient has not tried and failed any formulary alternatives."
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "plan-option",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-plan-option",
+            "code": "focus"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "focus-switch-generic",
+      "prefix": "b.",
+      "text": "Would you like to switch to the preferred medication? The preferred medication is generic Saxenda (liraglutide).",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Would the prescriber accept a preferred drug instead? Only the prescriber's office can decide this."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-focus-switch-generic",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-focus-switch-generic",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "plan-option",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-plan-option",
+            "code": "focus"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "continuation",
+      "prefix": "6.",
+      "text": "Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Is this the first time asking for this drug (a new start), or a renewal because the patient has already been taking it for 4 months?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "continuation"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "initiation",
+            "display": "NO – this is INITIATION of therapy"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "continuation",
+            "display": "YES – this is a PA renewal for CONTINUATION of therapy"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "initiation-pediatric-bmi",
+      "prefix": "a.",
+      "text": "Age 12-17: What is the patient's body mass index (BMI) percentile for their age? Please select answer below:",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "For patients 12 to 17 only."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-pediatric-bmi",
+            "code": "under-95",
+            "display": "Less than 95th percentile"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-pediatric-bmi",
+            "code": "95-plus",
+            "display": "Greater than or equal to 95th percentile"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "continuation",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "initiation"
+          }
+        },
+        {
+          "question": "age-group",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "12-17"
+          }
+        }
+      ],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "initiation-bmi",
+      "prefix": "b. i.",
+      "text": "Age 18 or older: What is the patient's body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "BMI (body mass index) is in the patient's vitals. Pick the range the most recent BMI falls in."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "bmi_range"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-bmi",
+            "code": "under-27",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-bmi",
+            "code": "27-29.9",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-bmi",
+            "code": "30-plus",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "continuation",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "initiation"
+          }
+        },
+        {
+          "question": "age-group",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "18-plus"
+          }
+        }
+      ],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "initiation-comorbidity",
+      "prefix": "ii.",
+      "text": "If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:",
+      "type": "choice",
+      "required": true,
+      "repeats": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Only asked when BMI is 27 to 29.9. Does the patient have one of these conditions on their problem list?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "comorbidities"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "type-2-diabetes-mellitus",
+            "display": "Type 2 diabetes mellitus"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "dyslipidemia",
+            "display": "Dyslipidemia"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "hypertension",
+            "display": "Hypertension"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "congenital-heart-disease",
+            "display": "Congenital heart disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "cerebrovascular-disease",
+            "display": "Cerebrovascular disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "peripheral-artery-disease-pad",
+            "display": "Peripheral artery disease (PAD)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "coronary-heart-disease",
+            "display": "Coronary heart disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "acute-coronary-syndrome-acs",
+            "display": "Acute coronary syndrome (ACS)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "myocardial-infarction-mi",
+            "display": "Myocardial infarction (MI)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "unstable-angina",
+            "display": "Unstable angina"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "coronary-or-other-arterial-revascularization",
+            "display": "Coronary or other arterial revascularization"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "prior-percutaneous-coronary-intervention-coronary-bypass-surgery",
+            "display": "Prior percutaneous coronary intervention/coronary bypass surgery"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-comorbidity",
+            "code": "none-of-the-above",
+            "display": "None of the above"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "initiation-bmi",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-initiation-bmi",
+            "code": "27-29.9"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "continuation-pediatric",
+      "prefix": "a.",
+      "text": "Age 12-17: Has the patient maintained clinically significant weight loss?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "For renewals only: has the patient lost at least 5% of their starting weight on the drug? Weights over time are needed; ask the prescriber's office."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-pediatric",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-pediatric",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "continuation",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "continuation"
+          }
+        },
+        {
+          "question": "age-group",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "12-17"
+          }
+        }
+      ],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "continuation-loss",
+      "prefix": "b.",
+      "text": "Age 18 or older: Has the patient lost at least 5 percent of their baseline body weight?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "For renewals only: has the patient lost at least 5% of their starting weight on the drug? Weights over time are needed; ask the prescriber's office."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-loss",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-loss",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "continuation",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation",
+            "code": "continuation"
+          }
+        },
+        {
+          "question": "age-group",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-age-group",
+            "code": "18-plus"
+          }
+        }
+      ],
+      "enableBehavior": "all"
+    },
+    {
+      "linkId": "continuation-maintained",
+      "prefix": "*",
+      "text": "If NO, has the patient continued to maintain their initial 5 percent weight loss?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "For renewals only: has the patient lost at least 5% of their starting weight on the drug? Weights over time are needed; ask the prescriber's office."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-maintained",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-maintained",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "continuation-loss",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/fep-saxenda-continuation-loss",
+            "code": "no"
+          }
+        }
+      ]
+    }
+  ]
+}

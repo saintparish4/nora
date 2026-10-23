@@ -1,0 +1,233 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "aetna-saxenda",
+  "url": "https://nora.example/fhir/Questionnaire/aetna-saxenda",
+  "version": "derived-2026-10-23",
+  "name": "AetnaSaxenda",
+  "title": "Saxenda for weight loss (Aetna)",
+  "status": "active",
+  "date": "2026-10-23",
+  "publisher": "Aetna",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Aetna sends its questions for this drug through ePA, behind CoverMyMeds' login. These are derived from its published criteria; the wording is Nora's, not the plan's.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/question-set",
+      "extension": [
+        {
+          "url": "kind",
+          "valueCode": "derived"
+        },
+        {
+          "url": "payer",
+          "valueString": "Aetna"
+        },
+        {
+          "url": "item",
+          "valueString": "Saxenda"
+        },
+        {
+          "url": "source",
+          "valueUri": "https://www.aetna.com/products/rxnonmedicare/data/2025/Saxenda_PA_with_Limit_1227-C_P08-2025.html"
+        },
+        {
+          "url": "sourceTitle",
+          "valueString": "Saxenda PA with Limit (Aetna Pharmacy Clinical Policy Bulletin)"
+        }
+      ]
+    }
+  ],
+  "item": [
+    {
+      "linkId": "age",
+      "text": "Is the patient 18 years of age or older?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "From the patient's date of birth."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "age_at_least"
+            },
+            {
+              "url": "age",
+              "valueInteger": 18
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-age",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-age",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "program",
+      "text": "Has the patient participated in a comprehensive weight management program (behavioral modification, reduced-calorie diet, and increased physical activity, with continuing follow-up) for at least 6 months before drug therapy?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Has the patient been in a diet and exercise program, with follow-up visits, for at least 6 months before this drug? A suggestion to diet is not a program."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 2
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-program",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-program",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "bmi",
+      "text": "What was the patient's baseline BMI, before any weight-loss drug?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "The plan wants the BMI from before the patient started any weight-loss drug, not today's if they have already taken one. Nora uses the BMI a person verified for this requirement."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion_bmi"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 3
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-bmi",
+            "code": "under-27",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-bmi",
+            "code": "27-29.9",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-bmi",
+            "code": "30-plus",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "comorbidity",
+      "text": "If baseline BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example hypertension, type 2 diabetes, or dyslipidemia)?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Only asked when BMI is 27 to 29.9. Does the patient have one of these conditions on their problem list?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 4
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-comorbidity",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-comorbidity",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "bmi",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/aetna-saxenda-bmi",
+            "code": "27-29.9"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,274 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "uhc-wegovy",
+  "url": "https://nora.example/fhir/Questionnaire/uhc-wegovy",
+  "version": "derived-2026-10-23",
+  "name": "UhcWegovy",
+  "title": "Wegovy for weight loss (UnitedHealthcare)",
+  "status": "active",
+  "date": "2026-10-23",
+  "publisher": "UnitedHealthcare",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "UnitedHealthcare sends its questions for this drug through ePA, behind CoverMyMeds' login. These are derived from its published criteria; the wording is Nora's, not the plan's.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/question-set",
+      "extension": [
+        {
+          "url": "kind",
+          "valueCode": "derived"
+        },
+        {
+          "url": "payer",
+          "valueString": "UnitedHealthcare"
+        },
+        {
+          "url": "item",
+          "valueString": "Wegovy"
+        },
+        {
+          "url": "source",
+          "valueUri": "https://www.uhcprovider.com/content/dam/provider/docs/public/prior-auth/drugs-pharmacy/commercial/r-z/PA-Notification-Weight-Loss.pdf"
+        },
+        {
+          "url": "sourceTitle",
+          "valueString": "Program 2026 P 1114-23, effective 10/1/2026"
+        }
+      ]
+    }
+  ],
+  "item": [
+    {
+      "linkId": "indication",
+      "text": "Is the medication being requested for weight loss?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Is the drug for weight loss (and not, for example, sleep apnea or heart disease)?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 1
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-indication",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-indication",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "age",
+      "text": "Is the patient 12 years of age or older?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "From the patient's date of birth."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "age_at_least"
+            },
+            {
+              "url": "age",
+              "valueInteger": 12
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-age",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-age",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "adjunct",
+      "text": "Will the medication be used as an adjunct to lifestyle modification (for example dietary or caloric restriction, exercise, behavioral support, or a community-based program)?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Will the drug be used alongside lifestyle changes like diet, exercise, or a program?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 3
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-adjunct",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-adjunct",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "bmi",
+      "text": "What is the patient's body mass index (BMI)?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "BMI (body mass index) is in the patient's vitals. Pick the range the most recent BMI falls in."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "bmi_range"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-bmi",
+            "code": "under-27",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-bmi",
+            "code": "27-29.9",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-bmi",
+            "code": "30-plus",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "comorbidity",
+      "text": "If BMI is 27 to 29.9: does the patient have a weight-related comorbidity (for example dyslipidemia, hypertension, type 2 diabetes, or sleep apnea)?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Only asked when BMI is 27 to 29.9. Does the patient have one of these conditions on their problem list?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 5
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-comorbidity",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-comorbidity",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "bmi",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/uhc-wegovy-bmi",
+            "code": "27-29.9"
+          }
+        }
+      ]
+    }
+  ]
+}

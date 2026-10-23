@@ -18,6 +18,19 @@ RSpec.describe 'GET /api/v1/prior_authorizations/:id/request_form', type: :reque
     expect(PhiAccessLog.where(resource_id: featured.id.to_s, action: 'view')).to exist
   end
 
+  it "adds the plan's clinical questions, each answered with its source or handed to the prescriber's office" do
+    organization = seed_demo_practice
+    staff = organization.users.find_by!(email: 'ma@nora.com')
+
+    get "/api/v1/prior_authorizations/#{Demo::Practice.featured_request.id}/request_form", headers: auth_headers(staff)
+
+    questions = parsed_body.dig('request_form', 'questions')
+    expect(questions['set']).to include('id' => 'cigna-wegovy', 'kind' => 'derived')
+    expect(questions['items'].map { |i| i['status'] }).to include('answered', 'ask_prescriber')
+    expect(questions['items'].find { |i| i['link_id'] == 'age' }).to include('answer' => { 'codes' => [ 'yes' ], 'display' => 'Yes' },
+                                                                             'source' => include('in_epic' => 'Patient header and demographics'))
+  end
+
   it 'says so when the patient has no chart record to read' do
     pa = create_prior_authorization
 

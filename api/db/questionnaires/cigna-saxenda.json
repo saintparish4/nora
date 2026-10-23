@@ -1,0 +1,360 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "cigna-saxenda",
+  "url": "https://nora.example/fhir/Questionnaire/cigna-saxenda",
+  "version": "derived-2026-10-23",
+  "name": "CignaSaxenda",
+  "title": "Saxenda for weight loss (Cigna)",
+  "status": "active",
+  "date": "2026-10-23",
+  "publisher": "Cigna",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Cigna sends its questions for this drug through ePA, behind CoverMyMeds' login. These are derived from its published criteria; the wording is Nora's, not the plan's.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/question-set",
+      "extension": [
+        {
+          "url": "kind",
+          "valueCode": "derived"
+        },
+        {
+          "url": "payer",
+          "valueString": "Cigna"
+        },
+        {
+          "url": "item",
+          "valueString": "Saxenda"
+        },
+        {
+          "url": "source",
+          "valueUri": "https://static.cigna.com/assets/chcp/pdf/coveragePolicies/pharmacy/ip_0813_coveragepositioncriteria_weight_loss_liraglutide.pdf"
+        },
+        {
+          "url": "sourceTitle",
+          "valueString": "Coverage policy IP0813, effective 09/01/2026"
+        }
+      ]
+    }
+  ],
+  "item": [
+    {
+      "linkId": "age",
+      "text": "Is the patient 18 years of age or older?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "From the patient's date of birth."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "age_at_least"
+            },
+            {
+              "url": "age",
+              "valueInteger": 18
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-age",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-age",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "behavioral-trial",
+      "text": "Has the patient engaged in a trial of behavioral modification and dietary restriction for at least 3 months?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Has the patient tried changing eating habits and cutting calories for at least 3 months?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 2
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-behavioral-trial",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-behavioral-trial",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "bmi",
+      "text": "What was the patient's BMI at baseline, before any GLP-1 or GLP-1/GIP drug?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "The plan wants the BMI from before the patient started any weight-loss drug, not today's if they have already taken one. Nora uses the BMI a person verified for this requirement."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion_bmi"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 3
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-bmi",
+            "code": "under-27",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-bmi",
+            "code": "27-29.9",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-bmi",
+            "code": "30-plus",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "comorbidity",
+      "text": "If baseline BMI is 27 to 29.9: does the patient have one of hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, COPD, MASLD/NAFLD, polycystic ovarian syndrome, or coronary artery disease?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Only asked when BMI is 27 to 29.9. Does the patient have one of these conditions on their problem list?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 4
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-comorbidity",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-comorbidity",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "bmi",
+          "operator": "=",
+          "answerCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-bmi",
+            "code": "27-29.9"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "with-lifestyle",
+      "text": "Will the medication be used with behavioral modification and a reduced-calorie diet?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Will the patient keep up diet and lifestyle changes while taking the drug?"
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 5
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "yes"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-with-lifestyle",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-with-lifestyle",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "other-glp1",
+      "text": "Will the medication be used together with another GLP-1 or GLP-1/GIP agonist?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Will the patient take another GLP-1 or GLP-1/GIP drug (like Ozempic or Mounjaro) at the same time? The answer the plan needs is no."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "criterion"
+            },
+            {
+              "url": "criterion",
+              "valueInteger": 6
+            },
+            {
+              "url": "whenMet",
+              "valueCode": "no"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-other-glp1",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-other-glp1",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "generic-liraglutide",
+      "text": "Employer plans, brand Saxenda only: has the patient tried generic liraglutide and been unable to take it because of an inactive ingredient?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/plain-language",
+          "valueString": "Employer plans, brand Saxenda only: the plan wants generic liraglutide tried first. Only the prescriber's office can say why the generic will not work."
+        },
+        {
+          "url": "https://nora.example/fhir/StructureDefinition/answer-rule",
+          "extension": [
+            {
+              "url": "from",
+              "valueCode": "ask"
+            }
+          ]
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-generic-liraglutide",
+            "code": "yes",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "https://nora.example/fhir/CodeSystem/cigna-saxenda-generic-liraglutide",
+            "code": "no",
+            "display": "No"
+          }
+        }
+      ]
+    }
+  ]
+}

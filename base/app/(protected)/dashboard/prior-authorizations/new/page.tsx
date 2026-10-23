@@ -152,7 +152,15 @@ function NewPriorAuthorization() {
               <Card className="mt-5 p-4 text-sm leading-relaxed">
                 <p className="font-medium text-ink">{template.title}</p>
                 <p className="mt-1 text-muted-foreground">
-                  {template.generic ? `No ${chosenCoverage.payer.name}-specific criteria on file; using the common baseline.` : `${chosenCoverage.payer.name} criteria.`}
+                  {template.generic ? `No ${chosenCoverage.payer.name}-specific criteria on file; using the common baseline.` : `${chosenCoverage.payer.name}'s published criteria.`}
+                  {template.source_url && (
+                    <>
+                      {' '}
+                      <a href={template.source_url} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-deep hover:underline">
+                        Read the policy
+                      </a>
+                    </>
+                  )}
                 </p>
                 {template.notes && <p className="mt-2 text-yellow-deep">{template.notes}</p>}
               </Card>

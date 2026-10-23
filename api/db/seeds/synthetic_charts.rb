@@ -21,7 +21,7 @@ plan = ->(payer, name) { InsurancePlan.joins(:payer).find_by!(payers: { name: pa
 patients = [
   {
     mrn: "DEMO-1001", first_name: "Jane", last_name: "Rivera", date_of_birth: "1984-03-14", sex: "female",
-    coverage: [ "UnitedHealthcare", "Choice Plus", "UHC900114572" ],
+    coverage: [ "Cigna", "Open Access Plus", "U90114572" ],
     documents: [
       { kind: "office_note", title: "Office visit, weight management", occurred_on: "2026-08-12", body: <<~NOTE },
         Patient: Jane Rivera   DOB: 03/14/1984   MRN: DEMO-1001
@@ -46,8 +46,8 @@ patients = [
         2. Prediabetes (R73.03)
         3. Seasonal allergic rhinitis (J30.2)
       NOTE
-      # A fill with no documented outcome: the demo's example of a
-      # prescription that is not, on its own, a documented trial.
+      # Shows her Saxenda course from the pharmacy's side: Cigna wants the BMI
+      # from before it, and nothing on file is that old.
       { kind: "medication_history", title: "Pharmacy fill history", occurred_on: "2026-08-12", body: <<~NOTE }
         Outside pharmacy fill history, received 08/12/2026.
 
@@ -100,7 +100,7 @@ patients = [
   },
   {
     mrn: "DEMO-1004", first_name: "Tom", last_name: "Okafor", date_of_birth: "1978-01-09", sex: "male",
-    coverage: [ "Blue Cross Blue Shield", "Blue Choice PPO", "XJB700331862" ],
+    coverage: [ "Blue Cross Blue Shield Federal Employee Program", "FEP Blue Standard", "R70331862" ],
     documents: [
       { kind: "office_note", title: "Weight management follow-up", occurred_on: "2026-08-28", body: <<~NOTE }
         Patient: Tom Okafor  DOB: 01/09/1978
@@ -111,7 +111,7 @@ patients = [
 
         Assessment: Obesity, class II (E66.01), BMI 36.0-36.9 (Z68.36). Obstructive sleep apnea (G47.33).
 
-        Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist.
+        Plan: Orlistat 120 mg three times daily was tried from 01/2026 to 04/2026 with minimal weight loss and GI side effects; discontinued. Requesting Saxenda. Not on any other GLP-1 receptor agonist or other weight-loss medication.
       NOTE
     ]
   },
@@ -130,7 +130,7 @@ patients = [
 
         Medication history: Phentermine 03/2024 to 06/2024, stopped for insomnia and palpitations. Contrave (naltrexone/bupropion) 09/2024 to 02/2025, stopped for headaches and inadequate response.
 
-        Plan: Request Wegovy. She is not taking any other GLP-1 receptor agonist.
+        Plan: Request Wegovy, to be used alongside her diet and activity program. She is not taking any other GLP-1 receptor agonist.
       NOTE
       { kind: "problem_list", title: "Problem list", occurred_on: "2026-09-02", body: <<~NOTE }
         Obesity, class II (E66.01)

@@ -144,7 +144,11 @@ general API traffic per IP.
   `db:prepare` on an empty disk adds 17 s and `demo:reset` 15 s.
 - **No OpenAPI document.** Zod schemas are the contract today.
 - **Scanned PDFs** have no text layer and are refused; OCR is not built.
-- **Policy library is illustrative.** Seeded criteria are a common baseline, not
-  any payer's published policy.
+- **Policy library covers four payers.** Criteria come from the published
+  policies of UnitedHealthcare, Aetna, Cigna and the BCBS Federal Employee
+  Program as retrieved on 2026-10-22 (`api/evals/evidence/policies/`). Nothing
+  watches those policies for changes, other Blue plans and Cigna's BMI-32/35
+  variants fall back to a common baseline, and no criterion checks whether the
+  member's plan covers weight-loss drugs at all.
 - **No payer submission.** Staff submit through the payer's portal or ePA
   network and record it in Nora.

@@ -29,7 +29,11 @@ coverage.
 ## Seeds
 
 - `db/seeds/policy_library.rb` loads payers, plans, and GLP-1 criteria in every
-  environment. The criteria are illustrative; replace them with each payer's
-  published policy before real use.
+  environment: version 2, taken from the published policies of
+  UnitedHealthcare, Aetna, Cigna and the BCBS Federal Employee Program, with a
+  common baseline for any other payer. Sources and wording are in
+  `evals/evidence/policies/`; payers revise these, so check the source URL on
+  each template. Version 1 templates are kept so earlier requests keep their
+  criteria.
 - `db/seeds/synthetic_charts.rb` loads a demo practice, three staff accounts,
   and five synthetic patients, except in production.

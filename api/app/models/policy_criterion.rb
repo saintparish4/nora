@@ -13,7 +13,10 @@
 #   "min_months"                 drop a program dated to less than this long
 #   "also_requires"              the chart must also mention one of these
 class PolicyCriterion < ApplicationRecord
-  KINDS = %w[documented_value diagnosis prior_trial lifestyle other].freeze
+  # The last four came with criteria taken from published payer policies:
+  # the patient's age, what the drug is requested for, how it will be used
+  # (the plan of care, not the history), and a product the payer prefers first.
+  KINDS =%w[documented_value diagnosis prior_trial lifestyle other age indication plan_of_care preferred_product].freeze
 
   belongs_to :policy_template
 

@@ -1,0 +1,101 @@
+# The policy library the 31 eval cases were labelled against (version 1).
+#
+# Frozen here on 2026-10-22, when db/seeds/policy_library.rb moved to criteria
+# taken from published payer policies (version 2). The cases test these
+# criteria, so the eval loads this file into its scratch database instead of
+# the seeds; state.json pins its digest. It is illustrative, not any payer's
+# policy (policies/DIFF.md shows how far it is from them). Do not edit it:
+# write new cases against the current library instead.
+
+#
+# Everything is a local, not a constant, so the file can be loaded more than
+# once in a process (the demo reset and the specs both do).
+
+illustrative_note = "Illustrative criteria for development and demos. Not this payer's published policy; " \
+                    "replace with the current policy and set the source URL before real use."
+generic_note = "Common baseline for GLP-1 weight-management requests. Payer policies vary; " \
+               "check the payer's current criteria before submitting."
+
+payers = {
+  "UnitedHealthcare" => [ [ "Choice Plus", "PPO" ], [ "Navigate", "HMO" ] ],
+  "Aetna" => [ [ "Open Access Managed Choice", "POS" ] ],
+  "Cigna" => [ [ "Open Access Plus", "PPO" ] ],
+  "Blue Cross Blue Shield" => [ [ "Blue Choice PPO", "PPO" ] ]
+}
+
+payers.each do |payer_name, plans|
+  payer = Payer.find_or_create_by!(name: payer_name)
+  plans.each do |plan_name, plan_type|
+    InsurancePlan.find_or_create_by!(payer: payer, name: plan_name) { |p| p.plan_type = plan_type }
+  end
+end
+
+# Weight-management drugs, one group per drug: brand and generic names together.
+weight_drugs = [
+  %w[phentermine Adipex-P Adipex Lomaira], %w[orlistat Xenical], %w[Qsymia], %w[Contrave naltrexone],
+  %w[Saxenda liraglutide], %w[Wegovy semaglutide], %w[Zepbound tirzepatide]
+]
+comorbidity_terms = [ "hypertension", "HTN", "type 2 diabetes", "T2DM", "dyslipidemia", "hyperlipidemia", "sleep apnea", "OSA", "I10", "E11", "E78" ]
+activity_terms = [ "physical activity", "exercise", "walking", "walks", "gym", "training", "aerobic", "aerobics", "swimming", "jogging",
+                   "running", "cycling", "fitness", "treadmill", "yoga", "cardio" ]
+
+glp1_criteria = lambda do |item_name, extra: []|
+  # The requested drug is not a prior trial of another drug, under either name.
+  other_drugs = weight_drugs.reject { |names| names.any? { |name| name.casecmp?(item_name) } }
+  [
+    { kind: "documented_value",
+      text: "BMI of 30 kg/m2 or greater, or 27 kg/m2 or greater with at least one weight-related comorbidity, documented within the last 6 months.",
+      hint: { "bmi_min" => 30, "bmi_min_with_comorbidity" => 27, "comorbidity_terms" => comorbidity_terms, "within_months" => 6 } },
+    { kind: "diagnosis",
+      text: "A diagnosis of obesity or overweight is documented.",
+      hint: { "terms" => %w[obesity obese overweight E66 Z68.3 Z68.4] } },
+    { kind: "diagnosis", optional: true,
+      text: "If BMI is 27 to 29.9: at least one weight-related comorbidity is documented (hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, or cardiovascular disease).",
+      hint: { "terms" => comorbidity_terms } },
+    { kind: "lifestyle",
+      text: "The patient has taken part in a reduced-calorie diet and increased physical activity program for at least 6 months before this request.",
+      hint: { "terms" => [ "reduced-calorie", "calorie", "dietitian", "nutrition", "physical activity", "exercise", "lifestyle" ],
+              "min_months" => 6, "also_requires" => activity_terms } },
+    { kind: "prior_trial",
+      text: "A trial of at least one other weight-management medication is documented, with its outcome or the reason it was stopped.",
+      hint: { "drugs" => other_drugs, "requires_outcome" => true } },
+    { kind: "other",
+      text: "The medication will not be used together with another GLP-1 receptor agonist.",
+      hint: { "terms" => %w[GLP-1 GLP1], "requires_denial" => true } }
+  ] + extra
+end
+
+upsert_template = lambda do |item_name:, item_code:, title:, criteria:, notes:, payer: nil|
+  template = PolicyTemplate.find_or_initialize_by(item_name: item_name, payer: payer, version: 1)
+  template.update!(item_kind: "medication", item_code: item_code, title: title, notes: notes)
+  template.criteria.where("position > ?", criteria.size).destroy_all
+  criteria.each_with_index do |attrs, i|
+    criterion = template.criteria.find_or_initialize_by(position: i + 1)
+    criterion.update!(kind: attrs[:kind], text: attrs[:text], optional: attrs.fetch(:optional, false), hint: attrs[:hint])
+  end
+  template
+end
+
+{
+  "Wegovy" => "semaglutide 2.4 mg",
+  "Zepbound" => "tirzepatide",
+  "Saxenda" => "liraglutide 3 mg"
+}.each do |item, generic_name|
+  upsert_template.call(item_name: item, item_code: nil, title: "#{item} (#{generic_name}) for chronic weight management",
+                       criteria: glp1_criteria.call(item), notes: generic_note)
+end
+
+# A stricter payer variant, so the demo shows a requirement the chart does
+# not meet.
+upsert_template.call(
+  item_name: "Wegovy", item_code: nil, payer: Payer.find_by!(name: "UnitedHealthcare"),
+  title: "Wegovy (semaglutide 2.4 mg) for chronic weight management, UnitedHealthcare (illustrative)",
+  notes: illustrative_note,
+  criteria: glp1_criteria.call("Wegovy", extra: [
+    { kind: "prior_trial",
+      text: "Trial of a second formulary weight-management alternative is documented, with outcome or reason for discontinuation.",
+      hint: { "drugs" => weight_drugs.reject { |names| names.include?("Wegovy") }, "requires_outcome" => true, "min_distinct" => 2 } }
+  ])
+)
+
+puts "Policy library: #{PolicyTemplate.count} templates, #{PolicyCriterion.count} criteria, #{Payer.count} payers."

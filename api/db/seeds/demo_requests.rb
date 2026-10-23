@@ -1,6 +1,7 @@
 # Prior authorization requests for the demo practice, one at each stage a
 # visitor should see: decided by the payer, waiting on the clinician, blocked
-# on missing documentation, and freshly read. The fifth patient has no request
+# on missing documentation, and freshly read. Each is on a different payer, so
+# the demo shows four published policies. The fifth patient has no request
 # so there is one left to start.
 #
 # Each request is played through the real workflow services (Demo::Story), so
@@ -33,18 +34,20 @@ working_day = lambda do |count, clock|
 end
 bmi_alone = ->(bmi) { "BMI is #{bmi}, which meets the 30 threshold on its own, so a comorbidity is not required." }
 
-# 1. Everything documented. Approved, submitted, and approved by the payer.
+# Positions follow each payer's criteria in db/seeds/policy_library.rb.
+
+# 1. UnitedHealthcare: everything documented. Approved, submitted, and
+# approved by the payer.
 Demo::Story.play(patient: patient.call("DEMO-1005"), item_name: "Wegovy", staff: staff, clinician: clinician,
                  starts_at: working_day.call(9, "09:10")) do |story|
   story.extract
   story.wait 4.minutes
   story.meet 1
   story.meet 2
-  story.not_applicable 3, note: bmi_alone.call("38.1")
+  # The criterion is about how the drug will be used, not what she did before.
+  story.meet 3, rejecting: [ "She has completed a 9-month" ]
   story.meet 4
-  story.meet 5
-  story.meet 6
-  story.meet 7
+  story.not_applicable 5, note: bmi_alone.call("38.1")
 
   story.at working_day.call(9, "15:42")
   story.approve
@@ -56,28 +59,27 @@ Demo::Story.play(patient: patient.call("DEMO-1005"), item_name: "Wegovy", staff:
   story.move_to "approved_by_payer"
 end
 
-# 2. Two requirements the chart does not support. The payer's policy asks for a
-# second prior medication trial, and the chart has only a phentermine fill with
-# no outcome, which Nora does not offer as evidence. Nothing states whether she
-# takes another GLP-1 either. Waiting on the clinician.
+# 2. Cigna: two requirements the chart does not support. Cigna wants the BMI
+# from before any GLP-1, and she took Saxenda in 2025; the only BMI on file
+# is from after it. And nothing states that she takes no other GLP-1. Waiting
+# on the clinician.
 Demo::Story.play(patient: patient.call("DEMO-1001"), item_name: "Wegovy", staff: staff, clinician: clinician,
                  starts_at: [ working_day.call(0, "09:05"), 50.minutes.ago ].min) do |story|
   story.extract
   story.wait 7.minutes
   story.meet 1
   story.meet 2
-  story.not_applicable 3, note: bmi_alone.call("34.2")
-  story.meet 4
-  story.meet 5
+  story.missing 3, note: "Cigna asks for the BMI at baseline, before any GLP-1. She took Saxenda (a GLP-1) from 06/2025 to " \
+                         "10/2025, and the only BMI on file (34.2, August 2026) is from after it. The reading from before " \
+                         "June 2025 is needed."
+  # Criterion 4 applies only if that baseline BMI was 27 to 29.9, so it waits.
+  story.meet 5, rejecting: [ "She has followed a reduced-calorie diet" ]
   story.missing 6, note: "The medication list shows no GLP-1, but the chart does not say she takes none. " \
                          "A list is not a statement."
-  story.missing 7,
-                   note: "Saxenda is the first trial (criterion 5). The pharmacy record shows one phentermine fill " \
-                         "in 02/2025, with no documented response or reason for stopping. A fill alone does not " \
-                         "document a second trial."
 end
 
-# 3. Every requirement verified by staff. Ready for the clinician to approve.
+# 3. BCBS Federal Employee Program: every requirement verified by staff.
+# Ready for the clinician to approve.
 Demo::Story.play(patient: patient.call("DEMO-1004"), item_name: "Saxenda", staff: staff, clinician: clinician,
                  starts_at: working_day.call(1, "14:05")) do |story|
   story.extract
@@ -90,7 +92,7 @@ Demo::Story.play(patient: patient.call("DEMO-1004"), item_name: "Saxenda", staff
   story.meet 6
 end
 
-# 4. Just read. Excerpts are waiting for a person to verify them.
+# 4. Aetna: just read. Excerpts are waiting for a person to verify them.
 Demo::Story.play(patient: patient.call("DEMO-1002"), item_name: "Zepbound", staff: staff, clinician: clinician,
                  starts_at: [ working_day.call(0, "09:40"), 15.minutes.ago ].min, &:extract)
 

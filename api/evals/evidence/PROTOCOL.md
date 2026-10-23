@@ -6,7 +6,7 @@ changes the app or its production behaviour.
 
 | Part | Where | Status |
 |---|---|---|
-| 1. Criteria from published payer policies | `policies/` | Done, with gaps listed there |
+| 1. Criteria from published payer policies | `policies/` | Done, with gaps listed there; seeded as library version 2 |
 | 2. External benchmark (n2c2 2018 Track 1) | below | Blocked: the data are closed |
 | 3. Failure taxonomy | `taxonomy.yml`, `eval:evidence:taxonomy` | Done; tags not yet checked by a second reader |
 | 4. medspaCy/ConText baseline and the three model conditions | `PLAN-2026-10-22.md`, `RESULTS-2026-10-22.md`, `context/` | Done |

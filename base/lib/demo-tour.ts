@@ -74,6 +74,12 @@ export const TOUR_STEPS: TourStep[] = [
     seconds: 8,
   },
   {
+    target: '[data-tour="open-form"]',
+    title: 'Ready to type into CoverMyMeds',
+    body: "The request form lays out every CoverMyMeds field and Cigna's questions, filled from the chart over FHIR, each with where it came from. What the chart can't answer is listed for the prescriber's office.",
+    seconds: 9,
+  },
+  {
     target: '[data-tour="submit"]',
     title: 'The final check is Jordan’s',
     body: 'Requirements are still open, so it cannot go yet. Once they are resolved, Jordan checks every answer and its source and submits under Dr. Chen’s name; Nora records exactly what went out.',

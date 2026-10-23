@@ -29,6 +29,13 @@ module RequestForm
 
     def self.call(...) = new(...).call
 
+    # Whether a MedicationRequest is for this item, by RxNorm code or name.
+    def self.prescribes?(rx, item_name)
+      concept = rx["medicationCodeableConcept"] || {}
+      Array(concept["coding"]).any? { |c| RXNORM.fetch(item_name, []).include?(c["code"]) } ||
+        concept["text"].to_s.downcase.include?(item_name.downcase)
+    end
+
     def initialize(prior_authorization, chart:)
       @pa = prior_authorization
       @chart = chart
@@ -146,11 +153,7 @@ module RequestForm
     def prescription
       return @prescription if defined?(@prescription)
 
-      codes = RXNORM.fetch(@pa.item_name, [])
-      @prescription = @chart.medication_requests.find do |rx|
-        concept = rx["medicationCodeableConcept"] || {}
-        Array(concept["coding"]).any? { |c| codes.include?(c["code"]) } || concept["text"].to_s.downcase.include?(@pa.item_name.downcase)
-      end
+      @prescription = @chart.medication_requests.find { |rx| self.class.prescribes?(rx, @pa.item_name) }
     end
 
     def field(section, key, label, value, reference, element, epic, missing: nil)

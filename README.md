@@ -11,6 +11,8 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 - **Built for the person who does the work:** front-desk staff and MAs complete and submit medication PAs themselves, under the prescriber's name. Nora is designed around that real workflow ([mapped step by step](docs/FRONT-DESK-WORKFLOW.md)), not around a doctor's sign-off.
 - **Quotes, never claims:** every requirement is answered with the chart's own sentence, its document and date. Staff verify each quote, and Nora never marks a requirement met by itself.
 - **Real payer criteria:** the initial-authorization criteria for Wegovy, Zepbound and Saxenda from UnitedHealthcare, Aetna, Cigna and the BCBS Federal Employee Program, each linked to its published policy and effective date. Criteria are versioned, so a request keeps the criteria it was opened under.
+- **The CoverMyMeds form, filled from the chart:** demographics, insurance with BIN/PCN/Rx group, prescriber with NPI, drug, quantity, days' supply and diagnoses are read from the chart over FHIR R4 (US Core), by lookup, with no model. Each value shows the FHIR element and the Epic screen it came from, ready to paste; a value the chart lacks says where to get it (the card scan in Coverages, or the pharmacy).
+- **The plan's own questions:** the BCBS FEP forms for Wegovy, Zepbound and Saxenda word for word, and question sets derived from UnitedHealthcare, Aetna and Cigna criteria, as branching FHIR Questionnaires. Each question is answered from structured chart data or a verified quote, or explained in plain language and listed for the prescriber's office. Nora never answers a clinical question it cannot source.
 - **Gaps become tasks:** a requirement the chart does not support is marked missing and becomes a task for staff, with the option to ask the prescriber's office. Nothing else waits on it.
 - **Measured, not assumed:** an evaluation, planned in writing before it ran, found that adding a language model made the evidence worse (it proposed text for unsupported requirements far more often), so Nora runs on rules. [The evaluation in two minutes](docs/EVALUATION.md).
 - **A final check that means something:** before submitting, staff confirm every answer and its source. Nora records exactly what went out, who submitted it, and the prescriber it went out under. The packet renders as a PDF and is tracked to the payer's decision.
@@ -25,6 +27,7 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 | **SQLite / PostgreSQL** | SQLite for zero-setup development; PostgreSQL via `DATABASE_URL`, tested in CI |
 | **Active Job, solid_queue** | Evidence extraction in the background |
 | **OpenAI via `Ai::Client`** | Optional model pass and payer-question help, behind one adapter (off by default) |
+| **FHIR R4, US Core 6.1** | Structured chart reads (Patient, Coverage, MedicationRequest, Condition, Observation, Practitioner) and the plans' questions as Questionnaires, checked with the HL7 validator |
 | **prawn, pdf-reader** | Submitted packets as PDF; text from uploaded chart PDFs |
 | **Next.js 16, React 19, TypeScript** | The staff console |
 | **Tailwind CSS, shadcn/ui, SWR, Zod** | Styling, components, data fetching, response validation |

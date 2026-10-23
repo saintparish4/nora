@@ -30,7 +30,7 @@ describe('the demo walkthrough', () => {
   })
 
   it('spotlights only panels on the request page, so it never changes page', () => {
-    const onRequestPage = /^\[data-tour="(requirements|requirement|evidence|tasks|submit|timeline)"\]$|^\[role="dialog"\]$/
+    const onRequestPage = /^\[data-tour="(requirements|requirement|evidence|open-form|tasks|submit|timeline)"\]$|^\[role="dialog"\]$/
 
     for (const step of TOUR_STEPS) expect(step.target).toMatch(onRequestPage)
   })

@@ -17,6 +17,7 @@ import {
   getEvents,
   getPriorAuthorization,
   getPriorAuthorizations,
+  getRequestForm,
   type PriorAuthorizationFilters,
 } from './prior-authorizations';
 
@@ -98,4 +99,10 @@ export function usePriorAuthorizationEvents(id: number | null) {
 /** Pass `null` to wait, e.g. until the request a task list belongs to is known. */
 export function useTasks(params: TaskParams | null) {
   return useSWR(params ? tasksKey(params) : null, () => getTasks(params as TaskParams), SWR_OPTIONS);
+}
+
+export const requestFormKey = (id: number) => ['request-form', id] as const;
+
+export function useRequestForm(id: number | null) {
+  return useSWR(id ? requestFormKey(id) : null, () => getRequestForm(id as number), SWR_OPTIONS);
 }

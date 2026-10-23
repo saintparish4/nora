@@ -1,0 +1,265 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-cigna-zepbound",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "cigna-zepbound"
+    }
+  ],
+  "title": "Zepbound for weight loss (Cigna)",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "Cigna sends its questions for this drug through ePA, behind CoverMyMeds' login. These are derived from its published criteria; the wording is Nora's, not the plan's.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": false
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "Is the patient 18 years of age or older?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q1",
+            "code": "Q1C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q1",
+            "code": "Q1C2",
+            "display": "No"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q2",
+      "text": "Has the patient engaged in a trial of behavioral modification and dietary restriction for at least 3 months?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q2",
+            "code": "Q2C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q2",
+            "code": "Q2C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q1",
+            "code": "Q1C1"
+          }
+        },
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q1",
+            "code": "Q1C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q3",
+      "text": "What was the patient's BMI at baseline, before any GLP-1 or GLP-1/GIP drug?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C1",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C2",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C3",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q2",
+            "code": "Q2C1"
+          }
+        },
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q2",
+            "code": "Q2C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q4",
+      "text": "If baseline BMI is 27 to 29.9: does the patient have one of hypertension, type 2 diabetes, dyslipidemia, obstructive sleep apnea, cardiovascular disease, knee osteoarthritis, asthma, COPD, MASLD/NAFLD, polycystic ovarian syndrome, or coronary artery disease?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q4",
+            "code": "Q4C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q4",
+            "code": "Q4C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q5",
+      "text": "Will the medication be used with behavioral modification and a reduced-calorie diet?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q5",
+            "code": "Q5C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q5",
+            "code": "Q5C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C1"
+          }
+        },
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q3",
+            "code": "Q3C3"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q4",
+            "code": "Q4C1"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q4",
+            "code": "Q4C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q6",
+      "text": "Will the medication be used together with another GLP-1 or GLP-1/GIP agonist?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q6",
+            "code": "Q6C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q6",
+            "code": "Q6C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q5",
+            "code": "Q5C1"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:cigna-zepbound:Q5",
+            "code": "Q5C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    }
+  ]
+}

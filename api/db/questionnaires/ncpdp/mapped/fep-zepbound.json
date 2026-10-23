@@ -1,0 +1,884 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-fep-zepbound",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "fep-zepbound"
+    }
+  ],
+  "title": "Weight Loss Medications Prior Approval Request: Zepbound (FEP)",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "WEIGHT LOSS MEDICATIONS PRIOR APPROVAL REQUEST, revised 2026-01-01: the plan's own questions, word for word.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": true
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "Patient age group?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q1",
+            "code": "Q1C1",
+            "display": "Age 12-17"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q1",
+            "code": "Q1C2",
+            "display": "Age 18 or older"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q2",
+      "text": "FEP plan option?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q2",
+            "code": "Q2C1",
+            "display": "Blue Standard or Blue Basic"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q2",
+            "code": "Q2C2",
+            "display": "Blue Focus"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q1",
+            "code": "Q1C1"
+          }
+        },
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q1",
+            "code": "Q1C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q3",
+      "text": "Is this request for brand or generic?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q3",
+            "code": "Q3C1",
+            "display": "Brand"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q3",
+            "code": "Q3C2",
+            "display": "Generic"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q2",
+            "code": "Q2C1"
+          }
+        },
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q2",
+            "code": "Q2C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q4",
+      "text": "Standard/Basic Option Patient: Has the patient tried and failed Saxenda and Wegovy? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C1",
+            "display": "Yes, Saxenda and Wegovy"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C2",
+            "display": "No, Saxenda only"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C3",
+            "display": "No, Wegovy only"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C4",
+            "display": "No, the patient has not tried and failed any of these medications."
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q3",
+            "code": "Q3C1"
+          }
+        },
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q3",
+            "code": "Q3C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q5",
+      "text": "Standard/Basic Option Patient Would you like to switch to a preferred medication? The preferred medications are Saxenda and Wegovy. Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C1",
+            "display": "Yes, switch to Saxenda"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C2",
+            "display": "Yes, switch to Wegovy"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C3",
+            "display": "No, do not switch"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C4",
+            "display": "No, do not switch however the patient has a medical exception"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C5",
+            "display": "No, do not switch however I would like to speak with a medical director to discuss the case"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C1"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C2"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C3"
+          }
+        },
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q4",
+            "code": "Q4C4"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q8",
+      "text": "Will the patient need more than 12 single-dose pens every 84 days?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q8",
+            "code": "Q8C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q8",
+            "code": "Q8C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C1"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C2"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C3"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C4"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q5",
+            "code": "Q5C5"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q9",
+      "text": "What is the patient's diagnosis?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C1",
+            "display": "Chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C2",
+            "display": "Obesity, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C3",
+            "display": "Elevated BMI, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C4",
+            "display": "Moderate to severe obstructive sleep apnea (OSA) with obesity"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C5",
+            "display": "None of the above"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q8",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q8",
+            "code": "Q8C1"
+          }
+        },
+        {
+          "question": "Q8",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q8",
+            "code": "Q8C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q10",
+      "text": "Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q10",
+            "code": "Q10C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q10",
+            "code": "Q10C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C1"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C2"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C3"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C4"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q9",
+            "code": "Q9C5"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q11",
+      "text": "Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C1",
+            "display": "No, the patient is not using another GLP-1"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C2",
+            "display": "Yes, this is a change in therapy from another GLP-1 (specify medication)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C3",
+            "display": "Yes, this is a request for an additional GLP-1 (specify medication)"
+          }
+        }
+      ],
+      "item": [
+        {
+          "linkId": "Q11.Q11C2.text",
+          "text": "Please specify",
+          "type": "text",
+          "required": true,
+          "enableWhen": [
+            {
+              "question": "Q11",
+              "operator": "=",
+              "answerCoding": {
+                "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+                "code": "Q11C2"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "Q11.Q11C3.text",
+          "text": "Please specify",
+          "type": "text",
+          "required": true,
+          "enableWhen": [
+            {
+              "question": "Q11",
+              "operator": "=",
+              "answerCoding": {
+                "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+                "code": "Q11C3"
+              }
+            }
+          ]
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q10",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q10",
+            "code": "Q10C1"
+          }
+        },
+        {
+          "question": "Q10",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q10",
+            "code": "Q10C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q12",
+      "text": "Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q12",
+            "code": "Q12C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q12",
+            "code": "Q12C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q11",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C1"
+          }
+        },
+        {
+          "question": "Q11",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C2"
+          }
+        },
+        {
+          "question": "Q11",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q11",
+            "code": "Q11C3"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q13",
+      "text": "Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q13",
+            "code": "Q13C1",
+            "display": "NO – this is INITIATION of therapy"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q13",
+            "code": "Q13C2",
+            "display": "YES – this is a PA renewal for CONTINUATION of therapy"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q12",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q12",
+            "code": "Q12C1"
+          }
+        },
+        {
+          "question": "Q12",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q12",
+            "code": "Q12C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q14",
+      "text": "What is the patient's body mass index (BMI) in kilograms per square meter (kg/m2)? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C1",
+            "display": "Less than 27 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C2",
+            "display": "Between 27 kg/m2 and 29.9 kg/m2"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C3",
+            "display": "Greater than or equal to 30kg/m2"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q13",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q13",
+            "code": "Q13C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q15",
+      "text": "If BMI is between 27 kg/m2 and 29.9 kg/m2: Does the patient have ONE of the listed weight related comorbid conditions OR established cardiovascular disease? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C1",
+            "display": "Type 2 diabetes mellitus"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C2",
+            "display": "Dyslipidemia"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C3",
+            "display": "Hypertension"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C4",
+            "display": "Congenital heart disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C5",
+            "display": "Cerebrovascular disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C6",
+            "display": "Peripheral artery disease (PAD)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C7",
+            "display": "Coronary heart disease"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C8",
+            "display": "Acute coronary syndrome (ACS)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C9",
+            "display": "Myocardial infarction (MI)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C10",
+            "display": "Unstable angina"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C11",
+            "display": "Coronary or other arterial revascularization"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C12",
+            "display": "Prior percutaneous coronary intervention/coronary bypass surgery"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q15",
+            "code": "Q15C13",
+            "display": "None of the above"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q14",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q16",
+      "text": "Does the patient have an intolerance or contraindication or have they had an inadequate treatment response to at least TWO oral medications for weight management? Oral medications for weight management include: benzphetamine, diethylpropion, phentermine, Qsymia, etc.",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q16",
+            "code": "Q16C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q16",
+            "code": "Q16C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q14",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C1"
+          }
+        },
+        {
+          "question": "Q14",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q14",
+            "code": "Q14C3"
+          }
+        },
+        {
+          "question": "Q15",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q17",
+      "text": "Has the patient lost at least 5 percent of their baseline body weight?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q17",
+            "code": "Q17C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q17",
+            "code": "Q17C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q13",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q13",
+            "code": "Q13C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q18",
+      "text": "If NO, has the patient continued to maintain their initial 5 percent weight loss?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q18",
+            "code": "Q18C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q18",
+            "code": "Q18C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q17",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-zepbound:Q17",
+            "code": "Q17C2"
+          }
+        }
+      ]
+    }
+  ]
+}

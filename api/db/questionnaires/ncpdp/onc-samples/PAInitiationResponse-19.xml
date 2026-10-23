@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Message DatatypesVersion="2023011" TransportVersion="2023011" TransactionDomain="SCRIPT" TransactionVersion="2023011" StructuresVersion="2023011" ECLVersion="2023011" xsi:noNamespaceSchemaLocation="transport.xsd"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">      
+   <Header>
+      <To Qualifier="D">1699052480</To>
+      <From Qualifier="PY">PAYER123</From>
+      <MessageID>500000</MessageID>
+      <RelatesToMessageID>500070</RelatesToMessageID>
+      <SentTime>2025-10-01T10:20:30</SentTime>
+      <SenderSoftware>
+         <SenderSoftwareDeveloper>ONC Conformance Tool</SenderSoftwareDeveloper>
+         <SenderSoftwareProduct>443</SenderSoftwareProduct>
+         <SenderSoftwareVersionRelease>12.1</SenderSoftwareVersionRelease>
+      </SenderSoftware>
+      <RxReferenceNumber>PHARMMU201</RxReferenceNumber>
+      <PrescriberOrderNumber>ORDMU201</PrescriberOrderNumber>
+   </Header>
+   <Body>
+      <PAInitiationResponse>
+          <PAReferenceID>55AAA</PAReferenceID>
+         <BenefitsCoordination>
+            <PBMMemberID>PBMC-ONC MU-6006F</PBMMemberID>
+         </BenefitsCoordination>
+         <Patient>
+            <HumanPatient>
+               <Identification>
+                  <PatientAccountNumber>PBMC-ONC MU-6006F</PatientAccountNumber>
+               </Identification>
+               <Names>
+                 <Name>
+                    <LastName>Adirondack</LastName>
+                    <FirstName>Susanne</FirstName>
+                 </Name>
+               </Names>
+               <GenderAndSex>
+                  <AdministrativeGender>F</AdministrativeGender>
+               </GenderAndSex>
+               <DateOfBirth>
+                  <Date>1955-01-08</Date>
+               </DateOfBirth>
+               <Address>
+                  <AddressLine1>4447 Lake Forest Drive</AddressLine1>
+                  <City>Lagrangeville</City>
+                  <StateProvince>NY</StateProvince>
+                  <PostalCode>12540</PostalCode>
+                  <CountryCode>US</CountryCode>
+               </Address>
+               <CommunicationNumbers>
+                  <PrimaryTelephone>
+                  <Number>8455550116</Number>
+                  </PrimaryTelephone>
+               </CommunicationNumbers>
+            </HumanPatient>
+         </Patient>
+         <Pharmacy>
+            <Identification>      
+               <NCPDPID>3105551</NCPDPID>
+               <NPI>1700134780</NPI>
+            </Identification>
+            <BusinessName>Pharmacy Store1 MU Long Name</BusinessName>
+            <Address>
+               <AddressLine1>56789 Long Pharmacy Name</AddressLine1>
+               <AddressLine2>1234 Long Address Line 2</AddressLine2>
+               <City>ReallyLongCityNameForPharmacy</City>
+               <StateProvince>CA</StateProvince>
+               <PostalCode>900098989</PostalCode>
+               <CountryCode>US</CountryCode>
+            </Address>
+            <CommunicationNumbers>
+               <PrimaryTelephone>
+               <Number>3105550115</Number>
+               <NumberExtension>123456</NumberExtension>
+               </PrimaryTelephone>
+            </CommunicationNumbers>
+         </Pharmacy>
+         <Prescriber>
+            <NonVeterinarian>
+               <Identification>      
+                  <DEANumber>BG5050505</DEANumber>
+                  <NPI>1699052480</NPI>
+               </Identification>
+               <PracticeLocation>
+                  <BusinessName>Clinic One5</BusinessName>
+               </PracticeLocation>
+               <Names>
+                 <Name>
+                    <LastName>Gregson</LastName>
+                    <FirstName>Michael</FirstName>
+                 </Name>
+               </Names>
+               <Address>
+                  <AddressLine1>2020 Casino Blvd</AddressLine1>
+                  <City>Las Vegas</City>
+                  <StateProvince>NV</StateProvince>
+                  <PostalCode>89101</PostalCode>
+                  <CountryCode>US</CountryCode>
+               </Address>
+               <CommunicationNumbers>
+                  <PrimaryTelephone>
+                  <Number>7025550112</Number>
+                  </PrimaryTelephone>
+               </CommunicationNumbers>
+            </NonVeterinarian>
+         </Prescriber>
+         <MedicationPrescribed>
+            <DrugDescription>Crestor 10 MG Oral Tablet</DrugDescription>
+            <Product>
+               <DrugCoded>
+                     <NDC>00340075190</NDC>
+                  <ProductCode>
+                     <Code>859749</Code>
+                     <Qualifier>SBD</Qualifier>
+                  </ProductCode>
+                  <Strength>
+                     <StrengthValue>10</StrengthValue>
+                     <StrengthForm>
+                        <Code>C42998</Code>
+                     </StrengthForm>
+                     <StrengthUnitOfMeasure>
+                        <Code>C28253</Code>
+                     </StrengthUnitOfMeasure>
+                  </Strength>
+                  <DrugDBCode>
+                     <Code>34000030100330</Code>
+                     <Qualifier>GPI</Qualifier>
+               </DrugDBCode>
+               </DrugCoded>
+            </Product>
+            <Quantity>
+               <Value>30</Value>
+               <CodeListQualifier>38</CodeListQualifier>
+               <QuantityUnitOfMeasure>
+                  <Code>C48542</Code>
+                </QuantityUnitOfMeasure>
+            </Quantity>
+            <DaysSupply>30</DaysSupply>
+            <Substitutions>
+               <Substitutions>1</Substitutions>
+            </Substitutions>
+            <Diagnosis>
+               <ClinicalInformationQualifier>1</ClinicalInformationQualifier>
+               <Qualifier>ABF</Qualifier>
+               <Value>E785</Value>
+               <Description>Hyperlipidemia, unspecified</Description>
+            </Diagnosis>
+            <Sig>
+               <SigText>Take 1 tablet by mouth every evening.</SigText>
+            </Sig>
+         </MedicationPrescribed>
+         <Response>
+            <ResponseStatus>
+                <Open>
+                  <PACaseID>A104</PACaseID>
+                  <DeadlineForReply>
+                     <DateTime>2022-10-01T23:59:59</DateTime>
+                  </DeadlineForReply>
+                     <QuestionSet> 
+                         <Header> 
+                             <QuestionSetID>QS103</QuestionSetID> 
+                             <QuestionSetTitle>Crestor PA Form</QuestionSetTitle> 
+                             <QuestionSetDescription>Please provide all information requested. Failure to complete this form in its entirety may result in delayed processing or an adverse determination for insufficient information.</QuestionSetDescription> 
+                             <QuestionSetContactCommunicationNumber> 
+                                 <PrimaryTelephone> 
+                                     <Number>5555551212</Number> 
+                                 </PrimaryTelephone> 
+                             </QuestionSetContactCommunicationNumber> 
+                             <AttachmentRequired>false</AttachmentRequired>
+                         </Header>
+                         <Question>
+                             <QuestionID>Q1</QuestionID> 
+                             <SequenceNumber>1</SequenceNumber> 
+                             <QuestionText>Can your patient be switched to a preferred medication with a lower cost? Available Formulary Alternatives: atorvastatin, fluvastatin, lovastatin, pravastatin, rosuvastatin, simvastatin, Vytorin.</QuestionText> 
+                             <DefaultNextQuestionID>Q2</DefaultNextQuestionID> 
+                             <QuestionType>
+                                 <Select> 
+                                     <SelectMultiple>false</SelectMultiple>
+                                     <Choice>
+                                         <ChoiceID>Q1C1</ChoiceID> 
+                                         <SequenceNumber>1</SequenceNumber>
+                                         <ChoiceText>Yes</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                         <NextQuestionID>END</NextQuestionID>
+                                     </Choice>
+                                     <Choice> 
+                                         <ChoiceID>Q1C2</ChoiceID> 
+                                         <SequenceNumber>2</SequenceNumber> 
+                                         <ChoiceText>No</ChoiceText> 
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                         <NextQuestionID>Q2</NextQuestionID>
+                                     </Choice> 
+                                 </Select> 
+                             </QuestionType> 
+                         </Question> 
+                         <Question>
+                             <QuestionID>Q2</QuestionID>
+                             <SequenceNumber>2</SequenceNumber> 
+                             <QuestionText>Is the requested drug being used for an FDA-Approved indication or an indication supported in the compendia of current literature?</QuestionText> 
+                             <DefaultNextQuestionID>Q3</DefaultNextQuestionID> 
+                             <QuestionType> 
+                                 <Select> 
+                                     <SelectMultiple>false</SelectMultiple> 
+                                     <Choice> 
+                                         <ChoiceID>Q2C1</ChoiceID>
+                                         <SequenceNumber>1</SequenceNumber> 
+                                         <ChoiceText>Yes</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator> 
+                                     </Choice>
+                                     <Choice> 
+                                         <ChoiceID>Q2C2</ChoiceID> 
+                                         <SequenceNumber>2</SequenceNumber> 
+                                         <ChoiceText>No</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                     </Choice> 
+                                 </Select> 
+                             </QuestionType>
+                         </Question> 
+                         <Question> 
+                             <QuestionID>Q3</QuestionID> 
+                             <SequenceNumber>3</SequenceNumber>
+                             <QuestionText>Does the prescribed dose and quantity fall within the FDA approved labeling or within dosing guidelines found in the compendia of current literature?</QuestionText> 
+                             <DefaultNextQuestionID>Q4</DefaultNextQuestionID>
+                             <QuestionType>
+                                 <Select> 
+                                     <SelectMultiple>false</SelectMultiple> 
+                                     <Choice> 
+                                         <ChoiceID>Q3C1</ChoiceID>
+                                         <SequenceNumber>1</SequenceNumber> 
+                                         <ChoiceText>Yes</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator> 
+                                     </Choice>
+                                     <Choice> 
+                                         <ChoiceID>Q3C2</ChoiceID> 
+                                         <SequenceNumber>2</SequenceNumber> 
+                                         <ChoiceText>No</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                     </Choice> 
+                                 </Select> 
+                             </QuestionType>
+                         </Question>
+                         <Question> 
+                             <QuestionID>Q4</QuestionID>
+                             <SequenceNumber>4</SequenceNumber>
+                             <QuestionText>Has the patient tried and had an inadequate treatment response or intolerance to the required number of suggested formulary alternatives: Drug Name, Trial Year, Reason for Failure? Required Formulary Alternatives 3 in a class with 3 or more alternatives: atorvastatin, fluvastatin, lovastatin, pravastatin,rosuvastatin, simvastatin, Vytorin.</QuestionText>
+                             <QuestionType>
+                                 <Select>
+                                     <SelectMultiple>false</SelectMultiple> 
+                                     <Choice> 
+                                         <ChoiceID>Q4C1</ChoiceID>
+                                         <SequenceNumber>1</SequenceNumber>
+                                         <ChoiceText>Yes</ChoiceText>
+                                         <AdditionalFreeTextIndicator>M</AdditionalFreeTextIndicator> 
+                                         <NextQuestionID>END</NextQuestionID>
+                                     </Choice>
+                                     <Choice> 
+                                         <ChoiceID>Q4C2</ChoiceID>
+                                         <SequenceNumber>2</SequenceNumber>
+                                         <ChoiceText>No</ChoiceText> 
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                         <NextQuestionID>Q5</NextQuestionID>
+                                     </Choice>
+                                 </Select>
+                             </QuestionType> 
+                         </Question>
+                         <Question>
+                             <QuestionID>Q5</QuestionID>
+                             <SequenceNumber>5</SequenceNumber>
+                             <QuestionText>Does the patient have a contraindication to all the alternatives?</QuestionText> 
+                             <DefaultNextQuestionID>END</DefaultNextQuestionID> 
+                             <QuestionType> 
+                                 <Select>
+                                     <SelectMultiple>false</SelectMultiple> 
+                                     <Choice> 
+                                         <ChoiceID>Q5C1</ChoiceID>
+                                         <SequenceNumber>1</SequenceNumber>
+                                         <ChoiceText>Yes</ChoiceText>
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator> 
+                                     </Choice>
+                                     <Choice> 
+                                         <ChoiceID>Q5C2</ChoiceID>
+                                         <SequenceNumber>2</SequenceNumber>
+                                         <ChoiceText>No</ChoiceText> 
+                                         <AdditionalFreeTextIndicator>NA</AdditionalFreeTextIndicator>
+                                     </Choice>
+                                 </Select>
+                             </QuestionType> 
+                         </Question>
+                     </QuestionSet>    
+               </Open>
+            </ResponseStatus>
+         </Response>
+      </PAInitiationResponse>
+    </Body>
+</Message>
+<!--
+ONC_Certification
+-->

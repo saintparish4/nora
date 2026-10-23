@@ -1,0 +1,668 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "ncpdp-fep-wegovy",
+  "identifier": [
+    {
+      "system": "urn:ncpdp:script:question-set-id",
+      "value": "fep-wegovy"
+    }
+  ],
+  "title": "Wegovy Prior Approval Request (FEP)",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "description": "WEGOVY PRIOR APPROVAL REQUEST, revised 2026-09-18: the plan's own questions, word for word.",
+  "extension": [
+    {
+      "url": "https://nora.example/fhir/StructureDefinition/attachment-required",
+      "valueBoolean": false
+    }
+  ],
+  "item": [
+    {
+      "linkId": "Q1",
+      "text": "Patient age group?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q1",
+            "code": "Q1C1",
+            "display": "Age 12-17"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q1",
+            "code": "Q1C2",
+            "display": "Age 18 or older"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q2",
+      "text": "FEP plan option?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q2",
+            "code": "Q2C1",
+            "display": "Blue Standard or Blue Basic"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q2",
+            "code": "Q2C2",
+            "display": "Blue Focus"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q1",
+            "code": "Q1C1"
+          }
+        },
+        {
+          "question": "Q1",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q1",
+            "code": "Q1C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q3",
+      "text": "Is this request for brand or generic?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q3",
+            "code": "Q3C1",
+            "display": "Brand"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q3",
+            "code": "Q3C2",
+            "display": "Generic"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q2",
+            "code": "Q2C1"
+          }
+        },
+        {
+          "question": "Q2",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q2",
+            "code": "Q2C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q4",
+      "text": "Dosage form?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q4",
+            "code": "Q4C1",
+            "display": "Injection"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q4",
+            "code": "Q4C2",
+            "display": "Tablets"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q3",
+            "code": "Q3C1"
+          }
+        },
+        {
+          "question": "Q3",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q3",
+            "code": "Q3C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q5",
+      "text": "Injection (single-dose pens): Will the patient need more than 12 single-dose pens every 84 days?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q5",
+            "code": "Q5C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q5",
+            "code": "Q5C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q4",
+            "code": "Q4C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q6",
+      "text": "Tablets: Will the patient need more than 90 tablets every 90 days?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q6",
+            "code": "Q6C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q6",
+            "code": "Q6C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q4",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q4",
+            "code": "Q4C2"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q7",
+      "text": "What is the patient's diagnosis?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C1",
+            "display": "Chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C2",
+            "display": "Elevated BMI, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C3",
+            "display": "Obesity, used for chronic weight management"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C4",
+            "display": "Major adverse cardiovascular risk reduction associated with established CV disease and either obesity or being overweight (chronic weight management)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C5",
+            "display": "Noncirrhotic metabolic dysfunction-associated steatohepatitis (MASH)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C6",
+            "display": "None of the above"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q5",
+            "code": "Q5C1"
+          }
+        },
+        {
+          "question": "Q5",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q5",
+            "code": "Q5C2"
+          }
+        },
+        {
+          "question": "Q6",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q6",
+            "code": "Q6C1"
+          }
+        },
+        {
+          "question": "Q6",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q6",
+            "code": "Q6C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q8",
+      "text": "Has the patient participated in a comprehensive weight management program such as Teladoc or another weight loss program?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q8",
+            "code": "Q8C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q8",
+            "code": "Q8C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C1"
+          }
+        },
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C2"
+          }
+        },
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C3"
+          }
+        },
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C4"
+          }
+        },
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C5"
+          }
+        },
+        {
+          "question": "Q7",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q7",
+            "code": "Q7C6"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q9",
+      "text": "Is the patient currently using another glucagon-like peptide-1 (GLP-1) receptor agonist? Please select answer below.",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C1",
+            "display": "No, the patient is not using another GLP-1"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C2",
+            "display": "Yes, this is a change in therapy from another GLP-1 (specify medication)"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C3",
+            "display": "Yes, this is a request for an additional GLP-1 (specify medication)"
+          }
+        }
+      ],
+      "item": [
+        {
+          "linkId": "Q9.Q9C2.text",
+          "text": "Please specify",
+          "type": "text",
+          "required": true,
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "=",
+              "answerCoding": {
+                "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+                "code": "Q9C2"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "Q9.Q9C3.text",
+          "text": "Please specify",
+          "type": "text",
+          "required": true,
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "=",
+              "answerCoding": {
+                "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+                "code": "Q9C3"
+              }
+            }
+          ]
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q8",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q8",
+            "code": "Q8C1"
+          }
+        },
+        {
+          "question": "Q8",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q8",
+            "code": "Q8C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q10",
+      "text": "Will this medication be used in combination with another *Prior Authorization (PA) medication for weight loss?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q10",
+            "code": "Q10C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q10",
+            "code": "Q10C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C1"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C2"
+          }
+        },
+        {
+          "question": "Q9",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q9",
+            "code": "Q9C3"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q11",
+      "text": "Blue Standard / Blue Basic Patient: Is this medication being requested as a change from Zepbound?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q11",
+            "code": "Q11C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q11",
+            "code": "Q11C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q10",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q10",
+            "code": "Q10C1"
+          }
+        },
+        {
+          "question": "Q10",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q10",
+            "code": "Q10C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q13",
+      "text": "Has the patient been on this medication continuously for the last 4 months excluding samples? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q13",
+            "code": "Q13C1",
+            "display": "NO – this is INITIATION of therapy"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q13",
+            "code": "Q13C2",
+            "display": "YES – this is a PA renewal for CONTINUATION of therapy"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q11",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q11",
+            "code": "Q11C1"
+          }
+        },
+        {
+          "question": "Q11",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q11",
+            "code": "Q11C2"
+          }
+        }
+      ],
+      "enableBehavior": "any"
+    },
+    {
+      "linkId": "Q14",
+      "text": "Age 12-17: What is the patient's body mass index (BMI) percentile for their age? Please select answer below:",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q14",
+            "code": "Q14C1",
+            "display": "Less than 95th percentile"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q14",
+            "code": "Q14C2",
+            "display": "Greater than or equal to 95th percentile"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q13",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q13",
+            "code": "Q13C1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "Q17",
+      "text": "Age 12-17: Has the patient maintained clinically significant weight loss?",
+      "required": true,
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q17",
+            "code": "Q17C1",
+            "display": "Yes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q17",
+            "code": "Q17C2",
+            "display": "No"
+          }
+        }
+      ],
+      "enableWhen": [
+        {
+          "question": "Q13",
+          "operator": "=",
+          "answerCoding": {
+            "system": "urn:ncpdp:script:question-set:fep-wegovy:Q13",
+            "code": "Q13C2"
+          }
+        }
+      ]
+    }
+  ]
+}

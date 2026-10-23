@@ -1,5 +1,10 @@
 .PHONY: help install setup test clean dev dev-stop docker-up docker-down db-reset db-migrate db-seed test-backend-postgres test-e2e lint lint-frontend lint-backend lint-fix lint-fix-frontend lint-fix-backend
 
+# Local ports. Override per run: make dev FRONTEND_PORT=4005. A different
+# API_PORT also needs NEXT_PUBLIC_API_URL in base/.env.local to match.
+FRONTEND_PORT ?= 3005
+API_PORT ?= 3006
+
 # Default target
 help:
 	@echo "Available commands:"
@@ -8,7 +13,7 @@ help:
 	@echo "  make setup        - Full project setup (install + database setup)"
 	@echo "  make test         - Run all tests (frontend + backend)"
 	@echo "  make dev          - Start development servers"
-	@echo "  make dev-stop     - Stop development servers (frontend:3005, backend:3006)"
+	@echo "  make dev-stop     - Stop development servers (frontend:$(FRONTEND_PORT), backend:$(API_PORT))"
 	@echo "  make docker-up    - Start Docker containers"
 	@echo "  make docker-down  - Stop Docker containers"
 	@echo "  make db-reset     - Reset database (drop, create, migrate, seed)"
@@ -57,14 +62,17 @@ test-e2e:
 # Development
 dev:
 	@echo "Starting development servers..."
-	@echo "Backend will run on http://localhost:3006"
-	@echo "Frontend will run on http://localhost:3005"
-	cd api && rails s & cd base && pnpm run dev
+	@echo "Backend will run on http://localhost:$(API_PORT)"
+	@echo "Frontend will run on http://localhost:$(FRONTEND_PORT)"
+	cd api && rails s -p $(API_PORT) & cd base && pnpm exec next dev --turbopack -p $(FRONTEND_PORT)
 
 dev-stop:
 	@echo "Stopping development servers..."
-	-lsof -ti:3005 | xargs kill -9 2>/dev/null || true
-	-lsof -ti:3006 | xargs kill -9 2>/dev/null || true
+	@# lsof misses some listeners (WSL); fuser catches them.
+	-@for port in $(FRONTEND_PORT) $(API_PORT); do \
+		pids=$$(lsof -ti:$$port 2>/dev/null || fuser $$port/tcp 2>/dev/null); \
+		[ -n "$$pids" ] && kill -9 $$pids 2>/dev/null; \
+	done; true
 	@echo "Servers stopped."
 
 # Docker

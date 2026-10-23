@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
-import { TOUR_STEPS, readTour, startTour, writeTour } from '@/lib/demo-tour'
+import { TOUR_STEPS, readTour, startTour, stepSeconds, writeTour } from '@/lib/demo-tour'
 
 describe('the demo walkthrough', () => {
   beforeEach(() => {
@@ -50,5 +50,14 @@ describe('the demo walkthrough', () => {
 
     expect(clicked.length).toBeGreaterThan(0)
     for (const selector of clicked) expect(selector).toMatch(/requirements|view-document|dialog-close/)
+  })
+
+  it('gives each step a few seconds, by how much there is to read, and the whole walkthrough under a minute', () => {
+    for (const step of TOUR_STEPS) {
+      expect(stepSeconds(step)).toBeGreaterThanOrEqual(3.5)
+      expect(stepSeconds(step)).toBeLessThanOrEqual(6)
+    }
+    expect(stepSeconds({ title: 'Short', body: 'Two words.' })).toBe(3.5)
+    expect(TOUR_STEPS.reduce((total, step) => total + stepSeconds(step), 0)).toBeLessThan(60)
   })
 })

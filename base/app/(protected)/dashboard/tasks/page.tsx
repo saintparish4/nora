@@ -20,7 +20,7 @@ export default function TasksPage() {
   return (
     <div className="max-w-3xl">
       <PageHeader title="Tasks" subtitle="Follow-ups Nora opened when a requirement was missing or unclear." />
-      <div className="mb-5 flex gap-2">
+      <div className="mb-5 flex flex-wrap gap-2">
         {VIEWS.map((v) => (
           <Button key={v.key} size="sm" variant={view === v.key ? 'default' : 'secondary'} aria-pressed={view === v.key} onClick={() => setView(v.key)}>
             {v.label}

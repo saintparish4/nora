@@ -26,7 +26,16 @@ export interface TourStep {
   after?: string[];
   title: string;
   body: string;
-  seconds: number;
+}
+
+/**
+ * How long a step stays up while playing: long enough to read the caption at
+ * a skim (about seven words a second, plus a moment to find the spotlight),
+ * and never long enough to wait on. A visitor who wants longer pauses.
+ */
+export function stepSeconds(step: Pick<TourStep, 'title' | 'body'>): number {
+  const words = `${step.title} ${step.body}`.split(/\s+/).filter(Boolean).length;
+  return Math.min(6, Math.max(3.5, 1 + words / 7.5));
 }
 
 const requirement = (position: number) => `[data-tour="requirements"] li:nth-child(${position}) button`;
@@ -36,14 +45,12 @@ export const TOUR_STEPS: TourStep[] = [
     target: '[data-tour="requirements"]',
     title: "Nora read the chart against the payer's criteria",
     body: "Jane Rivera's request for Wegovy, checked against Cigna's published policy. Each line is one criterion and what a person decided about it.",
-    seconds: 9,
   },
   {
     target: '[data-tour="evidence"]',
     before: [requirement(2)],
     title: 'Every excerpt is quoted, not written',
     body: "This is the chart's own sentence, with its source and date. Jordan, the medical assistant, verified it. Nora never marks a requirement met by itself.",
-    seconds: 10,
   },
   {
     target: '[role="dialog"]',
@@ -51,45 +58,38 @@ export const TOUR_STEPS: TourStep[] = [
     after: ['[data-tour="dialog-close"]'],
     title: 'One click shows it in the note',
     body: 'The quote is highlighted where it sits in the document, so it can be checked in context before anyone relies on it.',
-    seconds: 9,
   },
   {
     target: '[data-tour="requirement"]',
     before: [requirement(5)],
     title: 'A person can say no',
-    body: 'Here Nora also offered a sentence about her past diet. This criterion is about how the drug will be used, so Jordan rejected it and kept the line that says she will continue.',
-    seconds: 11,
+    body: 'Nora also offered a line about her past diet. This criterion is about how the drug will be used, so Jordan rejected it and kept the line saying she will continue.',
   },
   {
     target: '[data-tour="requirement"]',
     before: [requirement(3)],
     title: 'Read the way the payer reads it',
-    body: 'Cigna asks for the BMI from before any GLP-1. She took Saxenda in 2025, and the BMI Nora found is from after it, so nobody verified it and the requirement is marked missing.',
-    seconds: 12,
+    body: 'Cigna wants the BMI from before any GLP-1. The one Nora found is from after her 2025 Saxenda, so nobody verified it and the requirement is missing.',
   },
   {
     target: '[data-tour="tasks"]',
     title: 'The gap becomes a task',
     body: 'Each gap is a task for Jordan. For the baseline BMI, Jordan has asked the prescriber’s office; nothing else waits on the answer.',
-    seconds: 8,
   },
   {
     target: '[data-tour="open-form"]',
     title: 'Ready to type into CoverMyMeds',
-    body: "The request form lays out every CoverMyMeds field and Cigna's questions, filled from the chart over FHIR, each with where it came from. What the chart can't answer is listed for the prescriber's office.",
-    seconds: 9,
+    body: "Every CoverMyMeds field and Cigna's questions, filled from the chart with their sources. What the chart can't answer is listed for the prescriber's office.",
   },
   {
     target: '[data-tour="submit"]',
     title: 'The final check is Jordan’s',
-    body: 'Requirements are still open, so it cannot go yet. Once they are resolved, Jordan checks every answer and its source and submits under Dr. Chen’s name; Nora records exactly what went out.',
-    seconds: 11,
+    body: 'Open requirements block it for now. Once they are resolved, Jordan checks each answer and its source and submits under Dr. Chen’s name.',
   },
   {
     target: '[data-tour="timeline"]',
     title: 'Every step is on the record',
     body: 'Who did what, and when, from the first read of the chart. An approved request becomes a PDF packet, and the payer’s decision is recorded here too.',
-    seconds: 10,
   },
 ];
 

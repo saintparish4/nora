@@ -41,9 +41,10 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
 
 function SourceLine({ inEpic, element, detail }: { inEpic: string; element: string; detail?: string | null }) {
   return (
-    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+    <p className="mt-1 text-xs leading-relaxed break-words text-muted-foreground">
       <span className="font-medium text-body">{inEpic}</span>
-      {detail ? ` · ${detail}` : ''} · <span className="font-mono text-[0.6875rem]">{element}</span>
+      {detail ? ` · ${detail}` : ''} · {/* Breaks only after a dot, so a path wraps as Coverage.class / (rxbin), not mid-word. */}
+      <span className="font-mono text-[0.6875rem]">{element.replaceAll('.', '.\u200b')}</span>
     </p>
   );
 }
@@ -54,8 +55,8 @@ export function FieldSection({ title, fields }: { title: string; fields: FormFie
     <Panel title={title} tour={`form-${title.toLowerCase()}`}>
       <Card className="divide-y divide-border">
         {fields.map((field) => (
-          <div key={field.key} className="flex items-start gap-3 px-4 py-3" data-field={field.key}>
-            <div className="w-36 shrink-0 pt-0.5 text-sm text-muted-foreground">{field.label}</div>
+          <div key={field.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 px-4 py-3 sm:grid-cols-[9rem_minmax(0,1fr)_auto]" data-field={field.key}>
+            <div className="col-span-2 pt-0.5 text-sm text-muted-foreground sm:col-span-1">{field.label}</div>
             <div className="min-w-0 flex-1">
               {field.value ? (
                 <>

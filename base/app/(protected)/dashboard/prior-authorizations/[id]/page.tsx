@@ -125,8 +125,8 @@ export default function PriorAuthorizationPage() {
         </Notice>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="grid gap-6 md:grid-cols-[272px_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[272px_minmax(0,1fr)]">
           <Panel title="Requirements" className="self-start" tour="requirements">
             <ol className="-mx-2 space-y-1">
               {pa.requirements.map((req) => (

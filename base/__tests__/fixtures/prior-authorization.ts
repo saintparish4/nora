@@ -90,7 +90,7 @@ export function priorAuthorizationFixture(overrides: Partial<PriorAuthorizationD
         evidence: [],
       },
     ],
-    approval: null,
+    final_check: null,
     allowed_transitions: ['cancelled'],
     ...overrides,
   }

@@ -83,8 +83,12 @@ export async function startExtraction(id: number): Promise<PriorAuthorizationDet
   return detail(await authFetch(`${BASE}/${id}/extract`, post()), 'Could not start extraction');
 }
 
-export async function approvePriorAuthorization(id: number): Promise<PriorAuthorizationDetail> {
-  return detail(await authFetch(`${BASE}/${id}/approve`, post()), 'Could not approve');
+/** The staff member's final check and submission, recorded under the prescriber's name. */
+export async function submitPriorAuthorization(
+  id: number,
+  extra: { payer_reference?: string; prep_minutes_reported?: number } = {}
+): Promise<PriorAuthorizationDetail> {
+  return detail(await authFetch(`${BASE}/${id}/submit`, post(extra)), 'Could not submit');
 }
 
 export async function transitionPriorAuthorization(
@@ -131,7 +135,7 @@ export async function getEvents(id: number): Promise<WorkflowEvent[]> {
   return validateResponse(z.array(WorkflowEventSchema), data.events);
 }
 
-/** Downloads the approved packet PDF through the authenticated session. */
+/** Downloads the submitted packet PDF through the authenticated session. */
 export async function downloadPacket(id: number): Promise<void> {
   const res = await authFetch(`${BASE}/${id}/packet`);
   if (!res.ok) await readJson(res, 'Could not download the packet');

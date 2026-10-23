@@ -14,9 +14,9 @@ import { TaskList } from '@/components/workspace/task-list';
 const COUNT_TILES: ReadonlyArray<{ key: string; label: string; tone: Tone; include?: readonly string[] }> = [
   { key: 'gathering', label: 'Gathering evidence', tone: 'info' },
   { key: 'needs_clarification', label: 'Need clarification', tone: 'warning' },
-  { key: 'ready_for_review', label: 'Ready for approval', tone: 'accent' },
-  { key: 'approved', label: 'Ready to submit', tone: 'success' },
+  { key: 'ready_for_review', label: 'Ready to submit', tone: 'accent', include: ['ready_for_review', 'approved'] },
   { key: 'payer_pending', label: 'With payer', tone: 'neutral', include: ['submitted', 'payer_pending', 'appealed'] },
+  { key: 'approved_by_payer', label: 'Decided', tone: 'success', include: ['approved_by_payer', 'denied'] },
 ];
 
 export default function TodayPage() {
@@ -127,10 +127,9 @@ function PilotMeasurements() {
   const minutes = (value: number | null) => (value === null ? '–' : `${value} min`);
   const rows = [
     { label: 'Requests created', value: data?.requests_created ?? '–' },
-    { label: 'Approved by a clinician', value: data?.requests_approved ?? '–' },
-    { label: 'Median staff-reported prep time', value: data ? minutes(data.median_reported_prep_minutes) : '–', note: data && `${data.reported_prep_count} reported` },
-    { label: 'Median time from creation to approval', value: data ? minutes(data.median_minutes_to_approval) : '–' },
     { label: 'Submitted to payer', value: data?.submitted ?? '–' },
+    { label: 'Median staff-reported prep time', value: data ? minutes(data.median_reported_prep_minutes) : '–', note: data && `${data.reported_prep_count} reported` },
+    { label: 'Median time from start to submission', value: data ? minutes(data.median_minutes_to_submission) : '–' },
     { label: 'Payer decisions', value: data ? `${data.payer_approved} approved` : '–', note: data && `${data.payer_denied} denied` },
   ];
 
@@ -148,7 +147,7 @@ function PilotMeasurements() {
         ))}
       </dl>
       <p className="mt-4 text-xs text-muted-foreground">
-        Time to approval is wall-clock time and includes waiting. Staff-reported minutes, entered when a request is
+        Time to submission is wall-clock time and includes waiting. Staff-reported minutes, entered when a request is
         submitted, are the measure of effort.
       </p>
     </Panel>

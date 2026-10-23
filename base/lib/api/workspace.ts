@@ -206,6 +206,12 @@ export async function getTasks(params: { status?: string; mine?: boolean; page?:
   };
 }
 
+/** Records that staff asked the prescriber's office. The task stays open. */
+export async function askPrescriber(id: number): Promise<Task> {
+  const data = await readJson<{ task: unknown }>(await authFetch(`/api/v1/tasks/${id}/ask_prescriber`, json('POST', {})));
+  return validateResponse(TaskSchema, data.task);
+}
+
 export async function updateTask(id: number, fields: { status?: Task['status']; assignee_id?: number }): Promise<Task> {
   const data = await readJson<{ task: unknown }>(await authFetch(`/api/v1/tasks/${id}`, json('PATCH', fields)));
   return validateResponse(TaskSchema, data.task);

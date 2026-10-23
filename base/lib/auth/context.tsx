@@ -11,8 +11,8 @@ interface AuthContextType {
   signup: (fields: SignupFields, returnUrl?: string) => Promise<void>;
   /**
    * Sign in to the shared demo practice and open it where there is most to
-   * see: the featured request for staff, Today (with its approval queue) for
-   * the clinician, unless `destination` says otherwise. `prepare` runs after
+   * see: the featured request for staff, Today for the clinician, unless
+   * `destination` says otherwise. `prepare` runs after
    * sign-in and before navigating, with the path about to be opened.
    */
   enterDemo: (role?: DemoRole, destination?: string, prepare?: (path: string, data: DemoResponse) => Promise<void>) => Promise<void>;

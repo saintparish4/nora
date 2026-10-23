@@ -14,8 +14,7 @@ import { PaStatusPill, RequirementStatusPill } from '@/components/workspace/stat
 const FILTERS: Array<{ label: string; statuses: PaStatus[] | null }> = [
   { label: 'Open', statuses: null },
   { label: 'Needs clarification', statuses: ['needs_clarification'] },
-  { label: 'Ready for approval', statuses: ['ready_for_review'] },
-  { label: 'Ready to submit', statuses: ['approved'] },
+  { label: 'Ready to submit', statuses: ['ready_for_review', 'approved'] },
   { label: 'With payer', statuses: ['submitted', 'payer_pending', 'appealed'] },
   { label: 'Decided', statuses: ['approved_by_payer', 'denied', 'closed'] },
 ];

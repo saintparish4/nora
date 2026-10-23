@@ -9,7 +9,7 @@ describe('One-click demo', () => {
     cy.contains('nav', 'Today');
   });
 
-  it('opens Today with the approval queue for the clinician', () => {
+  it('still opens Today for the clinician, who sees what is ready to submit', () => {
     cy.visit('/demo?as=clinician');
     cy.location('pathname', { timeout: 20_000 }).should('eq', '/dashboard');
     cy.contains('h1', 'Today');

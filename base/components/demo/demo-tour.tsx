@@ -8,14 +8,15 @@ import { useAuth } from '@/lib/auth/context';
 import { getPriorAuthorizations } from '@/lib/api';
 import { TOUR_STEPS, readTour, writeTour, type TourPlace, type TourStep } from '@/lib/demo-tour';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const WAIT_FOR_TARGET_MS = 10_000;
+/** Room between the target and the spotlight ring. */
+const RING_GAP = 8;
 
-interface Box {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
+/** True while the target, or anything inside it, is still loading its data. */
+function isBusy(target: HTMLElement): boolean {
+  return target.matches('[aria-busy="true"]') || target.querySelector('[aria-busy="true"]') !== null;
 }
 
 /**
@@ -29,8 +30,9 @@ export function DemoTour() {
   const router = useRouter();
   const pathname = usePathname();
   const [place, setPlace] = useState<TourPlace | null>(null);
-  const [box, setBox] = useState<Box | null>(null);
   const [ready, setReady] = useState(false);
+  const [placed, setPlaced] = useState(false);
+  const ring = useRef<HTMLDivElement>(null);
   const paths = useRef<Record<string, string | null>>({});
 
   // Storage is only readable in the browser, after hydration.
@@ -40,7 +42,7 @@ export function DemoTour() {
   const update = useCallback((next: TourPlace | null) => {
     writeTour(next);
     setReady(false);
-    setBox(null);
+    setPlaced(false);
     setPlace(next);
   }, []);
 
@@ -103,10 +105,14 @@ export function DemoTour() {
           prepared = true;
         }
         const target = document.querySelector<HTMLElement>(step.target);
+        const waited = Date.now() - started > WAIT_FOR_TARGET_MS;
         if (!target) {
-          if (Date.now() - started > WAIT_FOR_TARGET_MS) go(place!.step + 1);
+          if (waited) go(place!.step + 1);
           return;
         }
+        // Spotlighting a panel that still shows placeholders would describe
+        // data the visitor cannot see yet. Wait for it, within reason.
+        if (isBusy(target) && !waited) return;
         window.clearInterval(poll);
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         // Tall targets sit under the header, clear of the caption at the
@@ -127,22 +133,27 @@ export function DemoTour() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place?.step, inDemo, user?.role, pathname]);
 
-  // Keep the spotlight on the target as the page scrolls and settles.
+  // Keep the spotlight on the target every frame, as the page scrolls and
+  // settles. Written straight to the element as a transform: a React render
+  // per frame would be wasted work, and animating top/left made the ring
+  // trail behind its target and shift the layout.
   useEffect(() => {
     if (!ready || !step) return;
-    const measure = () => {
+    let frame = 0;
+    const follow = () => {
       const target = document.querySelector<HTMLElement>(step.target);
-      if (!target) return;
-      const rect = target.getBoundingClientRect();
-      setBox({ top: rect.top - 8, left: rect.left - 8, width: rect.width + 16, height: rect.height + 16 });
+      const el = ring.current;
+      if (target && el) {
+        const rect = target.getBoundingClientRect();
+        el.style.transform = `translate3d(${rect.left - RING_GAP}px, ${rect.top - RING_GAP}px, 0)`;
+        el.style.width = `${rect.width + 2 * RING_GAP}px`;
+        el.style.height = `${rect.height + 2 * RING_GAP}px`;
+        setPlaced(true);
+      }
+      frame = window.requestAnimationFrame(follow);
     };
-    measure();
-    const timer = window.setInterval(measure, 200);
-    window.addEventListener('resize', measure);
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener('resize', measure);
-    };
+    frame = window.requestAnimationFrame(follow);
+    return () => window.cancelAnimationFrame(frame);
   }, [ready, step]);
 
   // Move on by itself while playing.
@@ -182,11 +193,15 @@ export function DemoTour() {
 
   return (
     <>
-      {box && (
+      {ready && (
         <div
+          ref={ring}
           aria-hidden
-          className="pointer-events-none fixed z-[60] rounded-[1.75rem] ring-2 ring-blue transition-all duration-300 motion-reduce:transition-none"
-          style={{ ...box, boxShadow: '0 0 0 9999px rgba(18, 18, 18, 0.42)' }}
+          className={cn(
+            'pointer-events-none fixed top-0 left-0 z-[60] rounded-[1.75rem] ring-2 ring-blue transition-opacity duration-200 motion-reduce:transition-none',
+            placed ? 'opacity-100' : 'opacity-0'
+          )}
+          style={{ boxShadow: '0 0 0 9999px rgba(18, 18, 18, 0.42)' }}
         />
       )}
       <section

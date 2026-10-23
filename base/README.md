@@ -12,7 +12,7 @@ pnpm run dev
 ```
 
 `NEXT_PUBLIC_API_URL` must point at the Rails API (default
-`http://localhost:3001`).
+`http://localhost:3006`).
 
 ## Checks
 

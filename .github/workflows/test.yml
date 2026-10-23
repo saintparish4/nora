@@ -9,10 +9,12 @@ on:
   # way to exercise a CI change before it reaches main.
   workflow_dispatch:
 
+# Runners are pinned to an image, not ubuntu-latest, so GitHub moving the
+# label to a new Ubuntu cannot turn main red on its own. Bump on purpose.
 jobs:
   test-backend:
     name: Rails Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -55,7 +57,7 @@ jobs:
   # SQLite run is not evidence about any of that.
   test-backend-postgres:
     name: Rails Tests (PostgreSQL)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -103,7 +105,7 @@ jobs:
 
   test-frontend:
     name: Next.js Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -145,7 +147,7 @@ jobs:
   # a freshly seeded demo practice (E2E=true keeps it on its own SQLite file).
   test-e2e:
     name: Console E2E (Cypress)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -179,7 +181,7 @@ jobs:
 
       - name: Upload screenshots and server logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-failure
           path: |

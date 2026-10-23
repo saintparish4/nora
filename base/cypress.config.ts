@@ -6,7 +6,7 @@ const apiDir = path.resolve(__dirname, '../api');
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:3005',
     specPattern: 'cypress/e2e/**/*.cy.ts',
     supportFile: 'cypress/support/e2e.ts',
     viewportWidth: 1440,
@@ -17,7 +17,7 @@ export default defineConfig({
     // No retries: a test that passes on its second try is a finding, not a pass.
     retries: 0,
     expose: {
-      apiUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+      apiUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3006',
     },
     setupNodeEvents(on) {
       on('task', {

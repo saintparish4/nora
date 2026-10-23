@@ -35,7 +35,7 @@ module Api
     #                        survive a cross-site request. Browsers require
     #                        Secure alongside None, which HTTPS provides.
     #
-    #   development :lax   — localhost:3000 and localhost:3001 are the *same*
+    #   development :lax   — localhost:3005 and localhost:3006 are the *same*
     #                        site (port is not part of a site), so Lax is both
     #                        sufficient and stricter. None would be rejected
     #                        here: browsers refuse SameSite=None without

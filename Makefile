@@ -8,14 +8,14 @@ help:
 	@echo "  make setup        - Full project setup (install + database setup)"
 	@echo "  make test         - Run all tests (frontend + backend)"
 	@echo "  make dev          - Start development servers"
-	@echo "  make dev-stop     - Stop development servers (frontend:3000, backend:3001)"
+	@echo "  make dev-stop     - Stop development servers (frontend:3005, backend:3006)"
 	@echo "  make docker-up    - Start Docker containers"
 	@echo "  make docker-down  - Stop Docker containers"
 	@echo "  make db-reset     - Reset database (drop, create, migrate, seed)"
 	@echo "  make db-migrate   - Run database migrations"
 	@echo "  make db-seed      - Seed database"
 	@echo "  make test-backend-postgres - RSpec against PostgreSQL (needs docker compose up -d postgres)"
-	@echo "  make test-e2e     - Cypress against the real API and console (ports 3000/3001 free)"
+	@echo "  make test-e2e     - Cypress against the real API and console (ports 3005/3006 free)"
 	@echo "  make clean        - Clean build artifacts and dependencies"
 	@echo "  make lint         - Run frontend (ESLint) and backend (RuboCop) linters"
 	@echo "  make lint-frontend - Run ESLint in base/"
@@ -50,21 +50,21 @@ test-backend:
 test-frontend:
 	cd base && pnpm test
 
-# Cypress against the real stack; needs ports 3000 and 3001 free.
+# Cypress against the real stack; needs ports 3005 and 3006 free.
 test-e2e:
 	cd base && pnpm e2e
 
 # Development
 dev:
 	@echo "Starting development servers..."
-	@echo "Backend will run on http://localhost:3001"
-	@echo "Frontend will run on http://localhost:3000"
+	@echo "Backend will run on http://localhost:3006"
+	@echo "Frontend will run on http://localhost:3005"
 	cd api && rails s & cd base && pnpm run dev
 
 dev-stop:
 	@echo "Stopping development servers..."
-	-lsof -ti:3000 | xargs kill -9 2>/dev/null || true
-	-lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+	-lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+	-lsof -ti:3006 | xargs kill -9 2>/dev/null || true
 	@echo "Servers stopped."
 
 # Docker

@@ -1,0 +1,28 @@
+name: Keep the demo API awake
+
+# Render's free instance sleeps after 15 idle minutes and takes about a minute
+# to boot, which is the wait a visitor sees on /demo. A ping every 10 minutes
+# during the hours people are likely to visit (12:00 to 04:00 UTC, 8 am to
+# midnight US Eastern) keeps it up. Outside them it sleeps, which keeps the
+# free tier's 750 instance hours a month well clear: 16 hours a day is about
+# 500. GitHub may run scheduled jobs late, so an occasional cold start remains.
+#
+# The ping never fails the job: a sleeping or broken API is reported in the
+# log, not as a red run every ten minutes.
+on:
+  schedule:
+    - cron: '*/10 12-23,0-3 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    name: Ping the API
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: GET /up
+        run: |
+          curl -sS --max-time 120 -o /dev/null -w 'HTTP %{http_code} in %{time_total}s\n' \
+            https://mai-2xra.onrender.com/up || echo "No answer from the API"

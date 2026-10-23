@@ -1,5 +1,10 @@
 # Protocol: making the evidence eval deeper
 
+Nora is a portfolio project, not a product in use. Parts 2 and 5 to 7 describe
+what a real deployment would need (independent reviewers, a public benchmark,
+a study of the human check, agreements before any patient data); they are
+written so the work could be picked up, not because it is planned.
+
 Written 2026-10-22. Scope stays GLP-1 weight-management prior authorization
 (Wegovy, Zepbound, Saxenda) and the four payers already modelled. Nothing here
 changes the app or its production behaviour.

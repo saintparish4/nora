@@ -1,131 +1,109 @@
 # Nora
 
-**Healthcare, followed through.** Nora helps outpatient practices finish the
-administrative work that starts once a clinician decides what a patient needs.
+A prior-authorization workspace for medical-office staff that checks a patient's chart against the payer's published criteria, quotes the chart text that documents each one, and sends what is missing to the clinician.
 
-The first capability is **Nora Auth**: prior authorization evidence and packet
-preparation. A medical assistant adds a patient's chart notes, picks the
-medication and payer, and Nora:
+![The demo's featured request: Cigna's criteria for Wegovy, the evidence quoted from the chart, and the gaps sent to the clinician](docs/images/request-page.png)
 
-1. checks the chart against the payer's criteria,
-2. quotes the exact chart text that documents each criterion, or says what is missing,
-3. opens follow-up tasks for the ordering clinician when documentation is missing,
-4. explains a question from the payer's form in plain words and shows what the chart says about it,
-5. requires staff to verify every quote and a clinician to approve the packet,
-6. renders the approved packet as a PDF and tracks the request to a payer decision.
+**Live demo:** [mai-omega.vercel.app/demo](https://mai-omega.vercel.app/demo) opens a synthetic practice with no sign-up. Add `?tour=1` for a guided walkthrough.
 
-Nora never decides medical necessity and never marks a requirement met on its
-own. People verify evidence and approve; Nora prepares and keeps the record.
+## Features
 
-## Quick start
+- **Quotes, never claims:** every requirement is answered with the chart's own sentence, its document and date. Staff verify each quote, a clinician approves the packet, and Nora never marks a requirement met by itself.
+- **Real payer criteria:** the initial-authorization criteria for Wegovy, Zepbound and Saxenda from UnitedHealthcare, Aetna, Cigna and the BCBS Federal Employee Program, each linked to its published policy and effective date. Criteria are versioned, so a request keeps the criteria it was opened under.
+- **Gaps become tasks:** a requirement the chart does not support is marked missing and turned into a documentation task for the ordering clinician.
+- **Measured, not assumed:** an evaluation, planned in writing before it ran, found that adding a language model made the evidence worse (it proposed text for unsupported requirements far more often), so Nora runs on rules. [The evaluation in two minutes](docs/EVALUATION.md).
+- **Approval that means something:** a clinician's approval pins the exact evidence they saw. Any later edit voids it. The approved packet renders as a PDF and is tracked to the payer's decision.
+- **Workflow integrity:** a request's status changes only through one service that records an event and an actor; every read or write of patient data is logged; the browser authenticates with an httpOnly cookie and a CSRF token.
+- **Tested end to end:** RSpec on SQLite and PostgreSQL, Jest, and Cypress driving the real console against the real API, all in CI.
 
-```bash
-make setup                                   # install, create, migrate, seed
-cp api/.env.example api/.env                 # set SECRET_KEY_BASE
-cp base/.env.local.example base/.env.local
-make dev
-```
+## Tech Stack
 
-- Backend: http://localhost:3001
-- Frontend: http://localhost:3000
+| Technology | Purpose |
+| :--- | :--- |
+| **Ruby 4.0, Rails 8.1 (API mode)** | Backend, workflow services, rule-based evidence extraction |
+| **SQLite / PostgreSQL** | SQLite for zero-setup development; PostgreSQL via `DATABASE_URL`, tested in CI |
+| **Active Job, solid_queue** | Evidence extraction in the background |
+| **OpenAI via `Ai::Client`** | Optional model pass and payer-question help, behind one adapter (off by default) |
+| **prawn, pdf-reader** | Approved packets as PDF; text from uploaded chart PDFs |
+| **Next.js 16, React 19, TypeScript** | The staff console |
+| **Tailwind CSS, shadcn/ui, SWR, Zod** | Styling, components, data fetching, response validation |
+| **RSpec, Jest, Cypress** | Backend, frontend and end-to-end tests |
+| **medspaCy** | Clinical NLP baseline in the evaluation |
+| **Render, Vercel** | API and console hosting for the demo |
 
-Sign in with a synthetic demo account (password `password123`):
-
-| Email | Role |
-|---|---|
-| `demo@nora.com` | Admin |
-| `clinician@nora.com` | Clinician (can approve) |
-| `ma@nora.com` | Staff |
-
-The seeds create a demo practice with five synthetic patients, a GLP-1 policy
-library, and four requests at different stages: one decided by the payer, one
-waiting for the clinician, one blocked on missing documentation, and one just
-read. The fifth patient has no request, so there is one left to start. Every
-name and note is invented.
-
-http://localhost:3000/demo signs you in to that practice without a password, as
-the medical assistant (`/demo?as=clinician` for the clinician, who can approve).
-`/demo?tour=1` plays a guided walkthrough that looks at each stage, first as the
-medical assistant and then as the clinician, without changing anything.
-`cd api && bin/rails demo:reset` puts the practice back the way the seeds left it.
-
-The demo practice is off in production. Set `DEMO_PRACTICE=true` on the API to
-seed it there and enable `/demo`; the container then rebuilds it on every boot,
-because the practice is shared by everyone who opens it.
-
-Without `OPENAI_API_KEY`, evidence extraction runs the rule pass only and says
-so on screen. That is enough to try the whole flow, except "Help with a payer
-question", which needs the model.
-
-## Tech stack
-
-| Layer | Technology |
-|---|---|
-| Backend | Ruby 4.0.7, Rails 8.1 (API mode), SQLite in development, PostgreSQL via `DATABASE_URL` |
-| Background jobs | Active Job (async in development, solid_queue in production) |
-| AI | OpenAI through a single adapter, `Ai::Client` (default `gpt-4o-mini`) |
-| PDF | prawn (packets), pdf-reader (uploaded chart PDFs) |
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui, SWR, Zod |
-| Other | Resend, Sentry, Lograge, Rack::Attack, Redis cache |
+## Getting Started
 
 ### Prerequisites
 
-- Ruby 4.0.x
-- Node.js 22.13+ and pnpm 12 (pnpm 12 refuses to run on older Node)
-- Docker, only to run the PostgreSQL test suite locally
-
-## Environment variables
-
-**Backend (`api/.env`):**
-
-| Variable | Required | Description |
-|---|---|---|
-| `SECRET_KEY_BASE` | **Yes** | Signs the session cookie and JWTs. `openssl rand -hex 64`. |
-| `OPENAI_API_KEY` | No | Enables the model pass of evidence extraction. Without it, only rules run. |
-| `OPENAI_MODEL` | No | Defaults to `gpt-4o-mini`. |
-| `DEMO_PRACTICE` | No | `true` seeds the synthetic demo practice in production and enables one-click sign-in at `/demo`. Always on outside production. |
-| `AI_PHI_BAA_CONFIRMED` | Production | Must be `true` before production sends a real practice's chart text to the model. Set it only once a BAA with zero data retention covers the key. The demo practice is exempt: its charts are synthetic and cannot be added to in production. |
-| `RESEND_API_KEY` | Production | Transactional email. |
-| `RESEND_FROM_EMAIL` | No | Sender address. |
-| `FRONTEND_URL` | No | Base URL for links in email. |
-| `REDIS_URL` | Production | Rails cache store. Defaults to `redis://localhost:6379/0` in development. |
-| `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | No | Error tracking. |
-| `DATABASE_URL` | No | A `postgres://` URL switches the app to PostgreSQL. |
-
-**Frontend (`base/.env.local`):**
-
-| Variable | Required | Description |
-|---|---|---|
-| `NEXT_PUBLIC_API_URL` | **Yes** | API base URL, e.g. `http://localhost:3001`. |
-| `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | No | Error tracking. |
-
-## Commands
+Ruby 4.0.x, Node.js 22.13 or later, and pnpm 12 (pnpm 12 refuses to run on older Node). Docker only to run the PostgreSQL test suite locally.
 
 ```bash
-make test                   # RSpec + Jest
-make test-backend-postgres  # RSpec against PostgreSQL (docker compose up -d postgres)
-make test-e2e               # Cypress against the real API and console (ports 3000/3001 free)
-make lint                   # RuboCop + ESLint (Brakeman runs in CI; see CLAUDE.md)
-make db-reset               # drop, create, migrate, seed
+ruby --version   # 4.0.x
+node --version   # v22.13 or later
+pnpm --version   # 12.x
 ```
 
-## CI
+### Installation
 
-One workflow, [.github/workflows/test.yml](.github/workflows/test.yml), runs on
-pushes and pull requests to `main` and `develop`:
+```bash
+git clone https://github.com/saintparish4/nora.git
+cd nora
+make setup                                   # install, create, migrate, seed
+cp api/.env.example api/.env                 # set SECRET_KEY_BASE: openssl rand -hex 64
+cp base/.env.local.example base/.env.local
+```
 
-| Job | Runs |
-|---|---|
-| `Rails Tests` | RuboCop, Brakeman, RSpec on SQLite |
-| `Rails Tests (PostgreSQL)` | RSpec and the seeds on PostgreSQL 16 |
-| `Next.js Tests` | ESLint, production build, Jest |
-| `Console E2E (Cypress)` | The console's main flows in a browser, against the API and the seeded demo practice |
+## Usage
 
-## Data and compliance
+```bash
+make dev
+```
 
-Use synthetic data only until a practice has a signed business associate
-agreement with you, and until the model provider's BAA covers your API key.
-Chart text is stored as text only, redacted of direct identifiers before it is
-sent to the model, and every read or write of patient data is recorded in
-`phi_access_logs`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
-safety rules the code enforces.
+- Console: http://localhost:3005
+- API: http://localhost:3006
+
+http://localhost:3005/demo signs you in to the synthetic demo practice as the medical assistant (`/demo?as=clinician` for the clinician, who can approve), and `/demo?tour=1` plays the walkthrough. Or sign in with a seeded account, password `password123`:
+
+| Email | Role |
+| :--- | :--- |
+| `demo@nora.com` | Admin |
+| `clinician@nora.com` | Clinician (can approve) |
+| `ma@nora.com` | Medical assistant |
+
+The demo practice has five synthetic patients on four payers and four requests at different stages: decided by the payer, waiting for the clinician, blocked on missing documentation, and just read. The fifth patient has no request, so there is one to start. Every name and note is invented. `cd api && bin/rails demo:reset` puts it back the way the seeds left it.
+
+Run the evaluation (no API key needed for the rule pass):
+
+```bash
+cd api
+bin/rails eval:evidence:selfcheck   # proves the harness first
+bin/rails eval:evidence ROUND=rules
+```
+
+## Configuration
+
+Copy the templates and fill in what you need: `api/.env.example` and `base/.env.local.example` list every variable.
+
+- `SECRET_KEY_BASE` (API): required. Signs the session cookie and tokens.
+- `NEXT_PUBLIC_API_URL` (console): required. The API's URL, `http://localhost:3006` locally.
+- `OPENAI_API_KEY` (API): optional. Enables the model pass and "Help with a payer question". Without it, extraction runs the rules and says so on screen.
+- `DEMO_PRACTICE` (API): `true` seeds the demo practice in production and enables `/demo`. Always on outside production; the deployed API rebuilds the practice on every boot.
+- `AI_PHI_BAA_CONFIRMED` (API): production refuses to send a real practice's chart text to a model unless this is `true`. The synthetic demo practice is exempt.
+- `DATABASE_URL` (API): a `postgres://` URL switches from SQLite to PostgreSQL.
+
+Nora uses synthetic data only. It is a portfolio project, not a product in use with patients.
+
+## Contributing
+
+```bash
+make test        # RSpec + Jest
+make test-e2e    # Cypress against the real API and console (ports 3005 and 3006 free)
+make lint        # RuboCop + ESLint
+cd api && bundle exec brakeman --no-pager   # security scan, as CI runs it
+```
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/). CI ([.github/workflows/test.yml](.github/workflows/test.yml)) runs on every push and pull request to `main`: RuboCop, Brakeman and RSpec on SQLite and on PostgreSQL, ESLint, the production build and Jest, and the Cypress suite. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) describes the services, routes and the safety rules the code enforces.
+
+## License
+
+Distributed under the [MIT License](LICENSE). See `LICENSE` for more information.

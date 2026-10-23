@@ -52,8 +52,8 @@ RSpec.describe 'Auth hardening', type: :request do
 
       set_cookie = response.headers['Set-Cookie'].to_s
 
-      # Test runs without HTTPS, so the cookie must be Lax: localhost:3000 and
-      # localhost:3001 are the same site, so nothing is lost by it.
+      # Test runs without HTTPS, so the cookie must be Lax: localhost:3005 and
+      # localhost:3006 are the same site, so nothing is lost by it.
       expect(set_cookie).to match(/SameSite=Lax/i)
       expect(set_cookie).not_to match(/SameSite=None/i)
     end

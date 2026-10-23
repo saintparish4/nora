@@ -6,6 +6,7 @@ import { useMetrics, useToday } from '@/lib/api';
 import { TONE_DOTS, type Tone } from '@/lib/prior-auth';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PageHeader, Panel, Card, EmptyState, ErrorNote } from '@/components/workspace/page-header';
 import { PaStatusPill } from '@/components/workspace/status-pill';
 import { TaskList } from '@/components/workspace/task-list';
@@ -37,7 +38,7 @@ export default function TodayPage() {
 
       <ErrorNote error={error} />
 
-      <div data-tour="counts" className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div data-tour="counts" aria-busy={isLoading || undefined} className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-5">
         {COUNT_TILES.map((tile) => {
           const keys = tile.include ?? [tile.key];
           const count = keys.reduce((sum, k) => sum + (byStatus[k] ?? 0), 0);
@@ -61,9 +62,13 @@ export default function TodayPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-        <Panel title="Needs attention" tour="attention">
+        <Panel title="Needs attention" tour="attention" busy={isLoading}>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            // The shape of two requests, so the cards arriving do not push the page down.
+            <div className="space-y-2">
+              <Skeleton className="h-[88px] rounded-2xl" />
+              <Skeleton className="h-[88px] rounded-2xl" />
+            </div>
           ) : data && data.needs_attention.length > 0 ? (
             <ul className="space-y-2">
               {data.needs_attention.map(({ kind, reason, action, prior_authorization: pa }) => (
@@ -113,21 +118,24 @@ export default function TodayPage() {
 }
 
 function PilotMeasurements() {
-  const { data } = useMetrics();
-  if (!data || data.requests_created === 0) return null;
+  const { data, isLoading } = useMetrics();
+  // While loading, draw the panel with dashes so it does not appear later and
+  // push the page down. Once loaded, a practice with no requests has nothing
+  // to measure.
+  if (!isLoading && (!data || data.requests_created === 0)) return null;
 
   const minutes = (value: number | null) => (value === null ? '–' : `${value} min`);
   const rows = [
-    { label: 'Requests created', value: data.requests_created },
-    { label: 'Approved by a clinician', value: data.requests_approved },
-    { label: 'Median staff-reported prep time', value: minutes(data.median_reported_prep_minutes), note: `${data.reported_prep_count} reported` },
-    { label: 'Median time from creation to approval', value: minutes(data.median_minutes_to_approval) },
-    { label: 'Submitted to payer', value: data.submitted },
-    { label: 'Payer decisions', value: `${data.payer_approved} approved`, note: `${data.payer_denied} denied` },
+    { label: 'Requests created', value: data?.requests_created ?? '–' },
+    { label: 'Approved by a clinician', value: data?.requests_approved ?? '–' },
+    { label: 'Median staff-reported prep time', value: data ? minutes(data.median_reported_prep_minutes) : '–', note: data && `${data.reported_prep_count} reported` },
+    { label: 'Median time from creation to approval', value: data ? minutes(data.median_minutes_to_approval) : '–' },
+    { label: 'Submitted to payer', value: data?.submitted ?? '–' },
+    { label: 'Payer decisions', value: data ? `${data.payer_approved} approved` : '–', note: data && `${data.payer_denied} denied` },
   ];
 
   return (
-    <Panel title={`Measurements, last ${data.window_days} days`} className="mt-6">
+    <Panel title={`Measurements, last ${data?.window_days ?? 90} days`} className="mt-6" busy={isLoading}>
       <dl className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         {rows.map((row) => (
           <Card key={row.label} className="p-4">

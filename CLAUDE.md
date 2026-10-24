@@ -68,7 +68,7 @@ make test-frontend
 
 **Request-form eval:** `cd api && bin/rails eval:request_form` scores the request form (`RequestForm::AdminFields`, `RequestForm::ClinicalAnswers`) against 20 labelled cases in `api/evals/request_form/cases.yml`: fields by exact match, questions on accuracy and correct "don't know". `spec/evals/request_form_eval_spec.rb` fails on any wrong or unsourced answer. A change to a question set, the demo bundles, or the answer rules can need a label change; say why in the case's note.
 
-**Independent labels and the timed task:** `bin/rails eval:request_form:packet` writes the blind labelling packet. `eval:request_form:agreement` gives Cohen's kappa against the eval's labels, and `eval:request_form:timed` scores timed-task sessions (`api/evals/request_form/labeling`, `timed`). Neither has been run with people.
+**Independent labels and the timed task:** `bin/rails eval:request_form:packet` writes the blind labelling packet. `eval:request_form:agreement` gives Cohen's kappa against the eval's labels, and `eval:request_form:timed` scores timed-task sessions (`api/evals/request_form/labeling`, `timed`). Neither has been run: no labellers or participants are available, so treat them as ready tooling, not pending work.
 
 **Backend:** RSpec in `api/spec/` (requests, models, services, controllers).  
 **Frontend:** Jest in `base/` (e.g. `__tests__/`). Use `pnpm test:watch` for watch mode, `pnpm test:coverage` for coverage.  

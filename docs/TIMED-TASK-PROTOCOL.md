@@ -2,6 +2,8 @@
 
 A plan for testing Nora's request form with front-desk staff and medical assistants who have done GLP-1 prior authorizations on CoverMyMeds. It tests the two claims the rest of the work cannot: that filling a request from Nora's form is **faster** than filling it from the chart, and **no less accurate**. The times in [FRONT-DESK-WORKFLOW.md](FRONT-DESK-WORKFLOW.md) are keystroke-level estimates, and the [request-form eval](../api/evals/request_form/README.md) is labelled by the person who wrote the code. This protocol replaces both with measurements and with labels from people who do the work.
 
+**Not run.** No participants are available, so this stays a ready protocol with working scoring (`bin/rails eval:request_form:timed`), not a result.
+
 Everything uses the synthetic demo practice. No real patient, chart, CoverMyMeds account or Epic login is involved.
 
 ## Questions

@@ -147,6 +147,39 @@ staff without medical training are least sure.
   one-patient check, which needs you to register the app. Inferno's US Core
   Client suite can test Nora's reads against its own simulated server.
 
+## Read against Epic's sandbox (2026-10-24)
+
+Nora signed in to Epic's FHIR sandbox
+(`fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4`) as a registered
+Backend Systems app: an RS384-signed JWT for a client-credentials token, with
+the public key published as a JWK Set at
+`https://noras-demo.vercel.app/epic-jwks.json` (`base/public/epic-jwks.json`).
+The private key never left the machine that signs. It then read Linda Ross
+(`eIXesllypH3M9tAA5WdJftQ3`, the sandbox patient with orders, problems and
+vitals) and filled the request form's fields from her chart.
+
+- **Read as expected:** all nine patient fields; both active problems with
+  their ICD-10 codes (J45.40, J20.9); her active Advair order's quantity,
+  days' supply and directions; the prescriber's name and NPI.
+- **Correctly left empty:** every insurance field (she has no Coverage), and
+  BMI (Epic has her weight but no height or BMI).
+- **One bug, fixed:** Epic names an order's drug by reference to a Medication
+  (`medicationReference`), where the demo bundles, HAPI and Inferno all carry
+  it on the order (`medicationCodeableConcept`). Nora read only the second, so
+  against Epic it found "no active prescription", left the prescriber empty
+  (it is found through the order), and the CQL would have missed prior drugs.
+  `Fhir::Chart` now reads the referenced (or contained) Medication's code onto
+  the order, the form cites `medicationReference → Medication.code`, and
+  `spec/support/epic_shaped_source.rb` serves the demo charts Epic's way so the
+  specs check that the form and the CQL answers come out the same.
+- **One field left empty on purpose:** Epic's Medication lists every RxNorm
+  code the drug maps to (Advair's has five, ingredients and products). Picking
+  the first gave salmeterol's ingredient code, so the RxNorm field now stays
+  empty and names the candidates whenever there is more than one.
+- **As Epic sends it:** the prescriber's office phone, fax and address are not
+  on the sandbox Practitioner, and the directions carry Epic's appended
+  "Starting ..., Until ..., Print". Both are shown as they came.
+
 ## The question sets (checked 2026-10-23)
 
 Only one of the four payers publishes questions written for these drugs:
@@ -221,8 +254,7 @@ says what it couldn't do; the language model is optional.
 - **Independent labels.** The request-form eval (20 cases, 0 harmful answers
   after fixing the two bugs it found) is labelled by the code's author. The
   protocol collects labels from people who have done the work.
-- **Epic itself.** Nora's FHIR client passed Inferno's SMART Backend Services
-  client tests and reads a HAPI server identically to the bundles. It has not
-  read Epic's sandbox. That needs an app registered in Epic's developer
-  portal, with its client ID and key.
+- **Epic beyond one sandbox patient.** Nora has read Epic's sandbox as a
+  backend system (below), for one patient with no coverage, BMI or
+  weight-loss drug. A real Epic build, with its own data habits, is untested.
 - **Approval rates.** No real submissions, so no payer outcomes.

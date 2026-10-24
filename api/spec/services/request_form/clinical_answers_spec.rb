@@ -67,6 +67,20 @@ RSpec.describe RequestForm::ClinicalAnswers do
     expect(answers['comorbidity'].depends_on).to eq([ "What was the patient's baseline BMI, before any weight-loss drug?" ])
   end
 
+  context 'when each order references a Medication, as Epic sends it' do
+    let(:source) { EpicShapedSource.new(Fhir::BundleSource.new(dir: Fhir::DEMO_BUNDLES)) }
+
+    it "gives the same answers as when the order carries its own code (Tom Okafor's Saxenda request)" do
+      pa = seeded('Okafor')
+      epic = answers_for(pa)
+      plain = described_class.call(pa, chart: Fhir::Chart.new(source: Fhir::BundleSource.new(dir: Fhir::DEMO_BUNDLES), patient_id: pa.patient.fhir_id),
+                                       question_set: RequestForm::QuestionSet.for(payer: pa.policy_template.payer.name, item: pa.item_name)).index_by(&:link_id)
+
+      expect(epic.transform_values { |a| [ a.status, a.answer ] }).to eq(plain.transform_values { |a| [ a.status, a.answer ] })
+      expect(epic.values.map(&:status).uniq).to eq([ 'answered' ])
+    end
+  end
+
   context 'on the FEP Zepbound form with a BMI of 28.4 (Marcus Bell)' do
     let(:set) { RequestForm::QuestionSet.for(payer: 'Blue Cross Blue Shield Federal Employee Program', item: 'Zepbound') }
     let(:pa) { travel_to(Time.zone.local(2026, 10, 23)) { create_prior_authorization(item_name: 'Zepbound') } }

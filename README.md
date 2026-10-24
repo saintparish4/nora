@@ -4,7 +4,7 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 
 ![The demo's featured request: Cigna's criteria for Wegovy, the evidence quoted from the chart, and the gaps still open](docs/images/request-page.png)
 
-**Live demo:** [mai-omega.vercel.app/demo](https://mai-omega.vercel.app/demo) opens a synthetic practice with no sign-up. Add `?tour=1` for a guided walkthrough.
+**Live demo:** [noras-demo.vercel.app/demo](https://noras-demo.vercel.app/demo) opens a synthetic practice with no sign-up. Add `?tour=1` for a guided walkthrough.
 
 ## Features
 

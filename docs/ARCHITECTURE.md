@@ -133,9 +133,14 @@ general API traffic per IP.
 
 ## Known gaps
 
-- **Production database is unresolved.** `config/database.yml` defines
-  production as SQLite (solid_cache/queue/cable); deployment docs have said
-  PostgreSQL. Decide before the first real deploy.
+- **Production keeps nothing between boots.** The Render deploy runs the
+  SQLite layout in `config/database.yml` on the instance's own disk, with no
+  `DATABASE_URL` and no persistent disk (checked 2026-10-24: after several
+  deploys and demo resets the demo's requests are still ids 1-4, where a
+  persistent database keeps counting up). Every deploy or wake starts empty
+  and reseeds the demo practice. That suits a shared synthetic demo; a real
+  practice needs PostgreSQL (`DATABASE_URL`, already tested in CI) or a
+  persistent disk first.
 - **Deployment is not configured.** `config/deploy.yml` is the Kamal template.
 - **`api/Dockerfile` cannot start.** `bin/*` are mode 644 in git, so the image's
   entrypoint fails with `exec: "/rails/bin/docker-entrypoint": permission

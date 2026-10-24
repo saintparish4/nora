@@ -36,9 +36,9 @@ test:
 # Production is deliberately untouched by the switch above. It is a
 # four-database solid_cache/solid_queue/solid_cable layout, and moving it to
 # PostgreSQL is a deployment change that needs to be made against a real
-# environment rather than inferred here. Note the drift: README and
-# docs/ARCHITECTURE.md describe production as PostgreSQL while this file says
-# SQLite. One of the two is wrong and it is not safe to guess which.
+# environment rather than inferred here. The Render deploy runs this SQLite
+# layout on a disk that does not persist (see Known gaps in
+# docs/ARCHITECTURE.md), so every boot starts empty.
 #
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.

@@ -167,10 +167,12 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
   (zero-setup local dev), a `postgres://` URL means PostgreSQL. CI runs the suite both ways; the
   `Rails Tests (PostgreSQL)` job is the one that speaks to locking, transaction semantics, and
   concurrent status transitions. Locally: `docker compose up -d postgres && make test-backend-postgres`.
-- **Production database is unresolved.** Earlier docs said production is PostgreSQL;
-  `config/database.yml` defines production as a four-database SQLite
-  solid_cache/solid_queue/solid_cable layout. Check the running deploy before trusting either, and
-  do not "fix" the config without looking. `docs/ARCHITECTURE.md` tracks this under Known gaps.
+- **Production is SQLite on a disk that does not persist.** The Render deploy uses the
+  four-database SQLite layout in `config/database.yml` with no `DATABASE_URL` (checked
+  2026-10-24 from the live demo's ids, which restart at 1 on every boot). Each deploy or wake
+  starts empty and reseeds the demo, so nothing else survives. Moving to PostgreSQL is a Render
+  change (a database plus `DATABASE_URL`) plus pointing the cache/queue/cable entries at it; see Known gaps in
+  `docs/ARCHITECTURE.md`.
 - **Auth:** The browser uses an httpOnly session cookie plus CSRF token; API clients opt in to a JWT and rotating refresh token with `X-Client-Type: api`. See `docs/ARCHITECTURE.md`.
 - **Workflow status:** Never write `PriorAuthorization#status` directly. Go through `Authorizations::TransitionService` (the model rejects anything else) so every change has an event and an actor.
 - **AI:** Call models only through `Ai::Client`. Never log prompts or chart text. Use synthetic data only; production refuses model calls until `AI_PHI_BAA_CONFIRMED=true`.

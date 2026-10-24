@@ -248,12 +248,14 @@ says what it couldn't do; the language model is optional.
 - **Real Epic data quality**: how often BIN/PCN, lifestyle-program dates or
   prior-drug outcomes are actually recorded. The sandbox and Synthea show the
   shapes, not the gaps.
-- **The time saved.** The keystroke-level estimates are lower bounds. Only the
-  timed task with former coworkers ([protocol](TIMED-TASK-PROTOCOL.md)), or
-  real use, measures it.
+- **The time saved.** The keystroke-level estimates are lower bounds. Only a
+  timed task with people who do this work ([protocol](TIMED-TASK-PROTOCOL.md)),
+  or real use, measures it. No participants are available, so it has not been
+  run; the protocol and its scoring stay ready.
 - **Independent labels.** The request-form eval (20 cases, 0 harmful answers
   after fixing the two bugs it found) is labelled by the code's author. The
-  protocol collects labels from people who have done the work.
+  blind labelling packet and the kappa script are ready, but no outside
+  labeller is available, so the labels are not independent.
 - **Epic beyond one sandbox patient.** Nora has read Epic's sandbox as a
   backend system (below), for one patient with no coverage, BMI or
   weight-loss drug. A real Epic build, with its own data habits, is untested.

@@ -61,4 +61,24 @@ RSpec.describe RequestForm::AdminFields do
     expect(fields[:drug].value).to eq('liraglutide pen')
     expect(fields[:rxnorm].value).to eq('1598268')
   end
+
+  it 'fills the prescription and prescriber when the order references a Medication, as Epic sends it' do
+    expected = fields_for('demo-1002', 'Zepbound').transform_values(&:value)
+    chart = Fhir::Chart.new(source: EpicShapedSource.new(source), patient_id: 'demo-1002')
+    fields = described_class.call(instance_double(PriorAuthorization, item_name: 'Zepbound'), chart: chart).index_by(&:key)
+
+    expect(fields.transform_values(&:value)).to eq(expected.merge(drug: 'ZEPBOUND 2.5 MG/0.5 ML AUTO-INJECTOR'))
+    expect(fields[:rxnorm].source).to include(reference: 'MedicationRequest/demo-1002-rx',
+                                              element: 'MedicationRequest.medicationReference → Medication.code.coding (RxNorm)')
+  end
+
+  it 'leaves the RxNorm code empty, naming the candidates, when the drug maps to several' do
+    order = source.search('MedicationRequest', patient: 'demo-1002').first
+    order['medicationCodeableConcept']['coding'] += [ { 'system' => 'http://www.nlm.nih.gov/research/umls/rxnorm', 'code' => '2601723' } ]
+    fields = fields_for('demo-1002', 'Zepbound')
+
+    expect(fields[:rxnorm].value).to be_nil
+    expect(fields[:rxnorm].missing).to include('several RxNorm codes (2669706, 2601723)')
+    expect(fields[:drug].value).to eq('Zepbound 2.5 mg/0.5 mL auto-injector')
+  end
 end

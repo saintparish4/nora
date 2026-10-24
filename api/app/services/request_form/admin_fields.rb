@@ -115,11 +115,13 @@ module RequestForm
       quantity = rx&.dig("dispenseRequest", "quantity")
       supply = rx&.dig("dispenseRequest", "expectedSupplyDuration")
       no_rx = "No active prescription for #{@pa.item_name} in the chart. Check the order, or ask the prescriber's office."
+      rxnorms = Array(concept["coding"]).select { |c| c["system"].to_s.include?("rxnorm") }.filter_map { |c| c["code"] }.uniq
+      drug_element = rx && @chart.medication_reference(rx) ? "MedicationRequest.medicationReference → Medication.code" : "MedicationRequest.medicationCodeableConcept"
       [
         field(:medication, :drug, "Drug and strength", concept["text"] || Array(concept["coding"]).first&.dig("display"), ref,
-              "MedicationRequest.medicationCodeableConcept", :order, missing: no_rx),
-        field(:medication, :rxnorm, "RxNorm code", Array(concept["coding"]).find { |c| c["system"].to_s.include?("rxnorm") }&.dig("code"), ref,
-              "MedicationRequest.medicationCodeableConcept.coding (RxNorm)", :order, missing: no_rx),
+              drug_element, :order, missing: no_rx),
+        field(:medication, :rxnorm, "RxNorm code", rxnorms.one? ? rxnorms.first : nil, ref,
+              "#{drug_element}.coding (RxNorm)", :order, missing: rx && rxnorms.many? ? several_rxnorms(rxnorms) : no_rx),
         field(:medication, :quantity, "Quantity", quantity && [ number(quantity["value"]), quantity["unit"] ].compact.join(" "), ref,
               "MedicationRequest.dispenseRequest.quantity", :order, missing: no_rx),
         field(:medication, :days_supply, "Days' supply", supply && number(supply["value"]).to_s, ref,
@@ -161,6 +163,14 @@ module RequestForm
       missing = nil if value.present?
       missing ||= "Not in the chart. #{EPIC.fetch(epic)} is where it would be." if value.blank?
       Field.new(section: section, key: key, label: label, value: value.presence, source: source, missing: missing)
+    end
+
+    # Epic lists every RxNorm code its drug record maps to (ingredients as well
+    # as the product); which one is the dispensed product needs RxNorm's term
+    # types, so Nora names them all rather than picking one.
+    def several_rxnorms(codes)
+      "The chart's drug record maps to several RxNorm codes (#{codes.join(', ')}). Use the product code from the order, " \
+        "or look the drug up in RxNav."
     end
 
     def official_name(patient)

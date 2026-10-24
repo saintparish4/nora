@@ -2,18 +2,18 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
   # Only measure coverage for app/ (controllers, models, services, mailers, jobs)
-  add_filter '/spec/'
-  add_filter '/config/'
-  add_filter '/db/'
-  add_filter '/vendor/'
-  add_filter '/evals/'
+  skip '/spec/'
+  skip '/config/'
+  skip '/db/'
+  skip '/vendor/'
+  skip '/evals/'
 
   # Group by layer for easier reading
-  add_group 'Controllers', 'app/controllers'
-  add_group 'Models',      'app/models'
-  add_group 'Services',    'app/services'
-  add_group 'Mailers',     'app/mailers'
-  add_group 'Jobs',        'app/jobs'
+  group 'Controllers', 'app/controllers'
+  group 'Models',      'app/models'
+  group 'Services',    'app/services'
+  group 'Mailers',     'app/mailers'
+  group 'Jobs',        'app/jobs'
 
   # Target: 70% coverage on critical paths
   minimum_coverage 70

@@ -50,6 +50,7 @@ Thumbs.db
 book/
 # Planning and strategy notes. This repo is public; these are not.
 directive/
+.claude/
 
 # Keep the committed env templates (they must survive the .env* rules above)
 !api/.env.example

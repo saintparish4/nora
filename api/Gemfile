@@ -29,7 +29,7 @@ gem "json", "~> 3.1"
 gem "prawn", "~> 2.5"
 gem "pdf-reader", "~> 2.14"
 gem "redis", "~> 6.0"
-gem "sentry-ruby", "~> 7.1"
+gem "sentry-ruby", "~> 7.2"
 gem "sentry-rails", "~> 7.1"
 gem "lograge", "~> 0.15.1"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

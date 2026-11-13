@@ -1,12 +1,3 @@
-# Set default behavior to automatically normalize line endings
+# Normalize line endings; the working standard is LF.
 * text=auto
-
-# Force Unix line endings for shell scripts and executables
 *.sh text eol=lf
-api/bin/* text eol=lf
-
-# Ensure Windows line endings for Windows-specific files
-*.bat text eol=crlf
-*.ps1 text eol=crlf
-
-api/cql/dist/* linguist-generated=true -diff

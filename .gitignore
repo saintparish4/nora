@@ -1,58 +1,20 @@
-# Root level .gitignore for NORA project
+# Nora keeps its own ignore rules in nora/.gitignore.
 
-# Rails API specific ignores
-/api/coverage
-/api/log/*
-!/api/log/.keep
-/api/tmp/*
-!/api/tmp/.keep
-!/api/tmp/pids/.keep
-!/api/tmp/storage/.keep
-/api/storage/*
-!/api/storage/.keep
-/api/public/assets
-/api/config/master.key
-/api/config/credentials.yml.enc
-/api/evals/evidence/context/.venv
-/api/storage/development.sqlite3
-/api/storage/*.sqlite3
-/api/storage/*.sqlite3-*
+# Private planning notes. This repo is public; these are not.
+book/
+directive/
+.claude/
 
-# Next.js specific ignores
-/base/node_modules
-/base/.next
-/base/out
-/base/build
-/base/.env*
-/base/package-lock.json
-
-# General ignores
-/notebook
-.DS_Store
-*.log
-*.tmp
-*.cache
+# Secrets and local settings
 .env*
 *.pem
+*.key
 
-# IDE files
+# Editors and operating systems
 .vscode/
 .idea/
 .cursor/
 *.swp
 *.swo
-
-# OS files
-Thumbs.db
 .DS_Store
-
-# Personal 
-book/
-# Planning and strategy notes. This repo is public; these are not.
-directive/
-.claude/
-
-# Keep the committed env templates (they must survive the .env* rules above)
-!api/.env.example
-!base/.env.local.example
-/api/cql/node_modules
+Thumbs.db

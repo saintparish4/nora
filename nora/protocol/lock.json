@@ -1,0 +1,9 @@
+{
+  "mimic-iv-demo-2.2": {
+    "protocol_sha256": "a48277aa6c91b56f63bce48de302cbbe4eef06ac1e7c9b2cee5eb29aa468fc6e",
+    "rows": 50,
+    "table_sha256": "5fa4444c14bd2641662286d5a15d9563ed802a6f8e530da605475676d0b52f62",
+    "test_rows": 8,
+    "test_sha256": "5e4d94a5e656bb502fa9afe433f89eef59439f6ef279321df2d45b058b71ea17"
+  }
+}

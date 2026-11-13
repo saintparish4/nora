@@ -1,0 +1,82 @@
+{
+  "dataset": "mimic-iv-demo-2.2",
+  "fidelity": {
+    "columns": {
+      "afib": 0.5140247879973907,
+      "age": 0.10828440965427266,
+      "bun": 0.5549393924522747,
+      "ckd": 0.1894977168949772,
+      "copd": 0.13242009132420088,
+      "creatinine": 0.4898891063274625,
+      "diabetes": 0.16046966731898238,
+      "died_in_hospital": 0.07273320287018915,
+      "discharged_home": 1.0,
+      "dx_group": 0.3101761252446184,
+      "emergency": 0.33202870189171557,
+      "hemoglobin": 0.7435897435897436,
+      "hypertension": 0.2315720808871494,
+      "los_days": 0.4986953685583822,
+      "male": 0.11317677756033917,
+      "potassium": 0.4898891063274625,
+      "prior_admissions_365d": 0.2517938682322244,
+      "readmit_30d": 0.07273320287018917,
+      "sodium": 0.4898891063274625
+    },
+    "correlation": 0.18789735781854217,
+    "discriminator_auroc": 0.9948979591836735,
+    "marginal": 0.35556855033310725
+  },
+  "floor": {
+    "fidelity": {
+      "columns": {
+        "afib": 0.023809523809523836,
+        "age": 0.1428571428571429,
+        "bun": 0.19207317073170732,
+        "ckd": 0.08333333333333334,
+        "copd": 0.041666666666666644,
+        "creatinine": 0.2195121951219512,
+        "diabetes": 0.14285714285714288,
+        "died_in_hospital": 0.047619047619047644,
+        "discharged_home": 0.20833333333333334,
+        "dx_group": 0.29761904761904756,
+        "emergency": 0.45238095238095233,
+        "hemoglobin": 0.3296703296703297,
+        "hypertension": 0.18452380952380953,
+        "los_days": 0.44047619047619047,
+        "male": 0.18452380952380953,
+        "potassium": 0.16463414634146345,
+        "prior_admissions_365d": 0.45238095238095244,
+        "readmit_30d": 0.125,
+        "sodium": 0.28963414634146334
+      },
+      "correlation": 0.34357569261378545,
+      "discriminator_auroc": NaN,
+      "marginal": 0.21173183897830883
+    }
+  },
+  "privacy": {
+    "attack_auroc": 0.5446428571428571,
+    "attack_auroc_ci": [
+      0.37201688815060907,
+      0.7333333333333333
+    ],
+    "ceiling": 0.55,
+    "passes": false,
+    "reason": "42 training and 8 test admissions; a verdict needs 30 of each",
+    "test_rows_copied": 0.0,
+    "train_rows_copied": 0.0
+  },
+  "synthetic_rows": 1022,
+  "synthetic_sha256": "3cdad9493dc53a53771999376831a860d1af96188ace5be5a7b2acde81892b18",
+  "system": "synthea",
+  "utility": {
+    "margin": 0.05,
+    "n_synthetic": 899,
+    "n_test": 8,
+    "n_test_positive": 0,
+    "n_train_real": 40,
+    "outcome": "readmit_30d",
+    "passes": false,
+    "reason": "a training or test set has only one class"
+  }
+}

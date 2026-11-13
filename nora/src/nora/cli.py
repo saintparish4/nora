@@ -2,8 +2,8 @@
 
 Each subcommand is one protocol step run from the project root, and each
 refuses to continue when a lock does not hold. Real data is read from and
-written to `data/`, which git ignores. Scores go to `results/`, which is
-committed.
+written to `data/`, which git ignores. Scores go to `results/` and simulated
+baseline tables to `baselines/`; both are committed.
 """
 
 from __future__ import annotations
@@ -15,10 +15,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from nora import mimic, schema, score, selfcheck, split
+from nora import mimic, schema, score, selfcheck, split, synthea
 
 DATA = Path("data")
 RESULTS = Path("results")
+BASELINES = Path("baselines")
 LOCK = Path("protocol/lock.json")
 PROTOCOL = Path("PROTOCOL.md")
 
@@ -85,6 +86,20 @@ def cohort(args: argparse.Namespace) -> None:
     print(f"  readmitted within 30 days {int(table['readmit_30d'].sum())} of {int(known.sum())}")
 
 
+def run_synthea(args: argparse.Namespace) -> None:
+    table = synthea.load(args.csv)
+    out = BASELINES / "synthea" / "admissions.csv"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    table.to_csv(out, index=False)
+    known = table["readmit_30d"].notna()
+    print(f"synthea: {len(table)} stays, {table['patient_id'].nunique()} patients -> {out}")
+    print(f"  by diagnosis group {table['dx_group'].value_counts().to_dict()}")
+    print(f"  died in hospital {int(table['died_in_hospital'].sum())}")
+    print(f"  readmitted within 30 days {int(table['readmit_30d'].sum())} of {int(known.sum())}")
+    print(f"  implausible lab values blanked {table.attrs['implausible_labs']}")
+    print(f"  table sha256 {split.digest(table)}")
+
+
 def run_score(args: argparse.Namespace) -> None:
     train = read_table(DATA / args.name / "train.csv")
     test = read_table(DATA / args.name / "test.csv")
@@ -125,6 +140,10 @@ def main() -> None:
     p.add_argument("--mimic", type=Path, required=True, help="directory that contains hosp/")
     p.add_argument("--name", required=True, help="dataset name, e.g. mimic-iv-demo-2.2")
     p.set_defaults(run=cohort)
+
+    p = commands.add_parser("synthea", help="map a Synthea CSV export to the admission table")
+    p.add_argument("--csv", type=Path, required=True, help="Synthea's output/csv directory")
+    p.set_defaults(run=run_synthea)
 
     p = commands.add_parser("score", help="score a synthetic table against a locked dataset")
     p.add_argument("--name", required=True, help="the locked dataset to score against")

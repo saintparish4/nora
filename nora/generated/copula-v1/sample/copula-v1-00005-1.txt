@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Emmett Ashdown    MRN: copula-v1-00005
+Date of birth: 1969-04-15    Sex: male
+Admitted: 2025-05-18 07:33    Discharged: 2025-05-27 01:17
+
+PRINCIPAL DIAGNOSIS
+Aortic valve stenosis (I35.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Ashdown is a 56-year-old man who came in for a planned admission with aortic valve stenosis. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic obstructive pulmonary disease (J44.9)
+Denies diabetes, chronic kidney disease, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 2.1 mg/dL
+BUN: 21 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.3 mmol/L
+Hemoglobin: not measured during this admission
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 8.7 days. Went home in stable condition.

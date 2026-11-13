@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Cyrus Birchall    MRN: copula-v1-00017
+Date of birth: 1949-10-16    Sex: male
+Admitted: 2025-11-16 21:33    Discharged: 2025-11-17 18:45
+
+PRINCIPAL DIAGNOSIS
+Pulmonary embolism (I26.99)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Birchall is a 76-year-old man who was admitted through the emergency department with pulmonary embolism. 2 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+No history of diabetes, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 30 mg/dL
+Sodium: 136 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 0.9 days. Discharged to a skilled nursing facility in stable condition.

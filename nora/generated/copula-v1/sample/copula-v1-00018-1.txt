@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Flora Larkspur    MRN: copula-v1-00018
+Date of birth: 1935-05-03    Sex: female
+Admitted: 2025-02-09 16:41    Discharged: 2025-02-14 08:05
+
+PRINCIPAL DIAGNOSIS
+Paroxysmal atrial fibrillation (I48.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Larkspur is a 89-year-old woman who presented as an emergency admission with paroxysmal atrial fibrillation. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Negative for diabetes or COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.8 mg/dL
+BUN: 43 mg/dL
+Sodium: 141 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.6 days. Transferred to another care facility in stable condition.

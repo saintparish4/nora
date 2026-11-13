@@ -1,0 +1,28 @@
+DISCHARGE SUMMARY
+
+Patient: Alden Birchall    MRN: copula-v1-00011
+Date of birth: 1959-02-23    Sex: male
+Admitted: 2025-01-10 10:17    Discharged: 2025-01-13 01:35
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Birchall is a 65-year-old man who was admitted electively with coronary artery disease. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+Denies diabetes.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.5 mg/dL
+BUN: 42 mg/dL
+Sodium: 132 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.6 days. The patient expired during this admission on 2025-01-13.

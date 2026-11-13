@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Felix Ivesdale    MRN: copula-v1-00009
+Date of birth: 1956-04-15    Sex: male
+Admitted: 2025-01-18 00:36    Discharged: 2025-01-22 07:04
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Ivesdale is a 68-year-old man who presented as an emergency admission with unstable angina. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Type 2 diabetes mellitus (E11.9)
+No history of chronic kidney disease, COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 28 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.3 days. Discharged to a skilled nursing facility in stable condition.

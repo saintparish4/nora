@@ -12,6 +12,10 @@ verdict, no number it produces for a real generator means anything, so the
   and the relationships are gone: the reason utility and the discriminator
   are scored and per-column distance is not enough.
 - noise: random values in range. Must fail utility and fidelity.
+
+`generator_by_size` then turns the same known process on our own generator
+and asks how much real data it needs. With enough, it must pass like the
+holdout does. With 42 rows it does not: it leaks who it was trained on.
 """
 
 from __future__ import annotations
@@ -19,9 +23,11 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from nora import fixture, schema, score, split
+from nora import fixture, generate, schema, score, split
 
 ROWS = 4000
+# Training sizes for `generator_by_size`. 42 is what the open demo offers.
+SIZES = [42, 100, 300, 1000, 3000]
 
 
 def systems(train: pd.DataFrame) -> dict[str, pd.DataFrame]:
@@ -86,3 +92,36 @@ def failures(cards: dict[str, dict]) -> list[str]:
         (cards["copy"]["privacy"]["attack_auroc"] > 0.95, "copy: attack should succeed"),
     ]
     return problems + [message for ok, message in checks if not ok]
+
+
+def generator_by_size() -> dict[int, dict]:
+    """Score the copula generator on the known process at each training size.
+
+    The non-members are always the same 1,000 patients, none of whom is in
+    any training set, so the privacy attack has enough of them to give a
+    verdict even when the generator saw only 42 admissions.
+    """
+    pool = fixture.sample(12000, seed=3).drop_duplicates("patient_id")
+    test = pool.iloc[-1000:].reset_index(drop=True)
+    cards = {}
+    for size in SIZES:
+        train = pool.iloc[:size].reset_index(drop=True)
+        model = generate.fit(train)
+        synthetic = generate.sample(model, max(size, 1000), score.SEED, "copula")
+        cards[size] = score.scorecard(train, test, synthetic)
+    return cards
+
+
+def generator_failures(cards: dict[int, dict]) -> list[str]:
+    """What must hold when the generator has plenty of data to learn from."""
+    card = cards[max(cards)]
+    checks = [
+        (card["utility"]["passes"], "generator: utility should pass with enough data"),
+        (card["privacy"]["passes"], "generator: privacy should pass with enough data"),
+        (
+            0.42 <= card["fidelity"]["discriminator_auroc"] <= 0.58,
+            "generator: discriminator not ~0.5 with enough data",
+        ),
+        (card["privacy"]["train_rows_copied"] == 0, "generator: copied a training row"),
+    ]
+    return [message for ok, message in checks if not ok]

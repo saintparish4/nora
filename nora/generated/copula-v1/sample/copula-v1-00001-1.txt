@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Quillon    MRN: copula-v1-00001
+Date of birth: 1944-01-30    Sex: male
+Admitted: 2025-03-04 06:36    Discharged: 2025-03-06 08:42
+
+PRINCIPAL DIAGNOSIS
+Dilated cardiomyopathy (I42.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Quillon is a 81-year-old man who presented as an emergency admission with dilated cardiomyopathy. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Negative for diabetes, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 28 mg/dL
+Sodium: 139 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.1 days. Discharged home in stable condition.

@@ -4,7 +4,7 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 
 ![The demo's featured request: Cigna's criteria for Wegovy, the evidence quoted from the chart, and the gaps still open](docs/images/request-page.png)
 
-**Live demo:** [noras-demo.vercel.app/demo](https://noras-demo.vercel.app/demo) opens a synthetic practice with no sign-up. Add `?tour=1` for a guided walkthrough.
+**Demo:** the hosted demo was shut down on 2026-11-13. The same synthetic practice runs locally with no sign-up: see [Usage](#usage), and add `?tour=1` for a guided walkthrough.
 
 ## Features
 
@@ -38,7 +38,7 @@ A prior-authorization workspace for front-desk staff and medical assistants: it 
 | **Tailwind CSS, shadcn/ui, SWR, Zod** | Styling, components, data fetching, response validation |
 | **RSpec, Jest, Cypress** | Backend, frontend and end-to-end tests |
 | **medspaCy** | Clinical NLP baseline in the evaluation |
-| **Render, Vercel** | API and console hosting for the demo |
+| **Render, Vercel** | API and console hosting for the demo, until it was shut down on 2026-11-13 |
 
 ## Getting Started
 

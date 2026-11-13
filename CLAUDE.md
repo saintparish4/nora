@@ -167,7 +167,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
   (zero-setup local dev), a `postgres://` URL means PostgreSQL. CI runs the suite both ways; the
   `Rails Tests (PostgreSQL)` job is the one that speaks to locking, transaction semantics, and
   concurrent status transitions. Locally: `docker compose up -d postgres && make test-backend-postgres`.
-- **Production is SQLite on a disk that does not persist.** The Render deploy uses the
+- **Production is SQLite on a disk that does not persist.** (The Render and Vercel deploys
+  were shut down on 2026-11-13; this records how they ran.) The Render deploy uses the
   four-database SQLite layout in `config/database.yml` with no `DATABASE_URL` (checked
   2026-10-24 from the live demo's ids, which restart at 1 on every boot). Each deploy or wake
   starts empty and reseeds the demo, so nothing else survives. Moving to PostgreSQL is a Render

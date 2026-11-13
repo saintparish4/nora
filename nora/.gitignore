@@ -1,0 +1,7 @@
+# Real patient data never enters git, open licence or not: the full MIMIC-IV
+# and eICU files are under a data use agreement that forbids sharing them.
+data/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/

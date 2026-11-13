@@ -1,0 +1,27 @@
+DISCHARGE SUMMARY
+
+Patient: Flora Quillon    MRN: copula-v1-00014
+Date of birth: 1947-05-05    Sex: female
+Admitted: 2025-06-09 15:09    Discharged: 2025-06-12 13:51
+
+PRINCIPAL DIAGNOSIS
+Pulmonary embolism (I26.99)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Quillon is a 78-year-old woman who presented as an emergency admission with pulmonary embolism. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Type 2 diabetes mellitus (E11.9)
+Atrial fibrillation (I48.91)
+Denies chronic kidney disease or COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.6 mg/dL
+BUN: 14 mg/dL
+Sodium: 142 mmol/L
+Potassium: 4.2 mmol/L
+Hemoglobin: 9.9 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.9 days. Discharged home in stable condition.

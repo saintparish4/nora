@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Iris Eastlake    MRN: copula-v1-00012
+Date of birth: 1946-11-23    Sex: female
+Admitted: 2025-03-02 23:29    Discharged: 2025-03-03 20:39
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Eastlake is a 78-year-old woman who came in for a planned admission with unstable angina. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Type 2 diabetes mellitus (E11.9)
+Negative for chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 17 mg/dL
+Sodium: 143 mmol/L
+Potassium: 3.7 mmol/L
+Hemoglobin: 11.8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 0.9 days. Transferred to another care facility in stable condition.

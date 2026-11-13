@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Fenwick    MRN: copula-v1-00008
+Date of birth: 1946-07-26    Sex: male
+Admitted: 2025-07-24 12:10    Discharged: 2025-07-27 05:50
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Fenwick is a 78-year-old man who was admitted through the emergency department with coronary artery disease. 2 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Type 2 diabetes mellitus (E11.9)
+Denies chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: not measured during this admission
+BUN: 18 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 9.8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.7 days. Went home in stable condition.

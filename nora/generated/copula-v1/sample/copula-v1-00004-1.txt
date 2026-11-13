@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Felix Oakhurst    MRN: copula-v1-00004
+Date of birth: 1965-01-12    Sex: male
+Admitted: 2025-02-16 17:42    Discharged: 2025-03-02 16:11
+
+PRINCIPAL DIAGNOSIS
+Hypertensive heart disease with heart failure (I11.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Oakhurst is a 60-year-old man who came in for a planned admission with hypertensive heart disease with heart failure. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Acute on chronic diastolic heart failure (I50.33)
+Atrial fibrillation (I48.91)
+No history of diabetes, chronic kidney disease or COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.4 mg/dL
+BUN: 15 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 13.9 days. Went home in stable condition.

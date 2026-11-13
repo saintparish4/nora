@@ -1,0 +1,28 @@
+DISCHARGE SUMMARY
+
+Patient: Cora Corvane    MRN: copula-v1-00013
+Date of birth: 1944-01-23    Sex: female
+Admitted: 2025-07-14 19:23    Discharged: 2025-07-23 13:36
+
+PRINCIPAL DIAGNOSIS
+Dilated cardiomyopathy (I42.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Corvane is a 81-year-old woman who came in for a planned admission with dilated cardiomyopathy. 2 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Type 2 diabetes mellitus with diabetic chronic kidney disease (E11.22)
+Atrial fibrillation (I48.91)
+No history of COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.5 mg/dL
+BUN: 21 mg/dL
+Sodium: 135 mmol/L
+Potassium: 5.1 mmol/L
+Hemoglobin: 8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 8.8 days. Discharged to a skilled nursing facility in stable condition.

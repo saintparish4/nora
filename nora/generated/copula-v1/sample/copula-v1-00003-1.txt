@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Bram Holloway    MRN: copula-v1-00003
+Date of birth: 1951-11-06    Sex: male
+Admitted: 2025-09-29 04:35    Discharged: 2025-10-13 08:47
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Holloway is a 73-year-old man who presented as an emergency admission with coronary artery disease. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Denies diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.7 mg/dL
+BUN: 33 mg/dL
+Sodium: 143 mmol/L
+Potassium: 3.8 mmol/L
+Hemoglobin: 10.1 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 14.2 days. Transferred to another care facility in stable condition.

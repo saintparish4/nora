@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Jasper Dunmere    MRN: copula-v1-00023
+Date of birth: 1953-04-13    Sex: male
+Admitted: 2025-04-14 00:24    Discharged: 2025-04-18 23:48
+
+PRINCIPAL DIAGNOSIS
+Non-ST elevation myocardial infarction (I21.4)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Dunmere is a 72-year-old man who was admitted through the emergency department with non-ST elevation myocardial infarction. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Type 2 diabetes mellitus (E11.9)
+No history of chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 17 mg/dL
+Sodium: 141 mmol/L
+Potassium: 3.4 mmol/L
+Hemoglobin: 10.9 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 5.0 days. Went home in stable condition.

@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Dorian Birchall    MRN: copula-v1-00000
+Date of birth: 1956-07-11    Sex: male
+Admitted: 2025-03-01 06:14    Discharged: 2025-03-05 04:58
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Birchall is a 68-year-old man who was admitted through the emergency department with coronary artery disease. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Type 2 diabetes mellitus (E11.9)
+Denies chronic kidney disease, COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.3 mg/dL
+BUN: 13 mg/dL
+Sodium: 141 mmol/L
+Potassium: 4.8 mmol/L
+Hemoglobin: 9.6 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 3.9 days. Went home in stable condition.

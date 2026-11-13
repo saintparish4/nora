@@ -2,8 +2,9 @@
 
 Each subcommand is one protocol step run from the project root, and each
 refuses to continue when a lock does not hold. Real data is read from and
-written to `data/`, which git ignores. Scores go to `results/` and simulated
-baseline tables to `baselines/`; both are committed.
+written to `data/`, which git ignores. Scores go to `results/`, simulated
+baseline tables to `baselines/` and our own generator's output to
+`generated/`; all three are committed.
 """
 
 from __future__ import annotations
@@ -15,11 +16,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from nora import mimic, schema, score, selfcheck, split, synthea
+from nora import generate, mimic, records, schema, score, selfcheck, split, synthea, validate
 
 DATA = Path("data")
 RESULTS = Path("results")
 BASELINES = Path("baselines")
+GENERATED = Path("generated")
 LOCK = Path("protocol/lock.json")
 PROTOCOL = Path("PROTOCOL.md")
 
@@ -100,6 +102,47 @@ def run_synthea(args: argparse.Namespace) -> None:
     print(f"  table sha256 {split.digest(table)}")
 
 
+def run_generate(args: argparse.Namespace) -> None:
+    train = read_table(DATA / args.name / "train.csv")
+    test = read_table(DATA / args.name / "test.csv")
+    split.verify(pd.concat([train, test]), args.name, LOCK, PROTOCOL)
+    # Fit to the training side only: the test set is for scoring.
+    table = generate.sample(generate.fit(train), args.rows, args.seed, args.system)
+    out = GENERATED / args.system / "admissions.csv"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    table.to_csv(out, index=False)
+    known = table["readmit_30d"].notna()
+    print(f"{args.system}: fit to {len(train)} training admissions of {args.name}")
+    print(f"  {len(table)} synthetic admissions, seed {args.seed} -> {out}")
+    print(f"  by diagnosis group {table['dx_group'].value_counts().to_dict()}")
+    print(f"  died in hospital {int(table['died_in_hospital'].sum())}")
+    print(f"  readmitted within 30 days {int(table['readmit_30d'].sum())} of {int(known.sum())}")
+    print(f"  table sha256 {split.digest(table)}")
+
+
+def run_render(args: argparse.Namespace) -> None:
+    table = read_table(args.table)
+    count = records.write(table.head(args.limit) if args.limit else table, args.out)
+    print(f"{count} admissions -> {args.out} (a FHIR bundle, a note and an answer key each)")
+    print("  every bundle reads back as its table row")
+
+
+def run_validate(args: argparse.Namespace) -> None:
+    report = validate.run(args.bundles)
+    out = RESULTS / "fhir-validation" / f"{args.system}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=2) + "\n")
+    print(f"HL7 validator {report['validator']}, {report['implementation_guide']} -> {out}")
+    print(
+        f"  {report['bundles']} bundles: {report['errors']} errors, "
+        f"{report['warnings']} warnings, {report['information']} information messages"
+    )
+    for kind, count in report["messages"].items():
+        print(f"  {count:6d}  {kind[:150]}")
+    if report["errors"]:
+        sys.exit(1)
+
+
 def run_score(args: argparse.Namespace) -> None:
     train = read_table(DATA / args.name / "train.csv")
     test = read_table(DATA / args.name / "test.csv")
@@ -119,7 +162,26 @@ def run_score(args: argparse.Namespace) -> None:
     print(summary(card))
 
 
-def run_selfcheck(_: argparse.Namespace) -> None:
+def run_generator_check() -> None:
+    cards = selfcheck.generator_by_size()
+    out = RESULTS / "fixture" / "copula-by-training-size.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(cards, indent=2, sort_keys=True) + "\n")
+    print(f"the generator on the known process, by training size -> {out}")
+    for size, card in cards.items():
+        print(f"[fit to {size} admissions]")
+        print(summary(card))
+    problems = selfcheck.generator_failures(cards)
+    for problem in problems:
+        print(f"WRONG  {problem}")
+    if problems:
+        sys.exit(1)
+    print(f"generator check passed at {max(cards)} admissions; read the smaller sizes as they came")
+
+
+def run_selfcheck(args: argparse.Namespace) -> None:
+    if args.generator:
+        return run_generator_check()
     cards = selfcheck.run()
     for name, card in cards.items():
         print(f"[{name}]")
@@ -145,6 +207,24 @@ def main() -> None:
     p.add_argument("--csv", type=Path, required=True, help="Synthea's output/csv directory")
     p.set_defaults(run=run_synthea)
 
+    p = commands.add_parser("generate", help="fit the generator to a locked dataset and sample")
+    p.add_argument("--name", required=True, help="the locked dataset to fit to (training side)")
+    p.add_argument("--rows", type=int, default=1000, help="synthetic admissions to draw")
+    p.add_argument("--seed", type=int, default=20261113)
+    p.add_argument("--system", default="copula-v1", help="label for this generator")
+    p.set_defaults(run=run_generate)
+
+    p = commands.add_parser("render", help="write FHIR bundles, notes and answer keys")
+    p.add_argument("--table", type=Path, required=True, help="admission table as CSV")
+    p.add_argument("--out", type=Path, required=True, help="directory to write into")
+    p.add_argument("--limit", type=int, help="only the first N admissions")
+    p.set_defaults(run=run_render)
+
+    p = commands.add_parser("validate", help="run the HL7 validator over rendered bundles")
+    p.add_argument("--bundles", type=Path, required=True, help="directory of bundles")
+    p.add_argument("--system", required=True, help="label for the generator, e.g. copula-v1")
+    p.set_defaults(run=run_validate)
+
     p = commands.add_parser("score", help="score a synthetic table against a locked dataset")
     p.add_argument("--name", required=True, help="the locked dataset to score against")
     p.add_argument("--synthetic", type=Path, required=True, help="admission table as CSV")
@@ -152,6 +232,7 @@ def main() -> None:
     p.set_defaults(run=run_score)
 
     p = commands.add_parser("selfcheck", help="prove the scorer on tables with known verdicts")
+    p.add_argument("--generator", action="store_true", help="score our generator by training size")
     p.set_defaults(run=run_selfcheck)
 
     args = parser.parse_args()

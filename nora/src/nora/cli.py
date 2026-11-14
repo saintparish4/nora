@@ -17,6 +17,7 @@ from pathlib import Path
 import pandas as pd
 
 from nora import (
+    defects,
     eicu,
     generate,
     mimic,
@@ -34,6 +35,7 @@ RESULTS = Path("results")
 BASELINES = Path("baselines")
 GENERATED = Path("generated")
 LOCK = Path("protocol/lock.json")
+KEY = "answers.key.json"  # the answer key written beside defective bundles
 PROTOCOL = Path("PROTOCOL.md")
 
 
@@ -141,8 +143,26 @@ def run_render(args: argparse.Namespace) -> None:
     print("  every bundle reads back as its table row")
 
 
+def run_defects(args: argparse.Namespace) -> None:
+    paths = sorted(p for p in args.records.glob("*.json") if not p.name.endswith(".key.json"))
+    clean = {p.name.removesuffix(".json"): json.loads(p.read_text()) for p in paths}
+    bundles, key = defects.inject(clean, args.seed, args.share)
+    args.out.mkdir(parents=True, exist_ok=True)
+    for name, bundle in bundles.items():
+        (args.out / f"{name}.json").write_text(json.dumps(bundle, indent=2) + "\n")
+    (args.out / KEY).write_text(json.dumps(key, indent=2) + "\n")
+    print(f"{len(clean)} clean bundles -> {len(bundles)} in {args.out}, answer key in {KEY}")
+    for kind in defects.KINDS:
+        print(f"  {sum(entry['kind'] == kind for entry in key):5d}  {kind}")
+
+
 def run_validate(args: argparse.Namespace) -> None:
     report = validate.run(args.bundles)
+    if (args.bundles / KEY).exists():
+        # These bundles hold planted defects: say which ones the validator caught.
+        key = json.loads((args.bundles / KEY).read_text())
+        names = {p.name.removesuffix(".json") for p in args.bundles.glob("*.json")} - {KEY[:-5]}
+        report["defects"] = defects.detection(key, set(report["bundles_with_errors"]), names)
     out = RESULTS / "fhir-validation" / f"{args.system}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2) + "\n")
@@ -153,7 +173,10 @@ def run_validate(args: argparse.Namespace) -> None:
     )
     for kind, count in report["messages"].items():
         print(f"  {count:6d}  {kind[:150]}")
-    if report["errors"]:
+    for kind, found in report.get("defects", {}).items():
+        total = found.get("planted", found.get("bundles"))
+        print(f"  {kind}: {found['flagged']} of {total} bundles reported with an error")
+    if report["errors"] and "defects" not in report:
         sys.exit(1)
 
 
@@ -235,6 +258,13 @@ def main() -> None:
     p.add_argument("--out", type=Path, required=True, help="directory to write into")
     p.add_argument("--limit", type=int, help="only the first N admissions")
     p.set_defaults(run=run_render)
+
+    p = commands.add_parser("defects", help="plant defects in clean bundles, with an answer key")
+    p.add_argument("--records", type=Path, required=True, help="directory of clean bundles")
+    p.add_argument("--out", type=Path, required=True, help="directory to write into")
+    p.add_argument("--seed", type=int, default=20261113)
+    p.add_argument("--share", type=float, default=0.1, help="share of admissions per defect")
+    p.set_defaults(run=run_defects)
 
     p = commands.add_parser("validate", help="run the HL7 validator over rendered bundles")
     p.add_argument("--bundles", type=Path, required=True, help="directory of bundles")

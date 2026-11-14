@@ -25,7 +25,9 @@ URL = f"https://github.com/hapifhir/org.hl7.fhir.core/releases/download/{VERSION
 JAR = Path("data/tools/validator_cli.jar")
 FHIR_VERSION = "4.0.1"
 US_CORE = "hl7.fhir.us.core#6.1.0"
-MESSAGE = re.compile(r"^\[\d+, \d+\] .*?: (Fatal|Error|Warning|Information) - (.*)$")
+MESSAGE = re.compile(r"^(?:\[\d+, \d+\] )?.*?: (Fatal|Error|Warning|Information) - (.*)$")
+RESOURCE = re.compile(r"\b(Patient|Encounter|Condition|Observation|DocumentReference)/[\w.-]+")
+FILE = re.compile(r"^(\S+\.json) \d\d:\d\d:\d\d$")  # the line that opens a file's messages
 
 
 def jar() -> Path:
@@ -47,13 +49,18 @@ def run(bundles: Path) -> dict:
     command = ["java", "-jar", str(jar()), *map(str, files), "-version", FHIR_VERSION]
     command += ["-ig", US_CORE, "-output-style", "compact"]
     done = subprocess.run(command, capture_output=True, text=True, check=False)
-    levels, kinds = Counter(), Counter()
+    levels, kinds, failed, current = Counter(), Counter(), set(), None
     for line in done.stdout.splitlines():
-        if match := MESSAGE.match(line):
+        if opened := FILE.match(line):
+            current = Path(opened.group(1)).name.removesuffix(".json")
+        elif match := MESSAGE.match(line):
             level, text = match.groups()
             levels[level] += 1
+            if level in ("Fatal", "Error") and current:
+                failed.add(current)
             # Drop what differs between bundles, to count kinds of message.
-            kinds[f"{level}: {re.sub(r' \(codes = .*', '', text)}"] += 1
+            text = re.sub(r" \(codes = .*", "", text)
+            kinds[f"{level}: {RESOURCE.sub(r'\1/<id>', text)}"] += 1
     validated = done.stdout.count("\n  Validate ")
     if validated != len(files) or "Done. Times:" not in done.stdout:
         tail = "\n".join((done.stdout + done.stderr).splitlines()[-5:])
@@ -69,4 +76,5 @@ def run(bundles: Path) -> dict:
         "warnings": levels["Warning"],
         "information": levels["Information"],
         "messages": dict(sorted(kinds.items())),
+        "bundles_with_errors": sorted(failed),
     }

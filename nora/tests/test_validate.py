@@ -15,12 +15,14 @@ Validating
   Validate b.json
  00:00.313
 Done. Times: Loading: 00:19.388, validation: 00:04.171 (#2). Max Memory = 3Gb
--- a.json --
+----------------------------------------------------------------
+bundles/a.json 03:38:25
 [7, 8] Bundle.entry[0].resource/*Patient/p1*/: Error - Patient.gender: bad code (codes = x#1)
 [9, 8] Bundle.entry[1].resource/*Encounter/e1*/: Warning - should have a performer
--- b.json --
-[7, 8] Bundle.entry[0].resource/*Patient/p2*/: Error - Patient.gender: bad code (codes = x#2)
-[9, 2] Bundle.entry[1]: Information - draft CodeSystem
+[9, 8] Bundle.entry[1]: Error - no profile match for Encounter/e1 among choices
+----------------------------------------------------------------
+bundles/b.json 03:38:26
+[9, 2] Bundle.entry[1]: Information - draft CodeSystem http://x/CodeSystem/observation-category
 """
 
 
@@ -41,7 +43,16 @@ def test_messages_are_counted_by_level_and_grouped_by_kind(bundles, monkeypatch)
     report = validate.run(bundles)
     assert (report["bundles"], report["errors"], report["warnings"]) == (2, 2, 1)
     assert report["information"] == 1
-    assert report["messages"]["Error: Patient.gender: bad code"] == 2
+    assert report["messages"]["Error: Patient.gender: bad code"] == 1
+    # Ids are taken out of a message so the same problem counts as one kind,
+    # but a code system's address is left alone.
+    assert "Error: no profile match for Encounter/<id> among choices" in report["messages"]
+    assert any(kind.endswith("CodeSystem/observation-category") for kind in report["messages"])
+
+
+def test_the_report_names_the_bundles_that_had_errors(bundles, monkeypatch):
+    monkeypatch.setattr(subprocess, "run", fake(OUTPUT))
+    assert validate.run(bundles)["bundles_with_errors"] == ["a"]
 
 
 def test_answer_keys_are_not_sent_to_the_validator(bundles, monkeypatch):

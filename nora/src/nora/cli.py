@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from nora import (
     eicu,
     generate,
     mimic,
+    packet,
     records,
     schema,
     score,
@@ -180,6 +182,29 @@ def run_validate(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def run_packet(args: argparse.Namespace) -> None:
+    if args.answers:
+        key = json.loads((args.out / "key.json").read_text())
+        sheet = pd.read_csv(args.answers, dtype=str).fillna("")
+        result = packet.score(
+            key, dict(zip(sheet["card"].astype(int), sheet["answer"], strict=True))
+        )
+        low, high = result["accuracy_ci"]
+        right, cards = result["correct"], result["cards"]
+        print(f"{right} of {cards} cards right: accuracy {result['accuracy']:.2f}")
+        print(f"  95% interval [{low:.2f}, {high:.2f}]; 0.50 means the rater could not tell")
+        return
+    real = pd.concat([read_table(DATA / args.name / f"{side}.csv") for side in ("train", "test")])
+    seed = args.seed if args.seed is not None else int.from_bytes(os.urandom(4))
+    html, sheet, key = packet.build(real, read_table(args.synthetic), args.cards, seed)
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "packet.html").write_text(html)
+    (args.out / "answer_sheet.csv").write_text(sheet)
+    (args.out / "key.json").write_text(json.dumps(key, indent=2) + "\n")
+    print(f"{len(key)} cards -> {args.out}/packet.html and answer_sheet.csv")
+    print("  key.json is the answer: keep it away from the rater")
+
+
 def run_score(args: argparse.Namespace) -> None:
     train = read_table(DATA / args.name / "train.csv")
     test = read_table(DATA / args.name / "test.csv")
@@ -270,6 +295,15 @@ def main() -> None:
     p.add_argument("--bundles", type=Path, required=True, help="directory of bundles")
     p.add_argument("--system", required=True, help="label for the generator, e.g. copula-v1")
     p.set_defaults(run=run_validate)
+
+    p = commands.add_parser("packet", help="build the blind real-or-synthetic packet, or score it")
+    p.add_argument("--out", type=Path, required=True, help="directory for the packet and its key")
+    p.add_argument("--name", help="the locked open dataset the real cards come from")
+    p.add_argument("--synthetic", type=Path, help="admission table as CSV")
+    p.add_argument("--cards", type=int, default=40)
+    p.add_argument("--seed", type=int, help="omit for a packet whose key cannot be rebuilt")
+    p.add_argument("--answers", type=Path, help="a filled answer sheet: score it instead")
+    p.set_defaults(run=run_packet)
 
     p = commands.add_parser("score", help="score a synthetic table against a locked dataset")
     p.add_argument("--name", required=True, help="the locked dataset to score against")

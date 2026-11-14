@@ -1,0 +1,88 @@
+{
+  "dataset": "eicu-demo-2.0.1",
+  "fidelity": {
+    "columns": {
+      "afib": 0.2620599243820416,
+      "age": 0.14774001101970247,
+      "bun": 0.5751156151569101,
+      "ckd": 0.051602606729618326,
+      "copd": 0.09196701689054397,
+      "creatinine": 0.43602872722436503,
+      "diabetes": 0.17725571409571939,
+      "died_in_hospital": 0.01841050291642129,
+      "discharged_home": 1.0,
+      "dx_group": 0.38349514563106796,
+      "emergency": 0.23547597036965895,
+      "hemoglobin": 0.5180684104627766,
+      "hypertension": 0.27443809017156534,
+      "los_days": 0.3844071210077328,
+      "male": 0.07804039290939144,
+      "potassium": 0.43117435829232614,
+      "prior_admissions_365d": 1.0,
+      "readmit_30d": 1.0,
+      "sodium": 0.43117435829232614
+    },
+    "correlation": 0.1015453181501076,
+    "discriminator_auroc": 1.0,
+    "marginal": 0.394550208713272
+  },
+  "floor": {
+    "fidelity": {
+      "columns": {
+        "afib": 0.019064430714916147,
+        "age": 0.10097087378640779,
+        "bun": 0.15343519606795586,
+        "ckd": 0.07140335392762581,
+        "copd": 0.053486319505737,
+        "creatinine": 0.16498388829215893,
+        "diabetes": 0.019417475728155335,
+        "died_in_hospital": 0.01818181818181818,
+        "discharged_home": 0.01818181818181818,
+        "dx_group": 0.10741394527802295,
+        "emergency": 0.10035304501323919,
+        "hemoglobin": 0.09252279635258359,
+        "hypertension": 0.033715798764342414,
+        "los_days": 0.07678729037952337,
+        "male": 0.09011473962930275,
+        "potassium": 0.09788359788359788,
+        "prior_admissions_365d": 0.0,
+        "readmit_30d": 0.0,
+        "sodium": 0.049886621315192725
+      },
+      "correlation": 0.10073316988020721,
+      "discriminator_auroc": 0.4965289256198347,
+      "marginal": 0.06672647415802095
+    }
+  },
+  "privacy": {
+    "attack_auroc": 0.5223300970873787,
+    "attack_auroc_ci": [
+      0.43225333196306726,
+      0.6235799275086414
+    ],
+    "ceiling": 0.55,
+    "passes": false,
+    "test_rows_copied": 0.0,
+    "train_rows_copied": 0.0
+  },
+  "synthetic_rows": 1022,
+  "synthetic_sha256": "3cdad9493dc53a53771999376831a860d1af96188ace5be5a7b2acde81892b18",
+  "system": "synthea",
+  "utility": {
+    "auroc_train_real": 0.9102040816326531,
+    "auroc_train_synthetic": 0.33877551020408164,
+    "difference": -0.5714285714285714,
+    "difference_ci": [
+      -0.7533333333333333,
+      -0.37315646258503404
+    ],
+    "margin": 0.05,
+    "n_synthetic": 1022,
+    "n_test": 54,
+    "n_test_positive": 5,
+    "n_train_real": 206,
+    "outcome": "died_in_hospital",
+    "passes": false,
+    "reason": "the test set has 5 with the outcome and 49 without; a verdict needs 30 of each"
+  }
+}

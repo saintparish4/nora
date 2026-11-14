@@ -16,7 +16,17 @@ from pathlib import Path
 
 import pandas as pd
 
-from nora import generate, mimic, records, schema, score, selfcheck, split, synthea, validate
+from nora import (
+    generate,
+    mimic,
+    records,
+    schema,
+    score,
+    selfcheck,
+    split,
+    synthea,
+    validate,
+)
 
 DATA = Path("data")
 RESULTS = Path("results")
@@ -107,8 +117,9 @@ def run_generate(args: argparse.Namespace) -> None:
     test = read_table(DATA / args.name / "test.csv")
     split.verify(pd.concat([train, test]), args.name, LOCK, PROTOCOL)
     # Fit to the training side only: the test set is for scoring.
-    table = generate.sample(generate.fit(train), args.rows, args.seed, args.system)
-    out = GENERATED / args.system / "admissions.csv"
+    model = generate.fit(train, generate.SYSTEMS[args.system])
+    table = generate.sample(model, args.rows, args.seed, args.system)
+    out = GENERATED / args.name / args.system / "admissions.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     table.to_csv(out, index=False)
     known = table["readmit_30d"].notna()
@@ -168,9 +179,10 @@ def run_generator_check() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(cards, indent=2, sort_keys=True) + "\n")
     print(f"the generator on the known process, by training size -> {out}")
-    for size, card in cards.items():
-        print(f"[fit to {size} admissions]")
-        print(summary(card))
+    for size, systems in cards.items():
+        for name, card in systems.items():
+            print(f"[{name}, {size} training admissions]")
+            print(summary(card))
     problems = selfcheck.generator_failures(cards)
     for problem in problems:
         print(f"WRONG  {problem}")
@@ -211,7 +223,7 @@ def main() -> None:
     p.add_argument("--name", required=True, help="the locked dataset to fit to (training side)")
     p.add_argument("--rows", type=int, default=1000, help="synthetic admissions to draw")
     p.add_argument("--seed", type=int, default=20261113)
-    p.add_argument("--system", default="copula-v1", help="label for this generator")
+    p.add_argument("--system", default="copula-v2", choices=list(generate.SYSTEMS))
     p.set_defaults(run=run_generate)
 
     p = commands.add_parser("render", help="write FHIR bundles, notes and answer keys")

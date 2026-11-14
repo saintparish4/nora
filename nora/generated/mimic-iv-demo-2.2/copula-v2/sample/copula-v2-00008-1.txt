@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Northcote    MRN: copula-v2-00008
+Date of birth: 1945-07-20    Sex: male
+Admitted: 2025-06-29 04:55    Discharged: 2025-07-02 02:15
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Northcote is a 79-year-old man who presented as an emergency admission with coronary artery disease. 2 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Negative for diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: not measured during this admission
+BUN: 20 mg/dL
+Sodium: 138 mmol/L
+Potassium: 3.9 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.9 days. Transferred to another care facility in stable condition.

@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Quillon    MRN: copula-v2-00015
+Date of birth: 1965-06-20    Sex: male
+Admitted: 2025-12-22 02:12    Discharged: 2025-12-28 12:35
+
+PRINCIPAL DIAGNOSIS
+Hypertensive heart and chronic kidney disease (I13.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Quillon is a 60-year-old man who was admitted through the emergency department with hypertensive heart and chronic kidney disease. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Heart failure (I50.9)
+Chronic kidney disease (N18.9)
+Denies diabetes, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.1 mg/dL
+BUN: 21 mg/dL
+Sodium: 139 mmol/L
+Potassium: 3.5 mmol/L
+Hemoglobin: 12.8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 6.4 days. Discharged home in stable condition.

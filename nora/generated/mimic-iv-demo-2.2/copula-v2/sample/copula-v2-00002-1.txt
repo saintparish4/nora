@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Kestrel    MRN: copula-v2-00002
+Date of birth: 1937-11-01    Sex: male
+Admitted: 2025-10-06 04:29    Discharged: 2025-10-12 06:06
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Kestrel is a 87-year-old man who was admitted electively with unstable angina. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+No history of diabetes, chronic kidney disease or hypertension.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.6 mg/dL
+BUN: 11 mg/dL
+Sodium: 132 mmol/L
+Potassium: 3.8 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 6.1 days. Discharged home in stable condition.

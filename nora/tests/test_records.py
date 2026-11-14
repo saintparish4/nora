@@ -10,7 +10,7 @@ from nora import fhir, records
 from nora.cli import read_table
 
 ROOT = Path(__file__).parents[1]
-TABLE = ROOT / "generated/copula-v1/admissions.csv"
+TABLE = ROOT / "generated/mimic-iv-demo-2.2/copula-v2/admissions.csv"
 SAMPLE = TABLE.parent / "sample"
 
 

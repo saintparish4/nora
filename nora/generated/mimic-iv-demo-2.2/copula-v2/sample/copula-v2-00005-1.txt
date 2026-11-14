@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Alden Holloway    MRN: copula-v2-00005
+Date of birth: 1970-11-24    Sex: male
+Admitted: 2025-06-24 12:01    Discharged: 2025-07-03 04:58
+
+PRINCIPAL DIAGNOSIS
+Pulmonary embolism (I26.99)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Holloway is a 54-year-old man who was admitted electively with pulmonary embolism. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic kidney disease (N18.9)
+Chronic obstructive pulmonary disease (J44.9)
+Negative for diabetes, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 3.4 mg/dL
+BUN: 26 mg/dL
+Sodium: 140 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: not measured during this admission
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 8.7 days. Went home in stable condition.

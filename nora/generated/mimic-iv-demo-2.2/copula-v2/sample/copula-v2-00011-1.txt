@@ -1,0 +1,28 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Holloway    MRN: copula-v2-00011
+Date of birth: 1959-03-21    Sex: male
+Admitted: 2025-04-12 00:01    Discharged: 2025-04-14 16:52
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Holloway is a 66-year-old man who presented as an emergency admission with unstable angina. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+Negative for diabetes.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.7 mg/dL
+BUN: 53 mg/dL
+Sodium: 132 mmol/L
+Potassium: 4.4 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.7 days. Discharged to a skilled nursing facility in stable condition.

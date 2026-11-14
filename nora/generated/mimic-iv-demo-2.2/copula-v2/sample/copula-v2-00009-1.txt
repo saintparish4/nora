@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Jasper Corvane    MRN: copula-v2-00009
+Date of birth: 1955-11-10    Sex: male
+Admitted: 2025-10-18 23:38    Discharged: 2025-10-23 13:40
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Corvane is a 69-year-old man who was admitted through the emergency department with coronary artery disease. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Type 2 diabetes mellitus (E11.9)
+Negative for chronic kidney disease, COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 30 mg/dL
+Sodium: 138 mmol/L
+Potassium: 3.9 mmol/L
+Hemoglobin: 8 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.6 days. Went home in stable condition.

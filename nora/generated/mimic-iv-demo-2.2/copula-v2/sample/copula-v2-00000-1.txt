@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Ivor Fenwick    MRN: copula-v2-00000
+Date of birth: 1955-08-01    Sex: male
+Admitted: 2025-02-15 01:21    Discharged: 2025-02-19 06:25
+
+PRINCIPAL DIAGNOSIS
+Non-ST elevation myocardial infarction (I21.4)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Fenwick is a 69-year-old man who presented as an emergency admission with non-ST elevation myocardial infarction. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Type 2 diabetes mellitus (E11.9)
+Denies chronic kidney disease, COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.3 mg/dL
+BUN: 13 mg/dL
+Sodium: 138 mmol/L
+Potassium: 5 mmol/L
+Hemoglobin: 9.1 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.2 days. Discharged home in stable condition.

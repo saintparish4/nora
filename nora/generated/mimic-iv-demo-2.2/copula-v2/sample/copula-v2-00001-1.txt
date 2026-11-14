@@ -1,0 +1,27 @@
+DISCHARGE SUMMARY
+
+Patient: Jasper Eastlake    MRN: copula-v2-00001
+Date of birth: 1944-12-30    Sex: male
+Admitted: 2025-03-26 11:24    Discharged: 2025-03-28 13:20
+
+PRINCIPAL DIAGNOSIS
+Aortic valve stenosis (I35.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Eastlake is a 80-year-old man who was admitted through the emergency department with aortic valve stenosis. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Atrial fibrillation (I48.91)
+Negative for diabetes or COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 30 mg/dL
+Sodium: 139 mmol/L
+Potassium: 4.2 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.1 days. Went home in stable condition.

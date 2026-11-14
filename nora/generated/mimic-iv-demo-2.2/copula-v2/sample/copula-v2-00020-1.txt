@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Dorian Pellham    MRN: copula-v2-00020
+Date of birth: 1966-02-13    Sex: male
+Admitted: 2025-03-28 11:40    Discharged: 2025-04-04 02:13
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Pellham is a 59-year-old man who was admitted through the emergency department with unstable angina. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+No history of diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 21 mg/dL
+Sodium: 142 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 9.1 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 6.6 days. Went home in stable condition.

@@ -1,0 +1,27 @@
+DISCHARGE SUMMARY
+
+Patient: Cyrus Kestrel    MRN: copula-v2-00007
+Date of birth: 1953-02-24    Sex: male
+Admitted: 2025-06-01 15:17    Discharged: 2025-06-04 22:45
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Kestrel is a 72-year-old man who was admitted through the emergency department with coronary artery disease. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic kidney disease (N18.9)
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+No history of diabetes or hypertension.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.4 mg/dL
+BUN: 24 mg/dL
+Sodium: 132 mmol/L
+Potassium: 4.3 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 3.3 days. Went home in stable condition.

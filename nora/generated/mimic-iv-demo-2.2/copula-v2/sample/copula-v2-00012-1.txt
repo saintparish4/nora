@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Adela Merrow    MRN: copula-v2-00012
+Date of birth: 1947-05-20    Sex: female
+Admitted: 2025-12-15 17:14    Discharged: 2025-12-16 14:45
+
+PRINCIPAL DIAGNOSIS
+Coronary artery disease (I25.10)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Merrow is a 78-year-old woman who came in for a planned admission with coronary artery disease. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic kidney disease (N18.9)
+Type 2 diabetes mellitus with diabetic chronic kidney disease (E11.22)
+Denies COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 18 mg/dL
+Sodium: 143 mmol/L
+Potassium: 3.7 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 0.9 days. Transferred to another care facility in stable condition.

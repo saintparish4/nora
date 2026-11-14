@@ -1,0 +1,14 @@
+{
+  "validator": "7.0.5",
+  "fhir_version": "4.0.1",
+  "implementation_guide": "hl7.fhir.us.core#6.1.0",
+  "bundles": 1000,
+  "errors": 0,
+  "warnings": 0,
+  "information": 6817,
+  "messages": {
+    "Information: None of the codings provided are in the value set 'US Core Discharge Disposition' (http://hl7.org/fhir/us/core/ValueSet/us-core-discharge-disposition|6.1.0), and a coding is recommended to come from this value set": 1000,
+    "Information: Reference to draft CodeSystem http://terminology.hl7.org/CodeSystem/discharge-disposition|0.1.0 from active ValueSet http://hl7.org/fhir/us/core/ValueSet/us-core-discharge-disposition|6.1.0": 1000,
+    "Information: Reference to draft CodeSystem http://terminology.hl7.org/CodeSystem/observation-category|0.1.0 from active ValueSet http://hl7.org/fhir/us/core/ValueSet/us-core-clinical-result-observation-category|6.1.0": 4817
+  }
+}

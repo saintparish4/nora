@@ -1,6 +1,13 @@
 {
+  "eicu-demo-2.0.1": {
+    "protocol_sha256": "fa09de9c0c9542fe56f4723d301c24096842fb08d2fd93dc214d9163dfec3ac1",
+    "rows": 261,
+    "table_sha256": "65f77b184c1256b50844db9c3ec8e7c9bf728d4421f4fdd888829baf0283e0ff",
+    "test_rows": 55,
+    "test_sha256": "6c2aa0585158a36570d57231ed72c27a662619c9df8f2a8bc4e3621b04e76005"
+  },
   "mimic-iv-demo-2.2": {
-    "protocol_sha256": "a48277aa6c91b56f63bce48de302cbbe4eef06ac1e7c9b2cee5eb29aa468fc6e",
+    "protocol_sha256": "fa09de9c0c9542fe56f4723d301c24096842fb08d2fd93dc214d9163dfec3ac1",
     "rows": 50,
     "table_sha256": "5fa4444c14bd2641662286d5a15d9563ed802a6f8e530da605475676d0b52f62",
     "test_rows": 8,

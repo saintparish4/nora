@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: June Merrow    MRN: copula-v2-00018
+Date of birth: 1937-12-29    Sex: female
+Admitted: 2025-03-08 20:22    Discharged: 2025-03-13 12:38
+
+PRINCIPAL DIAGNOSIS
+Cardiac arrhythmia (I49.9)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Merrow is a 87-year-old woman who was admitted through the emergency department with cardiac arrhythmia. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Negative for diabetes, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.3 mg/dL
+BUN: 42 mg/dL
+Sodium: 141 mmol/L
+Potassium: 4.5 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.7 days. Transferred to another care facility in stable condition.

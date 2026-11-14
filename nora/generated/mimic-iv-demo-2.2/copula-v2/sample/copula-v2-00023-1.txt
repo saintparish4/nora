@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Emmett Birchall    MRN: copula-v2-00023
+Date of birth: 1952-10-01    Sex: male
+Admitted: 2025-10-07 03:23    Discharged: 2025-10-12 07:22
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Birchall is a 73-year-old man who was admitted through the emergency department with unstable angina. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Type 2 diabetes mellitus (E11.9)
+Negative for chronic kidney disease, COPD, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1 mg/dL
+BUN: 20 mg/dL
+Sodium: 140 mmol/L
+Potassium: 3.4 mmol/L
+Hemoglobin: 10.3 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 5.2 days. Discharged home in stable condition.

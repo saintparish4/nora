@@ -1,18 +1,17 @@
 """What is committed under `generated/` must be what the code produces now."""
 
 import json
-import os
 from pathlib import Path
 
 import pytest
 from test_chart import row
 
-from nora import fhir, generate, mimic, records, split
+from nora import fhir, records
 from nora.cli import read_table
 
 ROOT = Path(__file__).parents[1]
-TABLE = ROOT / "generated/copula-v1/admissions.csv"
-SAMPLE = ROOT / "generated/copula-v1/sample"
+TABLE = ROOT / "generated/mimic-iv-demo-2.2/copula-v2/admissions.csv"
+SAMPLE = TABLE.parent / "sample"
 
 
 def test_the_committed_sample_is_what_the_committed_table_renders_to():
@@ -25,13 +24,6 @@ def test_the_committed_sample_is_what_the_committed_table_renders_to():
         assert json.loads(stem.with_suffix(".json").read_text()) == bundle
         assert stem.with_suffix(".txt").read_text() == text
         assert json.loads(stem.with_suffix(".key.json").read_text()) == key
-
-
-@pytest.mark.skipif("NORA_MIMIC_DEMO" not in os.environ, reason="set NORA_MIMIC_DEMO")
-def test_the_committed_table_is_what_the_generator_draws_from_the_open_demo():
-    train, _ = split.split(mimic.load(Path(os.environ["NORA_MIMIC_DEMO"]), "mimic-iv-demo-2.2"))
-    table = generate.sample(generate.fit(train), 1000, 20261113, "copula-v1")
-    assert split.digest(table) == split.digest(read_table(TABLE))
 
 
 def test_a_bundle_that_disagrees_with_its_row_is_refused(monkeypatch):

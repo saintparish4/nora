@@ -11,18 +11,33 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
 import pandas as pd
 
-from nora import generate, mimic, records, schema, score, selfcheck, split, synthea, validate
+from nora import (
+    defects,
+    eicu,
+    generate,
+    mimic,
+    packet,
+    records,
+    schema,
+    score,
+    selfcheck,
+    split,
+    synthea,
+    validate,
+)
 
 DATA = Path("data")
 RESULTS = Path("results")
 BASELINES = Path("baselines")
 GENERATED = Path("generated")
 LOCK = Path("protocol/lock.json")
+KEY = "answers.key.json"  # the answer key written beside defective bundles
 PROTOCOL = Path("PROTOCOL.md")
 
 
@@ -67,7 +82,9 @@ def summary(card: dict) -> str:
 
 
 def cohort(args: argparse.Namespace) -> None:
-    table = mimic.load(args.mimic, args.name)
+    if bool(args.mimic) == bool(args.eicu):
+        raise ValueError("give exactly one of --mimic and --eicu")
+    table = mimic.load(args.mimic, args.name) if args.mimic else eicu.load(args.eicu, args.name)
     if LOCK.exists() and args.name in json.loads(LOCK.read_text()):
         split.verify(table, args.name, LOCK, PROTOCOL)
         state = "matches its lock"
@@ -107,8 +124,9 @@ def run_generate(args: argparse.Namespace) -> None:
     test = read_table(DATA / args.name / "test.csv")
     split.verify(pd.concat([train, test]), args.name, LOCK, PROTOCOL)
     # Fit to the training side only: the test set is for scoring.
-    table = generate.sample(generate.fit(train), args.rows, args.seed, args.system)
-    out = GENERATED / args.system / "admissions.csv"
+    model = generate.fit(train, generate.SYSTEMS[args.system])
+    table = generate.sample(model, args.rows, args.seed, args.system)
+    out = GENERATED / args.name / args.system / "admissions.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     table.to_csv(out, index=False)
     known = table["readmit_30d"].notna()
@@ -127,8 +145,26 @@ def run_render(args: argparse.Namespace) -> None:
     print("  every bundle reads back as its table row")
 
 
+def run_defects(args: argparse.Namespace) -> None:
+    paths = sorted(p for p in args.records.glob("*.json") if not p.name.endswith(".key.json"))
+    clean = {p.name.removesuffix(".json"): json.loads(p.read_text()) for p in paths}
+    bundles, key = defects.inject(clean, args.seed, args.share)
+    args.out.mkdir(parents=True, exist_ok=True)
+    for name, bundle in bundles.items():
+        (args.out / f"{name}.json").write_text(json.dumps(bundle, indent=2) + "\n")
+    (args.out / KEY).write_text(json.dumps(key, indent=2) + "\n")
+    print(f"{len(clean)} clean bundles -> {len(bundles)} in {args.out}, answer key in {KEY}")
+    for kind in defects.KINDS:
+        print(f"  {sum(entry['kind'] == kind for entry in key):5d}  {kind}")
+
+
 def run_validate(args: argparse.Namespace) -> None:
     report = validate.run(args.bundles)
+    if (args.bundles / KEY).exists():
+        # These bundles hold planted defects: say which ones the validator caught.
+        key = json.loads((args.bundles / KEY).read_text())
+        names = {p.name.removesuffix(".json") for p in args.bundles.glob("*.json")} - {KEY[:-5]}
+        report["defects"] = defects.detection(key, set(report["bundles_with_errors"]), names)
     out = RESULTS / "fhir-validation" / f"{args.system}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2) + "\n")
@@ -139,8 +175,34 @@ def run_validate(args: argparse.Namespace) -> None:
     )
     for kind, count in report["messages"].items():
         print(f"  {count:6d}  {kind[:150]}")
-    if report["errors"]:
+    for kind, found in report.get("defects", {}).items():
+        total = found.get("planted", found.get("bundles"))
+        print(f"  {kind}: {found['flagged']} of {total} bundles reported with an error")
+    if report["errors"] and "defects" not in report:
         sys.exit(1)
+
+
+def run_packet(args: argparse.Namespace) -> None:
+    if args.answers:
+        key = json.loads((args.out / "key.json").read_text())
+        sheet = pd.read_csv(args.answers, dtype=str).fillna("")
+        result = packet.score(
+            key, dict(zip(sheet["card"].astype(int), sheet["answer"], strict=True))
+        )
+        low, high = result["accuracy_ci"]
+        right, cards = result["correct"], result["cards"]
+        print(f"{right} of {cards} cards right: accuracy {result['accuracy']:.2f}")
+        print(f"  95% interval [{low:.2f}, {high:.2f}]; 0.50 means the rater could not tell")
+        return
+    real = pd.concat([read_table(DATA / args.name / f"{side}.csv") for side in ("train", "test")])
+    seed = args.seed if args.seed is not None else int.from_bytes(os.urandom(4))
+    html, sheet, key = packet.build(real, read_table(args.synthetic), args.cards, seed)
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "packet.html").write_text(html)
+    (args.out / "answer_sheet.csv").write_text(sheet)
+    (args.out / "key.json").write_text(json.dumps(key, indent=2) + "\n")
+    print(f"{len(key)} cards -> {args.out}/packet.html and answer_sheet.csv")
+    print("  key.json is the answer: keep it away from the rater")
 
 
 def run_score(args: argparse.Namespace) -> None:
@@ -148,7 +210,7 @@ def run_score(args: argparse.Namespace) -> None:
     test = read_table(DATA / args.name / "test.csv")
     split.verify(pd.concat([train, test]), args.name, LOCK, PROTOCOL)
     synthetic = read_table(args.synthetic)
-    card = score.scorecard(train, test, synthetic)
+    card = score.scorecard(train, test, synthetic, args.outcome)
     card |= {
         "dataset": args.name,
         "system": args.system,
@@ -168,9 +230,10 @@ def run_generator_check() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(cards, indent=2, sort_keys=True) + "\n")
     print(f"the generator on the known process, by training size -> {out}")
-    for size, card in cards.items():
-        print(f"[fit to {size} admissions]")
-        print(summary(card))
+    for size, systems in cards.items():
+        for name, card in systems.items():
+            print(f"[{name}, {size} training admissions]")
+            print(summary(card))
     problems = selfcheck.generator_failures(cards)
     for problem in problems:
         print(f"WRONG  {problem}")
@@ -199,7 +262,8 @@ def main() -> None:
     commands = parser.add_subparsers(required=True)
 
     p = commands.add_parser("cohort", help="build, lock and split a real dataset")
-    p.add_argument("--mimic", type=Path, required=True, help="directory that contains hosp/")
+    p.add_argument("--mimic", type=Path, help="a MIMIC-IV directory, the one that contains hosp/")
+    p.add_argument("--eicu", type=Path, help="an eICU-CRD directory of CSV files")
     p.add_argument("--name", required=True, help="dataset name, e.g. mimic-iv-demo-2.2")
     p.set_defaults(run=cohort)
 
@@ -211,7 +275,7 @@ def main() -> None:
     p.add_argument("--name", required=True, help="the locked dataset to fit to (training side)")
     p.add_argument("--rows", type=int, default=1000, help="synthetic admissions to draw")
     p.add_argument("--seed", type=int, default=20261113)
-    p.add_argument("--system", default="copula-v1", help="label for this generator")
+    p.add_argument("--system", default="copula-v2", choices=list(generate.SYSTEMS))
     p.set_defaults(run=run_generate)
 
     p = commands.add_parser("render", help="write FHIR bundles, notes and answer keys")
@@ -220,15 +284,32 @@ def main() -> None:
     p.add_argument("--limit", type=int, help="only the first N admissions")
     p.set_defaults(run=run_render)
 
+    p = commands.add_parser("defects", help="plant defects in clean bundles, with an answer key")
+    p.add_argument("--records", type=Path, required=True, help="directory of clean bundles")
+    p.add_argument("--out", type=Path, required=True, help="directory to write into")
+    p.add_argument("--seed", type=int, default=20261113)
+    p.add_argument("--share", type=float, default=0.1, help="share of admissions per defect")
+    p.set_defaults(run=run_defects)
+
     p = commands.add_parser("validate", help="run the HL7 validator over rendered bundles")
     p.add_argument("--bundles", type=Path, required=True, help="directory of bundles")
     p.add_argument("--system", required=True, help="label for the generator, e.g. copula-v1")
     p.set_defaults(run=run_validate)
 
+    p = commands.add_parser("packet", help="build the blind real-or-synthetic packet, or score it")
+    p.add_argument("--out", type=Path, required=True, help="directory for the packet and its key")
+    p.add_argument("--name", help="the locked open dataset the real cards come from")
+    p.add_argument("--synthetic", type=Path, help="admission table as CSV")
+    p.add_argument("--cards", type=int, default=40)
+    p.add_argument("--seed", type=int, help="omit for a packet whose key cannot be rebuilt")
+    p.add_argument("--answers", type=Path, help="a filled answer sheet: score it instead")
+    p.set_defaults(run=run_packet)
+
     p = commands.add_parser("score", help="score a synthetic table against a locked dataset")
     p.add_argument("--name", required=True, help="the locked dataset to score against")
     p.add_argument("--synthetic", type=Path, required=True, help="admission table as CSV")
     p.add_argument("--system", required=True, help="label for the generator, e.g. synthea")
+    p.add_argument("--outcome", default="readmit_30d", choices=schema.OUTCOMES)
     p.set_defaults(run=run_score)
 
     p = commands.add_parser("selfcheck", help="prove the scorer on tables with known verdicts")

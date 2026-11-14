@@ -61,9 +61,35 @@ def _time(moment: datetime) -> str:
     return moment.isoformat(timespec="seconds") + ZONE
 
 
-def _narrated(resource: dict, summary: str) -> dict:
-    """Add the short human-readable text FHIR asks every resource to carry."""
-    div = f'<div xmlns="http://www.w3.org/1999/xhtml">{escape(summary)}</div>'
+def _summary(resource: dict) -> str:
+    """One line that says what a resource holds, from the resource itself."""
+    kind = resource["resourceType"]
+    if kind == "Patient":
+        name = resource.get("name", [{}])[0]
+        full = " ".join([*name.get("given", []), name.get("family", "")]).strip()
+        born = f"born {resource['birthDate']}" if "birthDate" in resource else None
+        return ", ".join(part for part in [full, resource.get("gender"), born] if part)
+    if kind == "Encounter":
+        period = resource.get("period", {})
+        return f"Inpatient admission, {period.get('start', '?')} to {period.get('end', '?')}"
+    if kind == "Condition":
+        code = resource.get("code")
+        return f"{code['text']} ({code['coding'][0]['code']})" if code else "Condition"
+    if kind == "Observation":
+        quantity = resource.get("valueQuantity")
+        result = f"{quantity['value']} {quantity['unit']}" if quantity else "no result"
+        return f"{resource['code']['coding'][0]['display']}: {result}"
+    return resource.get("name", kind)
+
+
+def narrated(resource: dict, summary: str | None = None) -> dict:
+    """Add the short human-readable text FHIR asks every resource to carry.
+
+    Called again after a resource is changed, so the text never states
+    something the resource no longer does.
+    """
+    text = escape(summary or _summary(resource))
+    div = f'<div xmlns="http://www.w3.org/1999/xhtml">{text}</div>'
     return resource | {"text": {"status": "generated", "div": div}}
 
 
@@ -82,8 +108,7 @@ def _encounter(stay: Stay, patient: dict) -> dict:
     if stay.planned is not None:
         code = "EL" if stay.planned else "EM"
         resource["priority"] = _coding(f"{HL7}/v3-ActPriority", code)
-    summary = f"Inpatient admission, {_time(stay.start)} to {_time(stay.end)}"
-    return _narrated(resource, summary)
+    return narrated(resource)
 
 
 def render(chart: Chart, note: str) -> dict:
@@ -184,17 +209,9 @@ def render(chart: Chart, note: str) -> dict:
     others = [_encounter(s, patient) for s in chart.prior]
     if chart.readmission:
         others.append(_encounter(chart.readmission, patient))
-    name = f"{chart.given} {chart.family}"
-    person = _narrated(person, f"{name}, {person['gender']}, born {person['birthDate']}")
-    conditions = [
-        _narrated(c, f"{c['code']['text']} ({c['code']['coding'][0]['code']})") for c in conditions
-    ]
-    for i, lab in enumerate(labs):
-        quantity = lab["valueQuantity"]
-        display = lab["code"]["coding"][0]["display"]
-        labs[i] = _narrated(lab, f"{display}: {quantity['value']} {quantity['unit']}")
-    document = _narrated(document, f"Discharge summary for {name}")
-    hospital = _narrated(HOSPITAL, HOSPITAL["name"])
+    document = narrated(document, f"Discharge summary for {chart.given} {chart.family}")
+    person, hospital = narrated(person), narrated(HOSPITAL)
+    conditions, labs = [narrated(c) for c in conditions], [narrated(o) for o in labs]
     resources = [hospital, person, *others, stay, *conditions, *labs, document]
     return {
         "resourceType": "Bundle",

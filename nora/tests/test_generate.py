@@ -1,6 +1,6 @@
 """The generator on small tables, then scored where the truth is known.
 
-The scored run is shared by the last three tests because it takes about a
+The scored run is shared by the last four tests because it takes about a
 minute."""
 
 import numpy as np
@@ -55,9 +55,20 @@ def test_missing_values_are_drawn_at_the_real_rate_and_an_empty_column_stays_emp
     assert out["age"].notna().all()
 
 
+def test_version_2_keeps_only_the_relationships_the_data_can_support(train):
+    def links(model):
+        corr = model.chol @ model.chol.T
+        return int((np.abs(corr[np.triu_indices_from(corr, k=1)]) > 1e-9).sum())
+
+    everything, supported = generate.fit(train, significant=0), generate.fit(train)
+    assert links(supported) < links(everything) / 2
+    plenty = fixture.sample(4000, seed=4)
+    assert links(generate.fit(plenty)) > links(supported)
+
+
 @pytest.fixture(scope="module")
 def cards():
-    return selfcheck.generator_by_size()
+    return selfcheck.generator_by_size([42, 3000])
 
 
 def test_with_enough_data_the_generator_passes_like_an_honest_sample(cards):
@@ -65,12 +76,19 @@ def test_with_enough_data_the_generator_passes_like_an_honest_sample(cards):
 
 
 def test_no_training_row_is_ever_copied_at_any_size(cards):
-    assert [card["privacy"]["train_rows_copied"] for card in cards.values()] == [0] * len(cards)
+    for systems in cards.values():
+        for name in generate.SYSTEMS:
+            assert systems[name]["privacy"]["train_rows_copied"] == 0
 
 
-def test_fit_to_42_admissions_it_leaks_who_it_was_trained_on(cards):
-    # A known limit, kept as a test so that it is never quietly forgotten:
-    # the open demo gives 42 training admissions, and that is too few.
-    privacy = cards[42]["privacy"]
-    assert privacy["attack_auroc"] > privacy["ceiling"]
-    assert not privacy["passes"]
+def test_on_42_admissions_nothing_passes_privacy_not_even_a_fresh_sample(cards):
+    # A known limit, kept as a test so that it is never quietly forgotten: the
+    # open demo gives 42 training admissions, and the protocol will not call
+    # that few private whatever the generator does.
+    assert not any(card["privacy"]["passes"] for card in cards[42].values())
+
+
+def test_on_42_admissions_version_2_leaks_less_than_version_1(cards):
+    attack = {name: card["privacy"]["attack_auroc"] for name, card in cards[42].items()}
+    assert attack["copula-v1"] > 0.55
+    assert attack["copula-v2"] < attack["copula-v1"] - 0.05

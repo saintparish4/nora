@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Blythe Larkspur    MRN: copula-v2-00010
+Date of birth: 1940-07-12    Sex: female
+Admitted: 2025-06-06 00:39    Discharged: 2025-06-18 09:59
+
+PRINCIPAL DIAGNOSIS
+Dilated cardiomyopathy (I42.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Larkspur is a 84-year-old woman who was admitted through the emergency department with dilated cardiomyopathy. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Denies diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 16 mg/dL
+Sodium: 140 mmol/L
+Potassium: 3.8 mmol/L
+Hemoglobin: 12.1 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 12.4 days. Transferred to another care facility in stable condition.

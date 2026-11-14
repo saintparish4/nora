@@ -1,417 +1,1257 @@
 {
   "42": {
-    "fidelity": {
-      "columns": {
-        "afib": 0.027714285714285705,
-        "age": 0.03376190476190477,
-        "bun": 0.042619047619047556,
-        "ckd": 0.008523809523809517,
-        "copd": 0.014142857142857138,
-        "creatinine": 0.06404761904761902,
-        "diabetes": 0.018000000000000016,
-        "died_in_hospital": 0.013190476190476193,
-        "discharged_home": 0.052285714285714296,
-        "dx_group": 0.030000000000000034,
-        "emergency": 0.017857142857142877,
-        "hemoglobin": 0.04653284671532848,
-        "hypertension": 0.0037142857142856978,
-        "los_days": 0.034285714285714364,
-        "male": 0.01638095238095233,
-        "potassium": 0.024380952380952392,
-        "prior_admissions_365d": 0.011190476190476306,
-        "readmit_30d": 0.01319047619047619,
-        "sodium": 0.04685714285714282
+    "copula-v1": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.027714285714285705,
+          "age": 0.03376190476190477,
+          "bun": 0.042619047619047556,
+          "ckd": 0.008523809523809517,
+          "copd": 0.014142857142857138,
+          "creatinine": 0.06404761904761902,
+          "diabetes": 0.018000000000000016,
+          "died_in_hospital": 0.013190476190476193,
+          "discharged_home": 0.052285714285714296,
+          "dx_group": 0.030000000000000034,
+          "emergency": 0.017857142857142877,
+          "hemoglobin": 0.04653284671532848,
+          "hypertension": 0.0037142857142856978,
+          "los_days": 0.034285714285714364,
+          "male": 0.01638095238095233,
+          "potassium": 0.024380952380952392,
+          "prior_admissions_365d": 0.011190476190476306,
+          "readmit_30d": 0.01319047619047619,
+          "sodium": 0.04685714285714282
+        },
+        "correlation": 0.09783943519476948,
+        "discriminator_auroc": 0.3735827664399093,
+        "marginal": 0.027298721255693985
       },
-      "correlation": 0.09783943519476948,
-      "discriminator_auroc": 0.3735827664399093,
-      "marginal": 0.027298721255693985
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.037714285714285714,
+            "age": 0.07809523809523816,
+            "bun": 0.09009523809523812,
+            "ckd": 0.006523809523809515,
+            "copd": 0.026142857142857148,
+            "creatinine": 0.22290476190476194,
+            "diabetes": 0.19599999999999998,
+            "died_in_hospital": 0.0011904761904761897,
+            "discharged_home": 0.006285714285714311,
+            "dx_group": 0.048095238095238094,
+            "emergency": 0.056142857142857105,
+            "hemoglobin": 0.08311518324607328,
+            "hypertension": 0.07428571428571429,
+            "los_days": 0.10490476190476183,
+            "male": 0.0066190476190476355,
+            "potassium": 0.166904761904762,
+            "prior_admissions_365d": 0.07938095238095233,
+            "readmit_30d": 0.12777986241400874,
+            "sodium": 0.14104761904761903
+          },
+          "correlation": 0.121504274866306,
+          "discriminator_auroc": 0.5079365079365079,
+          "marginal": 0.08174886205228503
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.6236666666666667,
+        "attack_auroc_ci": [
+          0.5285766293220145,
+          0.7115341964673292
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6177725902827378,
+        "auroc_train_synthetic": 0.61537724509172,
+        "difference": -0.002395345191017806,
+        "difference_ci": [
+          -0.035673711992322076,
+          0.03246503047227643
+        ],
+        "margin": 0.05,
+        "n_synthetic": 963,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 41,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
     },
-    "floor": {
+    "copula-v2": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.0007142857142856951,
+          "age": 0.03476190476190477,
+          "bun": 0.04242857142857137,
+          "ckd": 0.01652380952380951,
+          "copd": 0.014142857142857138,
+          "creatinine": 0.0578095238095237,
+          "diabetes": 0.026000000000000023,
+          "died_in_hospital": 0.012190476190476193,
+          "discharged_home": 0.04728571428571429,
+          "dx_group": 0.030000000000000034,
+          "emergency": 0.023857142857142882,
+          "hemoglobin": 0.0611053180396246,
+          "hypertension": 0.012285714285714316,
+          "los_days": 0.03409523809523818,
+          "male": 0.0033809523809523734,
+          "potassium": 0.024380952380952392,
+          "prior_admissions_365d": 0.007380952380952266,
+          "readmit_30d": 0.019051715413419656,
+          "sodium": 0.04719047619047617
+        },
+        "correlation": 0.13259563736894825,
+        "discriminator_auroc": 0.413265306122449,
+        "marginal": 0.027083452888506082
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.037714285714285714,
+            "age": 0.07809523809523816,
+            "bun": 0.09009523809523812,
+            "ckd": 0.006523809523809515,
+            "copd": 0.026142857142857148,
+            "creatinine": 0.22290476190476194,
+            "diabetes": 0.19599999999999998,
+            "died_in_hospital": 0.0011904761904761897,
+            "discharged_home": 0.006285714285714311,
+            "dx_group": 0.048095238095238094,
+            "emergency": 0.056142857142857105,
+            "hemoglobin": 0.08311518324607328,
+            "hypertension": 0.07428571428571429,
+            "los_days": 0.10490476190476183,
+            "male": 0.0066190476190476355,
+            "potassium": 0.166904761904762,
+            "prior_admissions_365d": 0.07938095238095233,
+            "readmit_30d": 0.12777986241400874,
+            "sodium": 0.14104761904761903
+          },
+          "correlation": 0.121504274866306,
+          "discriminator_auroc": 0.5079365079365079,
+          "marginal": 0.08174886205228503
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.519,
+        "attack_auroc_ci": [
+          0.4364626579093643,
+          0.5948815476190477
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6177725902827378,
+        "auroc_train_synthetic": 0.5510426284340539,
+        "difference": -0.06672996184868385,
+        "difference_ci": [
+          -0.11623570840363726,
+          -0.017744999783491946
+        ],
+        "margin": 0.05,
+        "n_synthetic": 964,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 41,
+        "outcome": "readmit_30d",
+        "passes": false
+      }
+    },
+    "fresh sample": {
       "fidelity": {
         "columns": {
           "afib": 0.037714285714285714,
-          "age": 0.07809523809523816,
-          "bun": 0.09009523809523812,
-          "ckd": 0.006523809523809515,
-          "copd": 0.026142857142857148,
-          "creatinine": 0.22290476190476194,
-          "diabetes": 0.19599999999999998,
-          "died_in_hospital": 0.0011904761904761897,
-          "discharged_home": 0.006285714285714311,
-          "dx_group": 0.048095238095238094,
-          "emergency": 0.056142857142857105,
-          "hemoglobin": 0.08311518324607328,
-          "hypertension": 0.07428571428571429,
-          "los_days": 0.10490476190476183,
-          "male": 0.0066190476190476355,
-          "potassium": 0.166904761904762,
-          "prior_admissions_365d": 0.07938095238095233,
-          "readmit_30d": 0.12777986241400874,
-          "sodium": 0.14104761904761903
+          "age": 0.09461904761904755,
+          "bun": 0.06538095238095239,
+          "ckd": 0.014523809523809508,
+          "copd": 0.008857142857142869,
+          "creatinine": 0.1899047619047619,
+          "diabetes": 0.19299999999999998,
+          "died_in_hospital": 0.004190476190476191,
+          "discharged_home": 0.014285714285714318,
+          "dx_group": 0.03709523809523811,
+          "emergency": 0.04314285714285715,
+          "hemoglobin": 0.13563829787234044,
+          "hypertension": 0.0572857142857143,
+          "los_days": 0.11790476190476185,
+          "male": 0.001619047619047631,
+          "potassium": 0.1565238095238095,
+          "prior_admissions_365d": 0.08119047619047626,
+          "readmit_30d": 0.11911572819431902,
+          "sodium": 0.14604761904761904
         },
-        "correlation": 0.121504274866306,
-        "discriminator_auroc": 0.5079365079365079,
-        "marginal": 0.08174886205228503
+        "correlation": 0.11984980539475949,
+        "discriminator_auroc": 0.576530612244898,
+        "marginal": 0.07989682843959862
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.037714285714285714,
+            "age": 0.07809523809523816,
+            "bun": 0.09009523809523812,
+            "ckd": 0.006523809523809515,
+            "copd": 0.026142857142857148,
+            "creatinine": 0.22290476190476194,
+            "diabetes": 0.19599999999999998,
+            "died_in_hospital": 0.0011904761904761897,
+            "discharged_home": 0.006285714285714311,
+            "dx_group": 0.048095238095238094,
+            "emergency": 0.056142857142857105,
+            "hemoglobin": 0.08311518324607328,
+            "hypertension": 0.07428571428571429,
+            "los_days": 0.10490476190476183,
+            "male": 0.0066190476190476355,
+            "potassium": 0.166904761904762,
+            "prior_admissions_365d": 0.07938095238095233,
+            "readmit_30d": 0.12777986241400874,
+            "sodium": 0.14104761904761903
+          },
+          "correlation": 0.121504274866306,
+          "discriminator_auroc": 0.5079365079365079,
+          "marginal": 0.08174886205228503
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.5331666666666667,
+        "attack_auroc_ci": [
+          0.4431024604017771,
+          0.622419796001545
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6177725902827378,
+        "auroc_train_synthetic": 0.7220528543804331,
+        "difference": 0.10428026409769531,
+        "difference_ci": [
+          0.060088787594555514,
+          0.14477924160255612
+        ],
+        "margin": 0.05,
+        "n_synthetic": 972,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 41,
+        "outcome": "readmit_30d",
+        "passes": true
       }
-    },
-    "privacy": {
-      "attack_auroc": 0.6236666666666667,
-      "attack_auroc_ci": [
-        0.5285766293220145,
-        0.7115341964673292
-      ],
-      "ceiling": 0.55,
-      "passes": false,
-      "test_rows_copied": 0.0,
-      "train_rows_copied": 0.0
-    },
-    "utility": {
-      "auroc_train_real": 0.6177725902827378,
-      "auroc_train_synthetic": 0.61537724509172,
-      "difference": -0.002395345191017806,
-      "difference_ci": [
-        -0.035673711992322076,
-        0.03246503047227643
-      ],
-      "margin": 0.05,
-      "n_synthetic": 963,
-      "n_test": 975,
-      "n_test_positive": 137,
-      "n_train_real": 41,
-      "outcome": "readmit_30d",
-      "passes": true
     }
   },
   "100": {
-    "fidelity": {
-      "columns": {
-        "afib": 0.019000000000000017,
-        "age": 0.02500000000000001,
-        "bun": 0.04200000000000004,
-        "ckd": 0.0010000000000000009,
-        "copd": 0.015000000000000013,
-        "creatinine": 0.05299999999999999,
-        "diabetes": 0.031,
-        "died_in_hospital": 0.0030000000000000027,
-        "discharged_home": 0.03699999999999998,
-        "dx_group": 0.020999999999999998,
-        "emergency": 0.02300000000000002,
-        "hemoglobin": 0.03426651735722283,
-        "hypertension": 0.009000000000000008,
-        "los_days": 0.027000000000000024,
-        "male": 0.013999999999999957,
-        "potassium": 0.019000000000000017,
-        "prior_admissions_365d": 0.009000000000000008,
-        "readmit_30d": 0.011983070181984926,
-        "sodium": 0.041000000000000036
-      },
-      "correlation": 0.046917740908651924,
-      "discriminator_auroc": 0.4555,
-      "marginal": 0.022907873028379364
-    },
-    "floor": {
+    "copula-v1": {
       "fidelity": {
         "columns": {
-          "afib": 0.04200000000000002,
-          "age": 0.05600000000000001,
-          "bun": 0.07300000000000006,
-          "ckd": 0.04300000000000001,
-          "copd": 0.04900000000000003,
-          "creatinine": 0.17100000000000004,
-          "diabetes": 0.07599999999999998,
-          "died_in_hospital": 0.005000000000000001,
-          "discharged_home": 0.0020000000000000018,
-          "dx_group": 0.04800000000000003,
-          "emergency": 0.04899999999999996,
-          "hemoglobin": 0.10100256210315256,
-          "hypertension": 0.10999999999999999,
-          "los_days": 0.08499999999999999,
-          "male": 0.009000000000000008,
-          "potassium": 0.05900000000000005,
-          "prior_admissions_365d": 0.062000000000000055,
-          "readmit_30d": 0.055363468146973266,
-          "sodium": 0.06899999999999999
+          "afib": 0.019000000000000017,
+          "age": 0.02500000000000001,
+          "bun": 0.04200000000000004,
+          "ckd": 0.0010000000000000009,
+          "copd": 0.015000000000000013,
+          "creatinine": 0.05299999999999999,
+          "diabetes": 0.031,
+          "died_in_hospital": 0.0030000000000000027,
+          "discharged_home": 0.03699999999999998,
+          "dx_group": 0.020999999999999998,
+          "emergency": 0.02300000000000002,
+          "hemoglobin": 0.03426651735722283,
+          "hypertension": 0.009000000000000008,
+          "los_days": 0.027000000000000024,
+          "male": 0.013999999999999957,
+          "potassium": 0.019000000000000017,
+          "prior_admissions_365d": 0.009000000000000008,
+          "readmit_30d": 0.011983070181984926,
+          "sodium": 0.041000000000000036
         },
-        "correlation": 0.07256155139820089,
-        "discriminator_auroc": 0.4981,
-        "marginal": 0.06128242264474347
+        "correlation": 0.046917740908651924,
+        "discriminator_auroc": 0.4555,
+        "marginal": 0.022907873028379364
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.04200000000000002,
+            "age": 0.05600000000000001,
+            "bun": 0.07300000000000006,
+            "ckd": 0.04300000000000001,
+            "copd": 0.04900000000000003,
+            "creatinine": 0.17100000000000004,
+            "diabetes": 0.07599999999999998,
+            "died_in_hospital": 0.005000000000000001,
+            "discharged_home": 0.0020000000000000018,
+            "dx_group": 0.04800000000000003,
+            "emergency": 0.04899999999999996,
+            "hemoglobin": 0.10100256210315256,
+            "hypertension": 0.10999999999999999,
+            "los_days": 0.08499999999999999,
+            "male": 0.009000000000000008,
+            "potassium": 0.05900000000000005,
+            "prior_admissions_365d": 0.062000000000000055,
+            "readmit_30d": 0.055363468146973266,
+            "sodium": 0.06899999999999999
+          },
+          "correlation": 0.07256155139820089,
+          "discriminator_auroc": 0.4981,
+          "marginal": 0.06128242264474347
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.58277,
+        "attack_auroc_ci": [
+          0.5260988518918888,
+          0.6428952770925126
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.5861366130690033,
+        "auroc_train_synthetic": 0.621805480549797,
+        "difference": 0.035668867480793676,
+        "difference_ci": [
+          0.0014347778002890307,
+          0.06777647717741228
+        ],
+        "margin": 0.05,
+        "n_synthetic": 967,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 97,
+        "outcome": "readmit_30d",
+        "passes": true
       }
     },
-    "privacy": {
-      "attack_auroc": 0.58277,
-      "attack_auroc_ci": [
-        0.5260988518918888,
-        0.6428952770925126
-      ],
-      "ceiling": 0.55,
-      "passes": false,
-      "test_rows_copied": 0.0,
-      "train_rows_copied": 0.0
-    },
-    "utility": {
-      "auroc_train_real": 0.5861366130690033,
-      "auroc_train_synthetic": 0.621805480549797,
-      "difference": 0.035668867480793676,
-      "difference_ci": [
-        0.0014347778002890307,
-        0.06777647717741228
-      ],
-      "margin": 0.05,
-      "n_synthetic": 967,
-      "n_test": 975,
-      "n_test_positive": 137,
-      "n_train_real": 97,
-      "outcome": "readmit_30d",
-      "passes": true
-    }
-  },
-  "300": {
-    "fidelity": {
-      "columns": {
-        "afib": 0.008999999999999994,
-        "age": 0.02699999999999997,
-        "bun": 0.03700000000000003,
-        "ckd": 0.006666666666666682,
-        "copd": 0.019333333333333327,
-        "creatinine": 0.040000000000000036,
-        "diabetes": 0.02899999999999997,
-        "died_in_hospital": 0.004666666666666633,
-        "discharged_home": 0.018666666666666692,
-        "dx_group": 0.030000000000000006,
-        "emergency": 0.025666666666666643,
-        "hemoglobin": 0.03923931095118696,
-        "hypertension": 0.007333333333333303,
-        "los_days": 0.028666666666666618,
-        "male": 0.024666666666666642,
-        "potassium": 0.020333333333333314,
-        "prior_admissions_365d": 0.009333333333333305,
-        "readmit_30d": 0.00466666666666667,
-        "sodium": 0.037666666666666626
-      },
-      "correlation": 0.030625494939367347,
-      "discriminator_auroc": 0.41426666666666667,
-      "marginal": 0.0220476830325186
-    },
-    "floor": {
-      "fidelity": {
-        "columns": {
-          "afib": 0.022000000000000006,
-          "age": 0.05099999999999999,
-          "bun": 0.08299999999999996,
-          "ckd": 0.056333333333333346,
-          "copd": 0.03233333333333334,
-          "creatinine": 0.11766666666666664,
-          "diabetes": 0.006000000000000005,
-          "died_in_hospital": 0.0016666666666666306,
-          "discharged_home": 0.0013333333333333253,
-          "dx_group": 0.0373333333333333,
-          "emergency": 0.05233333333333334,
-          "hemoglobin": 0.07025557764926937,
-          "hypertension": 0.08666666666666667,
-          "los_days": 0.055999999999999994,
-          "male": 0.042333333333333334,
-          "potassium": 0.06133333333333335,
-          "prior_admissions_365d": 0.010666666666666713,
-          "readmit_30d": 0.023870741131015075,
-          "sodium": 0.05466666666666667
-        },
-        "correlation": 0.054380636854160745,
-        "discriminator_auroc": 0.48934444444444447,
-        "marginal": 0.04562068344457638
-      }
-    },
-    "privacy": {
-      "attack_auroc": 0.5345933333333334,
-      "attack_auroc_ci": [
-        0.5007585915786636,
-        0.5693234298854808
-      ],
-      "ceiling": 0.55,
-      "passes": false,
-      "test_rows_copied": 0.0,
-      "train_rows_copied": 0.0
-    },
-    "utility": {
-      "auroc_train_real": 0.6899029667438984,
-      "auroc_train_synthetic": 0.6826995104785464,
-      "difference": -0.007203456265352015,
-      "difference_ci": [
-        -0.02959050137981408,
-        0.014555565495082955
-      ],
-      "margin": 0.05,
-      "n_synthetic": 978,
-      "n_test": 975,
-      "n_test_positive": 137,
-      "n_train_real": 292,
-      "outcome": "readmit_30d",
-      "passes": true
-    }
-  },
-  "1000": {
-    "fidelity": {
-      "columns": {
-        "afib": 0.0020000000000000018,
-        "age": 0.026999999999999982,
-        "bun": 0.038000000000000034,
-        "ckd": 0.009000000000000008,
-        "copd": 0.010000000000000009,
-        "creatinine": 0.04500000000000004,
-        "diabetes": 0.02799999999999997,
-        "died_in_hospital": 0.008000000000000004,
-        "discharged_home": 0.021999999999999964,
-        "dx_group": 0.033000000000000015,
-        "emergency": 0.020999999999999963,
-        "hemoglobin": 0.03675540331185104,
-        "hypertension": 0.0040000000000000036,
-        "los_days": 0.02300000000000002,
-        "male": 0.0050000000000000044,
-        "potassium": 0.014000000000000012,
-        "prior_admissions_365d": 0.01200000000000001,
-        "readmit_30d": 0.011160411868310516,
-        "sodium": 0.03600000000000003
-      },
-      "correlation": 0.02534220202045426,
-      "discriminator_auroc": 0.475456,
-      "marginal": 0.020258727114745346
-    },
-    "floor": {
+    "copula-v2": {
       "fidelity": {
         "columns": {
           "afib": 0.0030000000000000027,
-          "age": 0.052000000000000046,
-          "bun": 0.04200000000000004,
-          "ckd": 0.007999999999999993,
-          "copd": 0.028000000000000025,
+          "age": 0.030000000000000013,
+          "bun": 0.04099999999999998,
+          "ckd": 0.009000000000000008,
+          "copd": 0.013000000000000012,
           "creatinine": 0.05099999999999999,
-          "diabetes": 0.0050000000000000044,
-          "died_in_hospital": 0.007000000000000003,
-          "discharged_home": 0.009000000000000008,
-          "dx_group": 0.028999999999999984,
-          "emergency": 0.010000000000000009,
-          "hemoglobin": 0.053611682730236976,
-          "hypertension": 0.022999999999999993,
-          "los_days": 0.028000000000000025,
-          "male": 0.030999999999999972,
-          "potassium": 0.03200000000000003,
-          "prior_admissions_365d": 0.026999999999999913,
-          "readmit_30d": 0.006999999999999999,
-          "sodium": 0.030000000000000027
+          "diabetes": 0.017000000000000015,
+          "died_in_hospital": 0.0009999999999999992,
+          "discharged_home": 0.03699999999999998,
+          "dx_group": 0.020999999999999998,
+          "emergency": 0.018000000000000016,
+          "hemoglobin": 0.05572228443449051,
+          "hypertension": 0.006000000000000005,
+          "los_days": 0.029000000000000026,
+          "male": 0.010000000000000009,
+          "potassium": 0.01799999999999996,
+          "prior_admissions_365d": 0.017000000000000015,
+          "readmit_30d": 0.009067068703748946,
+          "sodium": 0.04699999999999993
         },
-        "correlation": 0.033427888318355976,
-        "discriminator_auroc": 0.502814,
-        "marginal": 0.025032193827907213
+        "correlation": 0.08071997409016464,
+        "discriminator_auroc": 0.4479,
+        "marginal": 0.02277838700727576
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.04200000000000002,
+            "age": 0.05600000000000001,
+            "bun": 0.07300000000000006,
+            "ckd": 0.04300000000000001,
+            "copd": 0.04900000000000003,
+            "creatinine": 0.17100000000000004,
+            "diabetes": 0.07599999999999998,
+            "died_in_hospital": 0.005000000000000001,
+            "discharged_home": 0.0020000000000000018,
+            "dx_group": 0.04800000000000003,
+            "emergency": 0.04899999999999996,
+            "hemoglobin": 0.10100256210315256,
+            "hypertension": 0.10999999999999999,
+            "los_days": 0.08499999999999999,
+            "male": 0.009000000000000008,
+            "potassium": 0.05900000000000005,
+            "prior_admissions_365d": 0.062000000000000055,
+            "readmit_30d": 0.055363468146973266,
+            "sodium": 0.06899999999999999
+          },
+          "correlation": 0.07256155139820089,
+          "discriminator_auroc": 0.4981,
+          "marginal": 0.06128242264474347
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.51697,
+        "attack_auroc_ci": [
+          0.4616901792822563,
+          0.5803643655626467
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.5861366130690033,
+        "auroc_train_synthetic": 0.5549100221242792,
+        "difference": -0.03122659094472413,
+        "difference_ci": [
+          -0.06736885203625874,
+          0.004722446836243118
+        ],
+        "margin": 0.05,
+        "n_synthetic": 971,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 97,
+        "outcome": "readmit_30d",
+        "passes": false
       }
     },
-    "privacy": {
-      "attack_auroc": 0.516257,
-      "attack_auroc_ci": [
-        0.4906169966286151,
-        0.5401007201130699
-      ],
-      "ceiling": 0.55,
-      "passes": true,
-      "test_rows_copied": 0.0,
-      "train_rows_copied": 0.0
+    "fresh sample": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.04200000000000002,
+          "age": 0.05500000000000005,
+          "bun": 0.05600000000000005,
+          "ckd": 0.03500000000000002,
+          "copd": 0.014000000000000012,
+          "creatinine": 0.138,
+          "diabetes": 0.07299999999999998,
+          "died_in_hospital": 0.002,
+          "discharged_home": 0.010000000000000009,
+          "dx_group": 0.05500000000000001,
+          "emergency": 0.036000000000000004,
+          "hemoglobin": 0.08085106382978721,
+          "hypertension": 0.093,
+          "los_days": 0.086,
+          "male": 0.0040000000000000036,
+          "potassium": 0.04800000000000004,
+          "prior_admissions_365d": 0.10499999999999998,
+          "readmit_30d": 0.04669933392728354,
+          "sodium": 0.067
+        },
+        "correlation": 0.07269569039203452,
+        "discriminator_auroc": 0.4353,
+        "marginal": 0.055081599881951104
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.04200000000000002,
+            "age": 0.05600000000000001,
+            "bun": 0.07300000000000006,
+            "ckd": 0.04300000000000001,
+            "copd": 0.04900000000000003,
+            "creatinine": 0.17100000000000004,
+            "diabetes": 0.07599999999999998,
+            "died_in_hospital": 0.005000000000000001,
+            "discharged_home": 0.0020000000000000018,
+            "dx_group": 0.04800000000000003,
+            "emergency": 0.04899999999999996,
+            "hemoglobin": 0.10100256210315256,
+            "hypertension": 0.10999999999999999,
+            "los_days": 0.08499999999999999,
+            "male": 0.009000000000000008,
+            "potassium": 0.05900000000000005,
+            "prior_admissions_365d": 0.062000000000000055,
+            "readmit_30d": 0.055363468146973266,
+            "sodium": 0.06899999999999999
+          },
+          "correlation": 0.07256155139820089,
+          "discriminator_auroc": 0.4981,
+          "marginal": 0.06128242264474347
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.49254,
+        "attack_auroc_ci": [
+          0.43450618851031375,
+          0.5532486173603299
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.5861366130690033,
+        "auroc_train_synthetic": 0.7220528543804331,
+        "difference": 0.13591624131142976,
+        "difference_ci": [
+          0.08067532076687943,
+          0.18961318661581952
+        ],
+        "margin": 0.05,
+        "n_synthetic": 972,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 97,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
+    }
+  },
+  "300": {
+    "copula-v1": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.008999999999999994,
+          "age": 0.02699999999999997,
+          "bun": 0.03700000000000003,
+          "ckd": 0.006666666666666682,
+          "copd": 0.019333333333333327,
+          "creatinine": 0.040000000000000036,
+          "diabetes": 0.02899999999999997,
+          "died_in_hospital": 0.004666666666666633,
+          "discharged_home": 0.018666666666666692,
+          "dx_group": 0.030000000000000006,
+          "emergency": 0.025666666666666643,
+          "hemoglobin": 0.03923931095118696,
+          "hypertension": 0.007333333333333303,
+          "los_days": 0.028666666666666618,
+          "male": 0.024666666666666642,
+          "potassium": 0.020333333333333314,
+          "prior_admissions_365d": 0.009333333333333305,
+          "readmit_30d": 0.00466666666666667,
+          "sodium": 0.037666666666666626
+        },
+        "correlation": 0.030625494939367347,
+        "discriminator_auroc": 0.41426666666666667,
+        "marginal": 0.0220476830325186
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.022000000000000006,
+            "age": 0.05099999999999999,
+            "bun": 0.08299999999999996,
+            "ckd": 0.056333333333333346,
+            "copd": 0.03233333333333334,
+            "creatinine": 0.11766666666666664,
+            "diabetes": 0.006000000000000005,
+            "died_in_hospital": 0.0016666666666666306,
+            "discharged_home": 0.0013333333333333253,
+            "dx_group": 0.0373333333333333,
+            "emergency": 0.05233333333333334,
+            "hemoglobin": 0.07025557764926937,
+            "hypertension": 0.08666666666666667,
+            "los_days": 0.055999999999999994,
+            "male": 0.042333333333333334,
+            "potassium": 0.06133333333333335,
+            "prior_admissions_365d": 0.010666666666666713,
+            "readmit_30d": 0.023870741131015075,
+            "sodium": 0.05466666666666667
+          },
+          "correlation": 0.054380636854160745,
+          "discriminator_auroc": 0.48934444444444447,
+          "marginal": 0.04562068344457638
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.5345933333333334,
+        "attack_auroc_ci": [
+          0.5007585915786636,
+          0.5693234298854808
+        ],
+        "ceiling": 0.55,
+        "passes": false,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6899029667438984,
+        "auroc_train_synthetic": 0.6826995104785464,
+        "difference": -0.007203456265352015,
+        "difference_ci": [
+          -0.02959050137981408,
+          0.014555565495082955
+        ],
+        "margin": 0.05,
+        "n_synthetic": 978,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 292,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
     },
-    "utility": {
-      "auroc_train_real": 0.7207114610734631,
-      "auroc_train_synthetic": 0.6919934498196958,
-      "difference": -0.028718011253767273,
-      "difference_ci": [
-        -0.05065079949217922,
-        -0.007592324628544617
-      ],
-      "margin": 0.05,
-      "n_synthetic": 976,
-      "n_test": 975,
-      "n_test_positive": 137,
-      "n_train_real": 968,
-      "outcome": "readmit_30d",
-      "passes": false
+    "copula-v2": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.05000000000000003,
+          "age": 0.025333333333333347,
+          "bun": 0.040000000000000036,
+          "ckd": 0.006666666666666682,
+          "copd": 0.013333333333333322,
+          "creatinine": 0.03733333333333333,
+          "diabetes": 0.023999999999999966,
+          "died_in_hospital": 0.006666666666666633,
+          "discharged_home": 0.013666666666666688,
+          "dx_group": 0.030000000000000006,
+          "emergency": 0.018666666666666637,
+          "hemoglobin": 0.030957265513910148,
+          "hypertension": 0.013666666666666688,
+          "los_days": 0.03199999999999992,
+          "male": 0.01166666666666663,
+          "potassium": 0.018333333333333313,
+          "prior_admissions_365d": 0.01733333333333331,
+          "readmit_30d": 0.023371540396980736,
+          "sodium": 0.042333333333333334
+        },
+        "correlation": 0.050809711194821985,
+        "discriminator_auroc": 0.4262,
+        "marginal": 0.02396467399531004
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.022000000000000006,
+            "age": 0.05099999999999999,
+            "bun": 0.08299999999999996,
+            "ckd": 0.056333333333333346,
+            "copd": 0.03233333333333334,
+            "creatinine": 0.11766666666666664,
+            "diabetes": 0.006000000000000005,
+            "died_in_hospital": 0.0016666666666666306,
+            "discharged_home": 0.0013333333333333253,
+            "dx_group": 0.0373333333333333,
+            "emergency": 0.05233333333333334,
+            "hemoglobin": 0.07025557764926937,
+            "hypertension": 0.08666666666666667,
+            "los_days": 0.055999999999999994,
+            "male": 0.042333333333333334,
+            "potassium": 0.06133333333333335,
+            "prior_admissions_365d": 0.010666666666666713,
+            "readmit_30d": 0.023870741131015075,
+            "sodium": 0.05466666666666667
+          },
+          "correlation": 0.054380636854160745,
+          "discriminator_auroc": 0.48934444444444447,
+          "marginal": 0.04562068344457638
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.51335,
+        "attack_auroc_ci": [
+          0.47783356180378506,
+          0.5489622770973569
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6899029667438984,
+        "auroc_train_synthetic": 0.5595177952371827,
+        "difference": -0.1303851715067157,
+        "difference_ci": [
+          -0.19342335995433638,
+          -0.06101975638308217
+        ],
+        "margin": 0.05,
+        "n_synthetic": 980,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 292,
+        "outcome": "readmit_30d",
+        "passes": false
+      }
+    },
+    "fresh sample": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.022000000000000006,
+          "age": 0.035666666666666624,
+          "bun": 0.06,
+          "ckd": 0.04833333333333335,
+          "copd": 0.0026666666666666783,
+          "creatinine": 0.08433333333333332,
+          "diabetes": 0.0030000000000000027,
+          "died_in_hospital": 0.0013333333333333704,
+          "discharged_home": 0.006666666666666682,
+          "dx_group": 0.03733333333333333,
+          "emergency": 0.03933333333333339,
+          "hemoglobin": 0.051108310475202035,
+          "hypertension": 0.06966666666666668,
+          "los_days": 0.06066666666666665,
+          "male": 0.03733333333333333,
+          "potassium": 0.05733333333333335,
+          "prior_admissions_365d": 0.03499999999999992,
+          "readmit_30d": 0.015206606911325346,
+          "sodium": 0.059000000000000025
+        },
+        "correlation": 0.05093421305261751,
+        "discriminator_auroc": 0.4602222222222222,
+        "marginal": 0.03820955705543127
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.022000000000000006,
+            "age": 0.05099999999999999,
+            "bun": 0.08299999999999996,
+            "ckd": 0.056333333333333346,
+            "copd": 0.03233333333333334,
+            "creatinine": 0.11766666666666664,
+            "diabetes": 0.006000000000000005,
+            "died_in_hospital": 0.0016666666666666306,
+            "discharged_home": 0.0013333333333333253,
+            "dx_group": 0.0373333333333333,
+            "emergency": 0.05233333333333334,
+            "hemoglobin": 0.07025557764926937,
+            "hypertension": 0.08666666666666667,
+            "los_days": 0.055999999999999994,
+            "male": 0.042333333333333334,
+            "potassium": 0.06133333333333335,
+            "prior_admissions_365d": 0.010666666666666713,
+            "readmit_30d": 0.023870741131015075,
+            "sodium": 0.05466666666666667
+          },
+          "correlation": 0.054380636854160745,
+          "discriminator_auroc": 0.48934444444444447,
+          "marginal": 0.04562068344457638
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.51047,
+        "attack_auroc_ci": [
+          0.4758133300563915,
+          0.5461512480997202
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.6899029667438984,
+        "auroc_train_synthetic": 0.7220528543804331,
+        "difference": 0.0321498876365347,
+        "difference_ci": [
+          0.0043990760687845415,
+          0.06151325894557199
+        ],
+        "margin": 0.05,
+        "n_synthetic": 972,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 292,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
+    }
+  },
+  "1000": {
+    "copula-v1": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.0020000000000000018,
+          "age": 0.026999999999999982,
+          "bun": 0.038000000000000034,
+          "ckd": 0.009000000000000008,
+          "copd": 0.010000000000000009,
+          "creatinine": 0.04500000000000004,
+          "diabetes": 0.02799999999999997,
+          "died_in_hospital": 0.008000000000000004,
+          "discharged_home": 0.021999999999999964,
+          "dx_group": 0.033000000000000015,
+          "emergency": 0.020999999999999963,
+          "hemoglobin": 0.03675540331185104,
+          "hypertension": 0.0040000000000000036,
+          "los_days": 0.02300000000000002,
+          "male": 0.0050000000000000044,
+          "potassium": 0.014000000000000012,
+          "prior_admissions_365d": 0.01200000000000001,
+          "readmit_30d": 0.011160411868310516,
+          "sodium": 0.03600000000000003
+        },
+        "correlation": 0.02534220202045426,
+        "discriminator_auroc": 0.475456,
+        "marginal": 0.020258727114745346
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.0030000000000000027,
+            "age": 0.052000000000000046,
+            "bun": 0.04200000000000004,
+            "ckd": 0.007999999999999993,
+            "copd": 0.028000000000000025,
+            "creatinine": 0.05099999999999999,
+            "diabetes": 0.0050000000000000044,
+            "died_in_hospital": 0.007000000000000003,
+            "discharged_home": 0.009000000000000008,
+            "dx_group": 0.028999999999999984,
+            "emergency": 0.010000000000000009,
+            "hemoglobin": 0.053611682730236976,
+            "hypertension": 0.022999999999999993,
+            "los_days": 0.028000000000000025,
+            "male": 0.030999999999999972,
+            "potassium": 0.03200000000000003,
+            "prior_admissions_365d": 0.026999999999999913,
+            "readmit_30d": 0.006999999999999999,
+            "sodium": 0.030000000000000027
+          },
+          "correlation": 0.033427888318355976,
+          "discriminator_auroc": 0.502814,
+          "marginal": 0.025032193827907213
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.516257,
+        "attack_auroc_ci": [
+          0.4906169966286151,
+          0.5401007201130699
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7207114610734631,
+        "auroc_train_synthetic": 0.6919934498196958,
+        "difference": -0.028718011253767273,
+        "difference_ci": [
+          -0.05065079949217922,
+          -0.007592324628544617
+        ],
+        "margin": 0.05,
+        "n_synthetic": 976,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 968,
+        "outcome": "readmit_30d",
+        "passes": false
+      }
+    },
+    "copula-v2": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.03,
+          "age": 0.02600000000000001,
+          "bun": 0.03799999999999998,
+          "ckd": 0.007000000000000006,
+          "copd": 0.01100000000000001,
+          "creatinine": 0.04300000000000004,
+          "diabetes": 0.024999999999999967,
+          "died_in_hospital": 0.005000000000000003,
+          "discharged_home": 0.013999999999999957,
+          "dx_group": 0.033000000000000015,
+          "emergency": 0.013999999999999957,
+          "hemoglobin": 0.02997270403978003,
+          "hypertension": 0.010999999999999982,
+          "los_days": 0.02300000000000002,
+          "male": 0.010000000000000009,
+          "potassium": 0.01799999999999996,
+          "prior_admissions_365d": 0.01100000000000001,
+          "readmit_30d": 0.03525986766666947,
+          "sodium": 0.03500000000000003
+        },
+        "correlation": 0.03314185209900814,
+        "discriminator_auroc": 0.488134,
+        "marginal": 0.022064872195076288
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.0030000000000000027,
+            "age": 0.052000000000000046,
+            "bun": 0.04200000000000004,
+            "ckd": 0.007999999999999993,
+            "copd": 0.028000000000000025,
+            "creatinine": 0.05099999999999999,
+            "diabetes": 0.0050000000000000044,
+            "died_in_hospital": 0.007000000000000003,
+            "discharged_home": 0.009000000000000008,
+            "dx_group": 0.028999999999999984,
+            "emergency": 0.010000000000000009,
+            "hemoglobin": 0.053611682730236976,
+            "hypertension": 0.022999999999999993,
+            "los_days": 0.028000000000000025,
+            "male": 0.030999999999999972,
+            "potassium": 0.03200000000000003,
+            "prior_admissions_365d": 0.026999999999999913,
+            "readmit_30d": 0.006999999999999999,
+            "sodium": 0.030000000000000027
+          },
+          "correlation": 0.033427888318355976,
+          "discriminator_auroc": 0.502814,
+          "marginal": 0.025032193827907213
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.510299,
+        "attack_auroc_ci": [
+          0.4868427484525502,
+          0.5351635099872011
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7207114610734631,
+        "auroc_train_synthetic": 0.6988223612006341,
+        "difference": -0.021889099872828943,
+        "difference_ci": [
+          -0.049196679594869994,
+          0.006118934929303945
+        ],
+        "margin": 0.05,
+        "n_synthetic": 973,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 968,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
+    },
+    "fresh sample": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.0030000000000000027,
+          "age": 0.03500000000000003,
+          "bun": 0.03200000000000003,
+          "ckd": 0.0,
+          "copd": 0.006999999999999992,
+          "creatinine": 0.020000000000000018,
+          "diabetes": 0.008000000000000007,
+          "died_in_hospital": 0.004000000000000002,
+          "discharged_home": 0.0010000000000000009,
+          "dx_group": 0.022000000000000006,
+          "emergency": 0.002999999999999947,
+          "hemoglobin": 0.03458848059547559,
+          "hypertension": 0.006000000000000005,
+          "los_days": 0.020000000000000004,
+          "male": 0.025999999999999968,
+          "potassium": 0.03400000000000003,
+          "prior_admissions_365d": 0.016000000000000014,
+          "readmit_30d": 0.010747202666394534,
+          "sodium": 0.03499999999999992
+        },
+        "correlation": 0.03821961150698018,
+        "discriminator_auroc": 0.484588,
+        "marginal": 0.016701878066414218
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.0030000000000000027,
+            "age": 0.052000000000000046,
+            "bun": 0.04200000000000004,
+            "ckd": 0.007999999999999993,
+            "copd": 0.028000000000000025,
+            "creatinine": 0.05099999999999999,
+            "diabetes": 0.0050000000000000044,
+            "died_in_hospital": 0.007000000000000003,
+            "discharged_home": 0.009000000000000008,
+            "dx_group": 0.028999999999999984,
+            "emergency": 0.010000000000000009,
+            "hemoglobin": 0.053611682730236976,
+            "hypertension": 0.022999999999999993,
+            "los_days": 0.028000000000000025,
+            "male": 0.030999999999999972,
+            "potassium": 0.03200000000000003,
+            "prior_admissions_365d": 0.026999999999999913,
+            "readmit_30d": 0.006999999999999999,
+            "sodium": 0.030000000000000027
+          },
+          "correlation": 0.033427888318355976,
+          "discriminator_auroc": 0.502814,
+          "marginal": 0.025032193827907213
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.521408,
+        "attack_auroc_ci": [
+          0.4949254273030788,
+          0.547506461163227
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7207114610734631,
+        "auroc_train_synthetic": 0.7220528543804331,
+        "difference": 0.001341393306970029,
+        "difference_ci": [
+          -0.026518426275811975,
+          0.0259211423527943
+        ],
+        "margin": 0.05,
+        "n_synthetic": 972,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 968,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
     }
   },
   "3000": {
-    "fidelity": {
-      "columns": {
-        "afib": 0.007666666666666683,
-        "age": 0.016000000000000014,
-        "bun": 0.018333333333333313,
-        "ckd": 0.0003333333333333105,
-        "copd": 0.0026666666666666367,
-        "creatinine": 0.01533333333333331,
-        "diabetes": 0.011333333333333306,
-        "died_in_hospital": 0.002999999999999999,
-        "discharged_home": 0.021333333333333343,
-        "dx_group": 0.012333333333333321,
-        "emergency": 0.00833333333333336,
-        "hemoglobin": 0.01095472564283595,
-        "hypertension": 0.010333333333333333,
-        "los_days": 0.014999999999999902,
-        "male": 0.0010000000000000009,
-        "potassium": 0.017000000000000015,
-        "prior_admissions_365d": 0.005666666666666598,
-        "readmit_30d": 0.0033415429674499286,
-        "sodium": 0.011333333333333338
-      },
-      "correlation": 0.01371535596041807,
-      "discriminator_auroc": 0.4909808888888889,
-      "marginal": 0.010068224663699244
-    },
-    "floor": {
+    "copula-v1": {
       "fidelity": {
         "columns": {
-          "afib": 0.006000000000000005,
-          "age": 0.04633333333333345,
-          "bun": 0.03433333333333338,
-          "ckd": 0.003666666666666679,
-          "copd": 0.021666666666666695,
-          "creatinine": 0.04199999999999998,
-          "diabetes": 0.012666666666666687,
-          "died_in_hospital": 0.009666666666666632,
-          "discharged_home": 0.0050000000000000044,
-          "dx_group": 0.02766666666666666,
-          "emergency": 0.0040000000000000036,
-          "hemoglobin": 0.04677137870855147,
-          "hypertension": 0.007000000000000006,
-          "los_days": 0.018333333333333424,
-          "male": 0.013000000000000012,
-          "potassium": 0.025999999999999912,
-          "prior_admissions_365d": 0.01733333333333331,
-          "readmit_30d": 0.009666666666666664,
-          "sodium": 0.027000000000000024
+          "afib": 0.007666666666666683,
+          "age": 0.016000000000000014,
+          "bun": 0.018333333333333313,
+          "ckd": 0.0003333333333333105,
+          "copd": 0.0026666666666666367,
+          "creatinine": 0.01533333333333331,
+          "diabetes": 0.011333333333333306,
+          "died_in_hospital": 0.002999999999999999,
+          "discharged_home": 0.021333333333333343,
+          "dx_group": 0.012333333333333321,
+          "emergency": 0.00833333333333336,
+          "hemoglobin": 0.01095472564283595,
+          "hypertension": 0.010333333333333333,
+          "los_days": 0.014999999999999902,
+          "male": 0.0010000000000000009,
+          "potassium": 0.017000000000000015,
+          "prior_admissions_365d": 0.005666666666666598,
+          "readmit_30d": 0.0033415429674499286,
+          "sodium": 0.011333333333333338
         },
-        "correlation": 0.028188034314397856,
-        "discriminator_auroc": 0.505275,
-        "marginal": 0.01990024800220448
+        "correlation": 0.01371535596041807,
+        "discriminator_auroc": 0.4909808888888889,
+        "marginal": 0.010068224663699244
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.006000000000000005,
+            "age": 0.04633333333333345,
+            "bun": 0.03433333333333338,
+            "ckd": 0.003666666666666679,
+            "copd": 0.021666666666666695,
+            "creatinine": 0.04199999999999998,
+            "diabetes": 0.012666666666666687,
+            "died_in_hospital": 0.009666666666666632,
+            "discharged_home": 0.0050000000000000044,
+            "dx_group": 0.02766666666666666,
+            "emergency": 0.0040000000000000036,
+            "hemoglobin": 0.04677137870855147,
+            "hypertension": 0.007000000000000006,
+            "los_days": 0.018333333333333424,
+            "male": 0.013000000000000012,
+            "potassium": 0.025999999999999912,
+            "prior_admissions_365d": 0.01733333333333331,
+            "readmit_30d": 0.009666666666666664,
+            "sodium": 0.027000000000000024
+          },
+          "correlation": 0.028188034314397856,
+          "discriminator_auroc": 0.505275,
+          "marginal": 0.01990024800220448
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.5146336666666667,
+        "attack_auroc_ci": [
+          0.4937934578345481,
+          0.534882666394946
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7245875651098375,
+        "auroc_train_synthetic": 0.7185948469592182,
+        "difference": -0.005992718150619303,
+        "difference_ci": [
+          -0.01970534475185551,
+          0.00820783739417797
+        ],
+        "margin": 0.05,
+        "n_synthetic": 2905,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 2896,
+        "outcome": "readmit_30d",
+        "passes": true
       }
     },
-    "privacy": {
-      "attack_auroc": 0.5146336666666667,
-      "attack_auroc_ci": [
-        0.4937934578345481,
-        0.534882666394946
-      ],
-      "ceiling": 0.55,
-      "passes": true,
-      "test_rows_copied": 0.0,
-      "train_rows_copied": 0.0
+    "copula-v2": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.0013333333333333253,
+          "age": 0.016000000000000014,
+          "bun": 0.01766666666666672,
+          "ckd": 0.002666666666666692,
+          "copd": 0.004333333333333328,
+          "creatinine": 0.014333333333333309,
+          "diabetes": 0.010000000000000009,
+          "died_in_hospital": 0.0026666666666666297,
+          "discharged_home": 0.024333333333333346,
+          "dx_group": 0.012333333333333321,
+          "emergency": 0.0063333333333333575,
+          "hemoglobin": 0.009694880235220027,
+          "hypertension": 0.014000000000000012,
+          "los_days": 0.015000000000000013,
+          "male": 0.0050000000000000044,
+          "potassium": 0.020333333333333314,
+          "prior_admissions_365d": 0.008000000000000007,
+          "readmit_30d": 0.01682191071944969,
+          "sodium": 0.010999999999999954
+        },
+        "correlation": 0.016969470404401284,
+        "discriminator_auroc": 0.49781844444444445,
+        "marginal": 0.011150006541473844
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.006000000000000005,
+            "age": 0.04633333333333345,
+            "bun": 0.03433333333333338,
+            "ckd": 0.003666666666666679,
+            "copd": 0.021666666666666695,
+            "creatinine": 0.04199999999999998,
+            "diabetes": 0.012666666666666687,
+            "died_in_hospital": 0.009666666666666632,
+            "discharged_home": 0.0050000000000000044,
+            "dx_group": 0.02766666666666666,
+            "emergency": 0.0040000000000000036,
+            "hemoglobin": 0.04677137870855147,
+            "hypertension": 0.007000000000000006,
+            "los_days": 0.018333333333333424,
+            "male": 0.013000000000000012,
+            "potassium": 0.025999999999999912,
+            "prior_admissions_365d": 0.01733333333333331,
+            "readmit_30d": 0.009666666666666664,
+            "sodium": 0.027000000000000024
+          },
+          "correlation": 0.028188034314397856,
+          "discriminator_auroc": 0.505275,
+          "marginal": 0.01990024800220448
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.5208683333333334,
+        "attack_auroc_ci": [
+          0.5002056385373584,
+          0.5413217208602029
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7245875651098375,
+        "auroc_train_synthetic": 0.7150671567688099,
+        "difference": -0.00952040834102752,
+        "difference_ci": [
+          -0.02693517004639582,
+          0.006901240438250094
+        ],
+        "margin": 0.05,
+        "n_synthetic": 2904,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 2896,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
     },
-    "utility": {
-      "auroc_train_real": 0.7245875651098375,
-      "auroc_train_synthetic": 0.7185948469592182,
-      "difference": -0.005992718150619303,
-      "difference_ci": [
-        -0.01970534475185551,
-        0.00820783739417797
-      ],
-      "margin": 0.05,
-      "n_synthetic": 2905,
-      "n_test": 975,
-      "n_test_positive": 137,
-      "n_train_real": 2896,
-      "outcome": "readmit_30d",
-      "passes": true
+    "fresh sample": {
+      "fidelity": {
+        "columns": {
+          "afib": 0.0050000000000000044,
+          "age": 0.019333333333333313,
+          "bun": 0.03433333333333338,
+          "ckd": 0.010999999999999996,
+          "copd": 0.009000000000000008,
+          "creatinine": 0.02433333333333343,
+          "diabetes": 0.003333333333333327,
+          "died_in_hospital": 0.005333333333333374,
+          "discharged_home": 0.003666666666666679,
+          "dx_group": 0.021000000000000005,
+          "emergency": 0.004333333333333356,
+          "hemoglobin": 0.025376388934622796,
+          "hypertension": 0.0010000000000000009,
+          "los_days": 0.021666666666666667,
+          "male": 0.009333333333333332,
+          "potassium": 0.013666666666666667,
+          "prior_admissions_365d": 0.015999999999999903,
+          "readmit_30d": 0.005333333333333336,
+          "sodium": 0.025333333333333263
+        },
+        "correlation": 0.020362631289935425,
+        "discriminator_auroc": 0.5129794444444444,
+        "marginal": 0.01359875731234857
+      },
+      "floor": {
+        "fidelity": {
+          "columns": {
+            "afib": 0.006000000000000005,
+            "age": 0.04633333333333345,
+            "bun": 0.03433333333333338,
+            "ckd": 0.003666666666666679,
+            "copd": 0.021666666666666695,
+            "creatinine": 0.04199999999999998,
+            "diabetes": 0.012666666666666687,
+            "died_in_hospital": 0.009666666666666632,
+            "discharged_home": 0.0050000000000000044,
+            "dx_group": 0.02766666666666666,
+            "emergency": 0.0040000000000000036,
+            "hemoglobin": 0.04677137870855147,
+            "hypertension": 0.007000000000000006,
+            "los_days": 0.018333333333333424,
+            "male": 0.013000000000000012,
+            "potassium": 0.025999999999999912,
+            "prior_admissions_365d": 0.01733333333333331,
+            "readmit_30d": 0.009666666666666664,
+            "sodium": 0.027000000000000024
+          },
+          "correlation": 0.028188034314397856,
+          "discriminator_auroc": 0.505275,
+          "marginal": 0.01990024800220448
+        }
+      },
+      "privacy": {
+        "attack_auroc": 0.509074,
+        "attack_auroc_ci": [
+          0.48954893307202146,
+          0.5297382594235073
+        ],
+        "ceiling": 0.55,
+        "passes": true,
+        "test_rows_copied": 0.0,
+        "train_rows_copied": 0.0
+      },
+      "utility": {
+        "auroc_train_real": 0.7245875651098375,
+        "auroc_train_synthetic": 0.7344563872968312,
+        "difference": 0.009868822186993698,
+        "difference_ci": [
+          -0.003249853041963105,
+          0.0226227950725214
+        ],
+        "margin": 0.05,
+        "n_synthetic": 2880,
+        "n_test": 975,
+        "n_test_positive": 137,
+        "n_train_real": 2896,
+        "outcome": "readmit_30d",
+        "passes": true
+      }
     }
   }
 }

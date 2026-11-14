@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Felix Merrow    MRN: copula-v2-00006
+Date of birth: 1958-04-06    Sex: male
+Admitted: 2025-01-13 16:19    Discharged: 2025-01-15 14:57
+
+PRINCIPAL DIAGNOSIS
+Hypertensive heart disease with heart failure (I11.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Merrow is a 66-year-old man who was admitted electively with hypertensive heart disease with heart failure. 5 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Acute on chronic systolic heart failure (I50.23)
+Denies diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 42 mg/dL
+Sodium: 135 mmol/L
+Potassium: 4.4 mmol/L
+Hemoglobin: 8.9 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 1.9 days. Went home in stable condition.

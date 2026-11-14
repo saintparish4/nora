@@ -15,7 +15,8 @@ verdict, no number it produces for a real generator means anything, so the
 
 `generator_by_size` then turns the same known process on our own generator
 and asks how much real data it needs. With enough, it must pass like the
-holdout does. With 42 rows it does not: it leaks who it was trained on.
+holdout does. With 42 rows nothing passes, not even a fresh sample: the
+protocol will not call so little data private.
 """
 
 from __future__ import annotations
@@ -94,8 +95,12 @@ def failures(cards: dict[str, dict]) -> list[str]:
     return problems + [message for ok, message in checks if not ok]
 
 
-def generator_by_size() -> dict[int, dict]:
-    """Score the copula generator on the known process at each training size.
+def generator_by_size(sizes: list[int] = SIZES) -> dict[int, dict[str, dict]]:
+    """Score both versions of the generator on the known process at each size.
+
+    Next to them, at each size, is a fresh sample of the same process: the
+    best any generator could do. Where even that fails the privacy test,
+    the verdict is about the amount of data and not about the generator.
 
     The non-members are always the same 1,000 patients, none of whom is in
     any training set, so the privacy attack has enough of them to give a
@@ -104,24 +109,32 @@ def generator_by_size() -> dict[int, dict]:
     pool = fixture.sample(12000, seed=3).drop_duplicates("patient_id")
     test = pool.iloc[-1000:].reset_index(drop=True)
     cards = {}
-    for size in SIZES:
+    for size in sizes:
         train = pool.iloc[:size].reset_index(drop=True)
-        model = generate.fit(train)
-        synthetic = generate.sample(model, max(size, 1000), score.SEED, "copula")
-        cards[size] = score.scorecard(train, test, synthetic)
+        rows = max(size, 1000)
+        tables = {"fresh sample": fixture.sample(rows, seed=4)}
+        for name, significant in generate.SYSTEMS.items():
+            model = generate.fit(train, significant)
+            tables[name] = generate.sample(model, rows, score.SEED, name)
+        cards[size] = {name: score.scorecard(train, test, t) for name, t in tables.items()}
     return cards
 
 
-def generator_failures(cards: dict[int, dict]) -> list[str]:
-    """What must hold when the generator has plenty of data to learn from."""
-    card = cards[max(cards)]
+def generator_failures(cards: dict[int, dict[str, dict]]) -> list[str]:
+    """What must hold: enough data passes, and version 2 leaks less on little."""
+    most, least = cards[max(cards)]["copula-v2"], cards[min(cards)]
+    attack = {name: card["privacy"]["attack_auroc"] for name, card in least.items()}
     checks = [
-        (card["utility"]["passes"], "generator: utility should pass with enough data"),
-        (card["privacy"]["passes"], "generator: privacy should pass with enough data"),
+        (most["utility"]["passes"], "generator: utility should pass with enough data"),
+        (most["privacy"]["passes"], "generator: privacy should pass with enough data"),
         (
-            0.42 <= card["fidelity"]["discriminator_auroc"] <= 0.58,
+            0.42 <= most["fidelity"]["discriminator_auroc"] <= 0.58,
             "generator: discriminator not ~0.5 with enough data",
         ),
-        (card["privacy"]["train_rows_copied"] == 0, "generator: copied a training row"),
+        (most["privacy"]["train_rows_copied"] == 0, "generator: copied a training row"),
+        (
+            attack["copula-v2"] < attack["copula-v1"],
+            "generator: version 2 should leak less than version 1 on little data",
+        ),
     ]
     return [message for ok, message in checks if not ok]

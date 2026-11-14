@@ -1,0 +1,27 @@
+DISCHARGE SUMMARY
+
+Patient: Felix Garrow    MRN: copula-v2-00004
+Date of birth: 1963-05-30    Sex: male
+Admitted: 2025-09-01 10:41    Discharged: 2025-09-14 18:40
+
+PRINCIPAL DIAGNOSIS
+Hypertensive heart disease with heart failure (I11.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Garrow is a 62-year-old man who was admitted electively with hypertensive heart disease with heart failure. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Acute on chronic systolic heart failure (I50.23)
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+Negative for diabetes or chronic kidney disease.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.1 mg/dL
+BUN: 13 mg/dL
+Sodium: 140 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 10 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 13.3 days. Discharged home in stable condition.

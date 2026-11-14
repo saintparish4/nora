@@ -1,0 +1,28 @@
+DISCHARGE SUMMARY
+
+Patient: Flora Holloway    MRN: copula-v2-00013
+Date of birth: 1944-10-11    Sex: female
+Admitted: 2025-04-08 02:16    Discharged: 2025-04-16 17:28
+
+PRINCIPAL DIAGNOSIS
+Aortic valve stenosis (I35.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Holloway is a 80-year-old woman who came in for a planned admission with aortic valve stenosis. 3 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Type 2 diabetes mellitus with diabetic chronic kidney disease (E11.22)
+Atrial fibrillation (I48.91)
+Negative for COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.6 mg/dL
+BUN: 21 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.7 mmol/L
+Hemoglobin: 8.9 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 8.6 days. The patient died in hospital on 2025-04-16.

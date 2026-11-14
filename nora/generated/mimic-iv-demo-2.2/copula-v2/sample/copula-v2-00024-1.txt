@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Gideon Eastlake    MRN: copula-v2-00024
+Date of birth: 1956-04-29    Sex: male
+Admitted: 2025-10-30 06:18    Discharged: 2025-11-14 00:15
+
+PRINCIPAL DIAGNOSIS
+Non-ST elevation myocardial infarction (I21.4)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Eastlake is a 69-year-old man who presented as an emergency admission with non-ST elevation myocardial infarction. No admissions in the past 12 months.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Chronic kidney disease (N18.9)
+Chronic obstructive pulmonary disease (J44.9)
+No history of diabetes, hypertension or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.7 mg/dL
+BUN: 23 mg/dL
+Sodium: 138 mmol/L
+Potassium: 3.9 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 14.7 days. Transferred to another care facility in stable condition.

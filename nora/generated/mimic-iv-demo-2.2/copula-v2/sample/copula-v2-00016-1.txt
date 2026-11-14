@@ -1,0 +1,28 @@
+DISCHARGE SUMMARY
+
+Patient: Iris Quillon    MRN: copula-v2-00016
+Date of birth: 1936-05-07    Sex: female
+Admitted: 2025-07-05 23:10    Discharged: 2025-07-10 18:37
+
+PRINCIPAL DIAGNOSIS
+Dilated cardiomyopathy (I42.0)
+
+HISTORY OF PRESENT ILLNESS
+Ms. Quillon is a 89-year-old woman who presented as an emergency admission with dilated cardiomyopathy. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Type 2 diabetes mellitus with diabetic chronic kidney disease (E11.22)
+Chronic obstructive pulmonary disease (J44.9)
+Atrial fibrillation (I48.91)
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.5 mg/dL
+BUN: 36 mg/dL
+Sodium: 136 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 7.2 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 4.8 days. Discharged home in stable condition.

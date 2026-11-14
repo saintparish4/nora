@@ -13,7 +13,8 @@ been shown; `nora/PROTOCOL.md` is the contract every number is judged by.
   /src/nora/         - One module per job (see nora/README.md "How it is built")
   /tests/            - pytest, one file per module
   /baselines/        - Synthea's mapped table (committed)
-  /generated/        - Our generator's table and 25 sample records (committed, ODbL)
+  /generated/        - Per dataset and generator: the synthetic table; for the MIMIC-IV
+                       demo also 25 sample records and their defective copies (ODbL)
   /results/          - Scorecards and validator results (committed)
   /data/             - Real data, tools, full renders (git-ignored, never committed)
 ```
@@ -25,13 +26,16 @@ Run everything from `nora/`.
 ```bash
 uv sync
 uv run ruff format . && uv run ruff check .
-NORA_MIMIC_DEMO=data/raw/mimic-iv-clinical-database-demo-2.2 uv run pytest -q
+export NORA_MIMIC_DEMO=data/raw/mimic-iv-clinical-database-demo-2.2
+export NORA_EICU_DEMO=data/raw/eicu-collaborative-research-database-demo-2.0.1
+uv run pytest -q -rs
 uv run nora --help
 ```
 
-Without `NORA_MIMIC_DEMO` two tests that read the open demo are skipped.
-The suite takes about a minute; the self-check and the generator-by-size
-run are most of it.
+Without those two variables the tests that read the open demos are
+skipped, and they are the ones that reproduce the committed numbers
+(`tests/test_reproduce.py`). CI sets both. The suite takes about two
+minutes; the self-check and the generator-by-size run are most of it.
 
 ## Rules that are easy to break
 
@@ -46,11 +50,19 @@ run are most of it.
 - **Real data never enters git.** `data/` is ignored. The full MIMIC-IV and
   eICU are under an agreement that forbids sharing them, and nothing may
   be fit to the full MIMIC-IV: it may only ever score.
-- **Committed output must match the code.** `tests/test_records.py` fails
-  when `generated/copula-v1/sample` is stale. After changing `generate`,
-  `chart`, `fhir` or `note`, rerun `nora generate`, `nora render`,
-  `nora score` and `nora validate`, and commit the new output in its own
-  commit.
+- **Committed output must match the code.** `tests/test_records.py`,
+  `test_defects.py` and `test_reproduce.py` fail when anything under
+  `generated/` or `results/` is stale. After changing `generate`, `chart`,
+  `fhir`, `note` or `defects`, rerun `nora generate`, `nora render`,
+  `nora defects`, `nora score` and `nora validate`, and commit the new
+  output in its own commit.
+- **A generator that changes gets a new name.** `generate.SYSTEMS` maps
+  each name (`copula-v1`, `copula-v2`) to its setting, so an old result
+  can always be redrawn. Do not change what an existing name produces.
+- **Privacy is traded against usefulness on purpose.** `copula-v2` drops
+  relationships the data cannot tell from chance. Do not loosen that to
+  improve a utility number without rerunning `nora selfcheck --generator`
+  and reporting both columns.
 - **Every bundle must read back as its row.** `records.build` enforces it.
   A new fact in the table needs both a renderer in `fhir.render` and a
   reader in `fhir.read`.

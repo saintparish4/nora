@@ -1,0 +1,635 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "https://nora.example/fhir/Organization/nora-general",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "nora-general",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization"
+          ]
+        },
+        "active": true,
+        "name": "Nora General Hospital (synthetic)",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Nora General Hospital (synthetic)</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Organization/nora-general"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Patient/copula-v2-00005",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "copula-v2-00005",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://nora.example/fhir/mrn",
+            "value": "copula-v2-00005"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Holloway",
+            "given": [
+              "Alden"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1970-11-24",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Alden Holloway, male, born 1970-11-24</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/copula-v2-00005"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Encounter/copula-v2-00005-1",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "copula-v2-00005-1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"
+          ]
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "185347001"
+              }
+            ],
+            "text": "Hospital admission"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "period": {
+          "start": "2025-06-24T12:01:00-05:00",
+          "end": "2025-07-03T04:58:00-05:00"
+        },
+        "serviceProvider": {
+          "reference": "Organization/nora-general"
+        },
+        "priority": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+              "code": "EL"
+            }
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Inpatient admission, 2025-06-24T12:01:00-05:00 to 2025-07-03T04:58:00-05:00</div>"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/copula-v2-00005-1-dx1"
+            },
+            "rank": 1
+          },
+          {
+            "condition": {
+              "reference": "Condition/copula-v2-00005-1-dx2"
+            },
+            "rank": 2
+          },
+          {
+            "condition": {
+              "reference": "Condition/copula-v2-00005-1-dx3"
+            },
+            "rank": 3
+          }
+        ],
+        "hospitalization": {
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/discharge-disposition",
+                "code": "home",
+                "display": "Home"
+              }
+            ]
+          }
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/copula-v2-00005-1"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/copula-v2-00005-1-dx1",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "copula-v2-00005-1-dx1",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "I26.99"
+            }
+          ],
+          "text": "Pulmonary embolism"
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "recordedDate": "2025-07-03T04:58:00-05:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Pulmonary embolism (I26.99)</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/copula-v2-00005-1-dx1"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/copula-v2-00005-1-dx2",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "copula-v2-00005-1-dx2",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "N18.9"
+            }
+          ],
+          "text": "Chronic kidney disease"
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "recordedDate": "2025-07-03T04:58:00-05:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Chronic kidney disease (N18.9)</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/copula-v2-00005-1-dx2"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Condition/copula-v2-00005-1-dx3",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "copula-v2-00005-1-dx3",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-encounter-diagnosis"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "J44.9"
+            }
+          ],
+          "text": "Chronic obstructive pulmonary disease"
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "recordedDate": "2025-07-03T04:58:00-05:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Chronic obstructive pulmonary disease (J44.9)</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/copula-v2-00005-1-dx3"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Observation/copula-v2-00005-1-creatinine",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "copula-v2-00005-1-creatinine",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2160-0",
+              "display": "Creatinine [Mass/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "effectiveDateTime": "2025-07-02T22:58:00-05:00",
+        "performer": [
+          {
+            "reference": "Organization/nora-general"
+          }
+        ],
+        "valueQuantity": {
+          "value": 3.4,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Creatinine [Mass/volume] in Serum or Plasma: 3.4 mg/dL</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/copula-v2-00005-1-creatinine"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Observation/copula-v2-00005-1-bun",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "copula-v2-00005-1-bun",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "3094-0",
+              "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "effectiveDateTime": "2025-07-02T22:58:00-05:00",
+        "performer": [
+          {
+            "reference": "Organization/nora-general"
+          }
+        ],
+        "valueQuantity": {
+          "value": 26,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Urea nitrogen [Mass/volume] in Serum or Plasma: 26 mg/dL</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/copula-v2-00005-1-bun"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Observation/copula-v2-00005-1-sodium",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "copula-v2-00005-1-sodium",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2951-2",
+              "display": "Sodium [Moles/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "effectiveDateTime": "2025-07-02T22:58:00-05:00",
+        "performer": [
+          {
+            "reference": "Organization/nora-general"
+          }
+        ],
+        "valueQuantity": {
+          "value": 140,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Sodium [Moles/volume] in Serum or Plasma: 140 mmol/L</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/copula-v2-00005-1-sodium"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/Observation/copula-v2-00005-1-potassium",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "copula-v2-00005-1-potassium",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "encounter": {
+          "reference": "Encounter/copula-v2-00005-1"
+        },
+        "effectiveDateTime": "2025-07-02T22:58:00-05:00",
+        "performer": [
+          {
+            "reference": "Organization/nora-general"
+          }
+        ],
+        "valueQuantity": {
+          "value": 4.5,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Potassium [Moles/volume] in Serum or Plasma: 4.5 mmol/L</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/copula-v2-00005-1-potassium"
+      }
+    },
+    {
+      "fullUrl": "https://nora.example/fhir/DocumentReference/copula-v2-00005-1-note",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "copula-v2-00005-1-note",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-documentreference"
+          ]
+        },
+        "status": "current",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "18842-5",
+              "display": "Discharge summary"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category",
+                "code": "clinical-note"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/copula-v2-00005"
+        },
+        "date": "2025-07-03T04:58:00-05:00",
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain; charset=utf-8",
+              "data": "RElTQ0hBUkdFIFNVTU1BUlkKClBhdGllbnQ6IEFsZGVuIEhvbGxvd2F5ICAgIE1STjogY29wdWxhLXYyLTAwMDA1CkRhdGUgb2YgYmlydGg6IDE5NzAtMTEtMjQgICAgU2V4OiBtYWxlCkFkbWl0dGVkOiAyMDI1LTA2LTI0IDEyOjAxICAgIERpc2NoYXJnZWQ6IDIwMjUtMDctMDMgMDQ6NTgKClBSSU5DSVBBTCBESUFHTk9TSVMKUHVsbW9uYXJ5IGVtYm9saXNtIChJMjYuOTkpCgpISVNUT1JZIE9GIFBSRVNFTlQgSUxMTkVTUwpNci4gSG9sbG93YXkgaXMgYSA1NC15ZWFyLW9sZCBtYW4gd2hvIHdhcyBhZG1pdHRlZCBlbGVjdGl2ZWx5IHdpdGggcHVsbW9uYXJ5IGVtYm9saXNtLiBObyBob3NwaXRhbCBhZG1pc3Npb25zIGluIHRoZSBwcmV2aW91cyB5ZWFyLgoKUEFTVCBNRURJQ0FMIEhJU1RPUlkgQU5EIFNFQ09OREFSWSBESUFHTk9TRVMKQ2hyb25pYyBraWRuZXkgZGlzZWFzZSAoTjE4LjkpCkNocm9uaWMgb2JzdHJ1Y3RpdmUgcHVsbW9uYXJ5IGRpc2Vhc2UgKEo0NC45KQpOZWdhdGl2ZSBmb3IgZGlhYmV0ZXMsIGh5cGVydGVuc2lvbiBvciBhdHJpYWwgZmlicmlsbGF0aW9uLgoKTEFCT1JBVE9SWSBSRVNVTFRTIChsYXN0IGJlZm9yZSBkaXNjaGFyZ2UpCkNyZWF0aW5pbmU6IDMuNCBtZy9kTApCVU46IDI2IG1nL2RMClNvZGl1bTogMTQwIG1tb2wvTApQb3Rhc3NpdW06IDQuNSBtbW9sL0wKSGVtb2dsb2Jpbjogbm90IG1lYXN1cmVkIGR1cmluZyB0aGlzIGFkbWlzc2lvbgoKSE9TUElUQUwgQ09VUlNFIEFORCBESVNQT1NJVElPTgpMZW5ndGggb2Ygc3RheSA4LjcgZGF5cy4gV2VudCBob21lIGluIHN0YWJsZSBjb25kaXRpb24uCg=="
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/copula-v2-00005-1"
+            }
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Discharge summary for Alden Holloway</div>"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/copula-v2-00005-1-note"
+      }
+    }
+  ]
+}

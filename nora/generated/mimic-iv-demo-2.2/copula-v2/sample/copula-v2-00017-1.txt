@@ -1,0 +1,26 @@
+DISCHARGE SUMMARY
+
+Patient: Hollis Ivesdale    MRN: copula-v2-00017
+Date of birth: 1951-08-15    Sex: male
+Admitted: 2025-11-28 13:15    Discharged: 2025-11-29 10:03
+
+PRINCIPAL DIAGNOSIS
+Aortic valve stenosis (I35.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Ivesdale is a 74-year-old man who presented as an emergency admission with aortic valve stenosis. 2 hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Denies diabetes, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.1 mg/dL
+BUN: 33 mg/dL
+Sodium: 136 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 10.1 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 0.9 days. Transferred to another care facility in stable condition.

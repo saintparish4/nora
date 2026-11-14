@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Gideon Fenwick    MRN: copula-v2-00019
+Date of birth: 1958-08-07    Sex: male
+Admitted: 2025-01-05 15:08    Discharged: 2025-01-07 17:17
+
+PRINCIPAL DIAGNOSIS
+Aortic valve stenosis (I35.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Fenwick is a 66-year-old man who presented as an emergency admission with aortic valve stenosis. 1 hospital admission in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Negative for diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.9 mg/dL
+BUN: 15 mg/dL
+Sodium: 138 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 14.9 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 2.1 days. The patient died in hospital on 2025-01-07.

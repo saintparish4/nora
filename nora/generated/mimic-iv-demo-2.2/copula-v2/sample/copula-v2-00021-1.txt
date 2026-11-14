@@ -1,0 +1,27 @@
+DISCHARGE SUMMARY
+
+Patient: Ivor Ashdown    MRN: copula-v2-00021
+Date of birth: 1971-12-21    Sex: male
+Admitted: 2025-07-02 14:18    Discharged: 2025-07-08 15:24
+
+PRINCIPAL DIAGNOSIS
+Non-ST elevation myocardial infarction (I21.4)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Ashdown is a 53-year-old man who was admitted electively with non-ST elevation myocardial infarction. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertensive chronic kidney disease (I12.9)
+Chronic kidney disease (N18.9)
+Atrial fibrillation (I48.91)
+Negative for diabetes or COPD.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 1.3 mg/dL
+BUN: 30 mg/dL
+Sodium: 135 mmol/L
+Potassium: 4.2 mmol/L
+Hemoglobin: 10.3 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 6.0 days. Discharged home in stable condition.

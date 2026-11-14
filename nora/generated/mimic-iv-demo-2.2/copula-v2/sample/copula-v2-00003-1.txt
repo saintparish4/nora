@@ -1,0 +1,25 @@
+DISCHARGE SUMMARY
+
+Patient: Alden Ivesdale    MRN: copula-v2-00003
+Date of birth: 1950-10-10    Sex: male
+Admitted: 2025-03-14 19:16    Discharged: 2025-03-29 13:09
+
+PRINCIPAL DIAGNOSIS
+Unstable angina (I20.0)
+
+HISTORY OF PRESENT ILLNESS
+Mr. Ivesdale is a 74-year-old man who presented as an emergency admission with unstable angina. No hospital admissions in the previous year.
+
+PAST MEDICAL HISTORY AND SECONDARY DIAGNOSES
+Hypertension (I10)
+Negative for diabetes, chronic kidney disease, COPD or atrial fibrillation.
+
+LABORATORY RESULTS (last before discharge)
+Creatinine: 0.7 mg/dL
+BUN: 35 mg/dL
+Sodium: 142 mmol/L
+Potassium: 4.1 mmol/L
+Hemoglobin: 9.7 g/dL
+
+HOSPITAL COURSE AND DISPOSITION
+Length of stay 14.7 days. Transferred to another care facility in stable condition.

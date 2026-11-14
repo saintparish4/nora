@@ -17,6 +17,7 @@ from pathlib import Path
 import pandas as pd
 
 from nora import (
+    eicu,
     generate,
     mimic,
     records,
@@ -77,7 +78,9 @@ def summary(card: dict) -> str:
 
 
 def cohort(args: argparse.Namespace) -> None:
-    table = mimic.load(args.mimic, args.name)
+    if bool(args.mimic) == bool(args.eicu):
+        raise ValueError("give exactly one of --mimic and --eicu")
+    table = mimic.load(args.mimic, args.name) if args.mimic else eicu.load(args.eicu, args.name)
     if LOCK.exists() and args.name in json.loads(LOCK.read_text()):
         split.verify(table, args.name, LOCK, PROTOCOL)
         state = "matches its lock"
@@ -159,7 +162,7 @@ def run_score(args: argparse.Namespace) -> None:
     test = read_table(DATA / args.name / "test.csv")
     split.verify(pd.concat([train, test]), args.name, LOCK, PROTOCOL)
     synthetic = read_table(args.synthetic)
-    card = score.scorecard(train, test, synthetic)
+    card = score.scorecard(train, test, synthetic, args.outcome)
     card |= {
         "dataset": args.name,
         "system": args.system,
@@ -211,7 +214,8 @@ def main() -> None:
     commands = parser.add_subparsers(required=True)
 
     p = commands.add_parser("cohort", help="build, lock and split a real dataset")
-    p.add_argument("--mimic", type=Path, required=True, help="directory that contains hosp/")
+    p.add_argument("--mimic", type=Path, help="a MIMIC-IV directory, the one that contains hosp/")
+    p.add_argument("--eicu", type=Path, help="an eICU-CRD directory of CSV files")
     p.add_argument("--name", required=True, help="dataset name, e.g. mimic-iv-demo-2.2")
     p.set_defaults(run=cohort)
 
@@ -241,6 +245,7 @@ def main() -> None:
     p.add_argument("--name", required=True, help="the locked dataset to score against")
     p.add_argument("--synthetic", type=Path, required=True, help="admission table as CSV")
     p.add_argument("--system", required=True, help="label for the generator, e.g. synthea")
+    p.add_argument("--outcome", default="readmit_30d", choices=schema.OUTCOMES)
     p.set_defaults(run=run_score)
 
     p = commands.add_parser("selfcheck", help="prove the scorer on tables with known verdicts")

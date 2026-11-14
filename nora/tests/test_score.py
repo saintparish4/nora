@@ -62,7 +62,7 @@ def test_utility_gives_no_verdict_on_a_test_set_too_small_to_mean_anything(real)
     result = score.utility(train, train, tiny)
     assert result["difference"] == 0
     assert result["passes"] is False
-    assert result["reason"].startswith("the test set has 5 readmitted and 40 not readmitted")
+    assert result["reason"].startswith("the test set has 5 with the outcome and 40 without")
 
 
 def test_privacy_gives_no_verdict_with_too_few_admissions_to_compare(real):

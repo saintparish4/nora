@@ -110,7 +110,7 @@ def utility(
     positives, negatives = int(y.sum()), int(len(y) - y.sum())
     if min(positives, negatives) < MIN_PER_CLASS:
         result["reason"] = (
-            f"the test set has {positives} readmitted and {negatives} not readmitted; "
+            f"the test set has {positives} with the outcome and {negatives} without; "
             f"a verdict needs {MIN_PER_CLASS} of each"
         )
 
@@ -252,7 +252,9 @@ def privacy(train: pd.DataFrame, test: pd.DataFrame, synthetic: pd.DataFrame) ->
     }
 
 
-def scorecard(train: pd.DataFrame, test: pd.DataFrame, synthetic: pd.DataFrame) -> dict:
+def scorecard(
+    train: pd.DataFrame, test: pd.DataFrame, synthetic: pd.DataFrame, outcome: str = "readmit_30d"
+) -> dict:
     """Everything the protocol reports for one synthetic table.
 
     `floor` is real test data scored as if it were synthetic: the distance
@@ -260,7 +262,7 @@ def scorecard(train: pd.DataFrame, test: pd.DataFrame, synthetic: pd.DataFrame) 
     judged against that, not against zero.
     """
     return {
-        "utility": utility(train, synthetic, test),
+        "utility": utility(train, synthetic, test, outcome),
         "fidelity": fidelity(train, synthetic),
         "privacy": privacy(train, test, synthetic),
         "floor": {"fidelity": fidelity(train, test)},

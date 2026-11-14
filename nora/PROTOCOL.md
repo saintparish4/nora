@@ -206,6 +206,23 @@ of stay). It is a check that synthetic data preserves how features relate
 to an outcome. It is not a usable mortality predictor and is never
 described as one.
 
+How eICU maps to the admission table:
+
+- An admission is a hospital stay, which can hold several intensive care
+  unit stays. Every admission therefore included intensive care.
+- The primary diagnosis is the earliest one marked "Primary" during the
+  hospital stay, the lowest diagnosis id breaking a tie. When that entry
+  carries both an ICD-9 and an ICD-10 code, the ICD-10 code is used. A stay
+  whose earliest Primary diagnosis has no code is left out of the cohort.
+- `readmit_30d` and `prior_admissions_365d` are entirely missing.
+- An age recorded as "> 89" is 90.
+- `emergency` is 1 when the hospital admission source is the emergency
+  department. `discharged_home` is 1 when the discharge location is "Home".
+  Each is missing when eICU leaves the field blank.
+- Comorbidities come from the diagnoses charted during the stay. eICU
+  charts active problems, not history, so these rates run lower than
+  MIMIC-IV's and the two sites are not compared on them.
+
 ## 12. Blind clinician packet
 
 - **What the clinician sees:** admission cards. One page per admission,
@@ -267,3 +284,8 @@ produced before the change.
   change moved the demo's test set from 5 admissions with one readmission
   to 8 with none. The new string follows from the name; it was not picked
   by looking at the split.
+- **2026-11-13, section 11.** Added how eICU fields map to the admission
+  table. Written after counting the open demo's cohort (261 admissions, 26
+  deaths) and before any generator was fit to it or any score computed on
+  it. The lock entry for `mimic-iv-demo-2.2` was edited by hand to carry
+  this file's new sha256; its table and test digests are unchanged.

@@ -13,9 +13,12 @@ not, and how to reproduce every number.
 | | |
 |---|---|
 | FHIR validity | HL7 validator on 1,000 generated bundles: 0 errors, 0 warnings |
-| Closeness to real data | Per-column distance 0.021, against 0.356 for Synthea |
-| Usefulness for training a model | Not assessable on open data: the open test set is 8 admissions |
-| Privacy | Not met at 42 training admissions; passes from about 1,000 on a known process |
+| Closeness to real data | Per-column distance 0.021 and 0.016 on two open datasets, against 0.356 and 0.395 for Synthea |
+| Planted defects | 300 defects with an answer key; the HL7 validator alone finds 69 |
+| Reproducibility | CI rebuilds every committed number from open data |
+| Usefulness for training a model | Not assessable on open data: the held-out sets hold 0 and 5 outcomes |
+| Privacy | Not met. No leak is detectable, but the open data is too small for the test to pass anything |
+| Blind test by a clinician | Packet built; not yet rated |
 
 The rules those results are judged by are in
 [nora/PROTOCOL.md](nora/PROTOCOL.md), committed before any result existed.
@@ -29,5 +32,5 @@ in the history; `git checkout ef07f9a` is the last commit that has it.
 
 ## License
 
-Code: [MIT](LICENSE). Generated data: Open Database License, see
-[nora/generated/copula-v1/NOTICE.md](nora/generated/copula-v1/NOTICE.md).
+Code: [MIT](LICENSE). Generated data: Open Database License, see the
+`NOTICE.md` beside each table under [nora/generated/](nora/generated/).

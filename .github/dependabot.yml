@@ -1,0 +1,26 @@
+# Grouped, weekly updates: one pull request per ecosystem, not one per package.
+# A dependency update can move a score in its last decimals. The `test` job
+# compares scores to nine places and says so when one moves.
+version: 2
+updates:
+  - package-ecosystem: uv
+    directory: "/nora"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      python:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns:
+          - "*"

@@ -1,0 +1,91 @@
+name: Nora
+
+# Two jobs. `test` is the evidence: lint, the test suite, and the committed
+# numbers reproduced from the open data. `validate` runs HL7's validator on
+# the committed sample bundles; it depends on HL7's public terminology
+# server, so it is kept apart and a red `validate` with a green `test`
+# usually means that server, not this repository.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: nora
+
+jobs:
+  test:
+    name: Tests and reproduced numbers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+          cache-dependency-glob: nora/uv.lock
+      - name: Install the locked dependencies
+        run: uv sync --locked
+      - name: Format and lint
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+      - name: Cache the open demo data
+        uses: actions/cache@v6
+        with:
+          path: nora/data/raw
+          key: open-demos-mimic-iv-2.2-eicu-2.0.1
+      - name: Download the open demo data
+        # Both are open on PhysioNet (Open Database License); no account needed.
+        run: |
+          mkdir -p data/raw && cd data/raw
+          fetch() {
+            [ -d "$3" ] && return
+            curl -sSL --retry 5 --retry-delay 10 -o demo.zip "$1"
+            echo "$2  demo.zip" | sha256sum --check
+            unzip -q demo.zip && rm demo.zip
+          }
+          fetch https://physionet.org/static/published-projects/mimic-iv-demo/mimic-iv-clinical-database-demo-2.2.zip \
+            97301a03820e8f41af211cf3462ddc19aefe75bbed05f11753859affaafeb8ec \
+            mimic-iv-clinical-database-demo-2.2
+          fetch https://physionet.org/static/published-projects/eicu-crd-demo/eicu-collaborative-research-database-demo-2.0.1.zip \
+            8e33a1094945d6ba07cf613b15b2fe4d98f6b3324601d026e80d445bd5b8b865 \
+            eicu-collaborative-research-database-demo-2.0.1
+      - name: Tests, with the committed numbers reproduced from the data
+        env:
+          NORA_MIMIC_DEMO: data/raw/mimic-iv-clinical-database-demo-2.2
+          NORA_EICU_DEMO: data/raw/eicu-collaborative-research-database-demo-2.0.1
+        # -rs lists any skipped test: with the data present there should be none.
+        run: uv run pytest -q -rs
+
+  validate:
+    name: HL7 validator on the sample bundles
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+          cache-dependency-glob: nora/uv.lock
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Cache the pinned validator
+        uses: actions/cache@v6
+        with:
+          path: nora/data/tools
+          key: hl7-validator-${{ hashFiles('nora/src/nora/validate.py') }}
+      - name: Validate against US Core
+        run: |
+          uv sync --locked
+          uv run nora validate --bundles generated/mimic-iv-demo-2.2/copula-v2/sample --system ci
